@@ -1,7 +1,8 @@
 #!/bin/bash
 
 PATH=$1
-KINDLE_HOME="/mnt/Data/Projects/Integration/RSS2Kindle/kindle"
+#KIDNLE_HOME has to be defined
+KINDLE_HOME=""
 
 if [ -z ${PATH} ]; then
     echo "Empty path";
