@@ -1,1 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+    <context:property-placeholder location="classpath:/camel-context.properties"/>
+    <context:component-scan base-package="org.roag"/>
+
+    <!--MongoDB-->
+    <bean id="mongoBean" class="com.mongodb.Mongo">
+        <constructor-arg name="host" value="${mongodb.host}"/>
+        <constructor-arg name="port" value="${mongodb.port}"/>
+    </bean>
+
+    <!--<bean id="rssPolicy" class="org.roag.camel.RssRoutePolicy"/>-->
+
+    <camel:camelContext id="MainCamelContext" typeConverterStatisticsEnabled="true">
+        <!--propertyPlaceholder is required for @PropertyInject  -->
+        <camel:propertyPlaceholder id="props" location="camel-context.properties"/>
+        <!-- let Camel use those @Component scanned route builders -->
+        <camel:contextScan/>
+
+        <!-- extracting all active subscribers from MongoDB -->
+        <camel:route>
+            <camel:from uri="direct:mongoFindAll"/>
+            <camel:setBody>
+                <camel:constant>{{mongodb.subscribers.filter}}</camel:constant>
+            </camel:setBody>
+            <camel:to uri="mongodb:mongoBean?database={{mongodb.database}}&amp;collection={{mongodb.collection.name}}&amp;operation=findAll"/>
+        </camel:route>
+        
+        <!-- rss to html transforming by xslt-->
+        <camel:route>
+            <camel:from uri="seda:startTransformation"/>
+            <camel:from uri="file://{{storage.path.rss}}?recursive=true&amp;noop=true"/>
+            <camel:log message="XSLT transforming ${file:onlyname} by xslt:rss2html.xsl" loggingLevel="DEBUG"/>
+            <camel:to uri="{{template.xslt.rss2html}}"/>
+            <camel:log message="Save as result as html:" loggingLevel="DEBUG"/>
+            <camel:setHeader headerName="CamelFileName">
+                <camel:simple>${header.CamelFileName}.htm</camel:simple>
+            </camel:setHeader>
+            <camel:log message="${header.CamelFileName}" loggingLevel="DEBUG"/>
+            <camel:toD uri="file://{{storage.path.mobi}}"/>
+            <camel:to uri="seda:kindlegen"/>
+        </camel:route>
+
+        <!--html to mobi transforming by kindlegen -->
+        <camel:route>
+            <camel:from uri="seda:kindlegen"/>
+            <camel:log message="Start kindlegen: {{kindlegen.path}}" loggingLevel="DEBUG"/>
+            <camel:toD uri="exec:{{kindlegen.path}}?args={{storage.path.mobi}}${header.CamelFileName}"/>
+        </camel:route>
+
+    </camel:camelContext>
+</beans>
