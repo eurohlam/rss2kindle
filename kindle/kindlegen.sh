@@ -4,6 +4,11 @@ PATH=$1
 #KIDNLE_HOME has to be defined
 KINDLE_HOME=""
 
+if [ -z ${KINDLE_HOME} ]; then
+    echo "Empty KINDLE_HOME";
+    exit -2;
+fi
+
 if [ -z ${PATH} ]; then
     echo "Empty path";
     exit -2;
