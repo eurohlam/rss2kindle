@@ -11,7 +11,7 @@
     <context:component-scan base-package="org.roag"/>
 
     <!--MongoDB-->
-    <bean id="mongo" class="com.mongodb.Mongo" name="${mongodb.spring.bean}">
+    <bean id="mongo" class="com.mongodb.MongoClient" name="${mongodb.spring.bean}">
         <constructor-arg index="0" value="${mongodb.host}"/>
         <constructor-arg index="1" value="${mongodb.port}"/>
     </bean>
@@ -75,7 +75,7 @@
 
         <!-- main flow that run RSS polling-->
         <camel:route id="mainFlow" startupOrder="1">
-            <camel:from uri="timer://runOnce?repeatCount=2&amp;delay=30000"/>
+            <camel:from uri="timer://runOnce?repeatCount=1&amp;delay=30000"/>
             <camel:log message="Timer fired" loggingLevel="INFO"/>
             <camel:bean ref="RSS2XMLBuilder" method="runRssPollingForAllSubscribers"/>
         </camel:route>
