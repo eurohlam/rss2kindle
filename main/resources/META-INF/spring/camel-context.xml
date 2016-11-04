@@ -11,49 +11,75 @@
     <context:component-scan base-package="org.roag"/>
 
     <!--MongoDB-->
-    <bean id="mongoBean" class="com.mongodb.Mongo">
-        <constructor-arg name="host" value="${mongodb.host}"/>
-        <constructor-arg name="port" value="${mongodb.port}"/>
+    <bean id="mongo" class="com.mongodb.Mongo" name="${mongodb.spring.bean}">
+        <constructor-arg index="0" value="${mongodb.host}"/>
+        <constructor-arg index="1" value="${mongodb.port}"/>
     </bean>
 
+    <!--MongoHelper-->
+    <bean id="mongoHelper" class="org.roag.mongo.MongoHelper">
+        <constructor-arg index="0" value="${mongodb.spring.bean}"/>
+        <constructor-arg index="1" value="${mongodb.camel.route}"/>
+        <constructor-arg index="2" value="${mongodb.database}"/>
+        <constructor-arg index="3" value="${mongodb.collection.name}"/>
+    </bean>
     <!--<bean id="rssPolicy" class="org.roag.camel.RssRoutePolicy"/>-->
 
-    <camel:camelContext id="MainCamelContext" typeConverterStatisticsEnabled="true">
+    <camel:camelContext id="MainCamelContext">
         <!--propertyPlaceholder is required for @PropertyInject  -->
         <camel:propertyPlaceholder id="props" location="camel-context.properties"/>
         <!-- let Camel use those @Component scanned route builders -->
         <camel:contextScan/>
 
         <!-- extracting all active subscribers from MongoDB -->
-        <camel:route>
-            <camel:from uri="direct:mongoFindAll"/>
+        <camel:route id="mongo" startupOrder="0">
+            <camel:from uri="{{mongodb.camel.route}}"/>
             <camel:setBody>
                 <camel:constant>{{mongodb.subscribers.filter}}</camel:constant>
             </camel:setBody>
-            <camel:to uri="mongodb:mongoBean?database={{mongodb.database}}&amp;collection={{mongodb.collection.name}}&amp;operation=findAll"/>
+            <camel:to uri="mongodb:{{mongodb.spring.bean}}?database={{mongodb.database}}&amp;collection={{mongodb.collection.name}}&amp;operation=findAll"/>
         </camel:route>
         
         <!-- rss to html transforming by xslt-->
-        <camel:route>
-            <camel:from uri="seda:startTransformation"/>
-            <camel:from uri="file://{{storage.path.rss}}?recursive=true&amp;noop=true"/>
-            <camel:log message="XSLT transforming ${file:onlyname} by xslt:rss2html.xsl" loggingLevel="DEBUG"/>
+        <camel:route id="rss2html" startupOrder="2">
+            <camel:from uri="direct:startTransformation?block=true&amp;timeout=50000"/>
+            <camel:from uri="file://{{storage.path.rss}}?recursive=true&amp;noop=false&amp;delete=true"/>
+            <camel:log message="XSLT transforming ${file:onlyname} by xslt:rss2html.xsl" loggingLevel="INFO"/>
             <camel:to uri="{{template.xslt.rss2html}}"/>
-            <camel:log message="Save as result as html:" loggingLevel="DEBUG"/>
+            <camel:log message="Save as result as html:" loggingLevel="INFO"/>
             <camel:setHeader headerName="CamelFileName">
                 <camel:simple>${header.CamelFileName}.htm</camel:simple>
             </camel:setHeader>
-            <camel:log message="${header.CamelFileName}" loggingLevel="DEBUG"/>
-            <camel:toD uri="file://{{storage.path.mobi}}"/>
+            <camel:log message="${header.CamelFileName}" loggingLevel="INFO"/>
+            <camel:to uri="file://{{storage.path.mobi}}"/>
             <camel:to uri="seda:kindlegen"/>
         </camel:route>
 
         <!--html to mobi transforming by kindlegen -->
-        <camel:route>
+        <camel:route id="html2mobi" startupOrder="3">
             <camel:from uri="seda:kindlegen"/>
-            <camel:log message="Start kindlegen: {{kindlegen.path}}" loggingLevel="DEBUG"/>
+            <camel:log message="Start kindlegen: {{kindlegen.path}}" loggingLevel="INFO"/>
             <camel:toD uri="exec:{{kindlegen.path}}?args={{storage.path.mobi}}${header.CamelFileName}"/>
         </camel:route>
+
+<!--
+        <camel:route id="smtp" startupOrder="4">
+            <camel:from uri="file://{{storage.path.mobi}}?recursive=true&amp;noop=true"/>
+            <camel:log message="Send mobi via SMTP" loggingLevel="INFO"/>
+            <camel:filter>
+                <camel:simple>${file:name.ext}== 'mobi'</camel:simple>
+                <camel:toD uri="{{smtp.uri}}?to={{smtp.to}}&amp;from={{smtp.from}}"/>
+            </camel:filter>
+        </camel:route>
+-->
+
+        <!-- main flow that run RSS polling-->
+        <camel:route id="mainFlow" startupOrder="1">
+            <camel:from uri="timer://runOnce?repeatCount=2&amp;delay=30000"/>
+            <camel:log message="Timer fired" loggingLevel="INFO"/>
+            <camel:bean ref="RSS2XMLBuilder" method="runRssPollingForAllSubscribers"/>
+        </camel:route>
+
 
     </camel:camelContext>
 </beans>
