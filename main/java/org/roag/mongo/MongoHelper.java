@@ -4,60 +4,55 @@ import com.google.gson.Gson;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
+import com.mongodb.Mongo;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.PropertyInject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by eurohlam on 05.10.16.
  */
-@Component("mongoHelper")
-@Scope("prototype")
-@SuppressWarnings("unused")
 public class MongoHelper
 {
     final public static Logger logger= LoggerFactory.getLogger(MongoHelper.class);
 
-    public static final String MONGO_BEAN="mongoBean";
+    private String MONGO_SPRING_BEAN;
 
-    @PropertyInject("mongodb.host")
-    private String mongoHost;
+    private String MONGO_CAMEL_ROUTE;
 
-    @PropertyInject("mongodb.port")
-    private String mongoPort;
+    private String defaultMongoDatabase;
 
-    @PropertyInject("mongodb.database")
-    private String mongoDatabase;
+    private String defaulMongoCollection;
 
-    @PropertyInject("mongodb.collection.name")
-    private String mongoCollection;
-
-    public String getMongoHost()
+    private MongoHelper()
     {
-        return mongoHost;
     }
 
-    public String getMongoPort()
+    public MongoHelper(String mongoBean, String mongoCamelRoute)
     {
-        return mongoPort;
+        this(mongoBean,mongoCamelRoute, null, null);
     }
 
-    public String getMongoDatabase()
+    public MongoHelper(String mongoBean, String mongoCamelRoute, String mongoDatabase, String mongoCollection)
     {
-        return mongoDatabase;
+        this.MONGO_SPRING_BEAN = mongoBean;
+        this.MONGO_CAMEL_ROUTE = mongoCamelRoute;
+        this.defaultMongoDatabase = mongoDatabase;
+        this.defaulMongoCollection = mongoCollection;
+    }
+
+    public String getDefaultMongoDatabase()
+    {
+        return defaultMongoDatabase;
     }
 
     public List<DBObject> findAllByCondition(ProducerTemplate producerTemplate, Map<String, String> conditions)
     {
-        return findAllByCondition(mongoDatabase, mongoCollection, producerTemplate, conditions);
+        return findAllByCondition(defaultMongoDatabase, defaulMongoCollection, producerTemplate, conditions);
     }
 
     public List<DBObject> findAllByCondition(String mongoDatabase, String collection, ProducerTemplate producerTemplate, Map<String, String> conditions)
@@ -78,22 +73,22 @@ public class MongoHelper
 
     public String findAllQuery(String mongoDatabase, String collection)
     {
-        return "mongodb:" + MONGO_BEAN + "?database=" + mongoDatabase + "&collection=" + collection+ "&operation=findAll";
+        return "mongodb:" + MONGO_SPRING_BEAN + "?database=" + mongoDatabase + "&collection=" + collection+ "&operation=findAll";
     }
 
     public String findAllQuery()
     {
-        return findAllQuery(mongoDatabase, mongoCollection);
+        return findAllQuery(defaultMongoDatabase, defaulMongoCollection);
     }
 
     public String findOneByQuery(String mongoDatabase, String collection)
     {
-        return "mongodb:" + MONGO_BEAN + "?database=" + mongoDatabase + "&collection=" + collection+ "&operation=findOneByQuery";
+        return "mongodb:" + MONGO_SPRING_BEAN + "?database=" + mongoDatabase + "&collection=" + collection+ "&operation=findOneByQuery";
     }
 
     public String findOneByQuery()
     {
-        return findOneByQuery(mongoDatabase, mongoCollection);
+        return findOneByQuery(defaultMongoDatabase, defaulMongoCollection);
     }
 
     public <T>T convertDBObject2Pojo(Class<T> _class, DBObject source_object)
@@ -111,7 +106,7 @@ public class MongoHelper
     public List<Subscriber> getSubscribers(ProducerTemplate producerTemplate) throws Exception
     {
         DBObject query = BasicDBObjectBuilder.start("status", "active").get();
-        List<DBObject> result = producerTemplate.requestBody("direct:mongoFindAll", query, List.class);
+        List<DBObject> result = producerTemplate.requestBody(MONGO_CAMEL_ROUTE, query, List.class);
 
         List<Subscriber> subscribers = new ArrayList<>(result.size());
         for (DBObject obj : result)
@@ -124,6 +119,4 @@ public class MongoHelper
         }
         return subscribers;
     }
-
-
 }

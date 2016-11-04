@@ -40,9 +40,6 @@ public class RSS2XMLBuilder
     @PropertyInject("storage.path.rss")
     private String storagePathRss;
 
-    @PropertyInject("mongodb.subscribers.filter")
-    private String subscribersFilter;
-
     @Produce
     private ProducerTemplate producerTemplate;
 
@@ -59,13 +56,14 @@ public class RSS2XMLBuilder
 
     public void runRssPollingForAllSubscribers() throws Exception
     {
+        logger.debug("Something called me runRssPollingForAllSubscribers");
         runRssPolling(mongoHelper.getSubscribers(producerTemplate));
     }
 
     public void runRssPolling(List<Subscriber> subscriberList) throws Exception
     {
         for (int i=0; i<subscriberList.size(); i++)
-            runRssPolling(subscriberList.get(i), i);
+            runRssPolling(subscriberList.get(i), i+1);
 
     }
 
@@ -116,7 +114,7 @@ public class RSS2XMLBuilder
 
     }
 
-    private final class RSSDynamicRouteBuilder extends RouteBuilder
+    private static final class RSSDynamicRouteBuilder extends RouteBuilder
     {
         private final String from;
         private final String to;
@@ -143,12 +141,11 @@ public class RSS2XMLBuilder
         {
             if (startupOrder == -1)
                 from("direct:" + direct).log(LoggingLevel.DEBUG, logger, "Polling RSS from "+from + " to "+to).
-                    from(from).routePolicyRef("rssPolicy").
+                    from(from).id(direct+from).routePolicyRef("rssPolicy").
                     marshal().rss().to(to);
             else
                 from("direct:" + direct).log(LoggingLevel.DEBUG, logger, "Polling RSS from "+from + " to "+to).
-                        startupOrder(startupOrder);
-                from(from).routePolicyRef("rssPolicy").
+                        from(from).id(direct+from).startupOrder(startupOrder).routePolicyRef("rssPolicy").
                         marshal().rss().to(to);
 
         }
