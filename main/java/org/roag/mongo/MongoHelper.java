@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +19,25 @@ import java.util.Map;
  */
 public class MongoHelper
 {
-    final public static Logger logger= LoggerFactory.getLogger(MongoHelper.class);
+    final public static Logger logger = LoggerFactory.getLogger(MongoHelper.class);
+
+    public static enum MONGO_OPERATION
+    {
+        FIND_ALL("findAll"), FIND_ONE("findOneByQuery");
+
+        private final String name;
+
+        MONGO_OPERATION(String name)
+        {
+            this.name = name;
+        }
+
+        @Override
+        public String toString()
+        {
+            return name;
+        }
+    }
 
     private String MONGO_SPRING_BEAN;
 
@@ -28,13 +47,15 @@ public class MongoHelper
 
     private String defaulMongoCollection;
 
+    private SubscriberFactory subscriberFactory;
+
     private MongoHelper()
     {
     }
 
     public MongoHelper(String mongoBean, String mongoCamelRoute)
     {
-        this(mongoBean,mongoCamelRoute, null, null);
+        this(mongoBean, mongoCamelRoute, null, null);
     }
 
     public MongoHelper(String mongoBean, String mongoCamelRoute, String mongoDatabase, String mongoCollection)
@@ -43,6 +64,7 @@ public class MongoHelper
         this.MONGO_CAMEL_ROUTE = mongoCamelRoute;
         this.defaultMongoDatabase = mongoDatabase;
         this.defaulMongoCollection = mongoCollection;
+        this.subscriberFactory = new SubscriberFactory();
     }
 
     public String getDefaultMongoDatabase()
@@ -50,57 +72,63 @@ public class MongoHelper
         return defaultMongoDatabase;
     }
 
+    public String getDefaulMongoCollection()
+    {
+        return defaulMongoCollection;
+    }
+
+    public DBObject findOneByCondition(ProducerTemplate producerTemplate, Map<String, String> conditions)
+    {
+        return findOneByCondition(defaultMongoDatabase, defaulMongoCollection, producerTemplate, conditions);
+    }
+
+    public DBObject findOneByCondition(String database, String collection, ProducerTemplate producerTemplate, Map<String, String> conditions)
+    {
+
+        return findByCondition(database, collection, MONGO_OPERATION.FIND_ONE, producerTemplate, conditions).get(0);
+    }
+
+
     public List<DBObject> findAllByCondition(ProducerTemplate producerTemplate, Map<String, String> conditions)
     {
         return findAllByCondition(defaultMongoDatabase, defaulMongoCollection, producerTemplate, conditions);
     }
 
-    public List<DBObject> findAllByCondition(String mongoDatabase, String collection, ProducerTemplate producerTemplate, Map<String, String> conditions)
+    public List<DBObject> findAllByCondition(String database, String collection, ProducerTemplate producerTemplate, Map<String, String> conditions)
     {
+        return findByCondition(database, collection, MONGO_OPERATION.FIND_ALL, producerTemplate, conditions);
+    }
+
+    public List<DBObject> findByCondition(String mongoDatabase, String collection, MONGO_OPERATION operation, ProducerTemplate producerTemplate, Map<String, String> conditions)
+    {
+        List<DBObject> list;
         DBObject query = BasicDBObjectBuilder.start(conditions).get();
-        List<DBObject> result  = producerTemplate.requestBody(findAllQuery(mongoDatabase, collection), query, List.class);
-        //TODO: remove this
+        Object result = producerTemplate.requestBody(getQuery(mongoDatabase, collection, operation), query);
+        if (result instanceof DBObject)
+        {
+            list = new ArrayList<>(1);
+            list.add((DBObject) result);
+        }
+        else
+        {
+            list = (List) result;
+        }
+
         if (logger.isDebugEnabled())
         {
-            for (DBObject obj:result)
+            logger.debug("findByCondition {} returned the following results:", operation);
+            for (DBObject obj : list)
             {
                 for (String key : obj.keySet())
                     logger.debug("key = " + key + "   value = " + obj.get(key));
             }
         }
-        return result;
+        return list;
     }
 
-    public String findAllQuery(String mongoDatabase, String collection)
+    public String getQuery(String mongoDatabase, String collection, MONGO_OPERATION operation)
     {
-        return "mongodb:" + MONGO_SPRING_BEAN + "?database=" + mongoDatabase + "&collection=" + collection+ "&operation=findAll";
-    }
-
-    public String findAllQuery()
-    {
-        return findAllQuery(defaultMongoDatabase, defaulMongoCollection);
-    }
-
-    public String findOneByQuery(String mongoDatabase, String collection)
-    {
-        return "mongodb:" + MONGO_SPRING_BEAN + "?database=" + mongoDatabase + "&collection=" + collection+ "&operation=findOneByQuery";
-    }
-
-    public String findOneByQuery()
-    {
-        return findOneByQuery(defaultMongoDatabase, defaulMongoCollection);
-    }
-
-    public <T>T convertDBObject2Pojo(Class<T> _class, DBObject source_object)
-    {
-        DBObject obj=source_object;
-        obj.removeField("_id");
-
-        Gson gson=new Gson();
-        String s=gson.toJson(obj);
-        logger.debug(s);
-        T subscr=gson.fromJson(s, _class);
-        return subscr;
+        return "mongodb:" + MONGO_SPRING_BEAN + "?database=" + mongoDatabase + "&collection=" + collection + "&operation=" + operation.toString();
     }
 
     public List<Subscriber> getSubscribers(ProducerTemplate producerTemplate) throws Exception
@@ -111,12 +139,24 @@ public class MongoHelper
         List<Subscriber> subscribers = new ArrayList<>(result.size());
         for (DBObject obj : result)
         {
-
-            Subscriber subscr = convertDBObject2Pojo(Subscriber.class, obj);
+            Subscriber subscr = subscriberFactory.getSubscriberFromDBObject(obj);
             subscribers.add(subscr);
             BasicDBList rsslist = (BasicDBList) obj.get("rsslist");
             logger.info("Subscriber: " + subscr.getEmail() + "\n" + rsslist.getClass().toString() + "  " + rsslist);
         }
         return subscribers;
+    }
+
+    public Subscriber getSubscriber(String email, ProducerTemplate producerTemplate)
+    {
+        Map<String, String> cond = new HashMap<>(2);
+        cond.put("status", "active");
+        cond.put("email", email);
+        DBObject result = findOneByCondition(producerTemplate, cond);
+        Subscriber subscr = subscriberFactory.getSubscriberFromDBObject(result);
+        BasicDBList rsslist = (BasicDBList) result.get("rsslist");
+        logger.info("Subscriber: {} \n {} {}", subscr.getEmail(), rsslist.getClass().toString(), rsslist);
+        return subscr;
+
     }
 }

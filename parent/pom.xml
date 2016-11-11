@@ -7,7 +7,7 @@
   <groupId>org.roag</groupId>
   <artifactId>rss-2-kindle-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
 
   <name>RSS to Kindle parent</name>
   <url>http://eurohlam.ru</url>

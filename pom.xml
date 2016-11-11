@@ -7,11 +7,11 @@
   <parent>
     <groupId>org.roag</groupId>
     <artifactId>rss-2-kindle-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <relativePath>parent/pom.xml</relativePath>
   </parent>
   <artifactId>rss-2-kindle</artifactId>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
 
   <name>RSS-to-Kindle Transformer</name>
 
@@ -42,12 +42,44 @@
       <artifactId>camel-mongodb</artifactId>
       <version>2.17.3</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mail</artifactId>
+      <version>2.17.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-script</artifactId>
+      <version>2.17.3</version>
+    </dependency>
 
+    <!-- Spring web to start application in web.xml -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>4.2.5.RELEASE</version>
+    </dependency>
+
+
+    <!-- Dropbox just for testing -->
     <dependency>
       <groupId>com.dropbox.core</groupId>
       <artifactId>dropbox-core-sdk</artifactId>
       <version>1.8</version>
     </dependency>
+
+    <!--REST via jersey -->
+    <dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-servlet</artifactId>
+      <version>2.23.2</version>
+    </dependency>
+    <!--dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-json-jackson</artifactId>
+      <version>2.23.2</version>
+    </dependency-->
+
 
     <dependency>
       <groupId>com.google.code.gson</groupId>
@@ -75,6 +107,7 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
+    <finalName>rss2kindle</finalName>
 
     <plugins>
       <plugin>

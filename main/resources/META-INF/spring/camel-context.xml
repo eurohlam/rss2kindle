@@ -10,6 +10,8 @@
     <context:property-placeholder location="classpath:/camel-context.properties"/>
     <context:component-scan base-package="org.roag"/>
 
+    <bean id="serviceLocator" class="org.roag.camel.ServiceLocator"/>
+
     <!--MongoDB-->
     <bean id="mongo" class="com.mongodb.MongoClient" name="${mongodb.spring.bean}">
         <constructor-arg index="0" value="${mongodb.host}"/>
@@ -63,9 +65,9 @@
         </camel:route>
 
         <camel:route id="smtp" startupOrder="4">
-            <camel:from uri="seda:smtp"/>
-            <camel:from uri="file://{{storage.path.mobi}}?recursive=true&amp;noop=true"/>
-            <camel:log message="Send mobi via SMTP: ${header.CamelFileName}" loggingLevel="INFO"/>
+            <camel:from uri="direct:smtp"/>
+            <camel:from uri="file://{{storage.path.mobi}}?recursive=true&amp;noop=false"/>
+            <camel:log message="Send to ${header.to} ${header.CamelFileName}" loggingLevel="INFO"/>
             <camel:filter>
                 <camel:simple>${file:name.ext}== 'mobi'</camel:simple>
                 <camel:setHeader headerName="to">
@@ -78,17 +80,17 @@
                     <camel:constant>Dear subscriber, U gotta new ebook</camel:constant>
                 </camel:setBody>
                 <camel:process ref="SMTPAttachmentProcessor"/>
-                <camel:log message="${header.to}" loggingLevel="INFO"/>
+                <camel:log message="Send to ${header.to} ${header.CamelFileName}" loggingLevel="INFO"/>
                 <camel:toD uri="{{smtp.uri}}?to=${header.to}&amp;from={{smtp.from}}&amp;subject={{smtp.default.subject}}&amp;contentType=text/plain"/>
             </camel:filter>
         </camel:route>
 
         <!-- main flow that run RSS polling-->
         <camel:route id="mainFlow" startupOrder="1">
-            <camel:from uri="timer://runOnce?repeatCount=1&amp;delay=30000"/>
+            <camel:from uri="timer://runOnce?repeatCount=1&amp;delay=5000"/>
             <camel:log message="Timer fired" loggingLevel="INFO"/>
             <camel:bean ref="RSS2XMLBuilder" method="runRssPollingForAllSubscribers"/>
-            <camel:to uri="seda:smtp"/>
+            <camel:to uri="direct:smtp"/>
         </camel:route>
 
 

@@ -13,7 +13,6 @@ public class MainApp {
      */
     public static void main(String... args) throws Exception {
         Main main=new Main();
-        main.setApplicationContext((AbstractApplicationContext) ServiceLocator.getContext());
         main.run(args);
 
     }

@@ -3,13 +3,15 @@ package org.roag.camel;
 import org.apache.camel.CamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Created by eurohlam on 06.10.16.
  */
-public class ServiceLocator
+public class ServiceLocator implements ApplicationContextAware
 {
     public static final Logger logger= LoggerFactory.getLogger(ServiceLocator.class);
 
@@ -24,6 +26,7 @@ public class ServiceLocator
         ApplicationContext c=ctx;
         if (c == null)
         {
+            logger.debug("Context is null. Trying to load it from {}", CONTEXT_CONFIG);
             synchronized (ApplicationContext.class)
             {
                 c = ctx;
@@ -40,6 +43,12 @@ public class ServiceLocator
             }
         }
         return ctx;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
+    {
+        this.ctx=applicationContext;
     }
 
     public static CamelContext getCamelContext()
