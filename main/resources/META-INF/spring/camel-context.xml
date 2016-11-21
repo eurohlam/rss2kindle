@@ -73,6 +73,9 @@
                 <camel:setHeader headerName="to">
                     <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('/.*','g'),'')</camel:javaScript>
                 </camel:setHeader>
+                <camel:setHeader headerName="feed">
+                    <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('.*/','g'),'')</camel:javaScript>
+                </camel:setHeader>
                 <camel:setHeader headerName="attachment">
                     <camel:simple>{{storage.path.mobi}}${header.CamelFileName}</camel:simple>
                 </camel:setHeader>

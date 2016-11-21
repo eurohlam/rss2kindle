@@ -46,7 +46,7 @@ public class RssRoutePolicy extends RoutePolicySupport
         logger.debug("Policy: stop router "+ route.getId());
         try
         {
-            ServiceLocator.getCamelContext().removeRoute(route.getId());
+            route.getRouteContext().getCamelContext().removeRoute(route.getId());
         }
         catch (Exception e)
         {

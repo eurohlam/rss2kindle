@@ -20,7 +20,6 @@ import static org.roag.camel.ServiceLocator.*;
  */
 @Component
 @SuppressWarnings("unused")
-//@DependsOn({"mongoBean", "mongoHelper"})
 public class RSS2XMLBuilder
 {
     final public static Logger logger = LoggerFactory.getLogger(RSS2XMLBuilder.class);
@@ -62,36 +61,31 @@ public class RSS2XMLBuilder
 
     public void runRssPolling(List<Subscriber> subscriberList) throws Exception
     {
-        for (int i=0; i<subscriberList.size(); i++)
-            runRssPolling(subscriberList.get(i), i+1);
+        for (Subscriber subscriber:subscriberList)
+            runRssPolling(subscriber);
 
     }
 
-    public void runRssPolling(Subscriber subscriber) throws Exception
-    {
-        runRssPolling(subscriber, -1);
-    }
 
-
-    private void runRssPolling(Subscriber subscriber, int startupOrder) throws Exception
+    private void runRssPolling(Subscriber subscriber) throws Exception
     {
 
         calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 30);//TODO: -30 is just for testing
         String currentDate = f.format(calendar.getTime());
 
-        for (int i=0; i<subscriber.getRsslist().size(); i++)
+        for (int i = 0; i < subscriber.getRsslist().size(); i++)
         {
-            Rsslist rss=subscriber.getRsslist().get(i);
+            Rsslist rss = subscriber.getRsslist().get(i);
             if ("active".equals(rss.getStatus()))
             {
-                String rssUri="rss:" + rss.getRss() + "?feedHeader=" + feedHeaders
+                String rssUri = "rss:" + rss.getRss() + "?feedHeader=" + feedHeaders
                         + "&splitEntries=" + splitEntries
                         + "&consumerDelay=" + consumerDelay
-                        + "&lastUpdate=" +
+                        + "&lastUpdate=" + //TODO: lastupdate for rss
                             /*StringUtils.isNotBlank(rss_lastUpdate)?rss_lastUpdate:*/
                         currentDate;
                 String fileUri = "file://" + storagePathRss +
-                        subscriber.getEmail() + "/" + rss.getRss().replace('/', '_').replace(":","_");
+                        subscriber.getEmail() + "/" + rss.getRss().replace('/', '_').replace(":", "_");
 
                 logger.debug("Trying to connect to RSS: {}  and save it to: {}", rssUri, fileUri);
 
@@ -99,10 +93,9 @@ public class RSS2XMLBuilder
                 {
                     getCamelContext().addRoutes(
                             new RSSDynamicRouteBuilder(getCamelContext(),
-                            subscriber.getEmail()+"_"+i,
-                            rssUri,
-                            fileUri,
-                            startupOrder*10 + i));//we need to send startupOrder to avoid polling rss from same endpoint in parallel
+                                    subscriber.getEmail() + "_" + i,
+                                    rssUri,
+                                    fileUri));
                 }
                 catch (CamelException e)
                 {
@@ -118,36 +111,26 @@ public class RSS2XMLBuilder
     {
         private final String from;
         private final String to;
-        private final String direct;
-        private final int startupOrder;
+        private final String sedaQueue;
 
-        private RSSDynamicRouteBuilder(CamelContext context, String direct, String from, String to)
-        {
-            this(context, direct, from, to, -1);
-        }
 
-        private RSSDynamicRouteBuilder(CamelContext context, String direct, String from, String to, int startupOrder)
+        private RSSDynamicRouteBuilder(CamelContext context, String sedaQueue, String from, String to)
         {
             super(context);
-            logger.debug("RSS dynamic route: direct:{}, {}, {}, {}", direct, from, to, startupOrder);
-            this.direct = direct;
+            logger.debug("RSS dynamic route: seda:{}, {}, {}, {}", sedaQueue, from, to);
+            this.sedaQueue = sedaQueue;
             this.from = from;
             this.to = to;
-            this.startupOrder = startupOrder;
         }
 
         @Override
         public void configure() throws Exception
         {
-            if (startupOrder == -1)
-                from("direct:" + direct).log(LoggingLevel.DEBUG, logger, "Polling RSS from "+from + " to "+to).
-                    from(from).id(direct+from).routePolicyRef("rssPolicy").
+            //we use seda:xxx?concurrentConsumers=1 to avoid concurrency issues when several subscribers poll same rss
+            from("seda:" + sedaQueue + "?concurrentConsumers=1").
+                    log(LoggingLevel.DEBUG, logger, "Polling RSS from " + from + " to " + to).
+                    from(from).id(sedaQueue + from).routePolicyRef("rssPolicy").
                     marshal().rss().to(to);
-            else
-                from("direct:" + direct).log(LoggingLevel.DEBUG, logger, "Polling RSS from "+from + " to "+to).
-                        from(from).id(direct+from).startupOrder(startupOrder).routePolicyRef("rssPolicy").
-                        marshal().rss().to(to);
-
         }
     }
 

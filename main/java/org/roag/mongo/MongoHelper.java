@@ -1,18 +1,13 @@
 package org.roag.mongo;
 
 import com.google.gson.Gson;
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
-import com.mongodb.Mongo;
+import com.mongodb.*;
+import com.mongodb.bulk.*;
 import org.apache.camel.ProducerTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by eurohlam on 05.10.16.
@@ -23,7 +18,10 @@ public class MongoHelper
 
     public static enum MONGO_OPERATION
     {
-        FIND_ALL("findAll"), FIND_ONE("findOneByQuery");
+        FIND_ALL("findAll"),
+        FIND_ONE("findOneByQuery"),
+        INSERT("insert"),
+        REMOVE("remove");
 
         private final String name;
 
@@ -77,33 +75,42 @@ public class MongoHelper
         return defaulMongoCollection;
     }
 
-    public DBObject findOneByCondition(ProducerTemplate producerTemplate, Map<String, String> conditions)
+    public DBObject findOneByCondition(ProducerTemplate producerTemplate, Map<String, String> conditions) throws Exception
     {
         return findOneByCondition(defaultMongoDatabase, defaulMongoCollection, producerTemplate, conditions);
     }
 
-    public DBObject findOneByCondition(String database, String collection, ProducerTemplate producerTemplate, Map<String, String> conditions)
+    public DBObject findOneByCondition(String database, String collection, ProducerTemplate producerTemplate, Map<String, String> conditions) throws Exception
     {
-
-        return findByCondition(database, collection, MONGO_OPERATION.FIND_ONE, producerTemplate, conditions).get(0);
+        List<DBObject> r = findByCondition(database, collection, MONGO_OPERATION.FIND_ONE, producerTemplate, conditions);
+        return r == null ? null : r.get(0);
     }
 
 
-    public List<DBObject> findAllByCondition(ProducerTemplate producerTemplate, Map<String, String> conditions)
+    public List<DBObject> findAllByCondition(ProducerTemplate producerTemplate, Map<String, String> conditions) throws Exception
     {
         return findAllByCondition(defaultMongoDatabase, defaulMongoCollection, producerTemplate, conditions);
     }
 
-    public List<DBObject> findAllByCondition(String database, String collection, ProducerTemplate producerTemplate, Map<String, String> conditions)
+    public List<DBObject> findAllByCondition(String database, String collection, ProducerTemplate producerTemplate, Map<String, String> conditions) throws Exception
     {
         return findByCondition(database, collection, MONGO_OPERATION.FIND_ALL, producerTemplate, conditions);
     }
 
-    public List<DBObject> findByCondition(String mongoDatabase, String collection, MONGO_OPERATION operation, ProducerTemplate producerTemplate, Map<String, String> conditions)
+    private List<DBObject> findByCondition(String mongoDatabase, String collection, MONGO_OPERATION operation,
+                                          ProducerTemplate producerTemplate, Map<String, String> conditions)
+            throws Exception
     {
-        List<DBObject> list;
+        List<DBObject> list=null;
         DBObject query = BasicDBObjectBuilder.start(conditions).get();
         Object result = producerTemplate.requestBody(getQuery(mongoDatabase, collection, operation), query);
+        if (result == null)
+        {
+            logger.warn("Nothing found in Mongo for " + conditions);
+            return null;
+//            throw new Exception("Nothing found in Mongo for " + conditions);
+        }
+
         if (result instanceof DBObject)
         {
             list = new ArrayList<>(1);
@@ -147,7 +154,7 @@ public class MongoHelper
         return subscribers;
     }
 
-    public Subscriber getSubscriber(String email, ProducerTemplate producerTemplate)
+    public Subscriber getSubscriber(String email, ProducerTemplate producerTemplate) throws Exception
     {
         Map<String, String> cond = new HashMap<>(2);
         cond.put("status", "active");
@@ -159,4 +166,33 @@ public class MongoHelper
         return subscr;
 
     }
+
+    public WriteResult addSubscriber(Subscriber subscriber, ProducerTemplate producerTemplate) throws Exception
+    {
+        Map<String, String> cond= new HashMap<>(1);
+        cond.put("email", subscriber.getEmail());
+        DBObject r=findOneByCondition(producerTemplate,cond);
+        if (r != null)
+            throw new Exception("Subscriber " + subscriber.getEmail() + " already exists");
+
+        WriteResult result = (WriteResult) producerTemplate.requestBody(
+                getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MONGO_OPERATION.INSERT),
+                subscriberFactory.convertPojo2Json(subscriber));
+
+        logger.info("New subscriber: {} has been inserted into Mongo with the result: {}", subscriber, result);
+        return result;
+    }
+
+    public WriteResult removeSubscriber(String email, ProducerTemplate producerTemplate) throws Exception
+    {
+
+        DBObject query = new BasicDBObject("email", email);
+        WriteResult result = (WriteResult) producerTemplate.requestBody(
+                getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MONGO_OPERATION.REMOVE),
+                query);
+
+        logger.warn("Subscriber: {} has been removed from Mongo with the result: {}", email, result);
+        return result;
+    }
+
 }
