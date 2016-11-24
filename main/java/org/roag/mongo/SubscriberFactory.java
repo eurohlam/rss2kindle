@@ -44,7 +44,33 @@ public class SubscriberFactory
         }
     };
 
-    public static enum RSS_STATUS {ACTIVE, DEAD};
+    public static enum RSS_STATUS {
+        ACTIVE("active"),
+        DEAD("dead");
+
+        private String value;
+        private RSS_STATUS(String value)
+        {
+            this.value = value;
+        }
+
+
+        @Override
+        public String toString()
+        {
+            return value;
+        }
+
+        public static RSS_STATUS fromValue(String value)
+        {
+            for (RSS_STATUS s:RSS_STATUS.values())
+            {
+                if (s.toString().equals(value))
+                    return s;
+            }
+            throw new IllegalArgumentException("Illegal value of argument: " + value);
+        }
+    };
 
 
     private Gson gson = new Gson();
@@ -80,7 +106,7 @@ public class SubscriberFactory
     public <T> T convertDBObject2Pojo(Class<T> _class, DBObject source_object)
     {
         DBObject obj = source_object;
-        obj.removeField("_id");
+        obj.removeField("_id");//
 
         String s = gson.toJson(obj);
         logger.debug(s);

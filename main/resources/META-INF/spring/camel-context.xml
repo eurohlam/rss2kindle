@@ -45,14 +45,13 @@
         <!-- rss to html transforming by xslt-->
         <camel:route id="rss2html" startupOrder="2">
             <camel:from uri="direct:startTransformation?block=true&amp;timeout=50000"/>
-            <camel:from uri="file://{{storage.path.rss}}?recursive=true&amp;noop=false&amp;delete=true"/>
-            <camel:log message="XSLT transforming ${file:onlyname} by xslt:rss2html.xsl" loggingLevel="INFO"/>
+            <camel:from uri="file://{{storage.path.rss}}?recursive=false&amp;noop=false&amp;delete=true"/>
+            <camel:log message="XSLT transforming ${header.CamelFileName} by xslt:rss2html.xsl" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
             <camel:to uri="{{template.xslt.rss2html}}"/>
-            <camel:log message="Save as result as html:" loggingLevel="INFO"/>
             <camel:setHeader headerName="CamelFileName">
                 <camel:simple>${header.CamelFileName}.htm</camel:simple>
             </camel:setHeader>
-            <camel:log message="${header.CamelFileName}" loggingLevel="INFO"/>
+            <camel:log message="Save transformation result as html ${header.CamelFileName}" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
             <camel:to uri="file://{{storage.path.mobi}}"/>
             <camel:to uri="seda:kindlegen"/>
         </camel:route>
@@ -60,42 +59,42 @@
         <!--html to mobi transforming by kindlegen -->
         <camel:route id="html2mobi" startupOrder="3">
             <camel:from uri="seda:kindlegen"/>
-            <camel:log message="Start kindlegen: {{kindlegen.path}}" loggingLevel="INFO"/>
+            <camel:log message="Start kindlegen: {{kindlegen.path}}" loggingLevel="INFO" logName="org.roag.camel.html2mobi"/>
             <camel:toD uri="exec:{{kindlegen.path}}?args={{storage.path.mobi}}${header.CamelFileName}"/>
+            <camel:setHeader headerName="mobiFile">
+                <camel:javaScript>'{{storage.path.mobi}}' +request.headers.get('CamelFileName').replace(new RegExp('htm','g'),'mobi')</camel:javaScript>
+            </camel:setHeader>
+            <camel:to uri="direct:smtp"/>
         </camel:route>
 
         <camel:route id="smtp" startupOrder="4">
             <camel:from uri="direct:smtp"/>
-            <camel:from uri="file://{{storage.path.mobi}}?recursive=true&amp;noop=false"/>
-            <camel:log message="Send to ${header.to} ${header.CamelFileName}" loggingLevel="INFO"/>
+            <!--<camel:log message="Before Send to ${header.email} ${header.name} ${header.mobiFile}" loggingLevel="INFO" logName="org.roag.camel.smtp"/>-->
             <camel:filter>
-                <camel:simple>${file:name.ext}== 'mobi'</camel:simple>
-                <camel:setHeader headerName="to">
-                    <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('/.*','g'),'')</camel:javaScript>
-                </camel:setHeader>
+                <camel:simple>${header.email} != null</camel:simple>
                 <camel:setHeader headerName="feed">
-                    <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('.*/','g'),'')</camel:javaScript>
+                    <camel:javaScript>request.headers.get('mobiFile').replace(new RegExp('.*/','g'),'')</camel:javaScript>
                 </camel:setHeader>
                 <camel:setHeader headerName="attachment">
-                    <camel:simple>{{storage.path.mobi}}${header.CamelFileName}</camel:simple>
+                    <camel:simple>${header.mobiFile}</camel:simple>
                 </camel:setHeader>
                 <camel:setBody>
-                    <camel:constant>Dear subscriber, U gotta new ebook</camel:constant>
+                    <camel:simple>Dear ${header.name}.\n\nPlease, have a look on updates from ${header.rss}.\n\nCheers\nEurohlam
+                    </camel:simple>
                 </camel:setBody>
                 <camel:process ref="SMTPAttachmentProcessor"/>
-                <camel:log message="Send to ${header.to} ${header.CamelFileName}" loggingLevel="INFO"/>
-                <camel:toD uri="{{smtp.uri}}?to=${header.to}&amp;from={{smtp.from}}&amp;subject={{smtp.default.subject}}&amp;contentType=text/plain"/>
+                <camel:log message="Send to ${header.email} file ${header.mobiFile}" loggingLevel="INFO" logName="org.roag.camel.smtp"/>
+                <camel:toD uri="{{smtp.uri}}?to=${header.email}&amp;from={{smtp.from}}&amp;subject=Update from ${header.rss}&amp;contentType=text/plain"/>
             </camel:filter>
         </camel:route>
 
         <!-- main flow that run RSS polling-->
         <camel:route id="mainFlow" startupOrder="1">
             <camel:from uri="timer://runOnce?repeatCount=1&amp;delay=5000"/>
-            <camel:log message="Timer fired" loggingLevel="INFO"/>
+            <camel:log message="Timer fired" loggingLevel="INFO" logName="org.roag.camel"/>
             <camel:bean ref="RSS2XMLBuilder" method="runRssPollingForAllSubscribers"/>
             <camel:to uri="direct:smtp"/>
         </camel:route>
-
 
     </camel:camelContext>
 </beans>
