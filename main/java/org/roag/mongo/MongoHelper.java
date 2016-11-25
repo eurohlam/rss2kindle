@@ -185,7 +185,6 @@ public class MongoHelper
 
     public WriteResult removeSubscriber(String email, ProducerTemplate producerTemplate) throws Exception
     {
-
         DBObject query = new BasicDBObject("email", email);
         WriteResult result = (WriteResult) producerTemplate.requestBody(
                 getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MONGO_OPERATION.REMOVE),
