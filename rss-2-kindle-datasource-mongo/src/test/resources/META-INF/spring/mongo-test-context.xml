@@ -26,7 +26,13 @@
         <constructor-arg index="2" value="${mongodb.collection.name}"/>
     </bean>
 
-    <camel:camelContext id="MongoCamelContext" streamCache="true">
+    <!--MongoSubscriberRepository is used as implementation of SubscriberRepository-->
+    <bean id="subscriberRepository" class="org.roag.ds.mongo.MongoSubscriberRepository" scope="prototype">
+        <constructor-arg index="0" ref="mongoHelper"/>
+        <constructor-arg index="1" ref="mongoCamelContext"/>
+    </bean>
+
+    <camel:camelContext id="mongoCamelContext" streamCache="true">
         <!--propertyPlaceholder is required for @PropertyInject  -->
         <!--<camel:propertyPlaceholder id="props" location="mongo.properties"/>-->
         <!-- let Camel use those @Component scanned route builders -->

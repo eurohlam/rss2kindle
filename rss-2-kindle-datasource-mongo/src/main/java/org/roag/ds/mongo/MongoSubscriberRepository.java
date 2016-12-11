@@ -9,11 +9,6 @@ import org.roag.model.Subscriber;
 import org.roag.service.SubscriberFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,9 +18,6 @@ import java.util.Map;
 /**
  * Created by eurohlam on 07.12.16.
  */
-@Component
-@Scope("prototype")
-@Lazy
 public class MongoSubscriberRepository implements SubscriberRepository
 {
 
@@ -38,14 +30,12 @@ public class MongoSubscriberRepository implements SubscriberRepository
 
     private SubscriberFactory subscriberFactory;
 
-    @Autowired
-    public MongoSubscriberRepository(MongoHelper mongoHelper, ApplicationContext context)
+    public MongoSubscriberRepository(MongoHelper mongoHelper, CamelContext context)
     {
         this.subscriberFactory = new SubscriberFactory();
         this.mongoHelper = mongoHelper;
-        CamelContext camel=context.getBean(CamelContext.class);
-        assert camel != null;
-        this.producerTemplate = camel.createProducerTemplate();
+        assert context != null;
+        this.producerTemplate = context.createProducerTemplate();
     }
 
     @Override
