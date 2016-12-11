@@ -4,53 +4,45 @@
 
   <modelVersion>4.0.0</modelVersion>
 
+<!--
   <parent>
     <groupId>org.roag</groupId>
     <artifactId>rss-2-kindle-parent</artifactId>
-    <version>1.0</version>
+    <version>2.0</version>
     <relativePath>parent/pom.xml</relativePath>
   </parent>
+-->
+  <groupId>org.roag</groupId>
   <artifactId>rss-2-kindle</artifactId>
-  <packaging>war</packaging>
+  <packaging>pom</packaging>
+  <version>2.0</version>
 
-  <name>RSS-to-Kindle Transformer</name>
+  <name>rss-2-kindle Transformer</name>
+  <url>http://eurohlam.ru</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+
+  <modules>
+    <module>rss-2-kindle-common</module>
+    <module>rss-2-kindle-datasource-mongo</module>
+    <module>rss-2-kindle-camel</module>
+    <module>rss-2-kindle-rest-api</module>
+    <!--<module>rss-2-kindle-web</module>-->
+  </modules>
 
   <dependencies>
-    <!-- Camel-->
+    <!--Common dependencies -->
+
+    <!-- Servlets -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <version>2.17.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-      <version>2.17.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-exec</artifactId>
-      <version>2.17.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-rss</artifactId>
-      <version>2.17.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-mongodb</artifactId>
-      <version>2.17.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-mail</artifactId>
-      <version>2.17.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-script</artifactId>
-      <version>2.17.3</version>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.0.1</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- Spring web to start application in web.xml -->
@@ -59,55 +51,53 @@
       <artifactId>spring-web</artifactId>
       <version>4.2.5.RELEASE</version>
     </dependency>
-
-
-    <!-- Dropbox just for testing -->
     <dependency>
-      <groupId>com.dropbox.core</groupId>
-      <artifactId>dropbox-core-sdk</artifactId>
-      <version>1.8</version>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>4.2.5.RELEASE</version>
     </dependency>
 
-    <!--REST via jersey -->
+    <!-- logging -->
     <dependency>
-      <groupId>org.glassfish.jersey.containers</groupId>
-      <artifactId>jersey-container-servlet</artifactId>
-      <version>2.23.2</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.21</version>
     </dependency>
-    <!--dependency>
-      <groupId>org.glassfish.jersey.media</groupId>
-      <artifactId>jersey-media-json-jackson</artifactId>
-      <version>2.23.2</version>
-    </dependency-->
-
-
     <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.7</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.21</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
     </dependency>
 
-    <!--Camel testing -->
-<!--
+    <!-- testing -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
-      <version>2.17.3</version>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
       <scope>test</scope>
     </dependency>
--->
-
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-testng</artifactId>
-      <version>2.17.3</version>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>6.9.8</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>2.1.0-RC.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
   <build>
     <defaultGoal>install</defaultGoal>
-    <finalName>rss2kindle</finalName>
+    <!--<finalName>rss2kindle</finalName>-->
 
     <plugins>
       <plugin>
@@ -125,22 +115,6 @@
         <version>2.6</version>
         <configuration>
           <encoding>UTF-8</encoding>
-        </configuration>
-      </plugin>
-
-      <!-- Allows the example to be run via 'mvn compile exec:java' -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.4.0</version>
-        <configuration>
-          <mainClass>org.roag.camel.MainApp</mainClass>
-          <includePluginDependencies>false</includePluginDependencies>
-          <includeProjectDependencies>true</includeProjectDependencies>
-          <executableDependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-rss</artifactId>
-          </executableDependency>
         </configuration>
       </plugin>
 
