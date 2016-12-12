@@ -115,6 +115,6 @@ public class MemorySubscriberRepository implements SubscriberRepository
     @Override
     public List<Subscriber> findAll(Map condition) throws Exception
     {
-        return null;
+        return null;//TODO: implement findAll with conditions
     }
 }

@@ -4,14 +4,6 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-<!--
-  <parent>
-    <groupId>org.roag</groupId>
-    <artifactId>rss-2-kindle-parent</artifactId>
-    <version>2.0</version>
-    <relativePath>parent/pom.xml</relativePath>
-  </parent>
--->
   <groupId>org.roag</groupId>
   <artifactId>rss-2-kindle</artifactId>
   <packaging>pom</packaging>
@@ -30,8 +22,6 @@
     <module>rss-2-kindle-common</module>
     <module>rss-2-kindle-datasource-mongo</module>
     <module>rss-2-kindle-camel</module>
-    <module>rss-2-kindle-rest-api</module>
-    <!--<module>rss-2-kindle-web</module>-->
   </modules>
 
   <dependencies>
@@ -131,11 +121,6 @@
       <id>rss2kindle</id>
       <url>http://localhost:8080</url>
     </site>
-    <!--repository>
-      <id>internal.repo</id>
-      <name>MyCo Internal Repository</name>
-      <url>http://localhost:8080</url>
-    </repository-->
   </distributionManagement>
 
 </project>

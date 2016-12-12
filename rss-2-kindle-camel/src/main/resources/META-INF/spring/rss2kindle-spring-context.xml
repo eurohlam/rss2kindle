@@ -2,16 +2,18 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="classpath:/mongo_test.properties"/>
+    <!-- import camel configuration -->
+    <import resource="classpath:rss2kindle-camel-context.xml"/>
+
+    <context:property-placeholder location="classpath:/camel-context.properties"/>
+    <context:component-scan base-package="org.roag.camel"/>
     <context:component-scan base-package="org.roag.ds.mongo"/>
 
     <!--MongoDB-->
-    <bean id="mongo" name="${mongodb.spring.bean}" class="com.mongodb.MongoClient">
+    <bean id="mongo" class="com.mongodb.MongoClient" name="${mongodb.spring.bean}">
         <constructor-arg index="0" value="${mongodb.host}"/>
         <constructor-arg index="1" value="${mongodb.port}"/>
     </bean>
@@ -26,13 +28,6 @@
     <!--MongoSubscriberRepository is used as implementation of SubscriberRepository-->
     <bean id="subscriberRepository" class="org.roag.ds.mongo.MongoSubscriberRepository" scope="prototype">
         <constructor-arg index="0" ref="mongoHelper"/>
-        <constructor-arg index="1" ref="mongoCamelContext"/>
+        <constructor-arg index="1" ref="mainCamelContext"/>
     </bean>
-
-    <camel:camelContext id="mongoCamelContext" streamCache="true">
-        <!--propertyPlaceholder is required for @PropertyInject  -->
-        <!--<camel:propertyPlaceholder id="props" location="mongo.properties"/>-->
-        <!-- let Camel use those @Component scanned route builders -->
-        <camel:contextScan/>
-    </camel:camelContext>
 </beans>
