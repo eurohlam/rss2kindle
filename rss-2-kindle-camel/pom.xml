@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.roag</groupId>
+    <artifactId>rss-2-kindle</artifactId>
+    <version>2.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>rss-2-kindle-camel</artifactId>
+  <packaging>jar</packaging>
+
+  <name>rss-2-kindle camel processor</name>
+
+  <dependencies>
+    <!--internal dependencies -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>rss-2-kindle-common</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>rss-2-kindle-datasource-mongo</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- Camel-->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <version>2.17.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+      <version>2.17.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-exec</artifactId>
+      <version>2.17.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-rss</artifactId>
+      <version>2.17.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mongodb</artifactId>
+      <version>2.17.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mail</artifactId>
+      <version>2.17.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-script</artifactId>
+      <version>2.17.3</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.7</version>
+    </dependency>
+
+    <!--Camel testing -->
+<!--
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <version>2.17.3</version>
+      <scope>test</scope>
+    </dependency>
+-->
+
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-testng</artifactId>
+      <version>2.17.3</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+    <!--<finalName>rss2kindle</finalName>-->
+
+    <plugins>
+      <!-- Allows the example to be run via 'mvn compile exec:java' -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.4.0</version>
+        <configuration>
+          <mainClass>org.roag.camel.MainApp</mainClass>
+          <includePluginDependencies>false</includePluginDependencies>
+          <includeProjectDependencies>true</includeProjectDependencies>
+          <executableDependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-rss</artifactId>
+          </executableDependency>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>2.17.3</version>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <!--dead letter channel for error handling -->
+    <bean id="deadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+        <property name="deadLetterUri" value="seda:errors"/>
+    </bean>
+
+    <camel:camelContext id="mainCamelContext" streamCache="true" errorHandlerRef="defErrorHandler">
+        <!--propertyPlaceholder is required for @PropertyInject  -->
+        <camel:propertyPlaceholder id="props" location="camel-context.properties"/>
+        <!-- let Camel use those @Component scanned route builders -->
+        <camel:contextScan/>
+
+        <camel:errorHandler id="defErrorHandler" type="DeadLetterChannel" deadLetterUri="deadLetterErrorHandler">
+            <camel:redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="5000" retryAttemptedLogLevel="ERROR"/>
+        </camel:errorHandler>
+
+        <!-- rss to html transforming by xslt-->
+        <camel:route id="rss2html" startupOrder="2">
+            <camel:from uri="direct:startTransformation?block=true&amp;timeout=50000"/>
+            <camel:from uri="file://{{storage.path.rss}}?recursive=false&amp;noop=false&amp;delete=true"/>
+            <camel:log message="XSLT transforming ${header.CamelFileName} by xslt:rss2html.xsl" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
+            <camel:to uri="{{template.xslt.rss2html}}"/>
+            <camel:setHeader headerName="CamelFileName">
+                <camel:simple>${header.CamelFileName}.htm</camel:simple>
+            </camel:setHeader>
+            <camel:log message="Save transformation result as html ${header.CamelFileName}" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
+            <camel:to uri="file://{{storage.path.mobi}}"/>
+            <camel:to uri="seda:kindlegen"/>
+        </camel:route>
+
+        <!--html to mobi transforming by kindlegen -->
+        <camel:route id="html2mobi" startupOrder="3">
+            <camel:from uri="seda:kindlegen"/>
+            <camel:log message="Start kindlegen: {{kindlegen.path}}" loggingLevel="DEBUG" logName="org.roag.camel.html2mobi"/>
+            <camel:toD uri="exec:{{kindlegen.path}}?args={{storage.path.mobi}}${header.CamelFileName}"/>
+            <camel:setHeader headerName="mobiFile">
+                <camel:javaScript>'{{storage.path.mobi}}' +request.headers.get('CamelFileName').replace(new RegExp('htm','g'),'mobi')</camel:javaScript>
+            </camel:setHeader>
+            <camel:to uri="direct:smtp"/>
+        </camel:route>
+
+        <camel:route id="smtp" startupOrder="4">
+            <camel:from uri="direct:smtp"/>
+            <camel:filter>
+                <camel:simple>${header.email} != null</camel:simple>
+                <camel:setHeader headerName="feed">
+                    <camel:javaScript>request.headers.get('mobiFile').replace(new RegExp('.*/','g'),'')</camel:javaScript>
+                </camel:setHeader>
+                <camel:setHeader headerName="attachment">
+                    <camel:simple>${header.mobiFile}</camel:simple>
+                </camel:setHeader>
+                <camel:setBody>
+                    <camel:simple>Dear ${header.name}.\n\nPlease, have a look on updates from ${header.rss}.\n\nCheers\nEurohlam
+                    </camel:simple>
+                </camel:setBody>
+                <camel:process ref="SMTPAttachmentProcessor"/>
+                <camel:log message="Send file ${header.mobiFile} to ${header.email}" loggingLevel="INFO" logName="org.roag.camel.smtp"/>
+                <camel:toD uri="{{smtp.uri}}?to=${header.email}&amp;from={{smtp.from}}&amp;subject=Update from ${header.rss}&amp;contentType=text/plain"/>
+            </camel:filter>
+        </camel:route>
+
+    </camel:camelContext>
+</beans>

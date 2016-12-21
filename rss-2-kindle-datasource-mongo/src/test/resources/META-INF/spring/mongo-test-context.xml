@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <context:property-placeholder location="classpath:/mongo_test.properties"/>
+    <context:component-scan base-package="org.roag.ds.mongo"/>
+
+    <!--MongoDB-->
+    <bean id="mongo" name="${mongodb.spring.bean}" class="com.mongodb.MongoClient">
+        <constructor-arg index="0" value="${mongodb.host}"/>
+        <constructor-arg index="1" value="${mongodb.port}"/>
+    </bean>
+
+    <!--MongoHelper-->
+    <bean id="mongoHelper" class="org.roag.ds.mongo.MongoHelper" scope="prototype">
+        <constructor-arg index="0" value="${mongodb.spring.bean}"/>
+        <constructor-arg index="1" value="${mongodb.database}"/>
+        <constructor-arg index="2" value="${mongodb.collection.name}"/>
+    </bean>
+
+    <!--MongoSubscriberRepository is used as implementation of SubscriberRepository-->
+    <bean id="subscriberRepository" class="org.roag.ds.mongo.MongoSubscriberRepository" scope="prototype">
+        <constructor-arg index="0" ref="mongoHelper"/>
+        <constructor-arg index="1" ref="mongoCamelContext"/>
+    </bean>
+
+    <camel:camelContext id="mongoCamelContext" streamCache="true">
+        <!--propertyPlaceholder is required for @PropertyInject  -->
+        <!--<camel:propertyPlaceholder id="props" location="mongo.properties"/>-->
+        <!-- let Camel use those @Component scanned route builders -->
+        <camel:contextScan/>
+    </camel:camelContext>
+</beans>
