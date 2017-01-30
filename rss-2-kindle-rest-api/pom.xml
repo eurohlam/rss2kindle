@@ -37,12 +37,12 @@
     <dependency>
       <groupId>org.glassfish.jersey.containers</groupId>
       <artifactId>jersey-container-servlet</artifactId>
-      <version>2.23.2</version>
+      <version>${jersey.version}</version>
     </dependency>
     <dependency>
       <groupId>org.glassfish.jersey.ext</groupId>
       <artifactId>jersey-spring3</artifactId>
-      <version>2.23.2</version>
+      <version>${jersey.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.springframework</groupId>
@@ -74,6 +74,47 @@
 
   </dependencies>
   <profiles>
-    <!-- TODO: copy spring&camel context into WEB-INFO/classes -->
+    <!-- copy spring&camel context from rss-2-kidnle-camel module into WEB-INFO/classes -->
+    <profile>
+      <id>build-rest-war</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>${resources.plugin.version}</version>
+            <executions>
+              <execution>
+                <id>copy configuration files</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${basedir}/../rss-2-kindle-camel/src/main/resources</directory>
+                      <includes>
+                        <include>camel-context.properties</include>
+                        <include>rss2kindle-camel-context.xml</include>
+                      </includes>
+                    </resource>
+                    <resource>
+                      <directory>${basedir}/../rss-2-kindle-camel/src/main/resources/META-INF/spring</directory>
+                      <includes>
+                        <include>rss2kindle-spring-context.xml</include>
+                      </includes>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>

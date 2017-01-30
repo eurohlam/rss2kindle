@@ -15,6 +15,21 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <!-- Third party libraries versions -->
+    <spring.version>4.2.5.RELEASE</spring.version>
+    <camel.version>2.17.3</camel.version>
+    <jersey.version>2.23.2</jersey.version>
+    <slf4j.version>1.7.21</slf4j.version>
+    <log4j.version>1.2.17</log4j.version>
+    <gson.version>2.7</gson.version>
+    <!-- JUnit versions-->
+    <junit.version>4.11</junit.version>
+    <mockito.version>2.1.0-RC.1</mockito.version>
+    <testng.version>6.9.8</testng.version>
+    <!-- Maven plugins versions -->
+    <resources.plugin.version>2.6</resources.plugin.version>
+    <compiler.plugin.version>3.5.1</compiler.plugin.version>
+    <checkstyle.plugin.version>2.17</checkstyle.plugin.version>
   </properties>
 
 
@@ -22,6 +37,7 @@
     <module>rss-2-kindle-common</module>
     <module>rss-2-kindle-datasource-mongo</module>
     <module>rss-2-kindle-camel</module>
+    <module>rss-2-kindle-rest-api</module>
   </modules>
 
   <dependencies>
@@ -39,48 +55,48 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>4.2.5.RELEASE</version>
+      <version>${spring.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-      <version>4.2.5.RELEASE</version>
+      <version>${spring.version}</version>
     </dependency>
 
     <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.21</version>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.21</version>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
+      <version>${log4j.version}</version>
     </dependency>
 
     <!-- testing -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.9.8</version>
+      <version>${testng.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>2.1.0-RC.1</version>
+      <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -93,7 +109,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>${compiler.plugin.version}</version>
         <configuration>
           <source>1.7</source>
           <target>1.7</target>
@@ -102,25 +118,31 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
+        <version>${resources.plugin.version}</version>
         <configuration>
           <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${checkstyle.plugin.version}</version>
+        <configuration>
+          <configLocation>checkstyle.xml</configLocation>
+          <includeTestSourceDirectory>false</includeTestSourceDirectory>
+          <encoding>UTF-8</encoding>
+          <consoleOutput>true</consoleOutput>
+          <failsOnError>true</failsOnError>
+          <linkXRef>false</linkXRef>
         </configuration>
       </plugin>
 
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
-        <version>2.17.3</version>
+        <version>${camel.version}</version>
       </plugin>
     </plugins>
   </build>
-
-  <distributionManagement>
-    <site>
-      <id>rss2kindle</id>
-      <url>http://localhost:8080</url>
-    </site>
-  </distributionManagement>
 
 </project>
