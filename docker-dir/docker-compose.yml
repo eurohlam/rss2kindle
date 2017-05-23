@@ -1,0 +1,16 @@
+version: '2'
+services:
+  mongo:
+    build: 
+      context: ./mongo
+    container_name: mongo_act
+    ports:
+      - "27017:27017/tcp"
+  tomcat:
+    build: 
+      context: ./tomcat
+    container_name: tomcat_act
+    ports:
+      - "8080:8080/tcp"
+    links:
+      - "mongo:localhost"
