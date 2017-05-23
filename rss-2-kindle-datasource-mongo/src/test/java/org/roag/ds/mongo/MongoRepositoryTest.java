@@ -1,18 +1,15 @@
 package org.roag.ds.mongo;
 
-import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.mongodb.MongoDbOperation;
 import org.apache.camel.testng.CamelSpringTestSupport;
-import org.roag.ds.Injector;
 import org.roag.ds.OperationResult;
 import org.roag.service.SubscriberFactory;
 import org.roag.model.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.*;
 
@@ -62,17 +59,16 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
         return context;
     }
 
-    @Test(groups = {"Functionality Check"})
+    @Test(groups = { "Functionality Check" })
     public void getQueryTest()
     {
-        String q = mh.getQuery(mh.getDefaultMongoDatabase(), mh.getDefaulMongoCollection(), MongoHelper.MONGO_OPERATION.FIND_ONE);
+        String q = mh.getQuery(mh.getDefaultMongoDatabase(), mh.getDefaulMongoCollection(), MongoDbOperation.findOneByQuery);
         logger.info("MongoTest: findOneByQuery - " + q);
         assertNotNull(q, "MongoHelper returns empty findOneByQuery");
         assertStringContains(q, "operation=findOneByQuery");
     }
 
-    @Test(groups = {"Connectivity Check"})
-    @BeforeGroups(groups = {"Mongo Integration"})
+    @Test(groups = { "Connectivity Check" }, dependsOnGroups = { "Functionality Check" })
     public void runConnectivityTest() throws Exception
     {
         Long result = template.requestBody("direct:count", null, Long.class);
@@ -81,24 +77,43 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
         assertTrue(result instanceof Long, "Result is not of type Long");
     }
 
-    @Test(groups = {"Mongo Integration"})
+    @Test(groups = { "Mongo repository CRUD" }, dependsOnGroups = { "Mongo Cleansing", "Connectivity Check" })
     public void mongoCRUDTest() throws Exception
     {
-        Subscriber s = subscriberFactory.newSubscriber(TEST_EMAIL, "test", "test.org/feed");
-        OperationResult r=mongoRepository.addSubscriber(s);
-
-        assertEquals(r, OperationResult.SUCCESS);
-
-        Subscriber ns=mongoRepository.getSubscriber(TEST_EMAIL);
-        assertEquals(ns.getName(), s.getName());
-
+        Subscriber subscriber = subscriberFactory.newSubscriber(TEST_EMAIL, "test", "test.org/feed");
+        //create
+        OperationResult result=mongoRepository.addSubscriber(subscriber);
+        assertEquals(result, OperationResult.SUCCESS);
+        //read
+        Subscriber newSubscriber=mongoRepository.getSubscriber(TEST_EMAIL);
+        assertEquals(newSubscriber.getName(), subscriber.getName());
+        //read all
         assertTrue(mongoRepository.findAll().size()>0);
-
+        //update
+        newSubscriber.setName("new_test_name");
+        result=mongoRepository.updateSubscriber(newSubscriber);
+        assertEquals(result, OperationResult.SUCCESS);
+        //read updated
+        newSubscriber=mongoRepository.getSubscriber(TEST_EMAIL);
+        assertEquals(newSubscriber.getName(), "new_test_name");
+        //suspend (update)
+        result=mongoRepository.suspendSubscriber(newSubscriber.getEmail());
+        assertEquals(result, OperationResult.SUCCESS);
+        //read suspended
+        newSubscriber=mongoRepository.getSubscriber(TEST_EMAIL);
+        assertEquals(newSubscriber.getStatus(), SubscriberStatus.SUSPENDED.toString());
+        //resume (update)
+        result=mongoRepository.resumeSubscriber(newSubscriber.getEmail());
+        assertEquals(result, OperationResult.SUCCESS);
+        //read resumed
+        newSubscriber=mongoRepository.getSubscriber(TEST_EMAIL);
+        assertEquals(newSubscriber.getStatus(), SubscriberStatus.ACTIVE.toString());
+        //delete
         OperationResult d = mongoRepository.removeSubscriber(TEST_EMAIL);
         assertEquals(d, OperationResult.SUCCESS);
     }
 
-    @Test(groups = {"Mongo Integration"})
+    @Test(groups = { "Mongo Integration" }, dependsOnGroups = { "Connectivity Check" })
     public void mongoHelperAddSubscriberTest() throws Exception
     {
         Subscriber s = subscriberFactory.newSubscriber(TEST_EMAIL, "test", "test.org/feed");
@@ -107,8 +122,16 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
         assertTrue(!r.isUpdateOfExisting());
     }
 
+    @Test(groups = { "Mongo Integration" },  dependsOnMethods = { "mongoHelperAddSubscriberTest" })
+    public void mongoHelperUpdateSubscriberTest() throws Exception
+    {
+        Subscriber s = subscriberFactory.newSubscriber(TEST_EMAIL, "updated_test", "updated_test.org/feed");
+        WriteResult r= mh.updateSubscriber(s, template);
 
-    @Test(groups = {"Mongo Integration"}, dependsOnMethods = {"mongoHelperAddSubscriberTest"})
+        assertTrue(r.isUpdateOfExisting());
+    }
+
+    @Test(groups = { "Mongo Integration" }, dependsOnMethods = { "mongoHelperAddSubscriberTest" })
     public void mongoHelperFindAllTest() throws Exception
     {
         HashMap<String, String> cond = new HashMap<>(1);
@@ -129,7 +152,7 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
         }
     }
 
-    @Test(groups = {"Mongo Integration"}, dependsOnMethods = {"mongoHelperAddSubscriberTest"})
+    @Test(groups = { "Mongo Integration" }, dependsOnMethods = { "mongoHelperAddSubscriberTest" })
     public void mongoHelperFindOneTest() throws Exception
     {
         HashMap<String, String> cond = new HashMap<>(1);
@@ -149,8 +172,7 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
 
 
 
-    @Test(groups = {"Mongo Cleansing"}, dependsOnMethods = {"mongoHelperAddSubscriberTest"})
-    @AfterGroups(dependsOnGroups = {"Mongo Integration", "Functionality Check"})
+    @Test(groups = { "Mongo Cleansing" }, dependsOnGroups = { "Mongo Integration" })
     public void mongoHelperRemoveSubscriberTest() throws Exception
     {
         WriteResult r= mh.removeSubscriber(TEST_EMAIL, template);
@@ -167,15 +189,15 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
             public void configure() throws Exception
             {
                 from("direct:count").id("Test Mongo Count").
-                        to(mh.getQuery(mh.getDefaultMongoDatabase(), mh.getDefaulMongoCollection(), MongoHelper.MONGO_OPERATION.COUNT)).
+                        to(mh.getQuery(mh.getDefaultMongoDatabase(), mh.getDefaulMongoCollection(), MongoDbOperation.count)).
                         to("mock:result");
 
                 from("direct:findOneTest").id("Test Mongo findOne").
-                        to(mh.getQuery(mh.getDefaultMongoDatabase(), mh.getDefaulMongoCollection(), MongoHelper.MONGO_OPERATION.FIND_ONE)).
+                        to(mh.getQuery(mh.getDefaultMongoDatabase(), mh.getDefaulMongoCollection(), MongoDbOperation.findOneByQuery)).
                         to("mock:result");
 
                 from("direct:findAllTest").id("Test Mongo findAllQuery").
-                        to(mh.getQuery(mh.getDefaultMongoDatabase(), mh.getDefaulMongoCollection(), MongoHelper.MONGO_OPERATION.FIND_ALL)).
+                        to(mh.getQuery(mh.getDefaultMongoDatabase(), mh.getDefaulMongoCollection(), MongoDbOperation.findAll)).
                         to("mock:result");
             }
         };

@@ -2,6 +2,8 @@ package org.roag.ds.mongo;
 
 import com.mongodb.*;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.mongodb.MongoDbConstants;
+import org.apache.camel.component.mongodb.MongoDbOperation;
 import org.roag.service.SubscriberFactory;
 import org.roag.model.*;
 import org.slf4j.Logger;
@@ -16,31 +18,7 @@ public class MongoHelper
 {
     final private static Logger logger = LoggerFactory.getLogger(MongoHelper.class);
 
-    public static enum MONGO_OPERATION
-    {
-        FIND_ALL("findAll"),
-        FIND_ONE("findOneByQuery"),
-        INSERT("insert"),
-        REMOVE("remove"),
-        COUNT("count");
-
-        private final String name;
-
-        MONGO_OPERATION(String name)
-        {
-            this.name = name;
-        }
-
-        @Override
-        public String toString()
-        {
-            return name;
-        }
-    }
-
     private String MONGO_SPRING_BEAN;
-
-//    private String MONGO_CAMEL_ROUTE;
 
     private String defaultMongoDatabase;
 
@@ -60,7 +38,6 @@ public class MongoHelper
     public MongoHelper(String mongoBean, String mongoDatabase, String mongoCollection)
     {
         this.MONGO_SPRING_BEAN = mongoBean;
-//        this.MONGO_CAMEL_ROUTE = mongoCamelRoute;
         this.defaultMongoDatabase = mongoDatabase;
         this.defaulMongoCollection = mongoCollection;
         this.subscriberFactory = new SubscriberFactory();
@@ -83,7 +60,7 @@ public class MongoHelper
 
     DBObject findOneByCondition(String database, String collection, ProducerTemplate producerTemplate, Map<String, String> conditions) throws Exception
     {
-        List<DBObject> r = findByCondition(database, collection, MONGO_OPERATION.FIND_ONE, producerTemplate, conditions);
+        List<DBObject> r = findByCondition(database, collection, MongoDbOperation.findOneByQuery, producerTemplate, conditions);
         return r == null ? null : r.get(0);
     }
 
@@ -95,10 +72,10 @@ public class MongoHelper
 
     List<DBObject> findAllByCondition(String database, String collection, ProducerTemplate producerTemplate, Map<String, String> conditions) throws Exception
     {
-        return findByCondition(database, collection, MONGO_OPERATION.FIND_ALL, producerTemplate, conditions);
+        return findByCondition(database, collection, MongoDbOperation.findAll, producerTemplate, conditions);
     }
 
-    private List<DBObject> findByCondition(String mongoDatabase, String collection, MONGO_OPERATION operation,
+    private List<DBObject> findByCondition(String mongoDatabase, String collection, MongoDbOperation operation,
                                           ProducerTemplate producerTemplate, Map<String, String> conditions)
             throws Exception
     {
@@ -134,7 +111,7 @@ public class MongoHelper
         return list;
     }
 
-    String getQuery(String mongoDatabase, String collection, MONGO_OPERATION operation)
+    String getQuery(String mongoDatabase, String collection, MongoDbOperation operation)
     {
         return "mongodb:" + MONGO_SPRING_BEAN + "?database=" + mongoDatabase + "&collection=" + collection + "&operation=" + operation.toString();
     }
@@ -150,7 +127,7 @@ public class MongoHelper
             Subscriber subscr = subscriberFactory.convertJson2Pojo(Subscriber.class, subscriberFactory.convertPojo2Json(obj));
             subscribers.add(subscr);
             BasicDBList rsslist = (BasicDBList) obj.get("rsslist");
-            logger.info("Subscriber: " + subscr.getEmail() + "\n" + rsslist.getClass().toString() + "  " + rsslist);
+            logger.info("GET: Subscriber: " + subscr.getEmail() + "\n" + rsslist.getClass().toString() + "  " + rsslist);
         }
         return subscribers;
     }
@@ -158,7 +135,7 @@ public class MongoHelper
     public Subscriber getSubscriber(String email, ProducerTemplate producerTemplate) throws Exception
     {
         Map<String, String> cond = new HashMap<>(2);
-        cond.put("status", "active");
+//        cond.put("status", "active");
         cond.put("email", email);
         DBObject result = findOneByCondition(producerTemplate, cond);
         if (result == null)
@@ -167,7 +144,7 @@ public class MongoHelper
         result.removeField("_id");
         Subscriber subscr = subscriberFactory.convertJson2Pojo(Subscriber.class, subscriberFactory.convertPojo2Json(result));
         BasicDBList rsslist = (BasicDBList) result.get("rsslist");
-        logger.info("Subscriber: {} \n {} {}", subscr.getEmail(), rsslist.getClass().toString(), rsslist);
+        logger.info("GET: Subscriber: {} \n {} {}", subscr.getEmail(), rsslist.getClass().toString(), rsslist);
         return subscr;
 
     }
@@ -178,13 +155,31 @@ public class MongoHelper
         cond.put("email", subscriber.getEmail());
         DBObject r=findOneByCondition(producerTemplate,cond);
         if (r != null)
-            throw new IllegalArgumentException("Subscriber " + subscriber.getEmail() + " already exists");
+            throw new IllegalArgumentException("Creation is impossible. Subscriber " + subscriber.getEmail() + " already exists");
 
         WriteResult result = (WriteResult) producerTemplate.requestBody(
-                getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MONGO_OPERATION.INSERT),
+                getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.insert),
                 subscriberFactory.convertPojo2Json(subscriber));
 
-        logger.info("New subscriber: {} has been inserted into Mongo with the result: {}", subscriber.getEmail(), result);
+        logger.info("INSERT: New subscriber: {} has been inserted into Mongo with the result: {}", subscriber.getEmail(), result);
+        return result;
+    }
+
+    public WriteResult updateSubscriber(Subscriber subscriber, ProducerTemplate producerTemplate) throws Exception
+    {
+        Map<String, String> cond= new HashMap<>(1);
+        cond.put("email", subscriber.getEmail());
+        DBObject r=findOneByCondition(producerTemplate,cond);
+        if (r == null)
+            throw new IllegalArgumentException("Update is impossible. Subscriber " + subscriber.getEmail() + " does not exist");
+
+        DBObject filterField = new BasicDBObject("email", subscriber.getEmail());
+        DBObject obj=BasicDBObjectBuilder.start(subscriberFactory.convertJson2Pojo(Map.class,subscriberFactory.convertPojo2Json(subscriber))).get();
+        WriteResult result = (WriteResult) producerTemplate.requestBody(
+                getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.update),
+                new Object[]{filterField, obj});
+
+        logger.info("UPDATE: Subscriber: {} has been updated into Mongo with the result: {}", subscriber.getEmail(), result);
         return result;
     }
 
@@ -192,11 +187,10 @@ public class MongoHelper
     {
         DBObject query = new BasicDBObject("email", email);
         WriteResult result = (WriteResult) producerTemplate.requestBody(
-                getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MONGO_OPERATION.REMOVE),
+                getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.remove),
                 query);
 
-        logger.warn("Subscriber: {} has been removed from Mongo with the result: {}", email, result);
+        logger.warn("DELETE: Subscriber: {} has been removed from Mongo with the result: {}", email, result);
         return result;
     }
-
 }

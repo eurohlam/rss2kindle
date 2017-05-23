@@ -6,6 +6,7 @@ import org.apache.camel.ProducerTemplate;
 import org.roag.ds.OperationResult;
 import org.roag.ds.SubscriberRepository;
 import org.roag.model.Subscriber;
+import org.roag.model.SubscriberStatus;
 import org.roag.service.SubscriberFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,21 +97,43 @@ public class MongoSubscriberRepository implements SubscriberRepository
     public OperationResult updateSubscriber(Subscriber subscriber) throws Exception
     {
         logger.debug("Update subscriber {}", subscriber.getEmail());
-        return OperationResult.FAILURE;
+        WriteResult r = mongoHelper.updateSubscriber(subscriber, producerTemplate);
+        logger.debug("Updated subscriber {} with the result {}", subscriber.getEmail(), r.toString().replaceFirst("WriteResult", ""));
+        return r.getN()>0?OperationResult.SUCCESS:OperationResult.NOT_EXIST;
     }
 
     @Override
     public OperationResult suspendSubscriber(String id) throws Exception
     {
         logger.debug("Suspend subscriber {}", id);
-        return OperationResult.FAILURE;
+        Subscriber subscriber = getSubscriber(id);
+        if (SubscriberStatus.fromValue(subscriber.getStatus()) == SubscriberStatus.TERMINATED)
+        {
+            logger.error("Subscriber {} can't be suspended due to it has been terminated", id);
+            return OperationResult.FAILURE;
+        }
+        else
+        {
+            subscriber.setStatus(SubscriberStatus.SUSPENDED.toString());
+            return updateSubscriber(subscriber);
+        }
     }
 
     @Override
     public OperationResult resumeSubscriber(String id) throws Exception
     {
         logger.debug("Resume subscriber {}", id);
-        return OperationResult.FAILURE;
+        Subscriber subscriber = getSubscriber(id);
+        if (SubscriberStatus.fromValue(subscriber.getStatus()) == SubscriberStatus.TERMINATED)
+        {
+            logger.error("Subscriber {} can't be resumed due to it has been terminated", id);
+            return OperationResult.FAILURE;
+        }
+        else
+        {
+            subscriber.setStatus(SubscriberStatus.ACTIVE.toString());
+            return updateSubscriber(subscriber);
+        }
     }
 
 }

@@ -9,7 +9,7 @@
 
     <!--<context:property-placeholder location="classpath:/camel-context.properties"/>-->
     <!--<context:component-scan base-package="org.roag.camel"/>-->
-    <import resource="classpath:rss2kindle-spring-context"/>
+    <import resource="classpath:rss2kindle-spring-context.xml"/>
 
 
 </beans>
