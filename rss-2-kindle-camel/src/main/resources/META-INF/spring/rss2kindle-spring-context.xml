@@ -12,6 +12,11 @@
     <context:component-scan base-package="org.roag.camel"/>
     <context:component-scan base-package="org.roag.ds.mongo"/>
 
+    <!-- initialize property placeholder for camel-->
+    <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent">
+        <property name="location" value="classpath:/camel-context.properties"/>
+    </bean>
+
     <!--MongoDB-->
     <bean id="mongo" class="com.mongodb.MongoClient" name="${mongodb.spring.bean}">
         <constructor-arg index="0" value="${mongodb.host}"/>
