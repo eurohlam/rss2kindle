@@ -23,9 +23,18 @@
 
     <xsl:template name="item">
         <h2><xsl:value-of select="title"/></h2>
-        <p>
-            <xsl:value-of select="content:encoded" disable-output-escaping="yes"/>
-        </p>
+        <xsl:choose>
+            <xsl:when test="count(content:encoded)=0">
+                <p>
+                    <xsl:value-of select="description" disable-output-escaping="yes"/>
+                </p>
+            </xsl:when>
+            <xsl:otherwise>
+                <p>
+                    <xsl:value-of select="content:encoded" disable-output-escaping="yes"/>
+                </p>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
 </xsl:stylesheet>
