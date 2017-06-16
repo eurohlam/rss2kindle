@@ -10,11 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -30,17 +33,37 @@ public class RSS2XMLBuilder
     private CamelContext camelContext;
     private SubscriberRepository subscriberRepository;
 
-    @PropertyInject("rss.opt.splitEntries")
+    @Value("${rss.opt.splitEntries}")
     private String splitEntries;
 
-    @PropertyInject("rss.opt.feedHeader")
+    @Value("${rss.opt.feedHeader}")
     private String feedHeaders;
 
-    @PropertyInject("rss.opt.consumerDelay")
+    @Value("${rss.opt.consumerDelay}")
     private String consumerDelay;
 
-    @PropertyInject("storage.path.rss")
+    @Value("${storage.path.rss}")
     private String storagePathRss;
+
+    @Value("${rss.opt.lastUpdate.count}")
+    private int lastUpdateCount;
+
+    @Value("${rss.opt.lastUpdated.timeunit}")
+    private String lastUpdateTimeunit;
+
+    private static final ThreadLocal<DateFormat> RSS_LAST_UPDATE_FORMAT = new ThreadLocal<DateFormat>(){
+        @Override
+        protected DateFormat initialValue() {
+            return  new SimpleDateFormat("yyyy-MM-dd'T'HH:MM:ss");
+        }
+    };
+
+    private static final ThreadLocal<DateFormat> RSS_FILE_NAME_FORMAT = new ThreadLocal<DateFormat>(){
+        @Override
+        protected DateFormat initialValue() {
+            return  new SimpleDateFormat("yyMMddHHmmss");
+        }
+    };
 
     @Autowired
     public RSS2XMLBuilder(@Qualifier("subscriberRepository") SubscriberRepository subscriberRepository,
@@ -48,6 +71,16 @@ public class RSS2XMLBuilder
     {
         this.subscriberRepository = subscriberRepository;
         this.camelContext = camelContext;
+    }
+
+    public static DateFormat getRssLastUpdateFormat()
+    {
+        return RSS_LAST_UPDATE_FORMAT.get();
+    }
+
+    public static DateFormat getRssFileNameFormat()
+    {
+        return RSS_FILE_NAME_FORMAT.get();
     }
 
     public void runRssPollingForAllSubscribers() throws Exception
@@ -113,22 +146,31 @@ public class RSS2XMLBuilder
             this.rss = rss;
             this.name = name;
             this.email = email;
-            SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmss");
-            fileName = format.format(new Date());
+            this.fileName = getRssFileNameFormat().format(new Date());
         }
 
         private String getCamelRssUri(String rss)
         {
-            calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 30);//TODO: -30 is just for testing
-            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:MM:ss");
-            String currentDate = f.format(calendar.getTime());
+            String lastUpdate;
+            if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.DAYS)
+            {
+                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - lastUpdateCount);
+                lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
+            } else if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.HOURS)
+            {
+                calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - lastUpdateCount);
+                lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
+            } else
+            {
+                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 1);
+                lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
+            }
+
             String rssUri = "rss:" + rss + "?feedHeader=" + feedHeaders
                     + "&consumer.bridgeErrorHandler=true"
                     + "&splitEntries=" + splitEntries
                     + "&consumerDelay=" + consumerDelay
-                    + "&lastUpdate=" + //TODO: lastupdate for rss
-                            /*StringUtils.isNotBlank(rss_lastUpdate)?rss_lastUpdate:*/
-                    currentDate;
+                    + "&lastUpdate=" + lastUpdate;
             return rssUri;
         }
 
@@ -159,7 +201,7 @@ public class RSS2XMLBuilder
 
             onException(RuntimeException.class).maximumRedeliveries(2).handled(true).
                     log(LoggingLevel.ERROR, logger,"jopa");
-//                    we use seda:xxx?concurrentConsumers=1 to avoid concurrency issues when several subscribers poll same rss
+//          TODO: we use seda:xxx?concurrentConsumers=1 to avoid concurrency issues when several subscribers poll same rss, but it does not work. We need queue
             from("seda:" + sedaQueue + "?concurrentConsumers=1").
                     setHeader("email").constant(email).
                     setHeader("name").constant(name).
