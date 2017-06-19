@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- import camel configuration -->
+    <import resource="classpath:rss2kindle-camel-context.xml"/>
+
+    <context:property-placeholder location="classpath:/test-context.properties"/>
+    <context:component-scan base-package="org.roag.camel"/>
+
+    <!-- initialize property placeholder for camel-->
+    <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent">
+        <property name="location" value="classpath:/test-context.properties"/>
+    </bean>
+
+    <bean id="subscriberFactory" class="org.roag.service.SubscriberFactory"/>
+
+    <bean id="testSubscriber" factory-bean="subscriberFactory" factory-method="newSubscriber">
+        <constructor-arg index="0" value="${test.email}"/>
+        <constructor-arg index="1" value="${test.name}"/>
+        <constructor-arg index="2" value="${test.rss}"/>
+    </bean>
+
+    <!--Using in memory repository for testing goals  -->
+    <bean id="subscriberRepository" class="org.roag.ds.impl.MemorySubscriberRepository" factory-method="getInstance">
+    </bean>
+
+</beans>

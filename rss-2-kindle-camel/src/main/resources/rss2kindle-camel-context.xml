@@ -22,16 +22,16 @@
 
         <!-- rss to html transforming by xslt-->
         <camel:route id="rss2html" startupOrder="2">
-            <camel:from uri="direct:startTransformation?block=true&amp;timeout=50000"/>
-            <camel:from uri="file://{{storage.path.rss}}?recursive=false&amp;noop=false&amp;delete=true"/>
+            <!--<camel:from uri="direct:startTransformation?block=true&amp;timeout=50000"/>-->
+            <camel:from uri="file://{{storage.path.rss}}?recursive={{rss2html.file.recursive}}&amp;delete={{rss2html.file.delete}}&amp;initialDelay={{rss2html.file.initialDelay}}&amp;delay={{rss2html.file.delay}}"/>
             <camel:log message="XSLT transforming ${header.CamelFileName} by xslt:rss2html.xsl" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
-            <camel:to uri="{{template.xslt.rss2html}}"/>
+            <camel:to uri="{{rss2html.template.xslt}}"/>
             <camel:setHeader headerName="CamelFileName">
                 <camel:simple>${header.CamelFileName}.htm</camel:simple>
             </camel:setHeader>
             <camel:log message="Save transformation result as html ${header.CamelFileName}" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
             <camel:to uri="file://{{storage.path.mobi}}"/>
-            <camel:to uri="seda:kindlegen"/>
+            <!--<camel:to uri="seda:kindlegen"/>-->
         </camel:route>
 
         <!--html to mobi transforming by kindlegen -->

@@ -48,7 +48,7 @@ public class RSS2XMLBuilder
     @Value("${rss.opt.lastUpdate.count}")
     private int lastUpdateCount;
 
-    @Value("${rss.opt.lastUpdated.timeunit}")
+    @Value("${rss.opt.lastUpdate.timeunit}")
     private String lastUpdateTimeunit;
 
     private static final ThreadLocal<DateFormat> RSS_LAST_UPDATE_FORMAT = new ThreadLocal<DateFormat>(){
@@ -211,8 +211,8 @@ public class RSS2XMLBuilder
                     from(getCamelRssUri(rss)).
                     //id(sedaQueue + rss).
                     routePolicyRef("rssPolicy").
-                        marshal().rss().to(getAbsoluteCamelFileUri(email, rss)).
-                        to("direct:startTransformation");
+                        marshal().rss().to(getAbsoluteCamelFileUri(email, rss));
+//                        to("direct:startTransformation");
         }
     }
 }
