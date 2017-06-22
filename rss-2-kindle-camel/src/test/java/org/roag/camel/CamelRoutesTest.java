@@ -61,6 +61,7 @@ public class CamelRoutesTest extends CamelSpringTestSupport
     public void runPollingTest() throws Exception
     {
         subscriberRepository.addSubscriber(testSubscriber);
+        sub
         builder.runRssPollingForAllSubscribers();
         //wait for polling before stopping of context
         Thread.sleep(15000);

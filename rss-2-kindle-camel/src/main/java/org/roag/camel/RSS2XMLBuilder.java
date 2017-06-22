@@ -33,22 +33,22 @@ public class RSS2XMLBuilder
     private CamelContext camelContext;
     private SubscriberRepository subscriberRepository;
 
-    @Value("${rss.opt.splitEntries}")
+    @Value("${rss.splitEntries}")
     private String splitEntries;
 
-    @Value("${rss.opt.feedHeader}")
+    @Value("${rss.feedHeader}")
     private String feedHeaders;
 
-    @Value("${rss.opt.consumerDelay}")
+    @Value("${rss.consumer.delay}")
     private String consumerDelay;
 
     @Value("${storage.path.rss}")
     private String storagePathRss;
 
-    @Value("${rss.opt.lastUpdate.count}")
+    @Value("${rss.lastUpdate.count}")
     private int lastUpdateCount;
 
-    @Value("${rss.opt.lastUpdate.timeunit}")
+    @Value("${rss.lastUpdate.timeunit}")
     private String lastUpdateTimeunit;
 
     private static final ThreadLocal<DateFormat> RSS_LAST_UPDATE_FORMAT = new ThreadLocal<DateFormat>(){
@@ -149,6 +149,24 @@ public class RSS2XMLBuilder
             this.fileName = getRssFileNameFormat().format(new Date());
         }
 
+
+        private String getLastUpdate()
+        {
+            String lastUpdate;
+            if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.DAYS)
+            {
+                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - lastUpdateCount);
+            } else if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.HOURS)
+            {
+                calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - lastUpdateCount);
+            } else
+            {
+                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 1);
+            }
+            lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
+            return lastUpdate;
+        }
+
         private String getCamelRssUri(String rss)
         {
             String lastUpdate;
@@ -169,7 +187,7 @@ public class RSS2XMLBuilder
             String rssUri = "rss:" + rss + "?feedHeader=" + feedHeaders
                     + "&consumer.bridgeErrorHandler=true"
                     + "&splitEntries=" + splitEntries
-                    + "&consumerDelay=" + consumerDelay
+                    + "&consumer.delay=" + consumerDelay
                     + "&lastUpdate=" + lastUpdate;
             return rssUri;
         }
@@ -201,8 +219,27 @@ public class RSS2XMLBuilder
 
             onException(RuntimeException.class).maximumRedeliveries(2).handled(true).
                     log(LoggingLevel.ERROR, logger,"jopa");
+
+            fromF("rss:%s?feedHeader=%s&consumer.bridgeErrorHandler=true&splitEntries=%s&consumer.delay=%s&lastUpdate=%s", rss, feedHeaders, splitEntries, consumerDelay, getLastUpdate()).
+                           log(LoggingLevel.DEBUG, logger, "seda:" + sedaQueue + " - Start polling RSS from " + getCamelRssUri(rss) + " to " + getAbsoluteCamelFileUri(email, rss)).
+                    //id(sedaQueue + rss).
+                            routePolicyRef("rssPolicy").
+                    marshal().rss().
+                    toF("file://%s%s/%s?fileName=%s", storagePathRss, email, rss.replace('/', '_').replace(":", "_"), fileName);
+//                        to("direct:startTransformation");
+        }
+
+/*        @Override
+        public void configure() throws Exception
+        {
+//            errorHandler(deadLetterChannel("seda:errors").
+//                    maximumRedeliveries(2).redeliveryDelay(4000).
+//                    retryAttemptedLogLevel(LoggingLevel.ERROR));
+
+            onException(RuntimeException.class).maximumRedeliveries(2).handled(true).
+                    log(LoggingLevel.ERROR, logger,"jopa");
 //          TODO: we use seda:xxx?concurrentConsumers=1 to avoid concurrency issues when several subscribers poll same rss, but it does not work. We need queue
-            from("seda:" + sedaQueue + "?concurrentConsumers=1").
+            fromF("seda:%s?concurrentConsumers=1", sedaQueue).
                     setHeader("email").constant(email).
                     setHeader("name").constant(name).
                     setHeader("rss").constant(rss).
@@ -213,6 +250,6 @@ public class RSS2XMLBuilder
                     routePolicyRef("rssPolicy").
                         marshal().rss().to(getAbsoluteCamelFileUri(email, rss));
 //                        to("direct:startTransformation");
-        }
+        }*/
     }
 }
