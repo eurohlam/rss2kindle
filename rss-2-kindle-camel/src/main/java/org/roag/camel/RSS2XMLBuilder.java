@@ -1,7 +1,10 @@
 package org.roag.camel;
 
+import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.feed.synd.SyndFeedImpl;
 import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.dataformat.rss.RssConverter;
 import org.roag.ds.SubscriberRepository;
 import org.roag.model.Rss;
 import org.roag.model.RssStatus;
@@ -14,6 +17,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -30,8 +36,11 @@ public class RSS2XMLBuilder
 {
     final private static Logger logger = LoggerFactory.getLogger(RSS2XMLBuilder.class);
 
+    private Calendar calendar = Calendar.getInstance();
+
     private CamelContext camelContext;
     private SubscriberRepository subscriberRepository;
+    private ConsumerTemplate rssConsumer;
 
     @Value("${rss.splitEntries}")
     private String splitEntries;
@@ -71,6 +80,7 @@ public class RSS2XMLBuilder
     {
         this.subscriberRepository = subscriberRepository;
         this.camelContext = camelContext;
+        this.rssConsumer = camelContext.createConsumerTemplate();
     }
 
     public static DateFormat getRssLastUpdateFormat()
@@ -86,23 +96,23 @@ public class RSS2XMLBuilder
     public void runRssPollingForAllSubscribers() throws Exception
     {
         logger.debug("Start polling RSS-feeds for all active subscribers");
-        runRssPolling(subscriberRepository.findAll());
+        runRssPollingForList(subscriberRepository.findAll());
     }
 
-    public void runRssPolling(List<Subscriber> subscriberList) throws Exception
+    public void runRssPollingForList(List<Subscriber> subscriberList) throws Exception
     {
         for (Subscriber subscriber:subscriberList)
-            runRssPolling(subscriber);
+            runRssPollingForSubscriber(subscriber);
     }
 
 
-    public void runRssPolling(String email) throws Exception
+    public void runRssPollingForSubscriber(String email) throws Exception
     {
         logger.debug("Start polling RSS-feed for {}", email);
-        runRssPolling(subscriberRepository.getSubscriber(email));
+        runRssPollingForSubscriber(subscriberRepository.getSubscriber(email));
     }
 
-    public void runRssPolling(Subscriber subscriber) throws Exception
+    public void runRssPollingForSubscriber(Subscriber subscriber) throws Exception
     {
         logger.debug("Start polling RSS-feed for subscriber: email = {}; name = {}", subscriber.getEmail(), subscriber.getName());
         for (int i = 0; i < subscriber.getRsslist().size(); i++)
@@ -112,144 +122,61 @@ public class RSS2XMLBuilder
             {
                 try
                 {
-                    camelContext.addRoutes(
-                            new RSSDynamicRouteBuilder(camelContext,
-                                    subscriber.getEmail() + "_" + i,
-                                    subscriber.getEmail(),
-                                    subscriber.getName(),
-                                    rss.getRss()));
-                }
-                catch (CamelException e)
+                    logger.debug("Polling {}", getCamelRssUri(rss.getRss()));
+                    SyndFeed feed = rssConsumer.receiveBody(getCamelRssUri(rss.getRss()), SyndFeedImpl.class);
+                    logger.error(feed.getTitle() + "  " + feed.getDescription());
+                    logger.error(RssConverter.feedToXml(feed));
+                    File file=new File(getAbsoluteCamelFileUri(subscriber.getEmail(), rss.getRss()));
+                    if (!file.exists())
+                        file.mkdirs();
+                    if (file.exists() && file.isDirectory())
+                    {
+                        OutputStream out = new FileOutputStream(file.getPath() + "/" + getRssFileNameFormat().format(new Date()));
+                        out.write(RssConverter.feedToXml(feed).getBytes());
+                        out.close();
+                    }
+                } catch (Exception e)
                 {
-                    logger.error(e.getMessage(), e);
+                    logger.error(e.getMessage());
+                    //TODO: change status of failed rss
                 }
 
             }
         }
     }
 
-    private final class RSSDynamicRouteBuilder extends RouteBuilder
+    private String getCamelRssUri(String rss)
     {
-        private final String rss;
-        private final String email;
-        private final String sedaQueue;
-        private final String name;
-        private final String fileName;
-
-        private Calendar calendar = Calendar.getInstance();
-
-        private RSSDynamicRouteBuilder(CamelContext context, String sedaQueue, String email, String name, String rss)
+        String lastUpdate;
+        if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.DAYS)
         {
-            super(context);
-            logger.debug("Creation of dynamic route: seda:{}, from {} for email {}", sedaQueue, rss, email);
-            this.sedaQueue = sedaQueue;
-            this.rss = rss;
-            this.name = name;
-            this.email = email;
-            this.fileName = getRssFileNameFormat().format(new Date());
-        }
-
-
-        private String getLastUpdate()
-        {
-            String lastUpdate;
-            if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.DAYS)
-            {
-                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - lastUpdateCount);
-            } else if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.HOURS)
-            {
-                calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - lastUpdateCount);
-            } else
-            {
-                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 1);
-            }
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - lastUpdateCount);
             lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
-            return lastUpdate;
+        } else if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.HOURS)
+        {
+            calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - lastUpdateCount);
+            lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
+        } else
+        {
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 1);
+            lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
         }
 
-        private String getCamelRssUri(String rss)
-        {
-            String lastUpdate;
-            if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.DAYS)
-            {
-                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - lastUpdateCount);
-                lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
-            } else if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.HOURS)
-            {
-                calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - lastUpdateCount);
-                lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
-            } else
-            {
-                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 1);
-                lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
-            }
+        String rssUri = "rss:" + rss + "?feedHeader=" + feedHeaders
+                + "&consumer.bridgeErrorHandler=true"
+                + "&splitEntries=" + splitEntries
+                + "&consumer.delay=" + consumerDelay
+                + "&lastUpdate=" + lastUpdate;
+        return rssUri;
+    }
 
-            String rssUri = "rss:" + rss + "?feedHeader=" + feedHeaders
-                    + "&consumer.bridgeErrorHandler=true"
-                    + "&splitEntries=" + splitEntries
-                    + "&consumer.delay=" + consumerDelay
-                    + "&lastUpdate=" + lastUpdate;
-            return rssUri;
-        }
-
-        private String getAbsoluteCamelFileUri(String email, String rss)
-        {
-            String fileUri = "file://" + storagePathRss +
-                    email + "/"
-                    + rss.replace('/', '_').replace(":", "_")
-                    + "?fileName=" + fileName;
-            return fileUri;
-        }
-
-        private String getRelativeFilePath(String email, String rss)
-        {
-            String fileUri =
-                    email + "/"
-                    + rss.replace('/', '_').replace(":", "_")
-                    + "/" + fileName;
-            return fileUri;
-        }
-
-        @Override
-        public void configure() throws Exception
-        {
-//            errorHandler(deadLetterChannel("seda:errors").
-//                    maximumRedeliveries(2).redeliveryDelay(4000).
-//                    retryAttemptedLogLevel(LoggingLevel.ERROR));
-
-            onException(RuntimeException.class).maximumRedeliveries(2).handled(true).
-                    log(LoggingLevel.ERROR, logger,"jopa");
-
-            fromF("rss:%s?feedHeader=%s&consumer.bridgeErrorHandler=true&splitEntries=%s&consumer.delay=%s&lastUpdate=%s", rss, feedHeaders, splitEntries, consumerDelay, getLastUpdate()).
-                           log(LoggingLevel.DEBUG, logger, "seda:" + sedaQueue + " - Start polling RSS from " + getCamelRssUri(rss) + " to " + getAbsoluteCamelFileUri(email, rss)).
-                    //id(sedaQueue + rss).
-                            routePolicyRef("rssPolicy").
-                    marshal().rss().
-                    toF("file://%s%s/%s?fileName=%s", storagePathRss, email, rss.replace('/', '_').replace(":", "_"), fileName);
-//                        to("direct:startTransformation");
-        }
-
-/*        @Override
-        public void configure() throws Exception
-        {
-//            errorHandler(deadLetterChannel("seda:errors").
-//                    maximumRedeliveries(2).redeliveryDelay(4000).
-//                    retryAttemptedLogLevel(LoggingLevel.ERROR));
-
-            onException(RuntimeException.class).maximumRedeliveries(2).handled(true).
-                    log(LoggingLevel.ERROR, logger,"jopa");
-//          TODO: we use seda:xxx?concurrentConsumers=1 to avoid concurrency issues when several subscribers poll same rss, but it does not work. We need queue
-            fromF("seda:%s?concurrentConsumers=1", sedaQueue).
-                    setHeader("email").constant(email).
-                    setHeader("name").constant(name).
-                    setHeader("rss").constant(rss).
-                    setHeader("CamelFileName").constant(getRelativeFilePath(email, rss)).
-                    log(LoggingLevel.DEBUG, logger, "seda:" + sedaQueue + " - Start polling RSS from " + getCamelRssUri(rss) + " to " + getAbsoluteCamelFileUri(email, rss)).
-                    from(getCamelRssUri(rss)).
-                    //id(sedaQueue + rss).
-                    routePolicyRef("rssPolicy").
-                        marshal().rss().to(getAbsoluteCamelFileUri(email, rss));
-//                        to("direct:startTransformation");
-        }*/
+    private String getAbsoluteCamelFileUri(String email, String rss)
+    {
+        String fileUri = /*"file://" +*/ storagePathRss +
+                email + "/"
+                + rss.replace('/', '_').replace(":", "_");
+//                + "?fileName="
+//                + getRssFileNameFormat().format(new Date());
+        return fileUri;
     }
 }

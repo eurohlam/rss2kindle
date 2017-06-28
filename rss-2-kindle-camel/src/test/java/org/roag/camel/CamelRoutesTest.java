@@ -7,6 +7,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.testng.CamelSpringTestSupport;
 import org.roag.ds.SubscriberRepository;
 import org.roag.model.Subscriber;
+import org.roag.service.SubscriberFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.Test;
@@ -19,6 +20,7 @@ public class CamelRoutesTest extends CamelSpringTestSupport
     private SubscriberRepository subscriberRepository;
     private Subscriber testSubscriber;
     private RSS2XMLBuilder builder;
+    private SubscriberFactory subscriberFactory = new SubscriberFactory();
 
     @PropertyInject("storage.path.rss")
     private String storagePathRss;
@@ -61,34 +63,10 @@ public class CamelRoutesTest extends CamelSpringTestSupport
     public void runPollingTest() throws Exception
     {
         subscriberRepository.addSubscriber(testSubscriber);
-        sub
+        subscriberRepository.addSubscriber(subscriberFactory.newSubscriber("test2@test.com", "test2", /*"file:src/test/resources/testrss.xml"*/"http://eurohlam.ru/feed"));
         builder.runRssPollingForAllSubscribers();
         //wait for polling before stopping of context
         Thread.sleep(15000);
     }
 
-//    @Test(groups = {"CamelTesting"})
-    public void runRss()
-    {
-//        template.requestBody("direct:rss", new Object());
-//        assertTrue(result instanceof Long, "Result is not of type Long");
-    }
-
-/*
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception
-    {
-        return new RouteBuilder()
-        {
-            @Override
-            public void configure() throws Exception
-            {
-               from("direct:rss").
-                       from("rss:http://justtralala.com/feed?feedHeader=false&splitEntries=true").
-                       marshal().rss().
-                       to("file://" + storagePathRss);
-            }
-        };
-    }
-*/
 }
