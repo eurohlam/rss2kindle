@@ -23,6 +23,9 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 
@@ -41,6 +44,7 @@ public class RSS2XMLBuilder
     private CamelContext camelContext;
     private SubscriberRepository subscriberRepository;
     private ConsumerTemplate rssConsumer;
+    private ExecutorService executor;
 
     @Value("${rss.splitEntries}")
     private String splitEntries;
@@ -81,6 +85,7 @@ public class RSS2XMLBuilder
         this.subscriberRepository = subscriberRepository;
         this.camelContext = camelContext;
         this.rssConsumer = camelContext.createConsumerTemplate();
+        this.executor = Executors.newCachedThreadPool();//TODO: may be better to use pool
     }
 
     public static DateFormat getRssLastUpdateFormat()
@@ -118,23 +123,13 @@ public class RSS2XMLBuilder
         for (int i = 0; i < subscriber.getRsslist().size(); i++)
         {
             Rss rss = subscriber.getRsslist().get(i);
-            if (RssStatus.ACTIVE == RssStatus.fromValue(rss.getStatus()))
+            if (RssStatus.DEAD != RssStatus.fromValue(rss.getStatus()))
             {
                 try
                 {
-                    logger.debug("Polling {}", getCamelRssUri(rss.getRss()));
-                    SyndFeed feed = rssConsumer.receiveBody(getCamelRssUri(rss.getRss()), SyndFeedImpl.class);
-                    logger.error(feed.getTitle() + "  " + feed.getDescription());
-                    logger.error(RssConverter.feedToXml(feed));
-                    File file=new File(getAbsoluteCamelFileUri(subscriber.getEmail(), rss.getRss()));
-                    if (!file.exists())
-                        file.mkdirs();
-                    if (file.exists() && file.isDirectory())
-                    {
-                        OutputStream out = new FileOutputStream(file.getPath() + "/" + getRssFileNameFormat().format(new Date()));
-                        out.write(RssConverter.feedToXml(feed).getBytes());
-                        out.close();
-                    }
+                    executor.submit(new RssTask(rssConsumer,getCamelRssUri(rss.getRss()),
+                            getAbsoluteCamelFileUri(subscriber.getEmail(),
+                                    rss.getRss()),getRssFileNameFormat().format(new Date())));
                 } catch (Exception e)
                 {
                     logger.error(e.getMessage());

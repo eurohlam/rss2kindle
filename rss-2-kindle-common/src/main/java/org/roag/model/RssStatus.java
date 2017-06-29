@@ -6,6 +6,7 @@ package org.roag.model;
 public enum RssStatus
 {
     ACTIVE("active"),
+    OFFLINE("offline"),
     DEAD("dead");
 
     private String value;
