@@ -21,7 +21,7 @@
         </camel:errorHandler>
 
         <!-- rss to html transforming by xslt-->
-        <camel:route id="rss2html" startupOrder="2">
+        <camel:route id="rss2html">
             <!--<camel:from uri="direct:startTransformation?block=true&amp;timeout=50000"/>-->
             <camel:from uri="file://{{storage.path.rss}}?recursive={{rss2html.file.recursive}}&amp;delete={{rss2html.file.delete}}&amp;initialDelay={{rss2html.file.initialDelay}}&amp;delay={{rss2html.file.delay}}"/>
             <camel:log message="XSLT transforming ${header.CamelFileName} by xslt:rss2html.xsl" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
@@ -31,11 +31,11 @@
             </camel:setHeader>
             <camel:log message="Save transformation result as html ${header.CamelFileName}" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
             <camel:to uri="file://{{storage.path.mobi}}"/>
-            <!--<camel:to uri="seda:kindlegen"/>-->
+            <camel:to uri="seda:kindlegen"/>
         </camel:route>
 
         <!--html to mobi transforming by kindlegen -->
-        <camel:route id="html2mobi" startupOrder="3">
+        <camel:route id="html2mobi">
             <camel:from uri="seda:kindlegen"/>
             <camel:log message="Start kindlegen: {{kindlegen.path}}" loggingLevel="DEBUG" logName="org.roag.camel.html2mobi"/>
             <camel:toD uri="exec:{{kindlegen.path}}?args={{storage.path.mobi}}${header.CamelFileName}"/>
@@ -45,7 +45,7 @@
             <camel:to uri="direct:smtp"/>
         </camel:route>
 
-        <camel:route id="smtp" startupOrder="4">
+        <camel:route id="smtp">
             <camel:from uri="direct:smtp"/>
             <camel:filter>
                 <camel:simple>${header.email} != null</camel:simple>

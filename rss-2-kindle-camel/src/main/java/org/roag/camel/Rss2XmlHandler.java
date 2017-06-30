@@ -1,10 +1,6 @@
 package org.roag.camel;
 
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.feed.synd.SyndFeedImpl;
 import org.apache.camel.*;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.dataformat.rss.RssConverter;
 import org.roag.ds.SubscriberRepository;
 import org.roag.model.Rss;
 import org.roag.model.RssStatus;
@@ -17,15 +13,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 
@@ -35,9 +28,9 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Scope("singleton")
 @SuppressWarnings("unused")
-public class RSS2XMLBuilder
+public class Rss2XmlHandler
 {
-    final private static Logger logger = LoggerFactory.getLogger(RSS2XMLBuilder.class);
+    final private static Logger logger = LoggerFactory.getLogger(Rss2XmlHandler.class);
 
     private Calendar calendar = Calendar.getInstance();
 
@@ -79,7 +72,7 @@ public class RSS2XMLBuilder
     };
 
     @Autowired
-    public RSS2XMLBuilder(@Qualifier("subscriberRepository") SubscriberRepository subscriberRepository,
+    public Rss2XmlHandler(@Qualifier("subscriberRepository") SubscriberRepository subscriberRepository,
                           @Qualifier("mainCamelContext") CamelContext camelContext)
     {
         this.subscriberRepository = subscriberRepository;
@@ -100,7 +93,7 @@ public class RSS2XMLBuilder
 
     public void runRssPollingForAllSubscribers() throws Exception
     {
-        logger.debug("Start polling RSS-feeds for all active subscribers");
+        logger.debug("Start polling RSS for all active subscribers");
         runRssPollingForList(subscriberRepository.findAll());
     }
 
@@ -111,15 +104,15 @@ public class RSS2XMLBuilder
     }
 
 
-    public void runRssPollingForSubscriber(String email) throws Exception
+    public short runRssPollingForSubscriber(String email) throws Exception
     {
-        logger.debug("Start polling RSS-feed for {}", email);
-        runRssPollingForSubscriber(subscriberRepository.getSubscriber(email));
+        return runRssPollingForSubscriber(subscriberRepository.getSubscriber(email));
     }
 
-    public void runRssPollingForSubscriber(Subscriber subscriber) throws Exception
+    public short runRssPollingForSubscriber(Subscriber subscriber) throws Exception
     {
-        logger.debug("Start polling RSS-feed for subscriber: email = {}; name = {}", subscriber.getEmail(), subscriber.getName());
+        short count= 0;
+        logger.debug("Start polling RSS for subscriber: email = {}; name = {}", subscriber.getEmail(), subscriber.getName());
         for (int i = 0; i < subscriber.getRsslist().size(); i++)
         {
             Rss rss = subscriber.getRsslist().get(i);
@@ -127,9 +120,24 @@ public class RSS2XMLBuilder
             {
                 try
                 {
-                    executor.submit(new RssTask(rssConsumer,getCamelRssUri(rss.getRss()),
-                            getAbsoluteCamelFileUri(subscriber.getEmail(),
+                    logger.info("Started polling RSS {}", rss.getRss());
+                    Future<Map<String, String>> result= executor.submit(new RssPollingTask(rssConsumer,getCamelRssUri(rss.getRss()),
+                            getPathForRss(subscriber.getEmail(),
                                     rss.getRss()),getRssFileNameFormat().format(new Date())));
+                    if (result.isDone())
+                    {
+                        Map<String, String> map = result.get();
+                        if (map.size()==1)
+                        {
+                            logger.info("RSS has been polled successfully to {}", map.get(rss.getRss()));
+                            count++;
+                        }
+                        else
+                        {
+                            logger.error("RSS has not been polled due to error {}", rss.getRss());
+                            throw new Exception("RSS " + rss.getRss() +" has not been polled");
+                        }
+                    }
                 } catch (Exception e)
                 {
                     logger.error(e.getMessage());
@@ -138,6 +146,7 @@ public class RSS2XMLBuilder
 
             }
         }
+        return count;
     }
 
     private String getCamelRssUri(String rss)
@@ -165,13 +174,11 @@ public class RSS2XMLBuilder
         return rssUri;
     }
 
-    private String getAbsoluteCamelFileUri(String email, String rss)
+    private String getPathForRss(String email, String rss)
     {
-        String fileUri = /*"file://" +*/ storagePathRss +
+        String fileUri = storagePathRss +
                 email + "/"
                 + rss.replace('/', '_').replace(":", "_");
-//                + "?fileName="
-//                + getRssFileNameFormat().format(new Date());
         return fileUri;
     }
 }

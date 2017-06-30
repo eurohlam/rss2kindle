@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -18,16 +17,16 @@ import java.util.concurrent.Callable;
 /**
  * Created by eurohlam on 29.06.17.
  */
-public class RssTask implements Callable<Map<String, String>>
+public class RssPollingTask implements Callable<Map<String, String>>
 {
-    final private static Logger logger = LoggerFactory.getLogger(RssTask.class);
+    final private static Logger logger = LoggerFactory.getLogger(RssPollingTask.class);
 
     final private ConsumerTemplate consumer;
     final private String rssURI;
     final private String path;
     final private String fileName;
 
-    public RssTask(ConsumerTemplate consumer, String rssURI, String path, String fileName)
+    public RssPollingTask(ConsumerTemplate consumer, String rssURI, String path, String fileName)
     {
         this.consumer = consumer;
         this.rssURI = rssURI;
@@ -41,7 +40,7 @@ public class RssTask implements Callable<Map<String, String>>
         Map<String, String> map = new Hashtable<>(1);
         logger.debug("Started polling {}", rssURI);
         SyndFeed feed = consumer.receiveBody(rssURI, SyndFeedImpl.class);
-        logger.debug("Finished polling {}.\nTitle is {}.\nDescription is {}", rssURI, feed.getTitle(), feed.getDescription());
+        logger.debug("Finished polling {}.\nTitle: {}.\nDescription: {}", rssURI, feed.getTitle(), feed.getDescription());
 
         File folder=new File(path);
         if (!folder.exists())
