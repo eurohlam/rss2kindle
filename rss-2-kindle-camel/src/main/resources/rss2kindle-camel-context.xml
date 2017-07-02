@@ -37,16 +37,20 @@
         <!--html to mobi transforming by kindlegen -->
         <camel:route id="html2mobi">
             <camel:from uri="seda:kindlegen"/>
-            <camel:log message="Start kindlegen: {{kindlegen.path}}" loggingLevel="DEBUG" logName="org.roag.camel.html2mobi"/>
+            <camel:log message="Start kindlegen: {{kindlegen.path}} for file ${header.CamelFileName}" loggingLevel="DEBUG" logName="org.roag.camel.html2mobi"/>
             <camel:toD uri="exec:{{kindlegen.path}}?args={{storage.path.mobi}}${header.CamelFileName}"/>
+            <camel:setHeader headerName="email">
+                <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('/.*$','g'),'')</camel:javaScript>
+            </camel:setHeader>
             <camel:setHeader headerName="mobiFile">
                 <camel:javaScript>'{{storage.path.mobi}}' +request.headers.get('CamelFileName').replace(new RegExp('htm','g'),'mobi')</camel:javaScript>
             </camel:setHeader>
-            <camel:to uri="direct:smtp"/>
+            <camel:to uri="seda:smtp"/>
         </camel:route>
 
         <camel:route id="smtp">
-            <camel:from uri="direct:smtp"/>
+            <camel:from uri="seda:smtp"/>
+            <camel:log message=" ${header.email}" loggingLevel="DEBUG" logName="org.roag.camel.smtp"/>
             <camel:filter>
                 <camel:simple>${header.email} != null</camel:simple>
                 <camel:setHeader headerName="feed">

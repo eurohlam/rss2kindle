@@ -24,7 +24,7 @@ public class MainApp
                     {
                         from("timer://runOnce?repeatCount=1&delay=5000").
                                 log(LoggingLevel.INFO, "org.roag.camel.Main", "Run RSS polling for all").
-                                bean("RSS2XMLBuilder", "runRssPollingForAllSubscribers");
+                                bean("rss2XmlHandler", "runRssPollingForAllSubscribers");
                     }
                 }
         );
