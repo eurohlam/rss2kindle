@@ -19,7 +19,7 @@ public class CamelRoutesTest extends CamelSpringTestSupport
 {
     private SubscriberRepository subscriberRepository;
     private Subscriber testSubscriber;
-    private RSS2XMLBuilder builder;
+    private Rss2XmlHandler builder;
     private SubscriberFactory subscriberFactory = new SubscriberFactory();
 
     @PropertyInject("storage.path.rss")
@@ -32,7 +32,7 @@ public class CamelRoutesTest extends CamelSpringTestSupport
         ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext("META-INF/spring/test-spring-context.xml");
         subscriberRepository = (SubscriberRepository) context.getBean("subscriberRepository");
         testSubscriber = (Subscriber) context.getBean("testSubscriber");
-        builder = context.getBean(RSS2XMLBuilder.class);
+        builder = context.getBean(Rss2XmlHandler.class);
         return context;
     }
 

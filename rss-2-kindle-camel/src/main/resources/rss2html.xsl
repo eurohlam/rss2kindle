@@ -13,6 +13,13 @@
                     <xsl:value-of select="//rss/channel/title"/>
                 </title>
             </header>
+            <nav epub:type="toc">
+                <ol>
+                    <xsl:for-each select="//rss/channel/item">
+                        <li><a href=""><xsl:value-of select="title"/></a></li>
+                    </xsl:for-each>
+                </ol>
+            </nav>
             <body>
                 <xsl:for-each select="//rss/channel/item">
                     <xsl:call-template name="item"/>
