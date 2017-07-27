@@ -8,12 +8,13 @@
 
     <xsl:template match="/">
         <html>
-            <header>
+            <head>
                 <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
                 <title>
                     <xsl:value-of select="//rss/channel/title"/>
                 </title>
-            </header>
+            </head>
+<!--
             <nav epub:type="toc">
                 <ol>
                     <xsl:for-each select="//rss/channel/item">
@@ -21,7 +22,18 @@
                     </xsl:for-each>
                 </ol>
             </nav>
+-->
             <body>
+                <div id="toc">
+                    <h2>
+                        Table of Contents
+                    </h2>
+                    <ol>
+                        <xsl:for-each select="//rss/channel/item">
+                            <li><a href="#{link}"><xsl:value-of select="title"/></a></li>
+                        </xsl:for-each>
+                    </ol>
+                </div>
                 <xsl:for-each select="//rss/channel/item">
                     <xsl:call-template name="item"/>
                 </xsl:for-each>
