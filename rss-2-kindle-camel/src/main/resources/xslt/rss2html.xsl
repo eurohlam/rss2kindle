@@ -24,6 +24,7 @@
             </nav>
 -->
             <body>
+<!--
                 <div id="toc">
                     <h2>
                         Table of Contents
@@ -34,6 +35,7 @@
                         </xsl:for-each>
                     </ol>
                 </div>
+-->
                 <xsl:for-each select="//rss/channel/item">
                     <xsl:call-template name="item"/>
                 </xsl:for-each>

@@ -63,7 +63,7 @@ public class CamelRoutesTest extends CamelSpringTestSupport
     public void runPollingTest() throws Exception
     {
         subscriberRepository.addSubscriber(testSubscriber);
-        subscriberRepository.addSubscriber(subscriberFactory.newSubscriber("test2@test.com", "test2", /*"file:src/test/resources/testrss.xml"*/"http://eurohlam.ru/feed"));
+        subscriberRepository.addSubscriber(subscriberFactory.newSubscriber("test2@test.com", "test2", "file:src/test/resources/testrss.xml"));
         builder.runRssPollingForAllSubscribers();
         //wait for polling before stopping of context
         Thread.sleep(15000);

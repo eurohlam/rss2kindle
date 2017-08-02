@@ -7,6 +7,8 @@
 
     <xsl:output method="xml" indent="yes" encoding="UTF-8"/>
 
+    <xsl:param name="output_file"/>
+
     <xsl:template match="/">
 
         <package unique-identifier="uid" xmlns:opf="http://www.idpf.org/2007/opf"
@@ -18,7 +20,7 @@
                     <dc:Language> <xsl:value-of select="//rss/channel/language"/></dc:Language>
                     <dc:Creator> <xsl:value-of select="//rss/channel/link"/></dc:Creator>
                     <dc:Copyrights> <xsl:value-of select="//rss/channel/link"/></dc:Copyrights>
-                    <dc:Publisher>Publisher</dc:Publisher>
+                    <dc:Publisher>Rss-2-kindle service</dc:Publisher>
                     <x-metadata>
                         <!--EmbeddedCover>images/cover.jpg</EmbeddedCover-->
                     </x-metadata>
@@ -27,7 +29,7 @@
             <manifest>
                 <item id="toc" media-type="text/x-oeb1-document" href="toc.html"></item>
                 <item id="ncx" media-type="application/x-dtbncx+xml" href="toc.ncx"/>
-                <item id="text" media-type="text/x-oeb1-document" href="test_output.html"></item>
+                <item id="text" media-type="text/x-oeb1-document" href="{$output_file}"></item>
                 <!--item id="Images" media-type="text/x-oeb1-document" href="Images.html"></item>
                 <item id="background" media-type="text/x-oeb1-document" href="background.html"></item-->
             </manifest>
@@ -39,7 +41,7 @@
             </spine>
             <guide>
                 <reference type="toc" title="Table of Contents" href="toc.html"/>
-                <reference type="text" title="Book" href="test_output.html"/>
+                <reference type="text" title="Book" href="{$output_file}"/>
             </guide>
         </package>
     </xsl:template>

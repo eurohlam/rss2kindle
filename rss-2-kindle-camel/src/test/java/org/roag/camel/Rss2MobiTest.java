@@ -44,6 +44,7 @@ public class Rss2MobiTest {
             Assert.assertTrue("Transformation for ncx file does not work", new File(ncx_file).exists());
 
             transformer = factory.newTransformer(new StreamSource(new FileInputStream(opf_xslt)));
+            transformer.setParameter("output_file", "test_output.html");
             transformer.transform(new StreamSource(rss_file), new StreamResult(new FileOutputStream(opf_file)));
             Assert.assertTrue("Transformation for opf file does not work", new File(opf_file).exists());
         } catch (Exception e) {
