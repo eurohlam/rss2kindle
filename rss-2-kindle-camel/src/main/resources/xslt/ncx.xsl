@@ -4,6 +4,8 @@
 
     <xsl:output method="xml" indent="yes" encoding="UTF-8"/>
 
+    <xsl:param name="output_file"/>
+
     <xsl:template match="/">
         <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
             <head></head>
@@ -13,13 +15,13 @@
             <navMap>
                 <navPoint id="toc" playOrder="1">
                     <navLabel><text>Table of Contents</text></navLabel>
-                    <content src="toc.html#toc" />
+                    <content src="{$output_file}_toc.html#toc" />
                 </navPoint>
 
                 <xsl:for-each select="//rss/channel/item">
                     <navPoint id="#{link}" playOrder="{position()+1}">
                         <navLabel><text><xsl:value-of select="title"/></text></navLabel>
-                        <content src="test_output.html#{link}" />
+                        <content src="{$output_file}.html#{link}" />
                     </navPoint>
                 </xsl:for-each>
 

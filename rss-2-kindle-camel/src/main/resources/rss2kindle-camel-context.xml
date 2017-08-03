@@ -24,6 +24,13 @@
         <camel:route id="rss2html">
             <!--<camel:from uri="direct:startTransformation?block=true&amp;timeout=50000"/>-->
             <camel:from uri="file://{{storage.path.rss}}?recursive={{rss2html.file.recursive}}&amp;delete={{rss2html.file.delete}}&amp;initialDelay={{rss2html.file.initialDelay}}&amp;delay={{rss2html.file.delay}}"/>
+            <camel:multicast>
+                <camel:to uri="direct:text"/>
+                <camel:to uri="direct:toc"/>
+                <camel:to uri="direct:ncx"/>
+                <camel:to uri="direct:opf"/>
+            </camel:multicast>
+            <!--
             <camel:log message="XSLT transforming ${header.CamelFileName} by xslt:rss2html.xsl" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
             <camel:to uri="{{rss2html.template.xslt}}"/>
             <camel:setHeader headerName="CamelFileName">
@@ -32,7 +39,57 @@
             <camel:log message="Save transformation result as html ${header.CamelFileName}" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
             <camel:to uri="file://{{storage.path.mobi}}"/>
             <camel:to uri="seda:kindlegen"/>
+-->
         </camel:route>
+
+        <camel:route id="text">
+            <camel:from uri="direct:text"/>
+            <camel:log message="XSLT transforming ${header.CamelFileName} by xslt:rss2html.xsl" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
+            <camel:to uri="{{rss2html.template.xslt}}"/>
+            <camel:setHeader headerName="CamelFileName">
+                <camel:simple>${header.CamelFileName}.htm</camel:simple>
+            </camel:setHeader>
+            <camel:log message="Save transformation result as html ${header.CamelFileName}" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
+            <camel:to uri="file://{{storage.path.mobi}}"/>
+        </camel:route>
+        <camel:route id="toc">
+            <camel:from uri="direct:toc"/>
+            <camel:log message="XSLT transforming ${header.CamelFileName} by toc.xsl" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
+            <camel:to uri="{{toc.template.xslt}}"/>
+            <camel:setHeader headerName="CamelFileName">
+                <camel:simple>${header.CamelFileName}_toc.htm</camel:simple>
+            </camel:setHeader>
+            <camel:log message="Save transformation result as html ${header.CamelFileName}" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
+            <camel:to uri="file://{{storage.path.mobi}}"/>
+        </camel:route>
+        <camel:route id="ncx">
+            <camel:from uri="direct:ncx"/>
+            <camel:log message="XSLT transforming ${header.CamelFileName} by ncx.xsl" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
+            <camel:setHeader headerName="output_file">
+                <camel:constant>${header.CamelFileName}</camel:constant>
+            </camel:setHeader>
+            <camel:to uri="{{ncx.template.xslt}}"/>
+            <camel:setHeader headerName="CamelFileName">
+                <camel:simple>${header.CamelFileName}.ncx</camel:simple>
+            </camel:setHeader>
+            <camel:log message="Save transformation result as ncx ${header.CamelFileName}" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
+            <camel:to uri="file://{{storage.path.mobi}}"/>
+        </camel:route>
+        <camel:route id="opf">
+            <camel:from uri="direct:opf"/>
+            <camel:log message="XSLT transforming ${header.CamelFileName} by opf.xsl" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
+            <camel:setHeader headerName="output_file">
+                <camel:constant>${header.CamelFileName}</camel:constant>
+            </camel:setHeader>
+            <camel:to uri="{{opf.template.xslt}}"/>
+            <camel:setHeader headerName="CamelFileName">
+                <camel:simple>${header.CamelFileName}.opf</camel:simple>
+            </camel:setHeader>
+            <camel:log message="Save transformation result as opf ${header.CamelFileName}" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
+            <camel:to uri="file://{{storage.path.mobi}}"/>
+        </camel:route>
+
+
 
         <!--html to mobi transforming by kindlegen -->
         <camel:route id="html2mobi">

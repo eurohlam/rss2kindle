@@ -27,9 +27,9 @@
                 </dc-metadata>
             </metadata>
             <manifest>
-                <item id="toc" media-type="text/x-oeb1-document" href="toc.html"></item>
-                <item id="ncx" media-type="application/x-dtbncx+xml" href="toc.ncx"/>
-                <item id="text" media-type="text/x-oeb1-document" href="{$output_file}"></item>
+                <item id="toc" media-type="text/x-oeb1-document" href="{$output_file}_toc.htm"></item>
+                <item id="ncx" media-type="application/x-dtbncx+xml" href="{$output_file}.ncx"/>
+                <item id="text" media-type="text/x-oeb1-document" href="{$output_file}.htm"></item>
                 <!--item id="Images" media-type="text/x-oeb1-document" href="Images.html"></item>
                 <item id="background" media-type="text/x-oeb1-document" href="background.html"></item-->
             </manifest>
@@ -40,8 +40,8 @@
                 <itemref idref="background"/-->
             </spine>
             <guide>
-                <reference type="toc" title="Table of Contents" href="toc.html"/>
-                <reference type="text" title="Book" href="{$output_file}"/>
+                <reference type="toc" title="Table of Contents" href="{$output_file}_toc.htm"/>
+                <reference type="text" title="Book" href="{$output_file}.htm"/>
             </guide>
         </package>
     </xsl:template>

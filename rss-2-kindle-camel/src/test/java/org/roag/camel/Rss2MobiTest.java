@@ -1,7 +1,14 @@
 package org.roag.camel;
 
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.testng.CamelSpringTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
+import org.roag.ds.SubscriberRepository;
+import org.roag.model.Subscriber;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -12,9 +19,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 /**
- * Created by RomanA on 13/07/2017.
+ * Created by eurohlam on 13/07/2017.
  */
-public class Rss2MobiTest {
+public class Rss2MobiTest extends CamelSpringTestSupport
+{
 
     private static final String rss_file = "src/test/resources/testrss.xml";
     private static final String text_file = "src/test/resources/test_output.html";
@@ -25,6 +33,37 @@ public class Rss2MobiTest {
     private static final String ncx_xslt = "src/main/resources/xslt/ncx.xsl";
     private static final String opf_file = "src/test/resources/test_output.opf";
     private static final String opf_xslt = "src/main/resources/xslt/opf.xsl";
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext()
+    {
+        ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext("META-INF/spring/test-spring-context.xml");
+        return context;
+    }
+
+    @Override
+    public boolean isCreateCamelContextPerClass()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isUseAdviceWith()
+    {
+        return false;
+    }
+
+    public void startCamelContext() throws Exception
+    {
+        context.start();
+    }
+
+
+    public void stopCamelContext() throws Exception
+    {
+        context.stop();
+    }
+
 
     @Test
     public void rss2htmlTransformationTest()
@@ -51,5 +90,18 @@ public class Rss2MobiTest {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception
+    {
+        return new RouteBuilder()
+        {
+            @Override
+            public void configure() throws Exception
+            {
+                from("direct:xslt").to("${}");
+            }
+        };
     }
 }
