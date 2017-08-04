@@ -6,10 +6,11 @@
 
     <xsl:output method="html" indent="yes" encoding="UTF-8"/>
 
+    <xsl:param name="output_file"/>
+
     <xsl:template match="/">
         <html>
             <head>
-                <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
                 <title>
                     <xsl:value-of select="//rss/channel/title"/>
                 </title>
@@ -19,7 +20,7 @@
                     <h2>Table of Contents</h2>
                     <ol>
                         <xsl:for-each select="//rss/channel/item">
-                            <li><a href="#{link}"><xsl:value-of select="title"/></a></li>
+                            <li><a href="{$output_file}.htm#{link}"><xsl:value-of select="title"/></a></li>
                         </xsl:for-each>
                     </ol>
                 </div>

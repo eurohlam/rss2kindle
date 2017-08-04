@@ -38,8 +38,11 @@
             </camel:setHeader>
             <camel:log message="Save transformation result as html ${header.CamelFileName}" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
             <camel:to uri="file://{{storage.path.mobi}}"/>
-            <camel:to uri="seda:kindlegen"/>
 -->
+            <camel:setHeader headerName="CamelFileName">
+                <camel:simple>${header.CamelFileName}.opf</camel:simple>
+            </camel:setHeader>
+            <camel:to uri="seda:kindlegen"/>
         </camel:route>
 
         <camel:route id="text">
@@ -55,6 +58,9 @@
         <camel:route id="toc">
             <camel:from uri="direct:toc"/>
             <camel:log message="XSLT transforming ${header.CamelFileName} by toc.xsl" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
+            <camel:setHeader headerName="output_file">
+                <camel:simple>${header.CamelFileNameOnly}</camel:simple>
+            </camel:setHeader>
             <camel:to uri="{{toc.template.xslt}}"/>
             <camel:setHeader headerName="CamelFileName">
                 <camel:simple>${header.CamelFileName}_toc.htm</camel:simple>
@@ -66,7 +72,7 @@
             <camel:from uri="direct:ncx"/>
             <camel:log message="XSLT transforming ${header.CamelFileName} by ncx.xsl" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
             <camel:setHeader headerName="output_file">
-                <camel:constant>${header.CamelFileName}</camel:constant>
+                <camel:simple>${header.CamelFileNameOnly}</camel:simple>
             </camel:setHeader>
             <camel:to uri="{{ncx.template.xslt}}"/>
             <camel:setHeader headerName="CamelFileName">
@@ -79,7 +85,7 @@
             <camel:from uri="direct:opf"/>
             <camel:log message="XSLT transforming ${header.CamelFileName} by opf.xsl" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
             <camel:setHeader headerName="output_file">
-                <camel:constant>${header.CamelFileName}</camel:constant>
+                <camel:simple>${header.CamelFileNameOnly}</camel:simple>
             </camel:setHeader>
             <camel:to uri="{{opf.template.xslt}}"/>
             <camel:setHeader headerName="CamelFileName">
@@ -92,7 +98,7 @@
 
 
         <!--html to mobi transforming by kindlegen -->
-        <camel:route id="html2mobi">
+        <camel:route id="kindlegen">
             <camel:from uri="seda:kindlegen"/>
             <camel:log message="Start kindlegen: {{kindlegen.path}} for file ${header.CamelFileName}" loggingLevel="DEBUG" logName="org.roag.camel.html2mobi"/>
             <camel:toD uri="exec:{{kindlegen.path}}?args={{storage.path.mobi}}${header.CamelFileName}"/>

@@ -15,13 +15,13 @@
             <navMap>
                 <navPoint id="toc" playOrder="1">
                     <navLabel><text>Table of Contents</text></navLabel>
-                    <content src="{$output_file}_toc.html#toc" />
+                    <content src="{$output_file}_toc.htm#toc" />
                 </navPoint>
 
                 <xsl:for-each select="//rss/channel/item">
-                    <navPoint id="#{link}" playOrder="{position()+1}">
+                    <navPoint id="{link}" playOrder="{position()+1}">
                         <navLabel><text><xsl:value-of select="title"/></text></navLabel>
-                        <content src="{$output_file}.html#{link}" />
+                        <content src="{$output_file}.htm#{link}" />
                     </navPoint>
                 </xsl:for-each>
 

@@ -9,33 +9,11 @@
     <xsl:template match="/">
         <html>
             <head>
-                <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
                 <title>
                     <xsl:value-of select="//rss/channel/title"/>
                 </title>
             </head>
-<!--
-            <nav epub:type="toc">
-                <ol>
-                    <xsl:for-each select="//rss/channel/item">
-                        <li><a href="#{link}"><xsl:value-of select="title"/></a></li>
-                    </xsl:for-each>
-                </ol>
-            </nav>
--->
             <body>
-<!--
-                <div id="toc">
-                    <h2>
-                        Table of Contents
-                    </h2>
-                    <ol>
-                        <xsl:for-each select="//rss/channel/item">
-                            <li><a href="#{link}"><xsl:value-of select="title"/></a></li>
-                        </xsl:for-each>
-                    </ol>
-                </div>
--->
                 <xsl:for-each select="//rss/channel/item">
                     <xsl:call-template name="item"/>
                 </xsl:for-each>
@@ -47,14 +25,10 @@
         <h2 id="{link}"><xsl:value-of select="title"/></h2>
         <xsl:choose>
             <xsl:when test="count(content:encoded)=0">
-                <p>
                     <xsl:value-of select="description" disable-output-escaping="yes"/>
-                </p>
             </xsl:when>
             <xsl:otherwise>
-                <p>
                     <xsl:value-of select="content:encoded" disable-output-escaping="yes"/>
-                </p>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
