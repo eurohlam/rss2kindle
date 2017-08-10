@@ -30,17 +30,8 @@
                 <camel:to uri="direct:ncx"/>
                 <camel:to uri="direct:opf"/>
             </camel:multicast>
-            <!--
-            <camel:log message="XSLT transforming ${header.CamelFileName} by xslt:rss2html.xsl" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
-            <camel:to uri="{{rss2html.template.xslt}}"/>
             <camel:setHeader headerName="CamelFileName">
-                <camel:simple>${header.CamelFileName}.htm</camel:simple>
-            </camel:setHeader>
-            <camel:log message="Save transformation result as html ${header.CamelFileName}" loggingLevel="DEBUG" logName="org.roag.camel.rss2html"/>
-            <camel:to uri="file://{{storage.path.mobi}}"/>
--->
-            <camel:setHeader headerName="CamelFileName">
-                <camel:simple>${header.CamelFileName}.opf</camel:simple>
+                <camel:simple>${header.CamelFileName}</camel:simple>
             </camel:setHeader>
             <camel:to uri="seda:kindlegen"/>
         </camel:route>
@@ -101,7 +92,7 @@
         <camel:route id="kindlegen">
             <camel:from uri="seda:kindlegen"/>
             <camel:log message="Start kindlegen: {{kindlegen.path}} for file ${header.CamelFileName}" loggingLevel="DEBUG" logName="org.roag.camel.html2mobi"/>
-            <camel:toD uri="exec:{{kindlegen.path}}?args={{storage.path.mobi}}${header.CamelFileName}"/>
+            <camel:toD uri="exec:{{kindlegen.path}}?args={{storage.path.mobi}}${header.CamelFileName} {{kindlegen.home}}"/>
             <camel:setHeader headerName="email">
                 <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('/.*$','g'),'')</camel:javaScript>
             </camel:setHeader>
