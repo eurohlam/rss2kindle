@@ -17,7 +17,7 @@
                 <dc-metadata xmlns:dc="http://purl.org/metadata/dublin_core"
                              xmlns:oebpackage="http://openebook.org/namespaces/oeb-package/1.0/">
                     <dc:Title><xsl:value-of select="//rss/channel/title"/></dc:Title>
-                    <dc:Language> <xsl:value-of select="//rss/channel/language"/></dc:Language>
+                    <dc:Language>en</dc:Language>
                     <dc:Creator> <xsl:value-of select="//rss/channel/link"/></dc:Creator>
                     <dc:Copyrights> <xsl:value-of select="//rss/channel/link"/></dc:Copyrights>
                     <dc:Publisher>Rss-2-kindle service</dc:Publisher>
