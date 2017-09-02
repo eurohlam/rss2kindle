@@ -5,6 +5,7 @@ import org.glassfish.jersey.test.JerseyTestNg;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import static org.junit.Assert.*;
@@ -23,7 +24,7 @@ public class ProfileManagerTest extends JerseyTestNg.ContainerPerClassTest
     @Test(groups = {"profile"})
     public void getAllSubscriptionTest()
     {
-        final Response response = target().request().get();
+        final Response response = target("profile/fbroman@mail.ru/subscriptions").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
 
         assertEquals(response.getStatus(), 200);
     }
