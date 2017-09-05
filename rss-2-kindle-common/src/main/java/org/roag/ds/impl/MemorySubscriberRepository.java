@@ -41,6 +41,11 @@ public class MemorySubscriberRepository implements SubscriberRepository
         }
     }
 
+    public void setSubscribers(Map<String, Subscriber> subscribers)
+    {
+        this.subscribers=subscribers;
+    }
+
     @Override
     public Subscriber getSubscriber(String email) throws Exception
     {

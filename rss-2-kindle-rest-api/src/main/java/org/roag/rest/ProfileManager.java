@@ -1,5 +1,6 @@
 package org.roag.rest;
 
+import com.google.gson.Gson;
 import org.roag.ds.OperationResult;
 import org.roag.ds.SubscriberRepository;
 import org.roag.model.Rss;
@@ -31,6 +32,8 @@ public class ProfileManager
     @Autowired
     private SubscriberRepository subscriberRepository;
 
+    private Gson gson = new Gson();
+
     @GET
     @Path("/{id}/subscriptions")
     @Produces(MediaType.APPLICATION_JSON)
@@ -40,7 +43,8 @@ public class ProfileManager
         try
         {
             Subscriber subscriber = subscriberRepository.getSubscriber(id);
-            return Response.ok(subscriber.getRsslist(), MediaType.APPLICATION_JSON_TYPE).build();
+            String result=gson.toJson(subscriber.getRsslist());
+            return Response.ok(result, MediaType.APPLICATION_JSON_TYPE).build();
         }
         catch (Exception e)
         {

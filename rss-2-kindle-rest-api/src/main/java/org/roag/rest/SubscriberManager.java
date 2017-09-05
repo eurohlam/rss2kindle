@@ -38,7 +38,7 @@ public class SubscriberManager
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllSubscribers()
     {
-        logger.debug("Fetch all subscribers from Mongo");
+        logger.debug("Fetch all subscribers from repository");
         try
         {
             String subscribers=subscriberFactory.convertPojo2Json(subscriberRepository.findAll());
@@ -56,7 +56,7 @@ public class SubscriberManager
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSubscriber(@PathParam("id") String id)
     {
-        logger.debug("Fetch subscriber {} from Mongo", id);
+        logger.debug("Fetch subscriber {} from repository", id);
         try
         {
             String subscriber = subscriberRepository.getSubscriberAsJSON(id);

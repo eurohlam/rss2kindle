@@ -26,6 +26,11 @@
 
     <!--Using in memory repository for testing goals  -->
     <bean id="subscriberRepository" class="org.roag.ds.impl.MemorySubscriberRepository" factory-method="getInstance">
+        <property name="subscribers">
+            <map>
+                <entry key="${test.email}" value-ref="testSubscriber"/>
+            </map>
+        </property>
     </bean>
 
 </beans>
