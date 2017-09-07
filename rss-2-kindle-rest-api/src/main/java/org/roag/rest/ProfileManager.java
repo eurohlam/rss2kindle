@@ -16,6 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import java.util.List;
 
 /**
  * Created by eurohlam on 30.08.17.
@@ -96,9 +97,13 @@ public class ProfileManager
         try
         {
             Subscriber subscriber = subscriberRepository.getSubscriber(id);
-            for (Rss r : subscriber.getRsslist())
-                if (r.getRss().equals(rss))
-                    subscriber.getRsslist().remove(r);
+            List<Rss> rssList=subscriber.getRsslist();
+            for (int i=0; i< rssList.size(); i++) {
+                Rss _rss=rssList.get(i);
+                if (_rss.getRss().equals(rss))
+                    rssList.remove(i);
+            }
+            subscriber.setRsslist(rssList);
 
             OperationResult result = subscriberRepository.updateSubscriber(subscriber);
             if (result == OperationResult.SUCCESS)
