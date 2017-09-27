@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Hashtable;
 import java.util.Map;
@@ -48,9 +49,18 @@ public class RssPollingTask implements Callable<Map<String, String>>
         if (folder.exists() && folder.isDirectory())
         {
             String file=folder.getPath() + "/" + fileName;
-            OutputStream out = new FileOutputStream(file);
-            out.write(RssConverter.feedToXml(feed).getBytes());
-            out.close();
+            OutputStream out = null;
+            try {
+                out = new FileOutputStream(file);
+                out.write(RssConverter.feedToXml(feed).getBytes());
+            } catch (IOException e)
+            {
+                logger.error(e.getMessage(), e);
+                throw e;
+            } finally {
+                if (out != null)
+                    out.close();
+            }
             logger.debug("Feed {} marshaled into file {}", rssURI, file);
             map.put(rssURI, file);
         }
