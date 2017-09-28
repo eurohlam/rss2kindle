@@ -4,6 +4,7 @@ import org.roag.ds.OperationResult;
 import org.roag.ds.SubscriberRepository;
 import org.roag.model.Subscriber;
 import org.roag.model.SubscriberStatus;
+import org.roag.model.User;
 import org.roag.service.SubscriberFactory;
 
 import java.util.*;
@@ -15,12 +16,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class MemorySubscriberRepository implements SubscriberRepository
 {
+    private Map<String, User> users;
     private Map<String, Subscriber> subscribers;
     private static SubscriberRepository repository;
     private final SubscriberFactory factory;
 
     private MemorySubscriberRepository()
     {
+        this.users = new ConcurrentHashMap<>();
         this.subscribers = new ConcurrentHashMap<>();
         this.factory = new SubscriberFactory();
     }
@@ -90,11 +93,17 @@ public class MemorySubscriberRepository implements SubscriberRepository
     }
 
     @Override
-    public OperationResult addSubscriber(Subscriber subscriber) throws Exception
+    public OperationResult addSubscriber(User user, Subscriber subscriber) throws Exception
     {
+        if (!users.containsKey(user.getUsername()))
+            throw new IllegalArgumentException("User " + user.getUsername() + " does not exist");
+
         if (subscribers.containsKey(subscriber.getEmail()))
             throw new IllegalArgumentException("Subscriber " + subscriber.getEmail() + " already exists");
+
         subscribers.put(subscriber.getEmail(), subscriber);
+        users.get(user.getUsername()).getSubscribers().add(subscriber);
+
         return OperationResult.SUCCESS;
     }
 
@@ -121,5 +130,25 @@ public class MemorySubscriberRepository implements SubscriberRepository
     public List<Subscriber> findAll(Map condition) throws Exception
     {
         return null;//TODO: implement findAll with conditions
+    }
+
+    @Override
+    public OperationResult addUser(User user) throws Exception
+    {
+        if (users.containsKey(user.getUsername()))
+            throw new IllegalArgumentException("User " + user.getUsername() + " already exists");
+        users.put(user.getUsername(), user);
+        return OperationResult.SUCCESS;
+    }
+
+    @Override
+    public User getUser(String username) throws Exception {
+        return users.get(username);
+    }
+
+    @Override
+    public OperationResult updateUser(User user) throws Exception {
+        User u = users.replace(user.getUsername(), user);
+        return u!=null? OperationResult.SUCCESS: OperationResult.FAILURE;
     }
 }

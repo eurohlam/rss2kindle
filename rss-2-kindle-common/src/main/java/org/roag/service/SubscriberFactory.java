@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -24,6 +25,23 @@ public class SubscriberFactory
 
 
     private Gson gson = new Gson();
+
+    public User newUser(String username, String password)
+    {
+        return newUser(username, password, format.format(new Date()), UserStatus.ACTIVE.toString());
+    }
+
+    public User newUser(String username, String password, String dateCreated, String status)
+    {
+        User user = new User();
+        user.setId(UUID.randomUUID().toString());
+        user.setUsername(username);
+        user.setPassword(password);//TODO: cryptography
+        user.setStatus(status);
+        user.setDateCreated(dateCreated);
+
+        return user;
+    }
 
     public Subscriber newSubscriber(String email, String name, String rss) throws IllegalArgumentException
     {
