@@ -39,6 +39,7 @@ public class SubscriberFactory
         user.setPassword(password);//TODO: cryptography
         user.setStatus(status);
         user.setDateCreated(dateCreated);
+        user.setSubscribers(new ArrayList<Subscriber>());
 
         return user;
     }

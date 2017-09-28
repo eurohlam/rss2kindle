@@ -17,23 +17,29 @@ public interface SubscriberRepository
 
     public OperationResult updateUser(User user) throws Exception;
 
+    public OperationResult removeUser(String username) throws Exception;
+
+    public OperationResult lockUser(String username) throws Exception;
+
+    public OperationResult unlockUser(String username) throws Exception;
+
     public Subscriber getSubscriber(String username, String email) throws Exception;
 
     public String getSubscriberAsJSON(String username, String email) throws Exception;
 
-    public OperationResult updateSubscriber(User user, Subscriber subscriber) throws Exception;
+    public OperationResult updateSubscriber(String username, Subscriber subscriber) throws Exception;
 
     public OperationResult suspendSubscriber(String username, String email) throws Exception;
 
     public OperationResult resumeSubscriber(String username, String email) throws Exception;
 
-    public OperationResult addSubscriber(User user, Subscriber subscriber) throws Exception;
+    public OperationResult addSubscriber(String username, Subscriber subscriber) throws Exception;
 
     public OperationResult removeSubscriber(String username, String email) throws Exception;
 
-    public OperationResult removeSubscriber(User user, Subscriber subscriber) throws Exception;
+    public OperationResult removeSubscriber(String username, Subscriber subscriber) throws Exception;
 
-    public List<Subscriber> findAll() throws Exception;
+    public List<Subscriber> findAll(String username) throws Exception;
 
-    public List<Subscriber> findAll(Map condition) throws Exception;
+    public List<Subscriber> findAll(String username, Map condition) throws Exception;
 }
