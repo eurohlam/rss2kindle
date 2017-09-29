@@ -144,15 +144,25 @@ public class MemorySubscriberRepository implements SubscriberRepository
     }
 
     @Override
-    public List<Subscriber> findAll(String username) throws Exception
+    public List<Subscriber> findAllSubscribersByUser(String username) throws Exception
     {
         return new ArrayList<Subscriber>(getUser(username).getSubscribers());
     }
 
     @Override
-    public List<Subscriber> findAll(String username, Map condition) throws Exception
+    public List<Subscriber> findAllSubscribersByUser(String username, Map condition) throws Exception
     {
-        return null;//TODO: implement findAll with conditions
+        return findAllSubscribersByUser(username);//TODO: implement findAll with conditions
+    }
+
+    @Override
+    public List<User> findAll() throws Exception {
+        return new ArrayList<User>(users.values());
+    }
+
+    @Override
+    public List<User> findAll(Map condition) throws Exception {
+        return findAll(); //TODO: implement findAll with conditions
     }
 
     @Override

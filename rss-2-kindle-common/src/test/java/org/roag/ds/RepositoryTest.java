@@ -37,7 +37,7 @@ public class RepositoryTest
         assertNotNull(repository.getSubscriber(TEST_USER, TEST_EMAIL));
         assertEquals(repository.suspendSubscriber(TEST_USER, TEST_EMAIL), OperationResult.SUCCESS);
 
-        assertTrue(repository.findAll(TEST_USER).size() > 0);
+        assertTrue(repository.findAllSubscribersByUser(TEST_USER).size() > 0);
         assertEquals(repository.removeSubscriber(TEST_USER, subscriber), OperationResult.SUCCESS);
 
         assertEquals(repository.lockUser(TEST_USER), OperationResult.SUCCESS);

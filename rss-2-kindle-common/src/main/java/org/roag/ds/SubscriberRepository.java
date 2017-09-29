@@ -39,7 +39,11 @@ public interface SubscriberRepository
 
     public OperationResult removeSubscriber(String username, Subscriber subscriber) throws Exception;
 
-    public List<Subscriber> findAll(String username) throws Exception;
+    public List<Subscriber> findAllSubscribersByUser(String username) throws Exception;
 
-    public List<Subscriber> findAll(String username, Map condition) throws Exception;
+    public List<Subscriber> findAllSubscribersByUser(String username, Map condition) throws Exception;
+
+    public List<User> findAll() throws Exception;
+
+    public List<User> findAll(Map condition) throws Exception;
 }

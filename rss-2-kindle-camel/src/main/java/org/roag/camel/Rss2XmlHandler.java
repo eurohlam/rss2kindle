@@ -2,9 +2,7 @@ package org.roag.camel;
 
 import org.apache.camel.*;
 import org.roag.ds.SubscriberRepository;
-import org.roag.model.Rss;
-import org.roag.model.RssStatus;
-import org.roag.model.Subscriber;
+import org.roag.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,11 +89,25 @@ public class Rss2XmlHandler
         return RSS_FILE_NAME_FORMAT.get();
     }
 
+
+    public void runRssPollingForAllUsers() throws Exception
+    {
+        logger.debug("Start polling RSS for all active users");
+        for (User user: subscriberRepository.findAll())
+            if (UserStatus.valueOf(user.getStatus()) == UserStatus.ACTIVE)
+                runRssPollingForList(user.getSubscribers());
+            else
+                logger.debug("User {} is locked and will not be processed", user.getUsername());
+    }
+
+
+/*
     public void runRssPollingForAllSubscribers() throws Exception
     {
         logger.debug("Start polling RSS for all active subscribers");
         runRssPollingForList(subscriberRepository.findAll());
     }
+*/
 
     public void runRssPollingForList(List<Subscriber> subscriberList) throws Exception
     {
@@ -104,9 +116,9 @@ public class Rss2XmlHandler
     }
 
 
-    public short runRssPollingForSubscriber(String email) throws Exception
+    public short runRssPollingForSubscriber(String username, String email) throws Exception
     {
-        return runRssPollingForSubscriber(subscriberRepository.getSubscriber(email));
+        return runRssPollingForSubscriber(subscriberRepository.getSubscriber(username, email));
     }
 
     public short runRssPollingForSubscriber(Subscriber subscriber) throws Exception
