@@ -7,6 +7,8 @@ import org.roag.ds.OperationResult;
 import org.roag.ds.SubscriberRepository;
 import org.roag.model.Subscriber;
 import org.roag.model.SubscriberStatus;
+import org.roag.model.User;
+import org.roag.model.UserStatus;
 import org.roag.service.SubscriberFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,73 +42,138 @@ public class MongoSubscriberRepository implements SubscriberRepository
     }
 
     @Override
-    public OperationResult addSubscriber(Subscriber subscriber) throws Exception
-    {
-        logger.debug("Add new subscriber {}", subscriber.getEmail());
-        WriteResult r = mongoHelper.addSubscriber(subscriber, producerTemplate);
-        logger.debug("Added subscriber {} with the result {}", subscriber.getEmail(), r.toString().replaceFirst("WriteResult", ""));
+    public User getUser(String username) throws Exception {
+        logger.debug("Fetch user {} from Mongo", username);
+        User user = mongoHelper.getUser(username, producerTemplate);
+        return user;
+    }
+
+    @Override
+    public OperationResult addUser(User user) throws Exception {
+        logger.debug("Add new user {}", user.getUsername());
+        WriteResult r = mongoHelper.addUser(user, producerTemplate);
+        logger.info("Added user {} with the result {}", user.getUsername(), r.toString().replaceFirst("WriteResult", ""));
         return OperationResult.SUCCESS;
     }
 
     @Override
-    public OperationResult removeSubscriber(Subscriber subscriber) throws Exception
-    {
-        logger.debug("Remove subscriber {}", subscriber.getEmail());
-        WriteResult r = mongoHelper.removeSubscriber(subscriber.getEmail(), producerTemplate);
-        logger.debug("Removed subscriber {} with the result {}", subscriber.getEmail(), r.toString().replaceFirst("WriteResult", ""));
+    public OperationResult updateUser(User user) throws Exception {
+        logger.debug("Update user {}", user.getUsername());
+        WriteResult r = mongoHelper.updateUser(user, producerTemplate);
+        logger.info("Updated user {} with the result {}", user.getUsername(), r.toString().replaceFirst("WriteResult", ""));
         return r.getN()>0?OperationResult.SUCCESS:OperationResult.NOT_EXIST;
     }
 
     @Override
-    public OperationResult removeSubscriber(String email) throws Exception
-    {
-        Subscriber s = new Subscriber();
-        s.setEmail(email);
-        return removeSubscriber(s);
+    public OperationResult removeUser(String username) throws Exception { //TODO: mongo remove user
+        return null;
     }
 
     @Override
-    public List<Subscriber> findAll() throws Exception
+    public OperationResult lockUser(String username) throws Exception {
+        User user= getUser(username);
+        user.setStatus(UserStatus.LOCKED.toString());
+        logger.warn("Trying to lock user {}", username);
+        return updateUser(user);
+    }
+
+    @Override
+    public OperationResult unlockUser(String username) throws Exception {
+        User user= getUser(username);
+        user.setStatus(UserStatus.ACTIVE.toString());
+        logger.warn("Trying to activate user {}", username);
+        return updateUser(user);
+    }
+
+    @Override
+    public OperationResult addSubscriber(String username, Subscriber subscriber) throws Exception
+    {
+        logger.debug("Trying to add new subscriber {} for user {}", subscriber.getEmail(),  username);
+        User user = getUser(username);
+        user.getSubscribers().add(subscriber);
+        WriteResult r = mongoHelper.updateUser(user, producerTemplate);
+        logger.info("Added subscriber {} for user {} with the result {}", subscriber.getEmail(), username, r.toString().replaceFirst("WriteResult", ""));
+        return OperationResult.SUCCESS;
+    }
+
+    @Override
+    public OperationResult removeSubscriber(String username, Subscriber subscriber) throws Exception
+    {
+        return removeSubscriber(username, subscriber.getEmail());
+    }
+
+    @Override
+    public OperationResult removeSubscriber(String username, String email) throws Exception
+    {
+        logger.debug("Trying to remove subscriber {} for user {}", email, username);
+        User user = getUser(username);
+        for (short i=0; i<user.getSubscribers().size(); i++)
+        {
+            Subscriber s = user.getSubscribers().get(i);
+            if (s.getEmail().equals(email)) {
+                user.getSubscribers().remove(i);
+                WriteResult r = mongoHelper.updateUser(user, producerTemplate);
+                logger.warn("Removed subscriber {} for user {} with the result {}", email, username, r.toString().replaceFirst("WriteResult", ""));
+                return r.getN()>0?OperationResult.SUCCESS:OperationResult.NOT_EXIST;
+            }
+        }
+//        WriteResult r = mongoHelper.removeSubscriber(subscriber.getEmail(), producerTemplate);
+        return OperationResult.NOT_EXIST;
+    }
+
+    @Override
+    public List<User> findAll() throws Exception
     {
         return findAll(Collections.EMPTY_MAP);
     }
 
     @Override
-    public List<Subscriber> findAll(Map condition) throws Exception
+    public List<User> findAll(Map condition) throws Exception
     {
-        logger.debug("Fetch all subscriber from Mongo by condition {}", condition);
-        List<Subscriber> subscribers = mongoHelper.getSubscribers(producerTemplate, condition);
-        return subscribers;
+        logger.debug("Fetch all users from Mongo by condition {}", condition);
+        List<User> users = mongoHelper.findAllByCondition(producerTemplate, condition);
+        return users;
     }
 
     @Override
-    public Subscriber getSubscriber(String email) throws Exception
+    public Subscriber getSubscriber(String username, String email) throws Exception
     {
         logger.debug("Fetch subscriber {} from Mongo", email);
-        Subscriber subscriber = mongoHelper.getSubscriber(email, producerTemplate);
+        Subscriber subscriber = mongoHelper.getSubscriber(username, email, producerTemplate);
         return subscriber;
     }
 
     @Override
-    public String getSubscriberAsJSON(String email) throws Exception
+    public String getSubscriberAsJSON(String username, String email) throws Exception
     {
-        return subscriberFactory.convertPojo2Json(getSubscriber(email));
+        return subscriberFactory.convertPojo2Json(getSubscriber(username, email));
     }
 
     @Override
-    public OperationResult updateSubscriber(Subscriber subscriber) throws Exception
+    public OperationResult updateSubscriber(String username, Subscriber subscriber) throws Exception
     {
-        logger.debug("Update subscriber {}", subscriber.getEmail());
-        WriteResult r = mongoHelper.updateSubscriber(subscriber, producerTemplate);
-        logger.debug("Updated subscriber {} with the result {}", subscriber.getEmail(), r.toString().replaceFirst("WriteResult", ""));
-        return r.getN()>0?OperationResult.SUCCESS:OperationResult.NOT_EXIST;
+        logger.debug("Update subscriber {} for user {}", subscriber.getEmail(), username);
+        User user = getUser(username);
+        for (short i=0; i<user.getSubscribers().size(); i++)
+        {
+            Subscriber s = user.getSubscribers().get(i);
+            if (s.getEmail().equals(subscriber.getEmail())) {
+                user.getSubscribers().remove(i);
+                user.getSubscribers().add(i,subscriber);
+                WriteResult r = mongoHelper.updateUser(user, producerTemplate);
+                logger.info("Updated subscriber {} for user {} with the result {}", subscriber.getEmail(), username, r.toString().replaceFirst("WriteResult", ""));
+                return r.getN()>0?OperationResult.SUCCESS:OperationResult.NOT_EXIST;
+            }
+        }
+//        WriteResult r = mongoHelper.updateSubscriber(subscriber, producerTemplate);
+        return OperationResult.NOT_EXIST;
     }
 
     @Override
-    public OperationResult suspendSubscriber(String id) throws Exception
+    public OperationResult suspendSubscriber(String username, String id) throws Exception
     {
-        logger.debug("Suspend subscriber {}", id);
-        Subscriber subscriber = getSubscriber(id);
+        logger.warn("Trying to suspend subscriber {} for user {}", id, username);
+        Subscriber subscriber = getSubscriber(username, id);
         if (SubscriberStatus.fromValue(subscriber.getStatus()) == SubscriberStatus.TERMINATED)
         {
             logger.error("Subscriber {} can't be suspended due to it has been terminated", id);
@@ -115,15 +182,15 @@ public class MongoSubscriberRepository implements SubscriberRepository
         else
         {
             subscriber.setStatus(SubscriberStatus.SUSPENDED.toString());
-            return updateSubscriber(subscriber);
+            return updateSubscriber(username, subscriber);
         }
     }
 
     @Override
-    public OperationResult resumeSubscriber(String id) throws Exception
+    public OperationResult resumeSubscriber(String username, String id) throws Exception
     {
-        logger.debug("Resume subscriber {}", id);
-        Subscriber subscriber = getSubscriber(id);
+        logger.warn("Trying to resume subscriber {} for user {}", id, username);
+        Subscriber subscriber = getSubscriber(username, id);
         if (SubscriberStatus.fromValue(subscriber.getStatus()) == SubscriberStatus.TERMINATED)
         {
             logger.error("Subscriber {} can't be resumed due to it has been terminated", id);
@@ -132,7 +199,7 @@ public class MongoSubscriberRepository implements SubscriberRepository
         else
         {
             subscriber.setStatus(SubscriberStatus.ACTIVE.toString());
-            return updateSubscriber(subscriber);
+            return updateSubscriber(username, subscriber);
         }
     }
 

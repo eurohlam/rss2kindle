@@ -116,6 +116,68 @@ public class MongoHelper
         return "mongodb:" + MONGO_SPRING_BEAN + "?database=" + mongoDatabase + "&collection=" + collection + "&operation=" + operation.toString();
     }
 
+    public User getUser(String username, ProducerTemplate producerTemplate) throws Exception
+    {
+        Map<String, String> cond = new HashMap<>(2);
+//        cond.put("status", "active");
+        cond.put("username", username);
+        DBObject result = findOneByCondition(producerTemplate, cond);
+        if (result == null)
+            throw new IllegalArgumentException("User " + username + " has not been found");
+
+        result.removeField("_id");
+        User user = subscriberFactory.convertJson2Pojo(User.class, subscriberFactory.convertPojo2Json(result));
+        BasicDBList subscribers = (BasicDBList) result.get("subscribers");
+        logger.info("GET: User: {} with status {} \n {} {}", user.getUsername(), user.getStatus(), subscribers.getClass().toString(), subscribers);
+        return user;
+
+    }
+
+    public WriteResult addUser(User user, ProducerTemplate producerTemplate) throws Exception
+    {
+        Map<String, String> cond= new HashMap<>(1);
+        cond.put("username", user.getUsername());
+        DBObject r=findOneByCondition(producerTemplate,cond);
+        if (r != null)
+            throw new IllegalArgumentException("Creation is impossible. User " + user.getUsername() + " already exists");
+
+        WriteResult result = (WriteResult) producerTemplate.requestBody(
+                getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.insert),
+                subscriberFactory.convertPojo2Json(user));
+
+        logger.info("INSERT: New user: {} has been inserted into Mongo with the result: {}", user.getUsername(), result);
+        return result;
+    }
+
+    public WriteResult updateUser(User user, ProducerTemplate producerTemplate) throws Exception
+    {
+        Map<String, String> cond= new HashMap<>(1);
+        cond.put("username", user.getUsername());
+        DBObject r=findOneByCondition(producerTemplate,cond);
+        if (r == null)
+            throw new IllegalArgumentException("Update is impossible. User " + user.getUsername() + " does not exist");
+
+        DBObject filterField = new BasicDBObject("username", user.getUsername());
+        DBObject obj=BasicDBObjectBuilder.start(subscriberFactory.convertJson2Pojo(Map.class,subscriberFactory.convertPojo2Json(user))).get();
+        WriteResult result = (WriteResult) producerTemplate.requestBody(
+                getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.update),
+                new Object[]{filterField, obj});
+
+        logger.info("UPDATE: User: {} has been updated into Mongo with the result: {}", user.getUsername(), result);
+        return result;
+    }
+
+    public WriteResult removeUser(String username, ProducerTemplate producerTemplate) throws Exception
+    {
+        DBObject query = new BasicDBObject("username", username);
+        WriteResult result = (WriteResult) producerTemplate.requestBody(
+                getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.remove),
+                query);
+
+        logger.warn("DELETE: User: {} has been removed from Mongo with the result: {}", username, result);
+        return result;
+    }
+
     public List<Subscriber> getSubscribers(ProducerTemplate producerTemplate, Map<String, String> conditions) throws Exception
     {
 //        DBObject query = BasicDBObjectBuilder.start("status", "active").get();
@@ -132,24 +194,25 @@ public class MongoHelper
         return subscribers;
     }
 
-    public Subscriber getSubscriber(String email, ProducerTemplate producerTemplate) throws Exception
+    public Subscriber getSubscriber(String username, String email, ProducerTemplate producerTemplate) throws Exception
     {
         Map<String, String> cond = new HashMap<>(2);
-//        cond.put("status", "active");
-        cond.put("email", email);
+        cond.put("username", username);
+        cond.put("subscribers.email", email);
         DBObject result = findOneByCondition(producerTemplate, cond);
         if (result == null)
             throw new IllegalArgumentException("Subscriber " + email + " has not been found");
 
         result.removeField("_id");
-        Subscriber subscr = subscriberFactory.convertJson2Pojo(Subscriber.class, subscriberFactory.convertPojo2Json(result));
+        Subscriber subscr = subscriberFactory.convertJson2Pojo(Subscriber.class, subscriberFactory.convertPojo2Json(result));//TODO:
         BasicDBList rsslist = (BasicDBList) result.get("rsslist");
-        logger.info("GET: Subscriber: {} \n {} {}", subscr.getEmail(), rsslist.getClass().toString(), rsslist);
+        logger.info("GET: Subscriber: {} for user {}\n {} {}", subscr.getEmail(), username, rsslist.getClass().toString(), rsslist);
         return subscr;
 
     }
 
-    public WriteResult addSubscriber(Subscriber subscriber, ProducerTemplate producerTemplate) throws Exception
+/*
+    public WriteResult addSubscriber(Subscriber subscriber, ProducerTemplate producerTemplate) throws Exception//TODO:
     {
         Map<String, String> cond= new HashMap<>(1);
         cond.put("email", subscriber.getEmail());
@@ -165,7 +228,7 @@ public class MongoHelper
         return result;
     }
 
-    public WriteResult updateSubscriber(Subscriber subscriber, ProducerTemplate producerTemplate) throws Exception
+    public WriteResult updateSubscriber(Subscriber subscriber, ProducerTemplate producerTemplate) throws Exception//TODO:
     {
         Map<String, String> cond= new HashMap<>(1);
         cond.put("email", subscriber.getEmail());
@@ -183,7 +246,7 @@ public class MongoHelper
         return result;
     }
 
-    public WriteResult removeSubscriber(String email, ProducerTemplate producerTemplate) throws Exception
+    public WriteResult removeSubscriber(String email, ProducerTemplate producerTemplate) throws Exception //TODO:
     {
         DBObject query = new BasicDBObject("email", email);
         WriteResult result = (WriteResult) producerTemplate.requestBody(
@@ -193,4 +256,5 @@ public class MongoHelper
         logger.warn("DELETE: Subscriber: {} has been removed from Mongo with the result: {}", email, result);
         return result;
     }
+    */
 }
