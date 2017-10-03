@@ -135,6 +135,17 @@ public class MongoSubscriberRepository implements SubscriberRepository
         return users;
     }
 
+
+    @Override
+    public List<Subscriber> findAllSubscribersByUser(String username) throws Exception {
+        return null;//TODO
+    }
+
+    @Override
+    public List<Subscriber> findAllSubscribersByUser(String username, Map condition) throws Exception {
+        return null;//TODO
+    }
+
     @Override
     public Subscriber getSubscriber(String username, String email) throws Exception
     {
