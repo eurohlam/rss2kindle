@@ -194,18 +194,18 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
     public void mongoHelperFindOneTest() throws Exception
     {
         HashMap<String, String> cond = new HashMap<>(1);
-        cond.put("email", TEST_EMAIL);
+        cond.put("username", TEST_USERNAME);
         DBObject result = mh.findOneByCondition(template, cond);
 
         assertTrue(result instanceof DBObject);
 
         logger.debug(result.get("_id").toString());
-        logger.debug(result.get("email").toString());
-        logger.debug(result.get("name").toString());
+        logger.debug(result.get("password").toString());
+        logger.debug(result.get("username").toString());
         logger.debug(result.get("status").toString());
         assertNotNull(result.get("_id").toString(), "DBObject in returned list should contain field _id");
-        assertNotNull(result.get("email").toString(), "DBObject in returned list should contain field email");
-        assertNotNull(result.get("name").toString(), "DBObject in returned list should contain field name");
+        assertNotNull(result.get("password").toString(), "DBObject in returned list should contain field password");
+        assertNotNull(result.get("username").toString(), "DBObject in returned list should contain field username");
     }
 
 

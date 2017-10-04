@@ -177,7 +177,7 @@ public class MongoHelper
         logger.warn("DELETE: User: {} has been removed from Mongo with the result: {}", username, result);
         return result;
     }
-
+/*
     public List<Subscriber> getSubscribers(ProducerTemplate producerTemplate, Map<String, String> conditions) throws Exception
     {
 //        DBObject query = BasicDBObjectBuilder.start("status", "active").get();
@@ -204,12 +204,13 @@ public class MongoHelper
             throw new IllegalArgumentException("Subscriber " + email + " has not been found");
 
         result.removeField("_id");
+        logger.info(result.toString());
         Subscriber subscr = subscriberFactory.convertJson2Pojo(Subscriber.class, subscriberFactory.convertPojo2Json(result));//TODO:
         BasicDBList rsslist = (BasicDBList) result.get("rsslist");
         logger.info("GET: Subscriber: {} for user {}\n {} {}", subscr.getEmail(), username, rsslist.getClass().toString(), rsslist);
         return subscr;
 
-    }
+    }*/
 
 /*
     public WriteResult addSubscriber(Subscriber subscriber, ProducerTemplate producerTemplate) throws Exception//TODO:

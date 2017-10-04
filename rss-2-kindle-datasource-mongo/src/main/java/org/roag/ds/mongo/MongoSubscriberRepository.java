@@ -65,8 +65,11 @@ public class MongoSubscriberRepository implements SubscriberRepository
     }
 
     @Override
-    public OperationResult removeUser(String username) throws Exception { //TODO: mongo remove user
-        return null;
+    public OperationResult removeUser(String username) throws Exception {
+        logger.debug("Remove user {}", username);
+        WriteResult r = mongoHelper.removeUser(username, producerTemplate);
+        logger.info("Removeed user {} with the result {}", username, r.toString().replaceFirst("WriteResult", ""));
+        return r.getN()>0?OperationResult.SUCCESS:OperationResult.NOT_EXIST;
     }
 
     @Override
@@ -150,8 +153,16 @@ public class MongoSubscriberRepository implements SubscriberRepository
     public Subscriber getSubscriber(String username, String email) throws Exception
     {
         logger.debug("Fetch subscriber {} from Mongo", email);
-        Subscriber subscriber = mongoHelper.getSubscriber(username, email, producerTemplate);
-        return subscriber;
+
+        User user=getUser(username);
+        if (user == null)
+            throw new IllegalArgumentException("User " + username + " does not exist");
+
+        for (Subscriber s: user.getSubscribers())
+            if (s.getEmail().equals(email))
+                return s;
+
+        return null;
     }
 
     @Override
