@@ -20,7 +20,7 @@
 
     <bean id="testUser" factory-bean="subscriberFactory" factory-method="newUser">
         <constructor-arg index="0" value="${test.username}"/>
-        <constructor-arg index="2" value="${test.password}"/>
+        <constructor-arg index="1" value="${test.password}"/>
     </bean>
 
     <bean id="testSubscriber" factory-bean="subscriberFactory" factory-method="newSubscriber">

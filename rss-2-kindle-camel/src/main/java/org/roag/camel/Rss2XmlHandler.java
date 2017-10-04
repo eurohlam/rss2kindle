@@ -94,7 +94,7 @@ public class Rss2XmlHandler
     {
         logger.debug("Start polling RSS for all active users");
         for (User user: subscriberRepository.findAll())
-            if (UserStatus.valueOf(user.getStatus()) == UserStatus.ACTIVE)
+            if (UserStatus.fromValue(user.getStatus()) == UserStatus.ACTIVE)
                 runRssPollingForList(user.getSubscribers());
             else
                 logger.debug("User {} is locked and will not be processed", user.getUsername());
