@@ -204,4 +204,12 @@ public class MemorySubscriberRepository implements SubscriberRepository
         user.setStatus(UserStatus.ACTIVE.toString());
         return updateUser(user);
     }
+
+    public Map<String, User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Map<String, User> users) {
+        this.users = users;
+    }
 }

@@ -95,7 +95,7 @@ public class Rss2XmlHandler
         logger.debug("Start polling RSS for all active users");
         for (User user: subscriberRepository.findAll())
             if (UserStatus.fromValue(user.getStatus()) == UserStatus.ACTIVE)
-                runRssPollingForList(user.getSubscribers());
+                runRssPollingForList(user.getUsername(), user.getSubscribers());
             else
                 logger.debug("User {} is locked and will not be processed", user.getUsername());
     }
@@ -109,19 +109,19 @@ public class Rss2XmlHandler
     }
 */
 
-    public void runRssPollingForList(List<Subscriber> subscriberList) throws Exception
+    public void runRssPollingForList(String username, List<Subscriber> subscriberList) throws Exception
     {
         for (Subscriber subscriber:subscriberList)
-            runRssPollingForSubscriber(subscriber);
+            runRssPollingForSubscriber(username, subscriber);
     }
 
 
     public short runRssPollingForSubscriber(String username, String email) throws Exception
     {
-        return runRssPollingForSubscriber(subscriberRepository.getSubscriber(username, email));
+        return runRssPollingForSubscriber(username, subscriberRepository.getSubscriber(username, email));
     }
 
-    public short runRssPollingForSubscriber(Subscriber subscriber) throws Exception
+    public short runRssPollingForSubscriber(String username, Subscriber subscriber) throws Exception
     {
         short count= 0;
         logger.debug("Start polling RSS for subscriber: email = {}; name = {}", subscriber.getEmail(), subscriber.getName());
@@ -134,7 +134,7 @@ public class Rss2XmlHandler
                 {
                     logger.info("Started polling RSS {}", rss.getRss());
                     Future<Map<String, String>> result= executor.submit(new RssPollingTask(rssConsumer,getCamelRssUri(rss.getRss()),
-                            getPathForRss(subscriber.getEmail(),
+                            getPathForRss(username, subscriber.getEmail(),
                                     rss.getRss()),getRssFileNameFormat().format(new Date())));
                     if (result.isDone())
                     {
@@ -186,9 +186,10 @@ public class Rss2XmlHandler
         return rssUri;
     }
 
-    private String getPathForRss(String email, String rss)
+    private String getPathForRss(String username, String email, String rss)
     {
         String fileUri = storagePathRss +
+                username + "/" +
                 email + "/"
                 + rss.replace('/', '_').replace(":", "_");
         return fileUri;

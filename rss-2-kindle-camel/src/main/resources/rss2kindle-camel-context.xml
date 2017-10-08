@@ -97,7 +97,7 @@
                 <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('/.*$','g'),'')</camel:javaScript>
             </camel:setHeader>
             <camel:setHeader headerName="mobiFile">
-                <camel:javaScript>'{{storage.path.mobi}}' +request.headers.get('CamelFileName').replace(new RegExp('htm','g'),'mobi')</camel:javaScript>
+                <camel:javaScript>'{{storage.path.mobi}}' +request.headers.get('CamelFileName').replace(new RegExp('opf','g'),'mobi')</camel:javaScript>
             </camel:setHeader>
             <camel:to uri="seda:smtp"/>
         </camel:route>
