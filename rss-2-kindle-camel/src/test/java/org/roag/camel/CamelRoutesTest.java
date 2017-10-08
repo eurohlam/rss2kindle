@@ -7,6 +7,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.testng.CamelSpringTestSupport;
 import org.roag.ds.SubscriberRepository;
 import org.roag.model.Subscriber;
+import org.roag.model.User;
 import org.roag.service.SubscriberFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -18,6 +19,7 @@ import org.testng.annotations.Test;
 public class CamelRoutesTest extends CamelSpringTestSupport
 {
     private SubscriberRepository subscriberRepository;
+    private User testUser;
     private Subscriber testSubscriber;
     private Rss2XmlHandler builder;
     private SubscriberFactory subscriberFactory = new SubscriberFactory();
@@ -31,6 +33,7 @@ public class CamelRoutesTest extends CamelSpringTestSupport
     {
         ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext("META-INF/spring/test-spring-context.xml");
         subscriberRepository = (SubscriberRepository) context.getBean("subscriberRepository");
+        testUser = (User) context.getBean("testUser");
         testSubscriber = (Subscriber) context.getBean("testSubscriber");
         builder = context.getBean(Rss2XmlHandler.class);
         return context;
@@ -62,9 +65,10 @@ public class CamelRoutesTest extends CamelSpringTestSupport
     @Test(groups = {"CamelTesting"})
     public void runPollingTest() throws Exception
     {
-        subscriberRepository.addSubscriber(testSubscriber);
-        subscriberRepository.addSubscriber(subscriberFactory.newSubscriber("test2@test.com", "test2", "file:src/test/resources/testrss.xml"));
-        builder.runRssPollingForAllSubscribers();
+        subscriberRepository.addUser(testUser);
+        subscriberRepository.addSubscriber(testUser.getUsername(), testSubscriber);
+        subscriberRepository.addSubscriber(testUser.getUsername(), subscriberFactory.newSubscriber("test2@test.com", "test2", "file:src/test/resources/testrss.xml"));
+        builder.runRssPollingForAllUsers();
         //wait for polling before stopping of context
         Thread.sleep(15000);
     }
