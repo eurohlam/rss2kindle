@@ -18,7 +18,8 @@ import static org.junit.Assert.*;
 public class ProfileManagerTest extends JerseyTestNg.ContainerPerClassTest
 {
 
-    private String id="test@mail.com";
+    private String username ="test";
+    private String email="test@mail.com";
 
     @Override
     protected Application configure()
@@ -29,7 +30,7 @@ public class ProfileManagerTest extends JerseyTestNg.ContainerPerClassTest
     @Test(groups = {"ProfileManager:GET"})
     public void getAllSubscriptionsTest()
     {
-        final Response response = target("profile/" + id + "/subscriptions").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        final Response response = target("profile/" + username + "/" + email + "/subscriptions").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
 
         assertEquals("Getting all subscriptions failed", 200, response.getStatus());
     }
@@ -41,13 +42,13 @@ public class ProfileManagerTest extends JerseyTestNg.ContainerPerClassTest
         //subscribe
         Form form = new Form();
         form.param("rss", subscription);
-        Response response = target("profile/" + id + "/subscribe").request().post(Entity.form(form), Response.class);
+        Response response = target("profile/" + username + "/"+ email + "/subscribe").request().post(Entity.form(form), Response.class);
         assertEquals("Adding new subscription failed", 200, response.getStatus());
 
         //unsubscribe
         Form form_update = new Form();
         form_update.param("rss", subscription);
-        response = target("profile/" + id + "/unsubscribe").request().post(Entity.form(form_update), Response.class);
+        response = target("profile/" + username + "/" + email + "/unsubscribe").request().post(Entity.form(form_update), Response.class);
         assertEquals("Deleting subscription failed", 200, response.getStatus());
     }
 

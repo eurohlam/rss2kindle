@@ -2,9 +2,7 @@ package org.roag.camel;
 
 import org.apache.camel.*;
 import org.roag.ds.SubscriberRepository;
-import org.roag.model.Rss;
-import org.roag.model.RssStatus;
-import org.roag.model.Subscriber;
+import org.roag.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,25 +89,39 @@ public class Rss2XmlHandler
         return RSS_FILE_NAME_FORMAT.get();
     }
 
+
+    public void runRssPollingForAllUsers() throws Exception
+    {
+        logger.debug("Start polling RSS for all active users");
+        for (User user: subscriberRepository.findAll())
+            if (UserStatus.fromValue(user.getStatus()) == UserStatus.ACTIVE)
+                runRssPollingForList(user.getUsername(), user.getSubscribers());
+            else
+                logger.debug("User {} is locked and will not be processed", user.getUsername());
+    }
+
+
+/*
     public void runRssPollingForAllSubscribers() throws Exception
     {
         logger.debug("Start polling RSS for all active subscribers");
         runRssPollingForList(subscriberRepository.findAll());
     }
+*/
 
-    public void runRssPollingForList(List<Subscriber> subscriberList) throws Exception
+    public void runRssPollingForList(String username, List<Subscriber> subscriberList) throws Exception
     {
         for (Subscriber subscriber:subscriberList)
-            runRssPollingForSubscriber(subscriber);
+            runRssPollingForSubscriber(username, subscriber);
     }
 
 
-    public short runRssPollingForSubscriber(String email) throws Exception
+    public short runRssPollingForSubscriber(String username, String email) throws Exception
     {
-        return runRssPollingForSubscriber(subscriberRepository.getSubscriber(email));
+        return runRssPollingForSubscriber(username, subscriberRepository.getSubscriber(username, email));
     }
 
-    public short runRssPollingForSubscriber(Subscriber subscriber) throws Exception
+    public short runRssPollingForSubscriber(String username, Subscriber subscriber) throws Exception
     {
         short count= 0;
         logger.debug("Start polling RSS for subscriber: email = {}; name = {}", subscriber.getEmail(), subscriber.getName());
@@ -122,7 +134,7 @@ public class Rss2XmlHandler
                 {
                     logger.info("Started polling RSS {}", rss.getRss());
                     Future<Map<String, String>> result= executor.submit(new RssPollingTask(rssConsumer,getCamelRssUri(rss.getRss()),
-                            getPathForRss(subscriber.getEmail(),
+                            getPathForRss(username, subscriber.getEmail(),
                                     rss.getRss()),getRssFileNameFormat().format(new Date())));
                     if (result.isDone())
                     {
@@ -174,9 +186,10 @@ public class Rss2XmlHandler
         return rssUri;
     }
 
-    private String getPathForRss(String email, String rss)
+    private String getPathForRss(String username, String email, String rss)
     {
         String fileUri = storagePathRss +
+                username + "/" +
                 email + "/"
                 + rss.replace('/', '_').replace(":", "_");
         return fileUri;
