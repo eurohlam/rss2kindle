@@ -27,7 +27,7 @@
 </head>
 <body>
 <script>
-    var rootURL = '/rss2kindle/rest/subscribers';
+    var rootURL = '/rss2kindle/rest/profile';
 
     $(document).ready(function () {
 
@@ -100,6 +100,7 @@
         $('#getresult').append('<p>trying to get data</p>');
         if (!isEmptyText(id)) {
             $.getJSON(rootURL + '/' + id, function (data) {
+                //TODO: it should be array
                 var table = '<table class="table table-hover">' +
                     '<tr>' +
                     '<th>email</th>' +

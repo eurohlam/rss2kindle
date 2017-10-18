@@ -8,6 +8,9 @@
 	http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <b:bean name="bcryptEncoder"
+                class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
     <http realm="JavaStudy example" use-expressions="false">
         <intercept-url pattern="/" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <intercept-url pattern="/login.jsp*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
@@ -27,6 +30,8 @@
 
     <authentication-manager>
         <authentication-provider>
+            <!-- adding encryption for passwords -->
+            <!--<password-encoder ref="bcryptEncoder"/>-->
             <user-service>
                 <user name="admin" password="admin" authorities="ROLE_USER, ROLE_ADMIN" />
                 <user name="user" password="user" authorities="ROLE_USER" />
