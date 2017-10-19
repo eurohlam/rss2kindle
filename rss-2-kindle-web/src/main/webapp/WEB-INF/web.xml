@@ -54,7 +54,7 @@
 
     <!-- page on load-->
     <welcome-file-list>
-        <welcome-file>main.html</welcome-file>
+        <welcome-file>jsp/profile.jsp</welcome-file>
     </welcome-file-list>
     <!-- error page -->
     <error-page>

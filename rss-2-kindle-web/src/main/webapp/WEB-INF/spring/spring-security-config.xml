@@ -11,7 +11,13 @@
     <b:bean name="bcryptEncoder"
                 class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
-    <http realm="JavaStudy example" use-expressions="false">
+    <b:bean id="daoAuthenticationProvider"
+          class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <b:property name="userDetailsService" ref="inMemoryUserDetailsManager"/>
+        <b:property name="passwordEncoder" ref="bcryptEncoder"/>
+    </b:bean>
+
+    <http realm="" use-expressions="false">
         <intercept-url pattern="/" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <intercept-url pattern="/login.jsp*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <intercept-url pattern="/admin" access="ROLE_ADMIN"/>
@@ -20,7 +26,7 @@
 
         <form-login login-page="/login.jsp"
                     authentication-failure-url="/login.jsp?login_error=1"
-                    default-target-url="/main.html" />
+                    default-target-url="/jsp/profile.jsp" />
         <http-basic/>
         <logout logout-success-url="/exitUser.jsp"/>
         <remember-me />
@@ -32,10 +38,12 @@
         <authentication-provider>
             <!-- adding encryption for passwords -->
             <!--<password-encoder ref="bcryptEncoder"/>-->
-            <user-service>
+            <user-service id="inMemoryUserDetailsManager" properties="WEB-INF/spring/users.properties">
+<!--
                 <user name="admin" password="admin" authorities="ROLE_USER, ROLE_ADMIN" />
                 <user name="user" password="user" authorities="ROLE_USER" />
                 <user name="guest" password="guest" authorities="ROLE_GUEST" />
+-->
             </user-service>
         </authentication-provider>
     </authentication-manager>
