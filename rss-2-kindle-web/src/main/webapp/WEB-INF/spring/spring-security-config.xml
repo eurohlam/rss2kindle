@@ -11,10 +11,18 @@
     <b:bean name="bcryptEncoder"
                 class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
+<!--
     <b:bean id="daoAuthenticationProvider"
           class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
         <b:property name="userDetailsService" ref="inMemoryUserDetailsManager"/>
         <b:property name="passwordEncoder" ref="bcryptEncoder"/>
+    </b:bean>
+-->
+
+    <b:bean id="subscriberRepository" class="org.roag.ds.impl.MemorySubscriberRepository" factory-method="getInstance"/>
+
+    <b:bean id="userDetailsService" class="org.roag.security.SecUserDetailsService">
+        <!--<b:property name="subscriberRepository" ref="subscriberRepository"/>-->
     </b:bean>
 
     <http realm="" use-expressions="false">
@@ -35,6 +43,9 @@
     </http>
 
     <authentication-manager>
+        <authentication-provider user-service-ref="userDetailsService">
+
+        </authentication-provider>
         <authentication-provider>
             <!-- adding encryption for passwords -->
             <!--<password-encoder ref="bcryptEncoder"/>-->
