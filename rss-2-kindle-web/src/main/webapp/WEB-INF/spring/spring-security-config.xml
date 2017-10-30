@@ -2,11 +2,12 @@
 <b:beans xmlns="http://www.springframework.org/schema/security"
          xmlns:b="http://www.springframework.org/schema/beans"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="
-	http://www.springframework.org/schema/security
-	http://www.springframework.org/schema/security/spring-security.xsd
-	http://www.springframework.org/schema/beans
-	http://www.springframework.org/schema/beans/spring-beans.xsd">
+         xmlns:context="http://www.springframework.org/schema/context"
+         xsi:schemaLocation="http://www.springframework.org/schema/security	http://www.springframework.org/schema/security/spring-security.xsd
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="org.roag.security"/>
 
     <b:bean name="bcryptEncoder"
                 class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
@@ -19,7 +20,7 @@
     </b:bean>
 -->
 
-    <b:bean id="subscriberRepository" class="org.roag.ds.impl.MemorySubscriberRepository" factory-method="getInstance"/>
+    <!--<b:bean id="userRepository" class="org.roag.security.MemoryUserRepository"/>-->
 
     <b:bean id="userDetailsService" class="org.roag.security.SecUserDetailsService">
         <!--<b:property name="subscriberRepository" ref="subscriberRepository"/>-->
@@ -46,17 +47,19 @@
         <authentication-provider user-service-ref="userDetailsService">
 
         </authentication-provider>
-        <authentication-provider>
-            <!-- adding encryption for passwords -->
-            <!--<password-encoder ref="bcryptEncoder"/>-->
-            <user-service id="inMemoryUserDetailsManager" properties="WEB-INF/spring/users.properties">
 <!--
+        <authentication-provider>
+            &lt;!&ndash; adding encryption for passwords &ndash;&gt;
+            &lt;!&ndash;<password-encoder ref="bcryptEncoder"/>&ndash;&gt;
+            <user-service id="inMemoryUserDetailsManager" properties="WEB-INF/spring/users.properties">
+&lt;!&ndash;
                 <user name="admin" password="admin" authorities="ROLE_USER, ROLE_ADMIN" />
                 <user name="user" password="user" authorities="ROLE_USER" />
                 <user name="guest" password="guest" authorities="ROLE_GUEST" />
--->
+&ndash;&gt;
             </user-service>
         </authentication-provider>
+-->
     </authentication-manager>
 
 </b:beans>
