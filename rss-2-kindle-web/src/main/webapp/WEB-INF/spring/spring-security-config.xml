@@ -20,7 +20,7 @@
     </b:bean>
 -->
 
-    <!--<b:bean id="userRepository" class="org.roag.security.MemoryUserRepository"/>-->
+    <!--<b:bean id="userRepository" class="org.roag.ds.impl.MemoryUserRepository"/>-->
 
     <b:bean id="userDetailsService" class="org.roag.security.SecUserDetailsService">
         <!--<b:property name="subscriberRepository" ref="subscriberRepository"/>-->

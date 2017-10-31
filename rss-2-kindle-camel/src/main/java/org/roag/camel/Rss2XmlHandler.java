@@ -93,7 +93,7 @@ public class Rss2XmlHandler
     public void runRssPollingForAllUsers() throws Exception
     {
         logger.debug("Start polling RSS for all active users");
-        for (User user: subscriberRepository.findAll())
+        for (User user: subscriberRepository.getUserRepository().findAll())
             if (UserStatus.fromValue(user.getStatus()) == UserStatus.ACTIVE)
                 runRssPollingForList(user.getUsername(), user.getSubscribers());
             else

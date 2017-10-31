@@ -5,6 +5,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.roag.ds.OperationResult;
 import org.roag.ds.SubscriberRepository;
+import org.roag.ds.UserRepository;
 import org.roag.model.Subscriber;
 import org.roag.model.SubscriberStatus;
 import org.roag.model.User;
@@ -26,66 +27,33 @@ public class MongoSubscriberRepository implements SubscriberRepository
 
     final private Logger logger = LoggerFactory.getLogger(MongoSubscriberRepository.class);
 
-
+    private UserRepository userRepository;
     private ProducerTemplate producerTemplate;
-
     private MongoHelper mongoHelper;
-
     private SubscriberFactory subscriberFactory;
 
-    public MongoSubscriberRepository(MongoHelper mongoHelper, CamelContext context)
+    public MongoSubscriberRepository(MongoUserRepository userRepository)
     {
+        this(userRepository, userRepository.getMongoHelper(), userRepository.getCamelContext());
+    }
+
+    public MongoSubscriberRepository(UserRepository userRepository, MongoHelper mongoHelper, CamelContext context)
+    {
+        this.userRepository = userRepository;
         this.subscriberFactory = new SubscriberFactory();
         this.mongoHelper = mongoHelper;
         assert context != null;
         this.producerTemplate = context.createProducerTemplate();
     }
 
-    @Override
-    public User getUser(String username) throws Exception {
-        logger.debug("Fetch user {} from Mongo", username);
-        User user = mongoHelper.getUser(username, producerTemplate);
-        return user;
+    private User getUser(String username) throws Exception
+    {
+        return userRepository.getUser(username);
     }
 
     @Override
-    public OperationResult addUser(User user) throws Exception {
-        logger.debug("Add new user {}", user.getUsername());
-        WriteResult r = mongoHelper.addUser(user, producerTemplate);
-        logger.info("Added user {} with the result {}", user.getUsername(), r.toString().replaceFirst("WriteResult", ""));
-        return OperationResult.SUCCESS;
-    }
-
-    @Override
-    public OperationResult updateUser(User user) throws Exception {
-        logger.debug("Update user {}", user.getUsername());
-        WriteResult r = mongoHelper.updateUser(user, producerTemplate);
-        logger.info("Updated user {} with the result {}", user.getUsername(), r.toString().replaceFirst("WriteResult", ""));
-        return r.getN()>0?OperationResult.SUCCESS:OperationResult.NOT_EXIST;
-    }
-
-    @Override
-    public OperationResult removeUser(String username) throws Exception {
-        logger.debug("Remove user {}", username);
-        WriteResult r = mongoHelper.removeUser(username, producerTemplate);
-        logger.info("Removeed user {} with the result {}", username, r.toString().replaceFirst("WriteResult", ""));
-        return r.getN()>0?OperationResult.SUCCESS:OperationResult.NOT_EXIST;
-    }
-
-    @Override
-    public OperationResult lockUser(String username) throws Exception {
-        User user= getUser(username);
-        user.setStatus(UserStatus.LOCKED.toString());
-        logger.warn("Trying to lock user {}", username);
-        return updateUser(user);
-    }
-
-    @Override
-    public OperationResult unlockUser(String username) throws Exception {
-        User user= getUser(username);
-        user.setStatus(UserStatus.ACTIVE.toString());
-        logger.warn("Trying to activate user {}", username);
-        return updateUser(user);
+    public UserRepository getUserRepository() throws Exception {
+        return userRepository;
     }
 
     @Override
@@ -123,21 +91,6 @@ public class MongoSubscriberRepository implements SubscriberRepository
 //        WriteResult r = mongoHelper.removeSubscriber(subscriber.getEmail(), producerTemplate);
         return OperationResult.NOT_EXIST;
     }
-
-    @Override
-    public List<User> findAll() throws Exception
-    {
-        return findAll(Collections.EMPTY_MAP);
-    }
-
-    @Override
-    public List<User> findAll(Map condition) throws Exception
-    {
-        logger.debug("Fetch all users from Mongo by condition {}", condition);
-        List<User> users = mongoHelper.findAllByCondition(producerTemplate, condition);
-        return users;
-    }
-
 
     @Override
     public List<Subscriber> findAllSubscribersByUser(String username) throws Exception {

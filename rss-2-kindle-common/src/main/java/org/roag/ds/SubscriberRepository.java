@@ -11,17 +11,7 @@ import java.util.Map;
  */
 public interface SubscriberRepository
 {
-    public User getUser(String username) throws Exception;
-
-    public OperationResult addUser(User user) throws Exception;
-
-    public OperationResult updateUser(User user) throws Exception;
-
-    public OperationResult removeUser(String username) throws Exception;
-
-    public OperationResult lockUser(String username) throws Exception;
-
-    public OperationResult unlockUser(String username) throws Exception;
+    public UserRepository getUserRepository() throws Exception;
 
     public Subscriber getSubscriber(String username, String email) throws Exception;
 
@@ -42,8 +32,4 @@ public interface SubscriberRepository
     public List<Subscriber> findAllSubscribersByUser(String username) throws Exception;
 
     public List<Subscriber> findAllSubscribersByUser(String username, Map condition) throws Exception;
-
-    public List<User> findAll() throws Exception;
-
-    public List<User> findAll(Map condition) throws Exception;
 }

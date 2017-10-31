@@ -2,11 +2,13 @@ package org.roag.ds.impl;
 
 import org.roag.ds.OperationResult;
 import org.roag.ds.SubscriberRepository;
+import org.roag.ds.UserRepository;
 import org.roag.model.Subscriber;
 import org.roag.model.SubscriberStatus;
 import org.roag.model.User;
 import org.roag.model.UserStatus;
 import org.roag.service.SubscriberFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,28 +17,28 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Created by eurohlam on 08.12.16.
  */
+@Service
 public class MemorySubscriberRepository implements SubscriberRepository
 {
-    private Map<String, User> users;
-//    private Map<String, Subscriber> subscribers;
     private static SubscriberRepository repository;
+
+    private UserRepository userRepository;
     private final SubscriberFactory factory;
 
-    private MemorySubscriberRepository()
+    private MemorySubscriberRepository(UserRepository userRepository)
     {
-        this.users = new ConcurrentHashMap<>();
-//        this.subscribers = new ConcurrentHashMap<>();
+        this.userRepository = userRepository;
         this.factory = new SubscriberFactory();
     }
 
-    public static SubscriberRepository getInstance()
+    public static SubscriberRepository getInstance(UserRepository userRepository)
     {
         ReentrantReadWriteLock.WriteLock lock = new ReentrantReadWriteLock().writeLock();
         lock.lock();
         try
         {
             if (repository == null)
-                repository = new MemorySubscriberRepository();
+                repository = new MemorySubscriberRepository(userRepository);
             return repository;
         }
         finally
@@ -45,10 +47,15 @@ public class MemorySubscriberRepository implements SubscriberRepository
         }
     }
 
-//    public void setSubscribers(Map<String, Subscriber> subscribers)
-//    {
-//        this.subscribers=subscribers;
-//    }
+    private User getUser(String username) throws Exception
+    {
+        return userRepository.getUser(username);
+    }
+
+    @Override
+    public UserRepository getUserRepository() throws Exception {
+        return userRepository;
+    }
 
     @Override
     public Subscriber getSubscriber(String username, String email) throws Exception
@@ -112,13 +119,13 @@ public class MemorySubscriberRepository implements SubscriberRepository
     @Override
     public OperationResult addSubscriber(String username, Subscriber subscriber) throws Exception
     {
-        if (!users.containsKey(username))
+        if (getUser(username) == null)
             throw new IllegalArgumentException("User " + username + " does not exist");
 
         if (getSubscriber(username, subscriber.getEmail())!= null)
             throw new IllegalArgumentException("Subscriber " + subscriber.getEmail() + " for user " + username + " already exists");
 
-        users.get(username).getSubscribers().add(subscriber);
+        getUser(username).getSubscribers().add(subscriber);
 
         return OperationResult.SUCCESS;
     }
@@ -155,61 +162,4 @@ public class MemorySubscriberRepository implements SubscriberRepository
         return findAllSubscribersByUser(username);//TODO: implement findAll with conditions
     }
 
-    @Override
-    public List<User> findAll() throws Exception {
-        return new ArrayList<User>(users.values());
-    }
-
-    @Override
-    public List<User> findAll(Map condition) throws Exception {
-        return findAll(); //TODO: implement findAll with conditions
-    }
-
-    @Override
-    public OperationResult addUser(User user) throws Exception
-    {
-        if (users.containsKey(user.getUsername()))
-            throw new IllegalArgumentException("User " + user.getUsername() + " already exists");
-        users.put(user.getUsername(), user);
-        return OperationResult.SUCCESS;
-    }
-
-    @Override
-    public User getUser(String username) throws Exception {
-        return users.get(username);
-    }
-
-    @Override
-    public OperationResult updateUser(User user) throws Exception {
-        User u = users.replace(user.getUsername(), user);
-        return u!=null? OperationResult.SUCCESS: OperationResult.FAILURE;
-    }
-
-    @Override
-    public OperationResult removeUser(String username) throws Exception {
-        User u = users.remove(username);
-        return u!=null? OperationResult.SUCCESS: OperationResult.FAILURE;
-    }
-
-    @Override
-    public OperationResult lockUser(String username) throws Exception {
-        User user = getUser(username);
-        user.setStatus(UserStatus.LOCKED.toString());
-        return updateUser(user);
-    }
-
-    @Override
-    public OperationResult unlockUser(String username) throws Exception {
-        User user = getUser(username);
-        user.setStatus(UserStatus.ACTIVE.toString());
-        return updateUser(user);
-    }
-
-    public Map<String, User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Map<String, User> users) {
-        this.users = users;
-    }
 }

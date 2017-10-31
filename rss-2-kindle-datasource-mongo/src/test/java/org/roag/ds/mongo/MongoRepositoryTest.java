@@ -32,7 +32,8 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
     protected MockEndpoint resultEndpoint;
 
     private MongoHelper mh;
-    private MongoSubscriberRepository mongoRepository;
+    private MongoUserRepository userRepository;
+    private MongoSubscriberRepository subscriberRepository;
 
     private SubscriberFactory subscriberFactory = new SubscriberFactory();
 
@@ -56,7 +57,8 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
     {
         ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext("META-INF/spring/mongo-test-context.xml");
         mh = context.getBean(MongoHelper.class);
-        mongoRepository = context.getBean(MongoSubscriberRepository.class);
+        userRepository = context.getBean(MongoUserRepository.class);
+        subscriberRepository = context.getBean(MongoSubscriberRepository.class);
         return context;
     }
 
@@ -83,22 +85,22 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
     {
         User user = subscriberFactory.newUser(TEST_USERNAME, "123");
         //create user
-        OperationResult result= mongoRepository.addUser(user);
+        OperationResult result= userRepository.addUser(user);
         assertEquals(result, OperationResult.SUCCESS, "Could not create a user");
         //lock user
-        result= mongoRepository.lockUser(TEST_USERNAME);
+        result= userRepository.lockUser(TEST_USERNAME);
         assertEquals(result, OperationResult.SUCCESS, "Could not lock a user");
         //read locked user
-        user=mongoRepository.getUser(TEST_USERNAME);
+        user= userRepository.getUser(TEST_USERNAME);
         assertEquals(user.getStatus(), UserStatus.LOCKED.toString(), "User status should be LOCKED, but it is not");
         //unlock user
-        result= mongoRepository.unlockUser(TEST_USERNAME);
+        result= userRepository.unlockUser(TEST_USERNAME);
         assertEquals(result, OperationResult.SUCCESS, "Could not unlock a user");
         //read unlocked user
-        user=mongoRepository.getUser(TEST_USERNAME);
+        user= userRepository.getUser(TEST_USERNAME);
         assertEquals(user.getStatus(), UserStatus.ACTIVE.toString(), "User status should be ACTIVE, but it is not");
         //remove user
-        result= mongoRepository.removeUser(TEST_USERNAME);
+        result= userRepository.removeUser(TEST_USERNAME);
         assertEquals(result, OperationResult.SUCCESS, "Could not remove a user");
     }
 
@@ -108,42 +110,42 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
     {
         User user = subscriberFactory.newUser(TEST_USERNAME, "123");
         //create user
-        OperationResult result= mongoRepository.addUser(user);
+        OperationResult result= userRepository.addUser(user);
         assertEquals(result, OperationResult.SUCCESS);
 
         Subscriber subscriber = subscriberFactory.newSubscriber(TEST_EMAIL, "test", "test.org/feed");
         //create subscriber
-        result=mongoRepository.addSubscriber(TEST_USERNAME, subscriber);
+        result= subscriberRepository.addSubscriber(TEST_USERNAME, subscriber);
         assertEquals(result, OperationResult.SUCCESS);
         //read subscriber
-        Subscriber newSubscriber=mongoRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
+        Subscriber newSubscriber= subscriberRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
         assertEquals(newSubscriber.getName(), subscriber.getName());
         //read all users
-        assertTrue(mongoRepository.findAll().size()>0);
+        assertTrue(userRepository.findAll().size()>0);
         //update subscriber
         newSubscriber.setName("new_test_name");
-        result=mongoRepository.updateSubscriber(TEST_USERNAME, newSubscriber);
+        result= subscriberRepository.updateSubscriber(TEST_USERNAME, newSubscriber);
         assertEquals(result, OperationResult.SUCCESS);
         //read updated subscriber
-        newSubscriber=mongoRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
+        newSubscriber= subscriberRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
         assertEquals(newSubscriber.getName(), "new_test_name");
         //suspend (update) subscriber
-        result=mongoRepository.suspendSubscriber(TEST_USERNAME, newSubscriber.getEmail());
+        result= subscriberRepository.suspendSubscriber(TEST_USERNAME, newSubscriber.getEmail());
         assertEquals(result, OperationResult.SUCCESS);
         //read suspended subscriber
-        newSubscriber=mongoRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
+        newSubscriber= subscriberRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
         assertEquals(newSubscriber.getStatus(), SubscriberStatus.SUSPENDED.toString());
         //resume (update) subscriber
-        result=mongoRepository.resumeSubscriber(TEST_USERNAME, newSubscriber.getEmail());
+        result= subscriberRepository.resumeSubscriber(TEST_USERNAME, newSubscriber.getEmail());
         assertEquals(result, OperationResult.SUCCESS);
         //read resumed subscriber
-        newSubscriber=mongoRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
+        newSubscriber= subscriberRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
         assertEquals(newSubscriber.getStatus(), SubscriberStatus.ACTIVE.toString());
         //delete subscriber
-        OperationResult d = mongoRepository.removeSubscriber(TEST_USERNAME, TEST_EMAIL);
+        OperationResult d = subscriberRepository.removeSubscriber(TEST_USERNAME, TEST_EMAIL);
         assertEquals(d, OperationResult.SUCCESS);
         //remove user
-        result= mongoRepository.removeUser(TEST_USERNAME);
+        result= userRepository.removeUser(TEST_USERNAME);
         assertEquals(result, OperationResult.SUCCESS);
     }
 

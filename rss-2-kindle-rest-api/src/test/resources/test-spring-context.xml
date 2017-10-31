@@ -35,12 +35,16 @@
     </bean>
 
     <!--Using in memory repository for testing goals  -->
-    <bean id="subscriberRepository" class="org.roag.ds.impl.MemorySubscriberRepository" factory-method="getInstance">
+    <bean id="userRepository" class="org.roag.ds.impl.MemoryUserRepository" factory-method="getInstance">
         <property name="users">
             <map>
                 <entry key="${test.username}" value-ref="testUser"/>
             </map>
         </property>
+    </bean>
+
+    <bean id="subscriberRepository" class="org.roag.ds.impl.MemorySubscriberRepository" factory-method="getInstance">
+        <constructor-arg index="0" ref="userRepository"/>
     </bean>
 
 </beans>

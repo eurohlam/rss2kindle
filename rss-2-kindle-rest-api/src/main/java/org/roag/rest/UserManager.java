@@ -1,7 +1,7 @@
 package org.roag.rest;
 
 import org.roag.ds.OperationResult;
-import org.roag.ds.SubscriberRepository;
+import org.roag.ds.UserRepository;
 import org.roag.model.User;
 import org.roag.service.SubscriberFactory;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class UserManager
     private Request request;
 
     @Autowired
-    private SubscriberRepository subscriberRepository;
+    private UserRepository userRepository;
 
     private SubscriberFactory subscriberFactory;
 
@@ -42,7 +42,7 @@ public class UserManager
         logger.debug("Fetch all users from repository");
         try
         {
-            String users=subscriberFactory.convertPojo2Json(subscriberRepository.findAll());
+            String users=subscriberFactory.convertPojo2Json(userRepository.findAll());
             return Response.ok(users, MediaType.APPLICATION_JSON_TYPE).build();
         }
         catch (Exception e)
@@ -60,7 +60,7 @@ public class UserManager
         logger.debug("Fetch user {} from repository", id);
         try
         {
-            String user = subscriberFactory.convertPojo2Json(subscriberRepository.getUser(id));
+            String user = subscriberFactory.convertPojo2Json(userRepository.getUser(id));
             return Response.ok(user, MediaType.APPLICATION_JSON_TYPE).build();
         }
         catch (Exception e)
@@ -78,7 +78,7 @@ public class UserManager
         logger.debug("Lock user {}", id);
         try
         {
-            OperationResult result= subscriberRepository.lockUser(id);
+            OperationResult result= userRepository.lockUser(id);
             if (result == OperationResult.SUCCESS)
                 return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
             else
@@ -99,7 +99,7 @@ public class UserManager
         logger.debug("Unlock user {}", id);
         try
         {
-            OperationResult result = subscriberRepository.unlockUser(id);
+            OperationResult result = userRepository.unlockUser(id);
             if (result == OperationResult.SUCCESS)
                 return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
             else
@@ -121,7 +121,7 @@ public class UserManager
         logger.debug("Add new user {}", username);
         try
         {
-            OperationResult result = subscriberRepository.addUser(subscriberFactory.newUser(username, password));
+            OperationResult result = userRepository.addUser(subscriberFactory.newUser(username, password));
             logger.info(result.toString());
             if (result == OperationResult.SUCCESS)
                 return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
@@ -145,9 +145,9 @@ public class UserManager
         logger.debug("Update existing user {}", username);
         try
         {
-            User user=subscriberRepository.getUser(username);
+            User user= userRepository.getUser(username);
             user.setPassword(password);
-            OperationResult result = subscriberRepository.updateUser(user);
+            OperationResult result = userRepository.updateUser(user);
             if (result == OperationResult.SUCCESS)
                 return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
             else
@@ -168,7 +168,7 @@ public class UserManager
         logger.debug("Remove user {}", id);
         try
         {
-            OperationResult  result = subscriberRepository.removeUser(id);
+            OperationResult  result = userRepository.removeUser(id);
             if (result == OperationResult.SUCCESS)
                 return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
             else
