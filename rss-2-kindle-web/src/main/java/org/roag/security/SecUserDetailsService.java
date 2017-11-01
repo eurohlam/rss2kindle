@@ -23,9 +23,9 @@ public class SecUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         try {
-            logger.error("TRY TO FIND USER {}", s);
+            logger.debug("Trying to find a User {} in repository", s);
             User user=userRepository.getUser(s);
-            logger.error("FOUND USER {}", user.getUsername());
+            logger.debug("User {} exists with roles {}", user.getUsername(), user.getRoles());
             SecUserDetails ud=new SecUserDetails(user);
             return ud;
         } catch (Exception e) {

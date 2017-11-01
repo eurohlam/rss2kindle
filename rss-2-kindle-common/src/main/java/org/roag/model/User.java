@@ -23,6 +23,8 @@ public class User {
     private String status;
     @SerializedName("subscribers")
     private List<Subscriber> subscribers;
+    @SerializedName("roles")
+    private List<Roles> roles;
 
     public String getId() {
         return id;
@@ -70,5 +72,13 @@ public class User {
 
     public void setSubscribers(List<Subscriber> subscribers) {
         this.subscribers = subscribers;
+    }
+
+    public List<Roles> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Roles> roles) {
+        this.roles = roles;
     }
 }

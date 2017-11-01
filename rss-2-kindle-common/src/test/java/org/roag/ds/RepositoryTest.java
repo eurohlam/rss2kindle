@@ -2,6 +2,7 @@ package org.roag.ds;
 
 import org.roag.ds.impl.MemorySubscriberRepository;
 import org.roag.ds.impl.MemoryUserRepository;
+import org.roag.model.Roles;
 import org.roag.model.Subscriber;
 import org.roag.model.User;
 import org.roag.model.UserStatus;
@@ -38,6 +39,7 @@ public class RepositoryTest
         User user=factory.newUser(TEST_USER, "123");
         userRepository.addUser(user);
         assertNotNull(userRepository.getUser(TEST_USER));
+        assertEquals(userRepository.getUser(TEST_USER).getRoles().get(0), Roles.ROLE_USER, "User has unexpected role.");
 
         Subscriber subscriber = factory.newSubscriber(TEST_EMAIL, TEST_NAME, TEST_RSS);
         OperationResult r = subscriberRepository.addSubscriber(TEST_USER,subscriber);

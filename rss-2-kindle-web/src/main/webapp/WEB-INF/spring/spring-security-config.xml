@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<b:beans xmlns="http://www.springframework.org/schema/security"
-         xmlns:b="http://www.springframework.org/schema/beans"
+<beans xmlns:security="http://www.springframework.org/schema/security"
+         xmlns="http://www.springframework.org/schema/beans"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns:context="http://www.springframework.org/schema/context"
          xsi:schemaLocation="http://www.springframework.org/schema/security	http://www.springframework.org/schema/security/spring-security.xsd
@@ -9,7 +9,7 @@
 
     <context:component-scan base-package="org.roag.security"/>
 
-    <b:bean name="bcryptEncoder"
+    <bean name="bcryptEncoder"
                 class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
 <!--
@@ -20,58 +20,58 @@
     </b:bean>
 -->
 
-    <b:bean id="subscriberFactory" class="org.roag.service.SubscriberFactory"/>
+    <bean id="subscriberFactory" class="org.roag.service.SubscriberFactory"/>
 
-    <b:bean id="testUser" factory-bean="subscriberFactory" factory-method="newUser">
-        <b:constructor-arg index="0" value="test"/>
-        <b:constructor-arg index="1" value="test"/>
-        <b:property name="subscribers">
-            <b:list>
-                <b:ref bean="testSubscriber"/>
-            </b:list>
-        </b:property>
-    </b:bean>
+    <bean id="testUser" factory-bean="subscriberFactory" factory-method="newUser">
+        <constructor-arg index="0" value="test"/>
+        <constructor-arg index="1" value="test"/>
+        <property name="subscribers">
+            <list>
+                <ref bean="testSubscriber"/>
+            </list>
+        </property>
+    </bean>
 
-    <b:bean id="testSubscriber" factory-bean="subscriberFactory" factory-method="newSubscriber">
-        <b:constructor-arg index="0" value="test@test.com"/>
-        <b:constructor-arg index="1" value="test"/>
-        <b:constructor-arg index="2" value="http://test.com/rss"/>
-    </b:bean>
+    <bean id="testSubscriber" factory-bean="subscriberFactory" factory-method="newSubscriber">
+        <constructor-arg index="0" value="test@test.com"/>
+        <constructor-arg index="1" value="test"/>
+        <constructor-arg index="2" value="http://test.com/rss"/>
+    </bean>
 
     <!--Using in memory repository for testing goals  -->
-    <b:bean id="userRepository" class="org.roag.ds.impl.MemoryUserRepository" factory-method="getInstance">
-        <b:property name="users">
-            <b:map>
-                <b:entry key="test" value-ref="testUser"/>
-            </b:map>
-        </b:property>
-    </b:bean>
+    <bean id="userRepository" class="org.roag.ds.impl.MemoryUserRepository" factory-method="getInstance">
+        <property name="users">
+            <map>
+                <entry key="test" value-ref="testUser"/>
+            </map>
+        </property>
+    </bean>
 
-    <b:bean id="userDetailsService" class="org.roag.security.SecUserDetailsService">
+    <bean id="userDetailsService" class="org.roag.security.SecUserDetailsService">
         <!--<b:property name="subscriberRepository" ref="subscriberRepository"/>-->
-    </b:bean>
+    </bean>
 
-    <http realm="" use-expressions="false">
-        <intercept-url pattern="/" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <intercept-url pattern="/login.jsp*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <intercept-url pattern="/admin" access="ROLE_ADMIN"/>
-        <intercept-url pattern="/exitUser*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <intercept-url pattern="/**" access="ROLE_USER"/>
+    <security:http realm="" use-expressions="false">
+        <security:intercept-url pattern="/" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <security:intercept-url pattern="/login.jsp*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <security:intercept-url pattern="/admin" access="ROLE_ADMIN"/>
+        <security:intercept-url pattern="/exitUser*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <security:intercept-url pattern="/**" access="ROLE_USER"/>
 
-        <form-login login-page="/login.jsp"
+        <security:form-login login-page="/login.jsp"
                     authentication-failure-url="/login.jsp?login_error=1"
                     default-target-url="/jsp/profile.jsp" />
-        <http-basic/>
-        <logout logout-success-url="/exitUser.jsp"/>
-        <remember-me />
-        <headers/>
-        <csrf/>
-    </http>
+        <security:http-basic/>
+        <security:logout logout-success-url="/exitUser.jsp"/>
+        <security:remember-me />
+        <security:headers/>
+        <security:csrf/>
+    </security:http>
 
-    <authentication-manager>
-        <authentication-provider user-service-ref="userDetailsService">
+    <security:authentication-manager>
+        <security:authentication-provider user-service-ref="userDetailsService">
 
-        </authentication-provider>
+        </security:authentication-provider>
 <!--
         <authentication-provider>
             &lt;!&ndash; adding encryption for passwords &ndash;&gt;
@@ -85,6 +85,6 @@
             </user-service>
         </authentication-provider>
 -->
-    </authentication-manager>
+    </security:authentication-manager>
 
-</b:beans>
+</beans>

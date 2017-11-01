@@ -1,5 +1,6 @@
 package org.roag.security;
 
+import org.roag.model.Roles;
 import org.roag.model.User;
 import org.roag.model.UserStatus;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,8 +16,6 @@ import java.util.Set;
  */
 public class SecUserDetails implements UserDetails{
 
-    private final String DEFAULT_GRANTED_AUTHORITY="ROLE_USER";
-
     private User user;
 
     public SecUserDetails(User user) {
@@ -26,7 +25,8 @@ public class SecUserDetails implements UserDetails{
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> set=new HashSet<GrantedAuthority>(1);
-        set.add(new SimpleGrantedAuthority(DEFAULT_GRANTED_AUTHORITY));
+        for (Roles role:user.getRoles())
+            set.add(new SimpleGrantedAuthority(role.toString()));
         return set;
     }
 
