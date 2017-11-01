@@ -39,7 +39,7 @@ public class RepositoryTest
         User user=factory.newUser(TEST_USER, "123");
         userRepository.addUser(user);
         assertNotNull(userRepository.getUser(TEST_USER));
-        assertEquals(userRepository.getUser(TEST_USER).getRoles().get(0), Roles.ROLE_USER, "User has unexpected role.");
+        assertEquals(userRepository.getUser(TEST_USER).getRoles().iterator().next(), Roles.ROLE_USER, "User has unexpected role.");
 
         Subscriber subscriber = factory.newSubscriber(TEST_EMAIL, TEST_NAME, TEST_RSS);
         OperationResult r = subscriberRepository.addSubscriber(TEST_USER,subscriber);

@@ -25,10 +25,12 @@ public class SubscriberFactory
 
     public User newUser(String username, String password)
     {
-        return newUser(username, password, format.format(new Date()), UserStatus.ACTIVE, Arrays.asList(Roles.ROLE_USER));
+        Set<Roles> roles=new HashSet<>(1);
+        roles.add(Roles.ROLE_USER);
+        return newUser(username, password, format.format(new Date()), UserStatus.ACTIVE, roles, new ArrayList<Subscriber>(3));
     }
 
-    public User newUser(String username, String password, String dateCreated, UserStatus status, List<Roles> roles)
+    public User newUser(String username, String password, String dateCreated, UserStatus status, Set<Roles> roles, List<Subscriber> subscribers)
     {
         User user = new User();
         user.setId(UUID.randomUUID().toString());
@@ -36,8 +38,8 @@ public class SubscriberFactory
         user.setPassword(password);//TODO: cryptography
         user.setStatus(status.toString());
         user.setDateCreated(dateCreated);
-        user.setSubscribers(new ArrayList<Subscriber>());
         user.setRoles(roles);
+        user.setSubscribers(subscribers);
 
         return user;
     }

@@ -12,7 +12,8 @@ public enum OperationResult
 {
     SUCCESS("success"),
     FAILURE("failure"),
-    NOT_EXIST("not_exist");
+    NOT_EXIST("not_exist"),
+    DUPLICATED("duplicated");
 
     private String status;
     private Map<String, String> map;
