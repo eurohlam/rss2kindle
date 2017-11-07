@@ -53,6 +53,7 @@
 
     <security:http realm="" use-expressions="false">
         <security:intercept-url pattern="/" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <security:intercept-url pattern="/index.html*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <security:intercept-url pattern="/login.jsp*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <security:intercept-url pattern="/admin" access="ROLE_ADMIN"/>
         <security:intercept-url pattern="/exitUser*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
@@ -60,9 +61,9 @@
 
         <security:form-login login-page="/login.jsp"
                     authentication-failure-url="/login.jsp?login_error=1"
-                    default-target-url="/jsp/profile.jsp" />
+                    default-target-url="/view/profile" />
         <security:http-basic/>
-        <security:logout logout-success-url="/exitUser.jsp"/>
+        <security:logout logout-success-url="/jsp/exitUser.jsp"/>
         <security:remember-me />
         <security:headers/>
         <security:csrf/>

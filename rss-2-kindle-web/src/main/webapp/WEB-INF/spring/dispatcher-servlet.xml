@@ -18,7 +18,7 @@
     <!-- Определяет какое представление рендерить на основании вычеслений в @Controller
     (return ModelAndView) -->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/"/>
+        <property name="prefix" value="/jsp/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
 

@@ -1,4 +1,4 @@
-<%@ include file="/include.jsp" %>
+<%@ include file="/jsp/include.jsp" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
@@ -11,5 +11,8 @@ This is admin page
   <input type="submit" value="Logoff"/> (also clears any remember-me cookie)
   <security:csrfInput/>
 </form>
+
+<%@include file="footer.jsp"%>
+
 </body>
 </html>

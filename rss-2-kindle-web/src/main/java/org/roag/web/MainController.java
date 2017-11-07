@@ -16,9 +16,9 @@ public class MainController {
 
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
-    @RequestMapping(value = "/second")
-    public String indexPage() {
-        return "secondPage";
+    @RequestMapping(value = "/subscribers")
+    public String subscribersPage() {
+        return "subscribers";
     }
 
     @RequestMapping(value = "/admin")
@@ -26,13 +26,13 @@ public class MainController {
         return "adminPage";
     }
 
-    @RequestMapping(value ="/welcome", method = RequestMethod.GET)
+    @RequestMapping(value ="/profile", method = RequestMethod.GET)
     public ModelAndView login(@RequestParam(value = "error", required = false) String error) {
         ModelAndView model = new ModelAndView();
         if (error != null) {
             model.addObject("error", "Invalid username or password!");
         }
-        model.setViewName("welcomePage");
+        model.setViewName("profile");
         return model;
 
     }

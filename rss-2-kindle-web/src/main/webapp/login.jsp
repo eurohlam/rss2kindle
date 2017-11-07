@@ -34,6 +34,8 @@
            value="<c:out value="${_csrf.token}"/>"/>
 </form>
 
+<%@include file="jsp/footer.jsp"%>
+
 </body>
 
 </html>
