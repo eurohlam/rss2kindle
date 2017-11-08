@@ -62,9 +62,9 @@ public class MongoSubscriberRepository implements SubscriberRepository
         logger.debug("Trying to add new subscriber {} for user {}", subscriber.getEmail(),  username);
         User user = getUser(username);
         user.getSubscribers().add(subscriber);
-        WriteResult r = mongoHelper.updateUser(user, producerTemplate);
-        logger.info("Added subscriber {} for user {} with the result {}", subscriber.getEmail(), username, r.toString().replaceFirst("WriteResult", ""));
-        return OperationResult.SUCCESS;
+        OperationResult r = mongoHelper.updateUser(user, producerTemplate);
+        logger.info("Added subscriber {} for user {} with the result {}", subscriber.getEmail(), username, r);
+        return r;
     }
 
     @Override
@@ -83,9 +83,9 @@ public class MongoSubscriberRepository implements SubscriberRepository
             Subscriber s = user.getSubscribers().get(i);
             if (s.getEmail().equals(email)) {
                 user.getSubscribers().remove(i);
-                WriteResult r = mongoHelper.updateUser(user, producerTemplate);
-                logger.warn("Removed subscriber {} for user {} with the result {}", email, username, r.toString().replaceFirst("WriteResult", ""));
-                return r.getN()>0?OperationResult.SUCCESS:OperationResult.NOT_EXIST;
+                OperationResult r = mongoHelper.updateUser(user, producerTemplate);
+                logger.warn("Removed subscriber {} for user {} with the result {}", email, username, r);
+                return r;
             }
         }
 //        WriteResult r = mongoHelper.removeSubscriber(subscriber.getEmail(), producerTemplate);
@@ -135,9 +135,9 @@ public class MongoSubscriberRepository implements SubscriberRepository
             if (s.getEmail().equals(subscriber.getEmail())) {
                 user.getSubscribers().remove(i);
                 user.getSubscribers().add(i,subscriber);
-                WriteResult r = mongoHelper.updateUser(user, producerTemplate);
-                logger.info("Updated subscriber {} for user {} with the result {}", subscriber.getEmail(), username, r.toString().replaceFirst("WriteResult", ""));
-                return r.getN()>0?OperationResult.SUCCESS:OperationResult.NOT_EXIST;
+                OperationResult r = mongoHelper.updateUser(user, producerTemplate);
+                logger.info("Updated subscriber {} for user {} with the result {}", subscriber.getEmail(), username, r);
+                return r;
             }
         }
 //        WriteResult r = mongoHelper.updateSubscriber(subscriber, producerTemplate);

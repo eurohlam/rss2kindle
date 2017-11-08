@@ -155,9 +155,9 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
         User user = subscriberFactory.newUser(TEST_USERNAME, "123");
         Subscriber s = subscriberFactory.newSubscriber(TEST_EMAIL, "test", "test.org/feed");
         user.getSubscribers().add(s);
-        WriteResult r= mh.addUser(user, template);
+        OperationResult r= mh.addUser(user, template);
 
-        assertTrue(!r.isUpdateOfExisting());
+        assertTrue(r == OperationResult.SUCCESS);
     }
 
     @Test(groups = { "Mongo Integration" },  dependsOnMethods = { "mongoHelperAddUserTest" })
@@ -166,9 +166,9 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
         User user = mh.getUser(TEST_USERNAME, template);
         Subscriber s = subscriberFactory.newSubscriber(TEST_EMAIL, "updated_test", "updated_test.org/feed");
         user.getSubscribers().add(s);
-        WriteResult r= mh.updateUser(user, template);
+        OperationResult r= mh.updateUser(user, template);
 
-        assertTrue(r.isUpdateOfExisting());
+        assertTrue(r == OperationResult.SUCCESS);
     }
 
     @Test(groups = { "Mongo Integration" }, dependsOnMethods = { "mongoHelperAddUserTest" })
@@ -215,9 +215,9 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
     @Test(groups = { "Mongo Cleansing" }, dependsOnGroups = { "Mongo Integration" })
     public void mongoHelperRemoveUserTest() throws Exception
     {
-        WriteResult r= mh.removeUser(TEST_USERNAME, template);
+        OperationResult r= mh.removeUser(TEST_USERNAME, template);
 
-        assertTrue(r.getN()>0);
+        assertTrue(r == OperationResult.SUCCESS);
     }
 
     @Override

@@ -76,27 +76,27 @@ public class MongoUserRepository implements UserRepository
     public OperationResult addUser(User user) throws Exception
     {
         logger.debug("Add new user {}", user.getUsername());
-        WriteResult r = mongoHelper.addUser(user, producerTemplate);
+        OperationResult r = mongoHelper.addUser(user, producerTemplate);
         logger.info("Added user {} with the result {}", user.getUsername(), r.toString().replaceFirst("WriteResult", ""));
-        return OperationResult.SUCCESS;
+        return r;
     }
 
     @Override
     public OperationResult updateUser(User user) throws Exception
     {
         logger.debug("Update user {}", user.getUsername());
-        WriteResult r = mongoHelper.updateUser(user, producerTemplate);
+        OperationResult r = mongoHelper.updateUser(user, producerTemplate);
         logger.info("Updated user {} with the result {}", user.getUsername(), r.toString().replaceFirst("WriteResult", ""));
-        return r.getN()>0?OperationResult.SUCCESS:OperationResult.NOT_EXIST;
+        return r;
     }
 
     @Override
     public OperationResult removeUser(String username) throws Exception
     {
         logger.debug("Remove user {}", username);
-        WriteResult r = mongoHelper.removeUser(username, producerTemplate);
+        OperationResult r = mongoHelper.removeUser(username, producerTemplate);
         logger.info("Removeed user {} with the result {}", username, r.toString().replaceFirst("WriteResult", ""));
-        return r.getN()>0?OperationResult.SUCCESS:OperationResult.NOT_EXIST;
+        return r;
     }
 
     @Override
