@@ -55,19 +55,19 @@
                         + item.dateCreated + '</td><td>'
                         + item.status + '</td><td>';
                 var subscribers = item.subscribers;
-                subscrTable='<table width="100%"><tr><td>';
+                rssTable='<table width="100%"><tr><td>';
                 for (j = 0; j < subscribers.length; j++) {
-                    subscrTable = subscrTable + '<a href="' + subscribers[j].email + '">' + subscribers[j].email + '</a></td><td>';
+                    rssTable = rssTable + '<a href="' + subscribers[j].email + '">' + subscribers[j].email + '</a></td><td>';
                     if (subscribers[j].status === 'active')
-                        subscrTable = subscrTable + '<label></label><input type="checkbox" checked disabled />'+ subscribers[j].status + '</label>';
+                        rssTable = rssTable + '<label></label><input type="checkbox" checked disabled />'+ subscribers[j].status + '</label>';
                     else
-                        subscrTable = subscrTable + '<label></label><input type="checkbox" disabled />' + subscribers[j].status + '</label>';
+                        rssTable = rssTable + '<label></label><input type="checkbox" disabled />' + subscribers[j].status + '</label>';
 
-                    subscrTable = subscrTable  + '<td/></tr>';
+                    rssTable = rssTable  + '<td/></tr>';
                 }
-                subscrTable = subscrTable + '</table>';
+                rssTable = rssTable + '</table>';
 
-                table = table + subscrTable + '</td></tr>';
+                table = table + rssTable + '</td></tr>';
             });
             table = table + '</table>';
             $('#all_users').append(table);

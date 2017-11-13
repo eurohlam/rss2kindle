@@ -40,11 +40,13 @@
             <artifactId>rss-2-kindle-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+<!--
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>rss-2-kindle-datasource-mongo</artifactId>
             <version>${project.version}</version>
         </dependency>
+-->
 
         <!-- Spring security minimal dependency-->
         <dependency>
@@ -98,5 +100,8 @@
 
     </dependencies>
 
+    <build>
+        <finalName>r2kweb</finalName>
+    </build>
 
 </project>

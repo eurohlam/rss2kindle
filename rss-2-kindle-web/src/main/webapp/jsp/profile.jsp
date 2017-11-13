@@ -34,19 +34,23 @@
 
 <body>
 <script>
-    var rootURL = '/rss2kindle/rest/users';
+    var rootURL = '/rss2kindle/rest/profile/<%=request.getAttribute("username")%>';
 
     $(document).ready(function () {
-        $('#all_users').append('<p>Getting users. Please wait...</p>');
+        $('#profile_view').append('<p>Getting profile. Please wait...</p>');
         $.getJSON(rootURL, function (data) {
+            $('#profile_view').append('<p><h3>Welcome, '+data.username + '!</h3></p>' +
+                '<p>Created: ' + data.dateCreated + '</p>' +
+                '<p>Status: ' + data.status + '</p>');
+
             var table = '<table class="table table-hover">' +
                 '<tr><th>#</th>' +
-                '<th>username</th>' +
-                '<th>date created</th>' +
+                '<th>email</th>' +
+                '<th>title</th>' +
                 '<th>status</th>'+
-                '<th>subscribers</th></tr>';
+                '<th>rss</th></tr>';
 
-            $.each(data, function (i, item) {
+            $.each(data.subscribers, function (i, item) {
                 var tr;
                 if (item.status === 'locked')
                     tr='<tr class="danger"><td>';
@@ -59,32 +63,32 @@
 
                 table = table + tr
                     + i + '</td><td>'
-                    + item.username + '</td><td>'
-                    + item.dateCreated + '</td><td>'
+                    + item.email + '</td><td>'
+                    + item.name + '</td><td>'
                     + item.status + '</td><td>';
-                var subscribers = item.subscribers;
-                subscrTable='<table width="100%"><tr><td>';
-                for (j = 0; j < subscribers.length; j++) {
-                    subscrTable = subscrTable + '<a href="' + subscribers[j].email + '">' + subscribers[j].email + '</a></td><td>';
-                    if (subscribers[j].status === 'active')
-                        subscrTable = subscrTable + '<label></label><input type="checkbox" checked disabled />'+ subscribers[j].status + '</label>';
+                var rss = item.rsslist;
+                rssTable='<table width="100%"><tr><td>';
+                for (j = 0; j < rss.length; j++) {
+                    rssTable = rssTable + '<a href="' + rss[j].rss + '">' + rss[j].rss + '</a></td><td>';
+                    if (rss[j].status === 'active')
+                        rssTable = rssTable + '<label></label><input type="checkbox" checked disabled />'+ rss[j].status + '</label>';
                     else
-                        subscrTable = subscrTable + '<label></label><input type="checkbox" disabled />' + subscribers[j].status + '</label>';
+                        rssTable = rssTable + '<label></label><input type="checkbox" disabled />' + rss[j].status + '</label>';
 
-                    subscrTable = subscrTable  + '<td/></tr>';
+                    rssTable = rssTable  + '<td/></tr>';
                 }
-                subscrTable = subscrTable + '</table>';
+                rssTable = rssTable + '</table>';
 
-                table = table + subscrTable + '</td></tr>';
+                table = table + rssTable + '</td></tr>';
             });
             table = table + '</table>';
-            $('#all_users').append(table);
+            $('#profile_view').append(table);
         })
     });
 </script>
 <header role="banner">
     <h1>RSS-2-Kindle rules</h1>
-    <h2>
+    <h2><p>
         <%-- TODO: just for test--%>
         <%
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -101,8 +105,12 @@
                     <%= ud.getPassword()%>
                 <%
                 }
-            }
-        %>
+            }%>
+    </p>
+    <p>
+            Username=<%=request.getAttribute("username")%>
+    </p>
+
     </h2>
 </header>
 
@@ -110,14 +118,14 @@
     <nav class="navbar navbar-default" role="navigation">
         <ul class="nav nav-tabs">
             <li role="presentation" class="active"><a href="#">My Profile</a></li>
-            <li role="presentation"><a href="subscribers.jsp">Subscriber Management</a></li>
+            <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
             <li role="presentation"><a href="service.html">Services</a></li>
         </ul>
     </nav>
 </div>
 
 <div class="container">
-    <div class="table-responsive" id="all_users">
+    <div class="table-responsive" id="profile_view">
 
     </div>
 </div>

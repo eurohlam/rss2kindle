@@ -34,7 +34,7 @@
 </head>
 <body>
 <script>
-    var rootURL = '/rss2kindle/rest/profile';
+    var rootURL = '/rss2kindle/rest/profile/<%=request.getAttribute("username")%>';
 
     $(document).ready(function () {
 
@@ -209,8 +209,8 @@
 <div class="container">
     <nav class="navbar navbar-default" role="navigation">
         <ul class="nav nav-tabs">
-            <li role="presentation"><a href="profile.jsp">My Profile</a></li>
-            <li role="presentation" class="active"><a href="subscribers.jsp">Subscriber Management</a></li>
+            <li role="presentation"><a href="profile">My Profile</a></li>
+            <li role="presentation" class="active"><a href="#">Subscriber Management</a></li>
             <li role="presentation"><a href="../service.html">Services</a></li>
         </ul>
     </nav>

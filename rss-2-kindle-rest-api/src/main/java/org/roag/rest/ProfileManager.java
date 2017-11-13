@@ -3,6 +3,7 @@ package org.roag.rest;
 import com.google.gson.Gson;
 import org.roag.ds.OperationResult;
 import org.roag.ds.SubscriberRepository;
+import org.roag.ds.UserRepository;
 import org.roag.model.Rss;
 import org.roag.model.RssStatus;
 import org.roag.model.Subscriber;
@@ -32,11 +33,32 @@ public class ProfileManager
     private Request request;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private SubscriberRepository subscriberRepository;
 
     private SubscriberFactory subscriberFactory = new SubscriberFactory();
 
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserDetails(@PathParam("username") String username)
+    {
+        logger.debug("Fetch user details from repository");
+        try
+        {
+            String subscribers=subscriberFactory.convertPojo2Json(userRepository.getUser(username));
+            return Response.ok(subscribers, MediaType.APPLICATION_JSON_TYPE).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+    @GET
+    @Path("/subscribers")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllSubscribers(@PathParam("username") String username)
     {

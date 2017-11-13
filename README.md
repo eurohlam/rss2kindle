@@ -59,3 +59,30 @@ For more help see the Apache Camel documentation
 
     http://camel.apache.org/
 
+### Structure of document in mongodb
+
+    { 
+    "_id" : "8a60e197-3ad8-4581-83e5-09c17bd3ee96" , 
+    "username" : "test" , 
+    "password" : "test" , 
+    "dateCreated" : "2017-11-13" ,
+    "status" : "active" ,
+    "subscribers" : 
+    [ 
+        { 
+        "email" : "test@gmail.com" , 
+        "name" : "test" , 
+        "rsslist" : 
+        [ 
+            { "rss" : "test.org/feed" , 
+            "status" : "active"}
+        ] , 
+        "settings" : { 
+            "starttime" : "2017-11-13" , 
+            "timeout" : "24"
+            } , 
+        "status" : "active"
+        }
+    ] , 
+    "roles" : [ "ROLE_USER"]
+    }
