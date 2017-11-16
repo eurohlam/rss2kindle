@@ -130,15 +130,6 @@
     </div>
 </div>
 
-<%--
-<footer class="footer">
-    <div class="container">
-        <div class="row">
-            <p align="center">Created by Eurohlam. 2016</p>
-        </div>
-    </div>
-</footer>
---%>
 <%@include file="footer.jsp"%>
 
 </body>

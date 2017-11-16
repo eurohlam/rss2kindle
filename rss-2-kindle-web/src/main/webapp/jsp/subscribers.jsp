@@ -70,7 +70,7 @@
 
         //on submit
         $("#get_subscr_form").submit(function () {
-            findById($("#email").val());
+            findSubscriberById($("#email").val());
             return false;
         });
         $("#edit_subscr_form").submit(function () {
@@ -78,7 +78,7 @@
             return false;
         });
         $("#remove_subscr_form").submit(function () {
-            removeById($("#removeemail").val());
+            removeSubscriberById($("#removeemail").val());
             return false;
         });
         $("#new_subscr_form").submit(function () {
@@ -103,7 +103,7 @@
         return false;
     }
 
-    function findById(id) {
+    function findSubscriberById(id) {
         $('#getresult').append('<p>trying to get data</p>');
         if (!isEmptyText(id)) {
             $.getJSON(rootURL + '/' + id, function (data) {
@@ -148,7 +148,7 @@
         }
     }
 
-    function removeById(id) {
+    function removeSubscriberById(id) {
         $.getJSON(rootURL + '/' + id + '/remove', function (data) {
             $('#getresult').append('<p>' + id + '</p><p>Result jopa' + '</p>');
         });
