@@ -8,7 +8,7 @@
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="org.roag.security"/>
-    <context:property-placeholder location="web-context.properties"/>
+    <context:property-placeholder location="WEB-INF/spring/web-context.properties"/>
 
     <bean name="bcryptEncoder"
                 class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
@@ -21,6 +21,7 @@
     </b:bean>
 -->
 
+<!--
     <bean id="subscriberFactory" class="org.roag.service.SubscriberFactory"/>
 
     <bean id="testUser" factory-bean="subscriberFactory" factory-method="newUser">
@@ -39,7 +40,7 @@
         <constructor-arg index="2" value="http://test.com/rss"/>
     </bean>
 
-    <!--Using in memory repository for testing goals  -->
+    &lt;!&ndash;Using in memory repository for testing goals  &ndash;&gt;
     <bean id="userRepository" class="org.roag.ds.impl.MemoryUserRepository" factory-method="getInstance">
         <property name="users">
             <map>
@@ -49,8 +50,9 @@
     </bean>
 
     <bean id="userDetailsService" class="org.roag.security.SecUserDetailsService">
-        <!--<b:property name="subscriberRepository" ref="subscriberRepository"/>-->
+        &lt;!&ndash;<b:property name="subscriberRepository" ref="subscriberRepository"/>&ndash;&gt;
     </bean>
+-->
 
     <bean id="restUserDetailsService" class="org.roag.security.RestUserDetailsService">
         <constructor-arg index="0" value="${rest.host}"/>
@@ -62,7 +64,8 @@
         <security:intercept-url pattern="/" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <security:intercept-url pattern="/index.html*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <security:intercept-url pattern="/login.jsp*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <security:intercept-url pattern="/admin" access="ROLE_ADMIN"/>
+        <security:intercept-url pattern="/view/admin*" access="ROLE_ADMIN"/>
+        <security:intercept-url pattern="/jsp/admin*" access="ROLE_ADMIN"/>
         <security:intercept-url pattern="/exitUser*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <security:intercept-url pattern="/**" access="ROLE_USER"/>
 
@@ -77,7 +80,7 @@
     </security:http>
 
     <security:authentication-manager>
-        <security:authentication-provider user-service-ref="userDetailsService">
+        <security:authentication-provider user-service-ref="restUserDetailsService">
 
         </security:authentication-provider>
 <!--

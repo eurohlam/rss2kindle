@@ -11,8 +11,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * Created by eurohlam on 26/10/2017.
+ * Only for initial security test. Will be deleted
  */
 //@Service
+@Deprecated
 public class SecUserDetailsService implements UserDetailsService {
 
     private static final Logger logger = LoggerFactory.getLogger(SecUserDetailsService.class);

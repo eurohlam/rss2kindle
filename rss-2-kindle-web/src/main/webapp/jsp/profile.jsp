@@ -6,6 +6,8 @@
   Time: 13:59
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@include file="include.jsp"%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,7 +36,7 @@
 
 <body>
 <script>
-    var rootURL = '/rss2kindle/rest/profile/<%=request.getAttribute("username")%>';
+    var rootURL = '/rss2kindle/rest/profile/<%=username%>';
 
     $(document).ready(function () {
         $('#profile_view').append('<p>Getting profile. Please wait...</p>');
@@ -88,30 +90,6 @@
 </script>
 <header role="banner">
     <h1>RSS-2-Kindle rules</h1>
-    <h2><p>
-        <%-- TODO: just for test--%>
-        <%
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth != null) { %>
-        <%= auth.getPrincipal().toString() %><br/>
-        <%= auth.getCredentials() %><br/>
-        <%= auth.getDetails() %>
-        <%
-
-                if (auth.getPrincipal() instanceof UserDetails) {
-                    UserDetails ud = (UserDetails)auth.getPrincipal();
-                %>
-                    <%= ud.getUsername()%>
-                    <%= ud.getPassword()%>
-                <%
-                }
-            }%>
-    </p>
-    <p>
-            Username=<%=request.getAttribute("username")%>
-    </p>
-
-    </h2>
 </header>
 
 <div class="container">

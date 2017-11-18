@@ -36,8 +36,7 @@ public class RestUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
             logger.debug("Trying to find a User {} in repository", username);
-
-            String response=ClientBuilder.newClient().target(restHost + ":" + restPort).path(restPath + "/users/"+username).request().get(String.class);
+            String response=ClientBuilder.newClient().target(restHost + ":" + restPort + restPath).path("users/"+username).request().get(String.class);
             if (!response.contains("Not Found")) {
                 SubscriberFactory factory = new SubscriberFactory();
                 User user=factory.convertJson2Pojo(User.class, response);

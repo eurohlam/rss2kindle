@@ -1,10 +1,13 @@
 <%@ page import="org.springframework.security.core.Authentication" %>
-<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %><%--
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
+<%@ page import="org.springframework.security.core.userdetails.UserDetails" %><%--
   User: eurohlam
   Date: 19/10/2017
   Time: 13:59
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@include file="include.jsp"%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,7 +37,7 @@
 </head>
 <body>
 <script>
-    var rootURL = '/rss2kindle/rest/profile/<%=request.getAttribute("username")%>';
+    var rootURL = '/rss2kindle/rest/profile/<%=username%>';
 
     $(document).ready(function () {
 
@@ -192,18 +195,6 @@
 
 <header role="banner">
     <h1>RSS-2-Kindle rules</h1>
-    <h2>
-        <%-- TODO: just for test--%>
-        <%
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth != null) { %>
-        <%= auth.getPrincipal().toString() %><br/>
-        <%= auth.getCredentials() %><br/>
-        <%= auth.getDetails() %>
-        <%
-            }
-        %>
-    </h2>
 </header>
 
 <div class="container">
