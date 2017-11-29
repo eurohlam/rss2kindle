@@ -26,40 +26,42 @@
 
 <body>
 <script>
-    var rootURL = '/rss2kindle/rest/subscribers';
+    var rootURL = '/rss2kindle/rest/users';
 
     $(document).ready(function () {
-        $('#all_subscribers').append('<p>Getting subscribers. Please wait...</p>');
+        $('#all_users').append('<p>Getting users. Please wait...</p>');
         $.getJSON(rootURL, function (data) {
             var table = '<table class="table table-hover">' +
                 '<tr><th>#</th>' +
-                '<th>email</th>' +
-                '<th>name</th>' +
+                '<th>username</th>' +
+                '<th>date created</th>' +
                 '<th>status</th>'+
-                '<th>rss</th></tr>';
+                '<th>subscribers</th></tr>';
 
             $.each(data, function (i, item) {
                 var tr;
-                if (item.status === 'terminated')
+                if (item.status === 'locked')
                     tr='<tr class="danger"><td>';
+/*
                 else if (item.status === 'suspended')
                     tr='<tr class="warning"><td>';
+*/
                 else
                     tr='<tr class="active"><td>';
 
                 table = table + tr
                         + i + '</td><td>'
-                        + item.email + '</td><td>'
-                        + item.name + '</td><td>'
+                        + item.username + '</td><td>'
+                        + item.dateCreated + '</td><td>'
                         + item.status + '</td><td>';
-                var rsslist = item.rsslist;
+                var subscribers = item.subscribers;
                 rssTable='<table width="100%"><tr><td>';
-                for (j = 0; j < rsslist.length; j++) {
-                    rssTable = rssTable + '<a href="' + rsslist[j].rss + '">' + rsslist[j].rss + '</a></td><td>';
-                    if (rsslist[j].status === 'active')
-                        rssTable = rssTable + '<label></label><input type="checkbox" checked disabled />'+ rsslist[j].status + '</label>';
+                for (j = 0; j < subscribers.length; j++) {
+                    rssTable = rssTable + '<a href="' + subscribers[j].email + '">' + subscribers[j].email + '</a></td><td>';
+                    if (subscribers[j].status === 'active')
+                        rssTable = rssTable + '<label></label><input type="checkbox" checked disabled />'+ subscribers[j].status + '</label>';
                     else
-                        rssTable = rssTable + '<label></label><input type="checkbox" disabled />' + rsslist[j].status + '</label>';
+                        rssTable = rssTable + '<label></label><input type="checkbox" disabled />' + subscribers[j].status + '</label>';
 
                     rssTable = rssTable  + '<td/></tr>';
                 }
@@ -68,7 +70,7 @@
                 table = table + rssTable + '</td></tr>';
             });
             table = table + '</table>';
-            $('#all_subscribers').append(table);
+            $('#all_users').append(table);
         })
     });
 </script>
@@ -87,7 +89,7 @@
 </div>
 
 <div class="container">
-    <div class="table-responsive" id="all_subscribers">
+    <div class="table-responsive" id="all_users">
 
     </div>
 </div>

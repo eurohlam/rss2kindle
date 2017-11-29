@@ -24,9 +24,14 @@
     </bean>
 
     <!--MongoSubscriberRepository is used as implementation of SubscriberRepository-->
-    <bean id="subscriberRepository" class="org.roag.ds.mongo.MongoSubscriberRepository" scope="prototype">
+    <bean id="userRepository" class="org.roag.ds.mongo.MongoUserRepository" scope="prototype">
         <constructor-arg index="0" ref="mongoHelper"/>
         <constructor-arg index="1" ref="mongoCamelContext"/>
+    </bean>
+
+    <!--MongoSubscriberRepository is used as implementation of SubscriberRepository-->
+    <bean id="subscriberRepository" class="org.roag.ds.mongo.MongoSubscriberRepository" scope="prototype">
+        <constructor-arg index="0" ref="userRepository"/>
     </bean>
 
     <camel:camelContext id="mongoCamelContext" streamCache="true">

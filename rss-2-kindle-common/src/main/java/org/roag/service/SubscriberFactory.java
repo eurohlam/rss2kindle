@@ -7,10 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,18 +25,21 @@ public class SubscriberFactory
 
     public User newUser(String username, String password)
     {
-        return newUser(username, password, format.format(new Date()), UserStatus.ACTIVE.toString());
+        Set<Roles> roles=new HashSet<>(1);
+        roles.add(Roles.ROLE_USER);
+        return newUser(username, password, format.format(new Date()), UserStatus.ACTIVE, roles, new ArrayList<Subscriber>(3));
     }
 
-    public User newUser(String username, String password, String dateCreated, String status)
+    public User newUser(String username, String password, String dateCreated, UserStatus status, Set<Roles> roles, List<Subscriber> subscribers)
     {
         User user = new User();
         user.setId(UUID.randomUUID().toString());
         user.setUsername(username);
         user.setPassword(password);//TODO: cryptography
-        user.setStatus(status);
+        user.setStatus(status.toString());
         user.setDateCreated(dateCreated);
-        user.setSubscribers(new ArrayList<Subscriber>());
+        user.setRoles(roles);
+        user.setSubscribers(subscribers);
 
         return user;
     }

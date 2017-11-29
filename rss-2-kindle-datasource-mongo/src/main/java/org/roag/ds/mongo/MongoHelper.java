@@ -4,6 +4,7 @@ import com.mongodb.*;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mongodb.MongoDbConstants;
 import org.apache.camel.component.mongodb.MongoDbOperation;
+import org.roag.ds.OperationResult;
 import org.roag.service.SubscriberFactory;
 import org.roag.model.*;
 import org.slf4j.Logger;
@@ -133,7 +134,7 @@ public class MongoHelper
 
     }
 
-    public WriteResult addUser(User user, ProducerTemplate producerTemplate) throws Exception
+    public OperationResult addUser(User user, ProducerTemplate producerTemplate) throws Exception
     {
         Map<String, String> cond= new HashMap<>(1);
         cond.put("username", user.getUsername());
@@ -141,15 +142,16 @@ public class MongoHelper
         if (r != null)
             throw new IllegalArgumentException("Creation is impossible. User " + user.getUsername() + " already exists");
 
-        WriteResult result = (WriteResult) producerTemplate.requestBody(
+        Object result = producerTemplate.requestBody(
                 getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.insert),
                 subscriberFactory.convertPojo2Json(user));
 
         logger.info("INSERT: New user: {} has been inserted into Mongo with the result: {}", user.getUsername(), result);
-        return result;
+        logger.debug("INSERT: result: {}", result);
+        return OperationResult.SUCCESS;
     }
 
-    public WriteResult updateUser(User user, ProducerTemplate producerTemplate) throws Exception
+    public OperationResult updateUser(User user, ProducerTemplate producerTemplate) throws Exception
     {
         Map<String, String> cond= new HashMap<>(1);
         cond.put("username", user.getUsername());
@@ -158,104 +160,25 @@ public class MongoHelper
             throw new IllegalArgumentException("Update is impossible. User " + user.getUsername() + " does not exist");
 
         DBObject filterField = new BasicDBObject("username", user.getUsername());
-        DBObject obj=BasicDBObjectBuilder.start(subscriberFactory.convertJson2Pojo(Map.class,subscriberFactory.convertPojo2Json(user))).get();
-        WriteResult result = (WriteResult) producerTemplate.requestBody(
+        DBObject obj=new BasicDBObject("$set", BasicDBObjectBuilder.start(subscriberFactory.convertJson2Pojo(Map.class,subscriberFactory.convertPojo2Json(user))).get());
+        Object result = producerTemplate.requestBody(
                 getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.update),
-                new Object[]{filterField, obj});
+                new Object[]{filterField, obj});//TODO: process UpdateResult
 
         logger.info("UPDATE: User: {} has been updated into Mongo with the result: {}", user.getUsername(), result);
-        return result;
+        logger.debug("UPDATE: result: {}", result);
+        return OperationResult.SUCCESS;
     }
 
-    public WriteResult removeUser(String username, ProducerTemplate producerTemplate) throws Exception
+    public OperationResult removeUser(String username, ProducerTemplate producerTemplate) throws Exception
     {
         DBObject query = new BasicDBObject("username", username);
-        WriteResult result = (WriteResult) producerTemplate.requestBody(
+        Object result = producerTemplate.requestBody(
                 getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.remove),
-                query);
+                query); //TODO: process DeleteResult
 
         logger.warn("DELETE: User: {} has been removed from Mongo with the result: {}", username, result);
-        return result;
+        logger.debug("DELETE: result: {}", result);
+        return OperationResult.SUCCESS;
     }
-/*
-    public List<Subscriber> getSubscribers(ProducerTemplate producerTemplate, Map<String, String> conditions) throws Exception
-    {
-//        DBObject query = BasicDBObjectBuilder.start("status", "active").get();
-//        List<DBObject> result = producerTemplate.requestBody(MONGO_CAMEL_ROUTE, query, List.class);
-        List<DBObject> result = findAllByCondition(producerTemplate, conditions);
-        List<Subscriber> subscribers = new ArrayList<>(result.size());
-        for (DBObject obj : result)
-        {
-            Subscriber subscr = subscriberFactory.convertJson2Pojo(Subscriber.class, subscriberFactory.convertPojo2Json(obj));
-            subscribers.add(subscr);
-            BasicDBList rsslist = (BasicDBList) obj.get("rsslist");
-            logger.info("GET: Subscriber: " + subscr.getEmail() + "\n" + rsslist.getClass().toString() + "  " + rsslist);
-        }
-        return subscribers;
-    }
-
-    public Subscriber getSubscriber(String username, String email, ProducerTemplate producerTemplate) throws Exception
-    {
-        Map<String, String> cond = new HashMap<>(2);
-        cond.put("username", username);
-        cond.put("subscribers.email", email);
-        DBObject result = findOneByCondition(producerTemplate, cond);
-        if (result == null)
-            throw new IllegalArgumentException("Subscriber " + email + " has not been found");
-
-        result.removeField("_id");
-        logger.info(result.toString());
-        Subscriber subscr = subscriberFactory.convertJson2Pojo(Subscriber.class, subscriberFactory.convertPojo2Json(result));//TODO:
-        BasicDBList rsslist = (BasicDBList) result.get("rsslist");
-        logger.info("GET: Subscriber: {} for user {}\n {} {}", subscr.getEmail(), username, rsslist.getClass().toString(), rsslist);
-        return subscr;
-
-    }*/
-
-/*
-    public WriteResult addSubscriber(Subscriber subscriber, ProducerTemplate producerTemplate) throws Exception//TODO:
-    {
-        Map<String, String> cond= new HashMap<>(1);
-        cond.put("email", subscriber.getEmail());
-        DBObject r=findOneByCondition(producerTemplate,cond);
-        if (r != null)
-            throw new IllegalArgumentException("Creation is impossible. Subscriber " + subscriber.getEmail() + " already exists");
-
-        WriteResult result = (WriteResult) producerTemplate.requestBody(
-                getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.insert),
-                subscriberFactory.convertPojo2Json(subscriber));
-
-        logger.info("INSERT: New subscriber: {} has been inserted into Mongo with the result: {}", subscriber.getEmail(), result);
-        return result;
-    }
-
-    public WriteResult updateSubscriber(Subscriber subscriber, ProducerTemplate producerTemplate) throws Exception//TODO:
-    {
-        Map<String, String> cond= new HashMap<>(1);
-        cond.put("email", subscriber.getEmail());
-        DBObject r=findOneByCondition(producerTemplate,cond);
-        if (r == null)
-            throw new IllegalArgumentException("Update is impossible. Subscriber " + subscriber.getEmail() + " does not exist");
-
-        DBObject filterField = new BasicDBObject("email", subscriber.getEmail());
-        DBObject obj=BasicDBObjectBuilder.start(subscriberFactory.convertJson2Pojo(Map.class,subscriberFactory.convertPojo2Json(subscriber))).get();
-        WriteResult result = (WriteResult) producerTemplate.requestBody(
-                getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.update),
-                new Object[]{filterField, obj});
-
-        logger.info("UPDATE: Subscriber: {} has been updated into Mongo with the result: {}", subscriber.getEmail(), result);
-        return result;
-    }
-
-    public WriteResult removeSubscriber(String email, ProducerTemplate producerTemplate) throws Exception //TODO:
-    {
-        DBObject query = new BasicDBObject("email", email);
-        WriteResult result = (WriteResult) producerTemplate.requestBody(
-                getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.remove),
-                query);
-
-        logger.warn("DELETE: Subscriber: {} has been removed from Mongo with the result: {}", email, result);
-        return result;
-    }
-    */
 }

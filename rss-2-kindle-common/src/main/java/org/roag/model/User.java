@@ -3,13 +3,15 @@ package org.roag.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+import java.util.Set;
 
 
 /**
  * Created by eurohlam on 28/09/2017.
  */
 @SuppressWarnings("unused")
-public class User {
+public class User
+{
 
     @SerializedName("_id")
     private String id;
@@ -23,6 +25,8 @@ public class User {
     private String status;
     @SerializedName("subscribers")
     private List<Subscriber> subscribers;
+    @SerializedName("roles")
+    private Set<Roles> roles;
 
     public String getId() {
         return id;
@@ -70,5 +74,15 @@ public class User {
 
     public void setSubscribers(List<Subscriber> subscribers) {
         this.subscribers = subscribers;
+    }
+
+    public Set<Roles> getRoles()
+    {
+        return roles;
+    }
+
+    public void setRoles(Set<Roles> roles)
+    {
+        this.roles = roles;
     }
 }

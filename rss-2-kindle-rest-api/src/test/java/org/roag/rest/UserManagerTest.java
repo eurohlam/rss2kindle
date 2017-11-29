@@ -22,7 +22,9 @@ import static org.junit.Assert.assertEquals;
  */
 public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest
 {
-    private String username="test";
+    private final static String PATH = "users/";
+
+    private String username = "test";
 
     @Override
     protected Application configure()
@@ -41,61 +43,56 @@ public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest
     @Test(groups = {"UserManager:GET"})
     public void getUserOperationsTest()
     {
-        Response response = target("users/"+username).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        Response response = target(PATH + username).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals("Getting user failed", 200, response.getStatus());
 
-        response = target("users/" + username +"/lock").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        response = target(PATH + username +"/lock").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals("Suspending user failed", 200, response.getStatus());
 
-        response = target("users/" + username + "/unlock").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        response = target(PATH + username + "/unlock").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals("Resuming user failed", 200, response.getStatus());
     }
 
     @Test(groups = {"UserManager:CRUD"})
     public void crudTest()
     {
-/*
-        String new_email="test2@mail.com";
+        String new_user="test2";
+        String new_password="new_password";
         SubscriberFactory factory=new SubscriberFactory();
 
         //create
         Form form_new = new Form();
-        form_new.param("email", new_email);
-        form_new.param("name", "test2");
-        form_new.param("rss", "http://test.com/rss");
-        Response response = target("Users/new").request().post(Entity.form(form_new), Response.class);
+        form_new.param("username", new_user);
+        form_new.param("password", "12345");
+        Response response = target(PATH + "new").request().post(Entity.form(form_new), Response.class);
         assertEquals("Creating new User failed", 200, response.getStatus());
 
         //read
-        response = target("Users/"+new_email).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        response = target(PATH + new_user).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals(200, response.getStatus());
         String entity=response.readEntity(String.class);
-        System.out.println(entity);
         User User=factory.convertJson2Pojo(User.class,entity);
-        assertEquals("Reading new User failed", new_email, User.getEmail());
+        assertEquals("Reading new User failed", new_user, User.getUsername());
 
         //update
-        User.setName("test2_updated");
+        User.setPassword(new_password);
         Form form_update = new Form();
-        form_update.param("email", User.getEmail());
-        form_update.param("name", User.getName());
-        form_update.param("rss", User.getRsslist().get(0).getRss()+"/updated");
-        response = target("Users/update").request().post(Entity.form(form_update), Response.class);
+        form_update.param("username", User.getUsername());
+        form_update.param("password", User.getPassword());
+        response = target(PATH + "update").request().post(Entity.form(form_update), Response.class);
         assertEquals(200, response.getStatus());
 
         //read
-        response = target("Users/"+new_email).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        response = target(PATH + new_user).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals(200, response.getStatus());
         entity=response.readEntity(String.class);
-        System.out.println(entity);
         User=factory.convertJson2Pojo(User.class, entity);
-        assertEquals("Reading updated User failed", "test2_updated", User.getName());
+        assertEquals("Reading updated User failed", new_password, User.getPassword());
 
         //delete
-        response = target("Users/" + new_email + "/remove").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        response = target(PATH + new_user + "/remove").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals(200, response.getStatus());
 
-*/
     }
 
 }

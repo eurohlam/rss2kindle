@@ -31,8 +31,13 @@
     </bean>
 
     <!--MongoSubscriberRepository is used as implementation of SubscriberRepository-->
-    <bean id="subscriberRepository" class="org.roag.ds.mongo.MongoSubscriberRepository" scope="prototype">
+    <bean id="userRepository" class="org.roag.ds.mongo.MongoUserRepository" scope="prototype">
         <constructor-arg index="0" ref="mongoHelper"/>
         <constructor-arg index="1" ref="mainCamelContext"/>
+    </bean>
+
+    <!--MongoSubscriberRepository is used as implementation of SubscriberRepository-->
+    <bean id="subscriberRepository" class="org.roag.ds.mongo.MongoSubscriberRepository" scope="prototype">
+        <constructor-arg index="0" ref="userRepository"/>
     </bean>
 </beans>

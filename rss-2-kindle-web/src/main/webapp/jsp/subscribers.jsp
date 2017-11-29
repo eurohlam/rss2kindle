@@ -1,3 +1,13 @@
+<%@ page import="org.springframework.security.core.Authentication" %>
+<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
+<%@ page import="org.springframework.security.core.userdetails.UserDetails" %><%--
+  User: eurohlam
+  Date: 19/10/2017
+  Time: 13:59
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@include file="include.jsp"%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,13 +17,13 @@
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
     <!-- JQuery -->
-    <script src="js/jquery-3.1.1.js"></script>
+    <script src="../js/jquery-3.1.1.js"></script>
 
     <!-- Bootstrap -->
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="../bootstrap/js/bootstrap.min.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -22,12 +32,12 @@
     <![endif]-->
 
     <!-- Custom css -->
-    <link href="css/sticky-footer.css" rel="stylesheet">
+    <link href="../css/sticky-footer.css" rel="stylesheet">
 
 </head>
 <body>
 <script>
-    var rootURL = '/rss2kindle/rest/profile';
+    var rootURL = '/rss2kindle/rest/profile/<%=username%>';
 
     $(document).ready(function () {
 
@@ -63,7 +73,7 @@
 
         //on submit
         $("#get_subscr_form").submit(function () {
-            findById($("#email").val());
+            findSubscriberById($("#email").val());
             return false;
         });
         $("#edit_subscr_form").submit(function () {
@@ -71,7 +81,7 @@
             return false;
         });
         $("#remove_subscr_form").submit(function () {
-            removeById($("#removeemail").val());
+            removeSubscriberById($("#removeemail").val());
             return false;
         });
         $("#new_subscr_form").submit(function () {
@@ -96,7 +106,7 @@
         return false;
     }
 
-    function findById(id) {
+    function findSubscriberById(id) {
         $('#getresult').append('<p>trying to get data</p>');
         if (!isEmptyText(id)) {
             $.getJSON(rootURL + '/' + id, function (data) {
@@ -141,7 +151,7 @@
         }
     }
 
-    function removeById(id) {
+    function removeSubscriberById(id) {
         $.getJSON(rootURL + '/' + id + '/remove', function (data) {
             $('#getresult').append('<p>' + id + '</p><p>Result jopa' + '</p>');
         });
@@ -190,9 +200,9 @@
 <div class="container">
     <nav class="navbar navbar-default" role="navigation">
         <ul class="nav nav-tabs">
-            <li role="presentation"><a href="main.html">Home</a></li>
-            <li role="presentation" class="active"><a href="subscriber.html">Subscriber Management</a></li>
-            <li role="presentation"><a href="service.html">Services</a></li>
+            <li role="presentation"><a href="profile">My Profile</a></li>
+            <li role="presentation" class="active"><a href="#">Subscriber Management</a></li>
+            <li role="presentation"><a href="../service.html">Services</a></li>
         </ul>
     </nav>
 </div>
@@ -296,6 +306,7 @@
 
 <!--<aside>This aside</aside>-->
 
+<%--
 <footer class="footer">
     <div class="container">
         <div class="row">
@@ -303,5 +314,7 @@
         </div>
     </div>
 </footer>
+--%>
+<%@include file="footer.jsp"%>
 </body>
 </html>

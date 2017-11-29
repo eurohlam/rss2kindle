@@ -17,7 +17,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <!-- Third party libraries versions -->
     <spring.version>4.2.5.RELEASE</spring.version>
-    <camel.version>2.17.3</camel.version>
+    <camel.version>2.19.2</camel.version>
     <jersey.version>2.26-b09</jersey.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
@@ -38,6 +38,7 @@
     <module>rss-2-kindle-datasource-mongo</module>
     <module>rss-2-kindle-camel</module>
     <module>rss-2-kindle-rest-api</module>
+    <module>rss-2-kindle-web</module>
   </modules>
 
   <dependencies>
@@ -79,6 +80,7 @@
       <artifactId>log4j</artifactId>
       <version>${log4j.version}</version>
     </dependency>
+
 
     <!-- testing -->
     <dependency>
