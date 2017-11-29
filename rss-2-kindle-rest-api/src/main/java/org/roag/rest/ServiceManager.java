@@ -51,7 +51,6 @@ public class ServiceManager {
     }
 
     @GET
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response runRssPollingForUser(@PathParam("username") String username)
     {

@@ -13,6 +13,7 @@ import org.roag.model.UserStatus;
 import org.roag.service.SubscriberFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Collections;
 import java.util.List;
@@ -94,12 +95,18 @@ public class MongoSubscriberRepository implements SubscriberRepository
 
     @Override
     public List<Subscriber> findAllSubscribersByUser(String username) throws Exception {
-        return null;//TODO
+        logger.debug("Fetch all subscribers for user {} from Mongo", username);
+
+        User user=getUser(username);
+        if (user == null)
+            throw new IllegalArgumentException("User " + username + " does not exist");
+
+        return user.getSubscribers();
     }
 
     @Override
     public List<Subscriber> findAllSubscribersByUser(String username, Map condition) throws Exception {
-        return null;//TODO
+        throw new NotImplementedException();//TODO
     }
 
     @Override
