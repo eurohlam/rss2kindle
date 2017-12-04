@@ -33,7 +33,7 @@ public class ServiceManager {
     @Produces(MediaType.APPLICATION_JSON)
     public Response runRssPollingForSubscriber(@PathParam("username") String username, @PathParam("email") String id)
     {
-        logger.debug("Run RSS polling by demand: user {}, subscriber {}", username, id);
+        logger.info("Run RSS polling by demand: user {}, subscriber {}", username, id);
         try
         {
             short count= rss2XmlHandler.runRssPollingForSubscriber(username, id);
@@ -54,7 +54,7 @@ public class ServiceManager {
     @Produces(MediaType.APPLICATION_JSON)
     public Response runRssPollingForUser(@PathParam("username") String username)
     {
-        logger.debug("Run RSS polling by demand: user {}", username);
+        logger.info("Run RSS polling by demand: user {}", username);
         try
         {
             rss2XmlHandler.runRssPollingForList(username, subscriberRepository.findAllSubscribersByUser(username));

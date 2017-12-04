@@ -75,7 +75,7 @@ public class UserManager
     @Produces(MediaType.APPLICATION_JSON)
     public Response lockUser(@PathParam("username") String id)
     {
-        logger.debug("Lock user {}", id);
+        logger.warn("Lock user {}", id);
         try
         {
             OperationResult result= userRepository.lockUser(id);
@@ -96,7 +96,7 @@ public class UserManager
     @Produces(MediaType.APPLICATION_JSON)
     public Response unlockUser(@PathParam("username") String id)
     {
-        logger.debug("Unlock user {}", id);
+        logger.warn("Unlock user {}", id);
         try
         {
             OperationResult result = userRepository.unlockUser(id);
@@ -118,7 +118,7 @@ public class UserManager
     public Response addUser(@FormParam("username") String username,
                             @FormParam("password") String password)
     {
-        logger.debug("Add new user {}", username);
+        logger.info("Add new user {}", username);
         try
         {
             OperationResult result = userRepository.addUser(subscriberFactory.newUser(username, password));
@@ -142,7 +142,7 @@ public class UserManager
     public Response updateUser(@FormParam("username") String username,
                                @FormParam("password") String password)
     {
-        logger.debug("Update existing user {}", username);
+        logger.warn("Update existing user {}", username);
         try
         {
             User user= userRepository.getUser(username);
@@ -165,7 +165,7 @@ public class UserManager
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeUser(@PathParam("username") String id)
     {
-        logger.debug("Remove user {}", id);
+        logger.warn("Remove user {}", id);
         try
         {
             OperationResult  result = userRepository.removeUser(id);

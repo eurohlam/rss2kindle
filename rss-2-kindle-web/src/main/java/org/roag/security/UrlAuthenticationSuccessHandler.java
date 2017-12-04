@@ -1,5 +1,6 @@
 package org.roag.security;
 
+import org.roag.model.Roles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -49,10 +50,10 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         boolean isAdmin = false;
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         for (GrantedAuthority grantedAuthority : authorities) {
-            if (grantedAuthority.getAuthority().equals("ROLE_USER")) {
+            if (grantedAuthority.getAuthority().equals(Roles.ROLE_USER.toString())) {
                 isUser = true;
                 break;
-            } else if (grantedAuthority.getAuthority().equals("ROLE_ADMIN")) {
+            } else if (grantedAuthority.getAuthority().equals(Roles.ROLE_ADMIN.toString())) {
                 isAdmin = true;
                 break;
             }

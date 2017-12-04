@@ -1,9 +1,10 @@
 <%--
   User: eurohlam
   Date: 2/12/17
-  Time: 00:13
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@include file="include.jsp"%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,6 +30,26 @@
     <link href="../css/sticky-footer.css" rel="stylesheet">
 
 </head>
+<script>
+    var rootURL = '/rss2kindle/rest/service/<%=username%>';
+    $(document).ready(function () {
+        $("#run_all").click(function () {
+            runPollingForUser();
+            return false;
+        });
+
+        //error view
+        $(document).ajaxError(function (event, request, settings) {
+            $("#errorview").append("<h1>Error in getting data.</h1>");
+        })
+    });
+
+    function runPollingForUser() {
+        $.getJSON(rootURL, function (data) {
+            $('#getresult').append('<p>Result jopa</p>');
+        });
+    }
+</script>
 
 <body>
 <header role="banner">
@@ -38,14 +59,25 @@
 <div class="container">
     <nav class="navbar navbar-default" role="navigation">
         <ul class="nav nav-tabs">
-            <li role="presentation"><a href="profile">Home</a></li>
+            <li role="presentation"><a href="profile">My Profile</a></li>
             <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
             <li role="presentation" class="active"><a href="#">Services</a></li>
         </ul>
     </nav>
 </div>
 
-<aside>This aside</aside>
+<div class="container">
+    <article>
+        <button id="run_all" type="button" class="btn btn-primary btn-lg btn-block">Poll my subscriptions immediately</button>
+    </article>
+</div>
+
+<div class="col-md-6">
+    <div id="getresult" class="table-responsive">
+
+    </div>
+    <p id="errorview">Jopa</p>
+</div>
 
 
 <%@include file="footer.jsp"%>

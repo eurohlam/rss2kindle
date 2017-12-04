@@ -1,9 +1,6 @@
-<%@ page import="org.springframework.security.core.Authentication" %>
-<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
-<%@ page import="org.springframework.security.core.userdetails.UserDetails" %><%--
+<%--
   User: eurohlam
   Date: 19/10/2017
-  Time: 13:59
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="include.jsp"%>

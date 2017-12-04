@@ -1,9 +1,6 @@
-<%@ page import="org.springframework.security.core.Authentication" %>
-<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
-<%@ page import="org.springframework.security.core.userdetails.UserDetails" %><%--
+<%--
   User: eurohlam
   Date: 19/10/2017
-  Time: 13:59
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="include.jsp"%>
@@ -47,8 +44,8 @@
 
             var table = '<table class="table table-hover">' +
                 '<tr><th>#</th>' +
-                '<th>email</th>' +
                 '<th>title</th>' +
+                '<th>email</th>' +
                 '<th>status</th>'+
                 '<th>rss</th></tr>';
 
@@ -65,8 +62,8 @@
 
                 table = table + tr
                     + i + '</td><td>'
-                    + item.email + '</td><td>'
                     + item.name + '</td><td>'
+                    + item.email + '</td><td>'
                     + item.status + '</td><td>';
                 var rss = item.rsslist;
                 rssTable='<table width="100%"><tr><td>';
