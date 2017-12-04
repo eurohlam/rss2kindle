@@ -39,6 +39,7 @@ public class RssPollingTask implements Callable<Map<String, String>>
     public Map<String, String> call() throws Exception
     {
         Map<String, String> map = new Hashtable<>(1);
+        map.put(rssURI, "Not polled yet");
         logger.debug("Started polling {}", rssURI);
         SyndFeed feed = consumer.receiveBody(rssURI, SyndFeedImpl.class);
         logger.debug("Finished polling {}.\nTitle: {}.\nDescription: {}", rssURI, feed.getTitle(), feed.getDescription());

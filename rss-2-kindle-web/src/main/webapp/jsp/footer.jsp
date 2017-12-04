@@ -1,3 +1,4 @@
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%--
   User: eurohlam
   Date: 7/11/2017
@@ -7,6 +8,10 @@
 <footer class="footer">
     <div class="container">
         <div class="row">
+            <form action="<c:url value="/logout"/>" method="post">
+                <input type="submit" value="Logoff"/> (also clears any remember-me cookie)
+                <security:csrfInput/>
+            </form>
             <p align="center">Created by Eurohlam. 2016</p>
         </div>
     </div>

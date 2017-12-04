@@ -97,7 +97,7 @@
         <ul class="nav nav-tabs">
             <li role="presentation" class="active"><a href="#">My Profile</a></li>
             <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
-            <li role="presentation"><a href="service.html">Services</a></li>
+            <li role="presentation"><a href="service">Services</a></li>
         </ul>
     </nav>
 </div>

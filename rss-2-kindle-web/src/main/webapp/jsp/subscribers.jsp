@@ -202,7 +202,7 @@
         <ul class="nav nav-tabs">
             <li role="presentation"><a href="profile">My Profile</a></li>
             <li role="presentation" class="active"><a href="#">Subscriber Management</a></li>
-            <li role="presentation"><a href="../service.html">Services</a></li>
+            <li role="presentation"><a href="service">Services</a></li>
         </ul>
     </nav>
 </div>
@@ -306,15 +306,7 @@
 
 <!--<aside>This aside</aside>-->
 
-<%--
-<footer class="footer">
-    <div class="container">
-        <div class="row">
-            <p align="center">Created by Eurohlam. 2016</p>
-        </div>
-    </div>
-</footer>
---%>
+
 <%@include file="footer.jsp"%>
 </body>
 </html>

@@ -25,6 +25,11 @@ public class MainController {
         return "subscribers";
     }
 
+    @RequestMapping(value = "/service")
+    public String servicePage() {
+        return "service";
+    }
+
     @RequestMapping(value = "/admin")
     public String adminPage() {
         return "adminPage";
