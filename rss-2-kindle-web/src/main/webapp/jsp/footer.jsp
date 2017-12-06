@@ -12,7 +12,7 @@
                 <input type="submit" value="Logoff"/> (also clears any remember-me cookie)
                 <security:csrfInput/>
             </form>
-            <p align="center">Created by Eurohlam. 2016</p>
+            <p align="center">&copy; Created by eurohlam. 2017</p>
         </div>
     </div>
 </footer>
