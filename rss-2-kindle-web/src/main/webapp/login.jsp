@@ -33,10 +33,10 @@
 
     <form class="form-signin" action="<c:url value='login'/>" method="post">
         <h2 class="form-signin-heading">Please sign in</h2>
-        <label for="inputUsername" class="sr-only">Username</label>
-        <input type="text" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
-        <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+        <label for="username" class="sr-only">Username</label>
+        <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
         <input type="hidden" name="<c:out value="${_csrf.parameterName}"/>" value="<c:out value="${_csrf.token}"/>"/>
         <div class="checkbox">
             <label>
@@ -52,10 +52,11 @@
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
     </form>
 
-    <footer class="footer">
-        <p>&copy; Created by eurohlam. 2017</p>
-    </footer>
+    <%--<footer class="sticky-footer">--%>
+        <%--<p>&copy; Created by eurohlam. 2017</p>--%>
+    <%--</footer>--%>
 </div> <!-- /container -->
+<%@include file="jsp/footer.jsp" %>
 
 </body>
 

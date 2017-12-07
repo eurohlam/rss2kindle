@@ -35,7 +35,10 @@ public class RestUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
-            logger.debug("Trying to find a User {} in repository", username);
+            logger.debug("Trying to find User {} in repository", username);
+            if (username == null || username.length() == 0)
+                throw new UsernameNotFoundException("User can't be found due to username is null or empty");
+
             String response=ClientBuilder.newClient().target(restHost + ":" + restPort + restPath).path("users/"+username).request().get(String.class);
             if (!response.contains("Not Found")) {
                 SubscriberFactory factory = new SubscriberFactory();
