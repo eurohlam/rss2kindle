@@ -5,7 +5,7 @@
   Time: 16:10
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<footer class="footer">
+<footer class="sticky-footer">
     <div class="container">
         <div class="row">
             <form action="<c:url value="/logout"/>" method="post">

@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.security.Principal;
-
 
 @Controller
 public class MainController {
@@ -32,7 +30,7 @@ public class MainController {
 
     @RequestMapping(value = "/admin")
     public String adminPage() {
-        return "adminPage";
+        return "admin/adminPage";
     }
 
     @RequestMapping(value ="/profile", method = RequestMethod.GET)

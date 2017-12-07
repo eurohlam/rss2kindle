@@ -29,20 +29,6 @@
 </head>
 <body>
 
-<%--<form name="frm" action="<c:url value='login'/>" method="post">
-    <table>
-        <tr> <td>User:</td> <td><input type="text" name="username"></td></tr>
-
-        <tr><td>Password:</td> <td><input type="password" name="password"></td></tr>
-
-        <tr><td colspan="2"><input name="submit" type="submit"></td></tr>
-        <tr><td colspan="2"><input name="reset" type="reset"></td></tr>
-    </table>
-
-    <input type="hidden" name="<c:out value="${_csrf.parameterName}"/>"
-           value="<c:out value="${_csrf.token}"/>"/>
-</form>--%>
-
 <div class="container">
 
     <form class="form-signin" action="<c:url value='login'/>" method="post">
@@ -62,7 +48,7 @@
             Your login attempt was not successful, try again.<br/>
             Reason: <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/>
             </span>
-            </c:if>
+        </c:if>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
     </form>
 

@@ -8,13 +8,13 @@
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
     <!-- JQuery -->
-    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../../js/jquery-3.1.1.js"></script>
 
     <!-- Bootstrap -->
-    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="../bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../bootstrap/js/bootstrap.min.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -23,7 +23,7 @@
     <![endif]-->
 
     <!-- Custom css -->
-    <link href="../css/sticky-footer.css" rel="stylesheet">
+    <link href="../../css/sticky-footer.css" rel="stylesheet">
 
 </head>
 
@@ -97,7 +97,7 @@
     </div>
 </div>
 
-<%@include file="footer.jsp" %>
+<%@include file="../footer.jsp" %>
 
 </body>
 </html>
