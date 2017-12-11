@@ -8,13 +8,13 @@
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
     <!-- JQuery -->
-    <script src="../../js/jquery-3.1.1.js"></script>
+    <script src="../js/jquery-3.1.1.js"></script>
 
     <!-- Bootstrap -->
-    <link href="../../bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../../bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="../../bootstrap/js/bootstrap.min.js"></script>
+    <script src="../bootstrap/js/bootstrap.min.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -23,7 +23,7 @@
     <![endif]-->
 
     <!-- Custom css -->
-    <link href="../../css/sticky-footer.css" rel="stylesheet">
+    <link href="../css/sticky-footer.css" rel="stylesheet">
 
 </head>
 
@@ -38,8 +38,8 @@
                 '<tr><th>#</th>' +
                 '<th>username</th>' +
                 '<th>date created</th>' +
-                '<th>status</th>' +
-                '<th>subscribers</th></tr>';
+                '<th>status</th>';
+//                '<th>subscribers</th></tr>';
 
             $.each(data, function (i, item) {
                 var tr;
@@ -56,7 +56,8 @@
                     + i + '</td><td>'
                     + item.username + '</td><td>'
                     + item.dateCreated + '</td><td>'
-                    + item.status + '</td><td>';
+                    + item.status + '</td></tr>';
+/*
                 var subscribers = item.subscribers;
                 rssTable = '<table width="100%"><tr><td>';
                 for (j = 0; j < subscribers.length; j++) {
@@ -71,6 +72,7 @@
                 rssTable = rssTable + '</table>';
 
                 table = table + rssTable + '</td></tr>';
+*/
             });
             table = table + '</table>';
             $('#all_users').append(table);
