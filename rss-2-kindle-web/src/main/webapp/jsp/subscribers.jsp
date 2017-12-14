@@ -9,7 +9,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>RSS-2-Kindle Management</title>
+    <title>RSS-2-KINDLE Subscribers Management</title>
 
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 

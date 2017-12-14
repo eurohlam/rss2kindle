@@ -3,12 +3,12 @@
   Date: 19/10/2017
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="include.jsp"%>
+<%@include file="include.jsp" %>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>RSS-2-Kindle Management</title>
+    <title>RSS-2-KINDLE Profile</title>
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
     <!-- JQuery -->
@@ -34,31 +34,36 @@
 <body>
 <script>
     var rootURL = '/rss2kindle/rest/profile/<%=username%>';
+    var userData;
 
     $(document).ready(function () {
         $('#profile_view').append('<p>Getting profile. Please wait...</p>');
         $.getJSON(rootURL, function (data) {
-            $('#profile_view').append('<p><h3>Welcome, '+data.username + '!</h3></p>' +
+            userData = data;
+
+            $('#dashboard_user_data').append(
                 '<p>Created: ' + data.dateCreated + '</p>' +
                 '<p>Status: ' + data.status + '</p>');
 
-            var table = '<table class="table table-hover">' +
+            $('#dashboard_subscribers_data').append('<p>' + data.subscribers.length + '</p>');
+
+            var table = '<table class="table table-hover"><thead>' +
                 '<tr><th>#</th>' +
                 '<th>title</th>' +
                 '<th>email</th>' +
-                '<th>status</th>'+
-                '<th>rss</th></tr>';
+                '<th>status</th>' +
+                '<th>rss</th></tr></thead><tbody>';
 
             $.each(data.subscribers, function (i, item) {
                 var tr;
                 if (item.status === 'locked')
-                    tr='<tr class="danger"><td>';
+                    tr = '<tr class="danger"><td>';
                 /*
                  else if (item.status === 'suspended')
                  tr='<tr class="warning"><td>';
                  */
                 else
-                    tr='<tr class="active"><td>';
+                    tr = '<tr class="active"><td>';
 
                 table = table + tr
                     + i + '</td><td>'
@@ -66,55 +71,74 @@
                     + item.email + '</td><td>'
                     + item.status + '</td><td>';
                 var rss = item.rsslist;
-                rssTable='<table width="100%"><tr><td>';
+                rssTable = '<table width="100%"><tr><td>';
                 for (j = 0; j < rss.length; j++) {
                     rssTable = rssTable + '<a href="' + rss[j].rss + '">' + rss[j].rss + '</a></td><td>';
                     if (rss[j].status === 'active')
-                        rssTable = rssTable + '<label></label><input type="checkbox" checked disabled />'+ rss[j].status + '</label>';
+                        rssTable = rssTable + '<label></label><input type="checkbox" checked disabled />' + rss[j].status + '</label>';
                     else
                         rssTable = rssTable + '<label></label><input type="checkbox" disabled />' + rss[j].status + '</label>';
 
-                    rssTable = rssTable  + '<td/></tr>';
+                    rssTable = rssTable + '<td/></tr>';
                 }
                 rssTable = rssTable + '</table>';
 
                 table = table + rssTable + '</td></tr>';
             });
-            table = table + '</table>';
+            table = table + '</tbody></table>';
             $('#profile_view').append(table);
         })
     });
+
+    function getUserData() {
+        return userData;
+    }
 </script>
-<header role="banner">
-    <h1>RSS-2-Kindle rules</h1>
-</header>
 
-<div class="container">
-<%--
-    <nav class="navbar navbar-default" role="navigation">
-        <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a href="#">My Profile</a></li>
-            <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
-            <li role="presentation"><a href="service">Services</a></li>
-        </ul>
-    </nav>
---%>
-    <div class="col-sm-3 col-md-2 sidebar">
-        <ul class="nav nav-sidebar">
-            <li role="presentation" class="active"><a href="#">My Profile</a></li>
-            <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
-            <li role="presentation"><a href="service">Services</a></li>
-        </ul>
+<div class="container-fluid">
+    <header class="header clearfix">
+        <h3 class="text-muted">RSS-2-KINDLE</h3>
+    </header>
+
+    <div class="row">
+        <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
+            <ul class="nav nav-pills flex-column">
+                <li role="presentation" class="active"><a href="#">My Profile</a></li>
+                <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
+                <li role="presentation"><a href="service">Services</a></li>
+            </ul>
+        </nav>
+        <main role="main" class="col-sm-9 col-md-10">
+            <h1><%=username%> dashboard</h1>
+            <section class="row text-center placeholders">
+                <div class="col-6 col-sm-3 placeholder">
+                    <div id="dashboard_user_data"></div>
+                    <h4>Profile data</h4>
+                    <div class="text-muted">Something else</div>
+                </div>
+                <div class="col-6 col-sm-3 placeholder">
+                    <div id="dashboard_subscribers_data"></div>
+                    <h4>Number of subscribers</h4>
+                    <div class="text-muted">Something else</div>
+                </div>
+                <div class="col-6 col-sm-3 placeholder">
+                    <div id="dashboard_subscriptions_data">
+                        <p>Tralala</p>
+                    </div>
+                    <h4>Number of subscriptions</h4>
+                    <div class="text-muted">Something else</div>
+                </div>
+            </section>
+            <h1>Subscribers</h1>
+            <div class="table-responsive" id="profile_view">
+
+            </div>
+        </main>
     </div>
+
 </div>
 
-<div class="container">
-    <div class="table-responsive" id="profile_view">
-
-    </div>
-</div>
-
-<%@include file="footer.jsp"%>
+<%@include file="footer.jsp" %>
 
 </body>
 </html>
