@@ -25,17 +25,6 @@
 </head>
 
 <body>
-<script>
-    $(document).ready(function () {
-
-        //toggling
-        $("#btn_signup").click(function (event) {
-            $("#signup").show('slow');
-        });
-    });
-
-</script>
-
 <div class="container">
     <div class="header clearfix">
         <nav>
@@ -48,31 +37,17 @@
         <h3 class="text-muted">RSS-2-KINDLE</h3>
     </div>
 
-    <div id="signup" class="container" hidden>
-        <form class="form-signup">
-            <h2 class="form-signup-heading">Please sign in</h2>
-            <label for="newUsername" class="sr-only">Username</label>
-            <input type="email" id="newUsername" class="form-control" placeholder="Username" required autofocus>
-            <label for="newPassword" class="sr-only">Password</label>
-            <input type="password" id="newPassword" class="form-control" placeholder="Password" required>
-            <label for="verifyPassword" class="sr-only">Verify Password</label>
-            <input type="password" id="verifyPassword" class="form-control" placeholder="Password" required>
-
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
-        </form>
-
-    </div> <!-- /container -->
-
-
     <div class="jumbotron">
         <h1>Just read your RSS in Kindle</h1>
         <p class="lead">RSS-2-KINDLE is a free service that allows you to redirect your RSS-subscriptions into your favorite kindle device.
             All you need is just sign up and create a subscriber for your kindle</p>
+        <div class="row">
         <div class="col-lg-6">
             <p><a id="btn_signin" class="btn btn-lg btn-success" href="login.jsp" role="button">Sign in</a></p>
         </div>
         <div class="col-lg-6">
-            <p><a id="btn_signup" class="btn btn-lg btn-success" href="#" role="button">Sign up today</a></p>
+            <p><a id="btn_signup" class="btn btn-lg btn-success" href="join.jsp" role="button">Sign up today</a></p>
+        </div>
         </div>
     </div>
 
@@ -83,11 +58,6 @@
 
             <h4>Manage your subscriptions for each kindle</h4>
             <p>You can manage list of subscriptions for each kindle device independently</p>
-
-<!--
-            <h4>Subheading</h4>
-            <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
--->
         </div>
 
         <div class="col-lg-6">
@@ -96,11 +66,6 @@
 
             <h4>Flexibility</h4>
             <p>You can set up any email for subscriber, not only kindle email.</p>
-
-<!--
-            <h4>Subheading</h4>
-            <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
--->
         </div>
     </div>
 
@@ -110,8 +75,5 @@
 
 </div> <!-- /container -->
 
-
-<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-<!--<script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>-->
 </body>
 </html>

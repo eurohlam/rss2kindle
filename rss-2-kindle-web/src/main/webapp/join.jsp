@@ -42,28 +42,23 @@
         <h3 class="text-muted">RSS-2-KINDLE</h3>
     </div>
 
-    <div class="jumbotron">
-        <form class="form-signin" action="<c:url value='login'/>" method="post">
-            <h2 class="form-signin-heading">Please sign in</h2>
-            <label for="username" class="sr-only">Username</label>
-            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
-            <label for="password" class="sr-only">Password</label>
-            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+    <div id="signup" class="jumbotron">
+        <form class="form-signin" action="<c:url value='join'/>" method="post" autocomplete="off">
+            <h2 class="form-signin-heading">Please sign up</h2>
+            <label for="newUsername" class="sr-only">Username</label>
+            <input type="email" id="newUsername" class="form-control" placeholder="Username" required autofocus>
+            <label for="newEmail" class="sr-only">E-mail</label>
+            <input type="email" id="newEmail" class="form-control" placeholder="e-mail" required>
+            <label for="newPassword" class="sr-only">Password</label>
+            <input type="password" id="newPassword" class="form-control" placeholder="Password" required>
+            <label for="verifyPassword" class="sr-only">Verify Password</label>
+            <input type="password" id="verifyPassword" class="form-control" placeholder="Verify password" required>
             <input type="hidden" name="<c:out value="${_csrf.parameterName}"/>" value="<c:out value="${_csrf.token}"/>"/>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" value="remember-me"> Remember me
-                </label>
-            </div>
-            <c:if test="${not empty param.login_error}">
-                <span style="color: red;">
-                Your login attempt was not successful, try again.<br/>
-                Reason: <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/>
-                </span>
-            </c:if>
-            <button class="btn btn-lg btn-success btn-block" type="submit">Sign in</button>
+
+            <button class="btn btn-lg btn-success btn-block" type="submit">Sign up</button>
         </form>
-    </div>
+
+    </div> <!-- /container -->
 
     <footer class="footer">
         <p>&copy; Created by Eurohlam. 2017</p>
