@@ -37,7 +37,7 @@
     var userData;
 
     $(document).ready(function () {
-        $('#profile_view').append('<p>Getting profile. Please wait...</p>');
+        $('#profile_view').append('<p id="message">Getting subscribers. Please wait...</p>');
         $.getJSON(rootURL, function (data) {
             userData = data;
 
@@ -86,6 +86,7 @@
                 table = table + rssTable + '</td></tr>';
             });
             table = table + '</tbody></table>';
+            $('#message').remove();
             $('#profile_view').append(table);
         })
     });
@@ -97,6 +98,13 @@
 
 <div class="container-fluid">
     <header class="header clearfix">
+        <nav>
+            <ul class="nav nav-pills pull-right">
+                <li role="presentation" class="active"><a href="/index.html">Home</a></li>
+                <li role="presentation"><a href="#">About</a></li>
+                <li role="presentation"><a href="#">Contact</a></li>
+            </ul>
+        </nav>
         <h3 class="text-muted">RSS-2-KINDLE</h3>
     </header>
 
@@ -114,7 +122,7 @@
                 <div class="col-6 col-sm-3 placeholder">
                     <div id="dashboard_user_data"></div>
                     <h4>Profile data</h4>
-                    <div class="text-muted">Something else</div>
+                    <div class="text-muted">General Information</div>
                 </div>
                 <div class="col-6 col-sm-3 placeholder">
                     <div id="dashboard_subscribers_data"></div>

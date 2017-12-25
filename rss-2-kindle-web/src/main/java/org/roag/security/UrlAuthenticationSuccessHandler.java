@@ -22,7 +22,7 @@ import java.util.Collection;
 public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler
 {
 
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger logger = LoggerFactory.getLogger(UrlAuthenticationSuccessHandler.class);
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 

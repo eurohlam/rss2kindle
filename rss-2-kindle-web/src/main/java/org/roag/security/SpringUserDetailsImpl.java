@@ -14,11 +14,11 @@ import java.util.Set;
 /**
  * Created by eurohlam on 26/10/2017.
  */
-public class SecUserDetails implements UserDetails{
+public class SpringUserDetailsImpl implements UserDetails{
 
     private User user;
 
-    public SecUserDetails(User user) {
+    public SpringUserDetailsImpl(User user) {
         this.user = user;
     }
 
