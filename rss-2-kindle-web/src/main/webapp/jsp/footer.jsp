@@ -8,7 +8,7 @@
 <footer class="sticky-footer">
     <div class="container">
         <div class="row">
-            <form action="<c:url value="/logout"/>" method="post">
+            <form action="<c:url value="logout"/>" method="post">
                 <input type="submit" value="Logoff"/> (also clears any remember-me cookie)
                 <security:csrfInput/>
             </form>

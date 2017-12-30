@@ -50,14 +50,16 @@
             <label for="password" class="sr-only">Password</label>
             <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
             <input type="hidden" name="<c:out value="${_csrf.parameterName}"/>" value="<c:out value="${_csrf.token}"/>"/>
+<%--
             <div class="checkbox">
                 <label>
                     <input type="checkbox" value="remember-me"> Remember me
                 </label>
             </div>
+--%>
             <c:if test="${not empty param.login_error}">
                 <span style="color: red;">
-                Your login attempt was not successful, try again.<br/>
+                Incorrect username or password, try again.<br/>
                 Reason: <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/>
                 </span>
             </c:if>

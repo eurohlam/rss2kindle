@@ -33,7 +33,7 @@ public class RestSecurityService implements SecurityService
 //    @Autowired
 //    private UserDetailsService userDetailsService;
 
-    private static final Logger logger = LoggerFactory.getLogger(SpringUserDetailsServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(RestSecurityService.class);
 
 
     private String restHost;
@@ -54,12 +54,12 @@ public class RestSecurityService implements SecurityService
     public UserDetails findUser(String username) throws UsernameNotFoundException
     {
         //TODO: cache for Rest Client
-        String response=ClientBuilder.newClient().target(restHost + ":" + restPort + restPath).path("users/"+username).request().get(String.class);
-        if (!response.contains("Not Found")) {
+        Response response=ClientBuilder.newClient().target(restHost + ":" + restPort + restPath).path("users/"+username).request().get();
+        if (response.getStatus() == 200) {
             SubscriberFactory factory = new SubscriberFactory();
-            User user=factory.convertJson2Pojo(User.class, response);
+            User user=factory.convertJson2Pojo(User.class, response.readEntity(String.class));
             logger.debug("User {} exists with roles {}", user.getUsername(), user.getRoles());
-            SpringUserDetailsImpl ud=new SpringUserDetailsImpl(user);
+            UserDetails ud=new SpringUserDetailsImpl(user);
             return ud;
         }
         else
@@ -78,13 +78,15 @@ public class RestSecurityService implements SecurityService
             form.param("username", username);
             form.param("password", password);
             //TODO: cache for Rest Client
-            Response response= ClientBuilder.newClient().target(restHost + ":" + restPort + restPath).path("users/add").request().post(Entity.form(form), Response.class);
+            logger.info("Sending request to create a new user {} with email {} to REST service {}:{}{}", username, email, restHost, restPort, restPath);
+            Response response= ClientBuilder.newClient().target(restHost + ":" + restPort + restPath).path("users/new").request().post(Entity.form(form), Response.class);
+            logger.info("Response from REST service {} ", response.toString());
             if (response.getStatus() == 200) {
 
                 return autologin(username, password);
             }
             else
-                throw new UsernameNotFoundException("User " + username + " has not been found");
+                throw new UsernameNotFoundException("User " + username + " can't be created due to error " + response.readEntity(String.class));
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

@@ -8,7 +8,7 @@
 <%@ page pageEncoding="UTF-8" %>
 <%! String username = null; %>
 <%
-    if (username == null) {
+
         if (request.getAttribute("username")!= null)
             username = request.getAttribute("username").toString();
         else {
@@ -21,5 +21,4 @@
                 }
             }
         }
-    }
 %>
