@@ -190,20 +190,87 @@
 
 </script>
 
-<header role="banner">
-    <h1>RSS-2-Kindle rules</h1>
-</header>
+<div class="container-fluid">
+    <header class="header clearfix">
+        <nav>
+            <ul class="nav nav-pills pull-right">
+                <li role="presentation" class="active"><a href="../index.html">Home</a></li>
+                <li role="presentation"><a href="#">About</a></li>
+                <li role="presentation"><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">RSS-2-KINDLE</h3>
+    </header>
+    <hr/>
+    <div class="row">
+        <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
+            <ul class="nav nav-pills flex-column">
+                <li role="presentation"><a href="profile">My Profile</a></li>
+                <li role="presentation" class="active"><a href="#">Subscriber Management</a></li>
+                <li role="presentation"><a href="service">Services</a></li>
+            </ul>
+        </nav>
+        <main role="main" class="col-sm-9 col-md-10">
+            <ul class="nav nav-tabs" id="operationsTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="new-tab" data-toggle="tab" href="#new" role="tab" aria-controls="home" aria-selected="true">New subscriber</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="profile" aria-selected="false">Edit subscribers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="remove-tab" data-toggle="tab" href="#remove" role="tab" aria-controls="contact" aria-selected="false">Remove subscribers</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="operationsTabContent">
+                <div class="tab-pane fade active" id="new" role="tabpanel" aria-labelledby="new-tab">
+                    <h3>Add new subscriber</h3>
+                    <form method="POST" id="new_subscr_form" action="">
+                        <div class="input-group">
+                            <label for="newemail">Email</label>
+                            <p><input type="email" id="newemail" required class="form-control"/></p>
+                            <label for="name">Name</label>
+                            <p><input type="text" id="name" required class="form-control"/></p>
+                            <label for="rss">RSS</label>
+                            <p><input type="url" id="rss" required class="form-control"/></p>
+                            <label for="starttime">Start date</label>
+                            <p><input type="date" id="starttime" class="form-control"/></p>
+                            <input type="submit" value="Create" class="btn btn-default"/>
+                        </div>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
+                    <h3>Edit subscriber</h3>
+                    <form method="POST" id="edit_subscr_form" action="">
+                        <div class="input-group">
+                            <label for="editemail">Email</label>
+                            <p><input type="email" id="editemail" readonly class="form-control"/><p/>
+                            <label for="editname">Name</label>
+                            <p><input type="text" id="editname" required class="form-control"/><p/>
+                            <label for="editrss">RSS</label>
+                            <p><input type="url" id="editrss" required class="form-control"/><p/>
+                            <p><input type="submit" value="Apply" class="btn btn-default"/></p>
+                        </div>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="remove" role="tabpanel" aria-labelledby="remove-tab">
+                    <h3>Remove subscriber</h3>
+                    <form method="GET" id="remove_subscr_form" action="">
+                        <label for="removeemail">Enter email of subscriber</label>
+                        <div class="input-group">
+                            <input type="email" id="removeemail" required class="form-control"/>
+                            <span class="input-group-btn">
+                                <input type="submit" value="Remove" class="btn btn-default"/>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
 
-<div class="container">
-    <nav class="navbar navbar-default" role="navigation">
-        <ul class="nav nav-tabs">
-            <li role="presentation"><a href="profile">My Profile</a></li>
-            <li role="presentation" class="active"><a href="#">Subscriber Management</a></li>
-            <li role="presentation"><a href="service">Services</a></li>
-        </ul>
-    </nav>
 </div>
-
+<%--
 <div class="container" id="forms">
     <div class="row" id="forms_row">
 
@@ -300,6 +367,7 @@
         </article>
     </div>
 </div>
+--%>
 
 <!--<aside>This aside</aside>-->
 

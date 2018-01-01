@@ -107,6 +107,7 @@
         </nav>
         <h3 class="text-muted">RSS-2-KINDLE</h3>
     </header>
+    <hr/>
 
     <div class="row">
         <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
@@ -117,6 +118,7 @@
             </ul>
         </nav>
         <main role="main" class="col-sm-9 col-md-10">
+            <div class="jumbotron jumbotron-fluid">
             <h1><%=username%> dashboard</h1>
             <section class="row text-center placeholders">
                 <div class="col-6 col-sm-3 placeholder">
@@ -137,6 +139,7 @@
                     <div class="text-muted">Something else</div>
                 </div>
             </section>
+            </div>
             <h1>Subscribers</h1>
             <div class="table-responsive" id="profile_view">
 

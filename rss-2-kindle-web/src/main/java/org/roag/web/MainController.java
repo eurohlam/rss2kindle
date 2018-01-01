@@ -106,8 +106,9 @@ public class MainController {
         }
 
         securityService.registerUser(user.getUsername(), user.getEmail(), user.getPassword());
-
-        return "registerResult";
+        model.addAttribute("username", user.getUsername());
+        model.addAttribute("email", user.getEmail());
+        return "registrationResult";
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)

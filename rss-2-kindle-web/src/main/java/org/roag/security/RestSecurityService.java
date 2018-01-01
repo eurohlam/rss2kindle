@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.client.ClientBuilder;
@@ -41,6 +42,9 @@ public class RestSecurityService implements SecurityService
     private String restPort;
 
     private String restPath;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public RestSecurityService(@Value("${rest.host}")String restHost,  @Value("${rest.port}")String restPort, @Value("${rest.path}")String restPath)
@@ -76,7 +80,10 @@ public class RestSecurityService implements SecurityService
 
             Form form = new Form();
             form.param("username", username);
-            form.param("password", password);
+            if (passwordEncoder!= null)
+                form.param("password", passwordEncoder.encode(password));
+            else
+                form.param("password", password);
             //TODO: cache for Rest Client
             logger.info("Sending request to create a new user {} with email {} to REST service {}:{}{}", username, email, restHost, restPort, restPath);
             Response response= ClientBuilder.newClient().target(restHost + ":" + restPort + restPath).path("users/new").request().post(Entity.form(form), Response.class);

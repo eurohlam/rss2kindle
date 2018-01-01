@@ -10,7 +10,7 @@
     <context:component-scan base-package="org.roag.security"/>
     <context:property-placeholder location="WEB-INF/spring/web-context.properties"/>
 
-    <bean name="bcryptEncoder"
+    <bean name="passwordEncoder"
                 class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
     <bean id="userDetailsService" class="org.roag.security.SpringUserDetailsServiceImpl"/>
@@ -42,9 +42,7 @@
 
     <security:authentication-manager>
         <security:authentication-provider user-service-ref="userDetailsService">
-<!--
-            <security:password-encoder ref="bcryptEncoder"/>
--->
+            <security:password-encoder ref="passwordEncoder"/>
         </security:authentication-provider>
     </security:authentication-manager>
 
