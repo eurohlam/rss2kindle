@@ -116,12 +116,13 @@ public class UserManager
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addUser(@FormParam("username") String username,
+                            @FormParam("email") String email,
                             @FormParam("password") String password)
     {
         logger.info("Add new user {}", username);
         try
         {
-            OperationResult result = userRepository.addUser(subscriberFactory.newUser(username, password));
+            OperationResult result = userRepository.addUser(subscriberFactory.newUser(username, email, password));
             logger.info(result.toString());
             if (result == OperationResult.SUCCESS)
                 return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();

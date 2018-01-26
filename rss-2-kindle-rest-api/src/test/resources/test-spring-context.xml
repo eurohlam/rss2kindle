@@ -19,8 +19,9 @@
     <bean id="subscriberFactory" class="org.roag.service.SubscriberFactory"/>
 
     <bean id="testUser" factory-bean="subscriberFactory" factory-method="newUser">
-        <constructor-arg index="0" value="${test.username}"/>
-        <constructor-arg index="1" value="${test.password}"/>
+        <constructor-arg index="0" value="${test.user.username}"/>
+        <constructor-arg index="1" value="${test.user.email}"/>
+        <constructor-arg index="2" value="${test.user.password}"/>
         <property name="subscribers">
             <list>
                 <ref bean="testSubscriber"/>
@@ -29,16 +30,16 @@
     </bean>
 
     <bean id="testSubscriber" factory-bean="subscriberFactory" factory-method="newSubscriber">
-        <constructor-arg index="0" value="${test.email}"/>
-        <constructor-arg index="1" value="${test.name}"/>
-        <constructor-arg index="2" value="${test.rss}"/>
+        <constructor-arg index="0" value="${test.subscriber.email}"/>
+        <constructor-arg index="1" value="${test.subscriber.name}"/>
+        <constructor-arg index="2" value="${test.subscriber.rss}"/>
     </bean>
 
     <!--Using in memory repository for testing goals  -->
     <bean id="userRepository" class="org.roag.ds.impl.MemoryUserRepository" factory-method="getInstance">
         <property name="users">
             <map>
-                <entry key="${test.username}" value-ref="testUser"/>
+                <entry key="${test.user.username}" value-ref="testUser"/>
             </map>
         </property>
     </bean>

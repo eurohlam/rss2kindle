@@ -54,12 +54,14 @@ public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest
     public void crudTestHtmlForm()
     {
         String new_user="formUser";
+        String new_email = "html@mail.com";
         String new_password="htmlforever";
         SubscriberFactory factory=new SubscriberFactory();
 
         //create from html form
         Form form_new = new Form();
         form_new.param("username", new_user);
+        form_new.param("email", new_email);
         form_new.param("password", "12345");
         Response response = target(PATH + "new").request().post(Entity.form(form_new), Response.class);
         assertEquals("Creating new User failed", 200, response.getStatus());
@@ -96,11 +98,12 @@ public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest
     public void crudTestJson()
     {
         String new_user="jsonUser";
+        String new_email = "json@mail.com";
         String new_password="jsonforever";
         SubscriberFactory factory=new SubscriberFactory();
 
         //create from json
-        User u=factory.newUser(new_user, "12345");
+        User u=factory.newUser(new_user, new_email, "12345");
         Response response = target(PATH + "new").request().post(Entity.json(factory.convertPojo2Json(u)), Response.class);
         assertEquals("Creating new User failed", 200, response.getStatus());
 

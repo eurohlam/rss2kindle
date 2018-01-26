@@ -17,10 +17,16 @@ public class User
     private String id;
     @SerializedName("username")
     private String username;
+    @SerializedName("email")
+    private String email;
     @SerializedName("password")
     private String password;
     @SerializedName("dateCreated")
     private String dateCreated;
+    @SerializedName("dateModified")
+    private String dateModified;
+    @SerializedName("lastLogin")
+    private String lastLogin;
     @SerializedName("status")
     private String status;
     @SerializedName("subscribers")
@@ -50,6 +56,36 @@ public class User
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getEmail()
+    {
+        return email;
+    }
+
+    public void setEmail(String email)
+    {
+        this.email = email;
+    }
+
+    public String getDateModified()
+    {
+        return dateModified;
+    }
+
+    public void setDateModified(String dateModified)
+    {
+        this.dateModified = dateModified;
+    }
+
+    public String getLastLogin()
+    {
+        return lastLogin;
+    }
+
+    public void setLastLogin(String lastLogin)
+    {
+        this.lastLogin = lastLogin;
     }
 
     public String getDateCreated() {

@@ -18,26 +18,28 @@ public class SubscriberFactory
     //default timeout is 24 hours
     final public long DEFAULT_TIMEOUT=24;
 
-    final private DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    final private DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 
     private Gson gson = new Gson();
 
-    public User newUser(String username, String password)
+    public User newUser(String username, String email, String password)
     {
         Set<Roles> roles=new HashSet<>(1);
         roles.add(Roles.ROLE_USER);
-        return newUser(username, password, format.format(new Date()), UserStatus.ACTIVE, roles, new ArrayList<Subscriber>(3));
+        return newUser(username, email, password, format.format(new Date()), UserStatus.ACTIVE, roles, new ArrayList<Subscriber>(3));
     }
 
-    public User newUser(String username, String password, String dateCreated, UserStatus status, Set<Roles> roles, List<Subscriber> subscribers)
+    public User newUser(String username, String email, String password, String dateCreated, UserStatus status, Set<Roles> roles, List<Subscriber> subscribers)
     {
         User user = new User();
         user.setId(UUID.randomUUID().toString());
         user.setUsername(username);
-        user.setPassword(password);//TODO: cryptography
+        user.setEmail(email);
+        user.setPassword(password);
         user.setStatus(status.toString());
         user.setDateCreated(dateCreated);
+        user.setDateModified(dateCreated);
         user.setRoles(roles);
         user.setSubscribers(subscribers);
 

@@ -36,7 +36,7 @@ public class RepositoryTest
     @Test(groups = {"Functionality Check"})
     public void crudSubscriberTest() throws Exception
     {
-        User user=factory.newUser(TEST_USER, "123");
+        User user=factory.newUser(TEST_USER, TEST_EMAIL,"123");
         userRepository.addUser(user);
         assertNotNull(userRepository.getUser(TEST_USER));
         assertEquals(userRepository.getUser(TEST_USER).getRoles().iterator().next(), Roles.ROLE_USER, "User has unexpected role.");
@@ -59,7 +59,7 @@ public class RepositoryTest
     @Test(groups = {"Functionality Check"})
     public void subscriberFactoryTest() throws Exception
     {
-        User user=factory.newUser(TEST_USER, "123");
+        User user=factory.newUser(TEST_USER, TEST_EMAIL, "123");
         assertEquals(user.getStatus(), UserStatus.ACTIVE.toString());
 
         Subscriber subscriber = factory.newSubscriber(TEST_EMAIL, TEST_NAME, TEST_RSS);
@@ -75,7 +75,7 @@ public class RepositoryTest
     @Test(groups = {"Functionality Check"}, expectedExceptions = {IllegalArgumentException.class})
     public void duplicatedSubscriberTest() throws Exception
     {
-        userRepository.addUser(factory.newUser(TEST_USER, "123"));
+        userRepository.addUser(factory.newUser(TEST_USER, TEST_EMAIL, "123"));
         Subscriber subscriber = factory.newSubscriber(TEST_EMAIL, TEST_NAME, TEST_RSS);
         subscriberRepository.addSubscriber(TEST_USER, subscriber);
         subscriberRepository.addSubscriber(TEST_USER, subscriber);

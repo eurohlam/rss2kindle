@@ -16,10 +16,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by eurohlam on 25/12/17.
@@ -36,6 +39,15 @@ public class RestSecurityService implements SecurityService
 
     private static final Logger logger = LoggerFactory.getLogger(RestSecurityService.class);
 
+    private ThreadLocal<SimpleDateFormat> dateFormat = new ThreadLocal<SimpleDateFormat>(){
+        @Override
+        protected SimpleDateFormat initialValue()
+        {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        }
+    };
+
+    private SubscriberFactory subscriberFactory = new SubscriberFactory();
 
     private String restHost;
 
@@ -58,11 +70,13 @@ public class RestSecurityService implements SecurityService
     public UserDetails findUser(String username) throws UsernameNotFoundException
     {
         //TODO: cache for Rest Client
-        Response response=ClientBuilder.newClient().target(restHost + ":" + restPort + restPath).path("users/"+username).request().get();
+        Client restClient = ClientBuilder.newClient();
+        Response response = restClient.target(restHost + ":" + restPort + restPath).path("users/"+username).request().get();
         if (response.getStatus() == 200) {
-            SubscriberFactory factory = new SubscriberFactory();
-            User user=factory.convertJson2Pojo(User.class, response.readEntity(String.class));
+            User user=subscriberFactory.convertJson2Pojo(User.class, response.readEntity(String.class));
             logger.debug("User {} exists with roles {}", user.getUsername(), user.getRoles());
+            user.setLastLogin(dateFormat.get().format(new Date()));
+            response= restClient.target(restHost + ":" + restPort + restPath).path("users/update").request().post(Entity.json(subscriberFactory.convertPojo2Json(user)), Response.class);
             UserDetails ud=new SpringUserDetailsImpl(user);
             return ud;
         }
@@ -78,15 +92,10 @@ public class RestSecurityService implements SecurityService
             if (username == null || username.length() == 0)
                 throw new AuthenticationServiceException("User can't be created due to username is null or empty");
 
-            Form form = new Form();
-            form.param("username", username);
-            if (passwordEncoder!= null)
-                form.param("password", passwordEncoder.encode(password));
-            else
-                form.param("password", password);
+            User user = subscriberFactory.newUser(username, email, passwordEncoder!=null?passwordEncoder.encode(password):password);
             //TODO: cache for Rest Client
             logger.info("Sending request to create a new user {} with email {} to REST service {}:{}{}", username, email, restHost, restPort, restPath);
-            Response response= ClientBuilder.newClient().target(restHost + ":" + restPort + restPath).path("users/new").request().post(Entity.form(form), Response.class);
+            Response response= ClientBuilder.newClient().target(restHost + ":" + restPort + restPath).path("users/new").request().post(Entity.json(subscriberFactory.convertPojo2Json(user)), Response.class);
             logger.info("Response from REST service {} ", response.toString());
             if (response.getStatus() == 200) {
 

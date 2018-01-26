@@ -136,7 +136,7 @@ public class ProfileManager
 
     @POST
     @Path("/new")
-    @Consumes("application/x-www-form-urlencoded")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSubscriber(@PathParam("username") String username,
                                   @FormParam("email") String email,
@@ -162,7 +162,7 @@ public class ProfileManager
 
     @POST
     @Path("/update")
-    @Consumes("application/x-www-form-urlencoded")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateSubscriber(@PathParam("username") String username,
                                      @FormParam("email") String email,
@@ -227,7 +227,7 @@ public class ProfileManager
 
     @POST
     @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/subscribe")
-    @Consumes("application/x-www-form-urlencoded")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSubscription(@PathParam("username") String username,
                                     @PathParam("email") String id,
@@ -260,7 +260,7 @@ public class ProfileManager
 
     @POST
     @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/unsubscribe")
-    @Consumes("application/x-www-form-urlencoded")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeSubscription(@PathParam("username") String username,
                                        @PathParam("email") String id,
