@@ -113,7 +113,7 @@ public class UserManager
 
     @POST
     @Path("/new")
-    @Consumes("application/x-www-form-urlencoded")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addUser(@FormParam("username") String username,
                             @FormParam("password") String password)
@@ -136,8 +136,32 @@ public class UserManager
     }
 
     @POST
+    @Path("/new")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addUser(String message)
+    {
+        logger.info("Requested to add new user from data {}", message);
+        try
+        {
+            User user=subscriberFactory.convertJson2Pojo(User.class, message);
+            OperationResult result = userRepository.addUser(user);
+            logger.info(result.toString());
+            if (result == OperationResult.SUCCESS)
+                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+            else
+                return Response.status(Response.Status.CONFLICT).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @POST
     @Path("/update")
-    @Consumes("application/x-www-form-urlencoded")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUser(@FormParam("username") String username,
                                @FormParam("password") String password)
@@ -147,6 +171,29 @@ public class UserManager
         {
             User user= userRepository.getUser(username);
             user.setPassword(password);
+            OperationResult result = userRepository.updateUser(user);
+            if (result == OperationResult.SUCCESS)
+                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+            else
+                return Response.status(Response.Status.CONFLICT).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @POST
+    @Path("/update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateUser(String message)
+    {
+        logger.warn("Requested to update existing user with data {}", message);
+        try
+        {
+            User user = subscriberFactory.convertJson2Pojo(User.class, message);
             OperationResult result = userRepository.updateUser(user);
             if (result == OperationResult.SUCCESS)
                 return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
