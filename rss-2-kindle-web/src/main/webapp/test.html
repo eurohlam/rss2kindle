@@ -1,10 +1,3 @@
-<%--
-  User: eurohlam
-  Date: 19/10/2017
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="include.jsp"%>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,13 +7,13 @@
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
     <!-- JQuery -->
-    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="js/jquery-3.1.1.js"></script>
 
     <!-- Bootstrap -->
-    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="../bootstrap/js/bootstrap.min.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -29,68 +22,19 @@
     <![endif]-->
 
     <!-- Custom css -->
-    <link href="../css/sticky-footer.css" rel="stylesheet">
-    <script src="../js/profile.js"></script>
+    <link href="css/sticky-footer.css" rel="stylesheet">
+    <script src="js/profile.js"></script>
 
 </head>
 <body>
 <script>
-    var username='<%=username%>';
-    var rootURL = '/rss2kindle/rest/profile/';
-    var userData;
+    var username='test2';
+    var rootURL = '/rss2kindle/rest/profile/test2';
+    var subscriberTable;
 
     $(document).ready(function () {
 
-        //show subscribers for edit
-        $.getJSON(restURL + username, function (data) {
-            userData = data;
-            var table = '<table class="table table-hover"><thead>' +
-                '<tr><th>#</th>' +
-                '<th>title</th>' +
-                '<th>email</th>' +
-                '<th>status</th>' +
-                '<th>action</th></tr></thead><tbody>';
-
-            $.each(data.subscribers, function (i, item) {
-                var tr;
-                if (item.status === 'locked')
-                    tr = '<tr class="danger"><td>';
-                else if (item.status === 'suspended')
-                    tr='<tr class="warning"><td>';
-                else
-                    tr = '<tr class="active"><td>';
-
-                table = table + tr
-                    + i + '</td><td>'
-                    + item.name + '</td><td>'
-                    + item.email + '</td><td>'
-                    + item.status + '</td><td>'
-                    + '<div class="btn-group" role="group">'
-                    + '<button id="btn_change" type="button" class="btn btn-primary">Change</button>'
-                    + '<button id="btn_suspend" type="button" class="btn btn-warning">Suspend</button>'
-                    + '<button id="btn_remove" type="button" class="btn btn-danger">Remove</button>'
-                    + '</div></td></tr>';
-
-/*
-                var rss = item.rsslist;
-                rssTable = '<table width="100%"><tr><td>';
-                for (j = 0; j < rss.length; j++) {
-                    rssTable = rssTable + '<a href="' + rss[j].rss + '">' + rss[j].rss + '</a></td><td>';
-                    if (rss[j].status === 'active')
-                        rssTable = rssTable + '<label></label><input type="checkbox" checked disabled />' + rss[j].status + '</label>';
-                    else
-                        rssTable = rssTable + '<label></label><input type="checkbox" disabled />' + rss[j].status + '</label>';
-
-                    rssTable = rssTable + '<td/></tr>';
-                }
-                rssTable = rssTable + '</table>';
-
-                table = table + rssTable + '</td></tr>';
-*/
-            });
-            table = table + '</tbody></table>';
-            $('#edit').append(table);
-        });
+        subscriberTable = getSubscribersAsTable(username);
 
         //toggling
         $('#getsubscr').click(function (event) {
@@ -155,6 +99,10 @@
             return true;
         }
         return false;
+    }
+
+    function showSubscribers() {
+        $('#table').append('<p>Jopa</p>').append(getSubscribersAsTable(username));
     }
 
     function findSubscriberById(id) {
@@ -289,13 +237,14 @@
                             <p><input type="url" id="rss" required class="form-control"/></p>
                             <label for="starttime">Start date</label>
                             <p><input type="date" id="starttime" class="form-control"/></p>
-                            <security:csrfInput/>
                             <input type="submit" value="Create" class="btn btn-default"/>
                         </div>
                     </form>
                 </div>
                 <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
                     <h3>Edit subscriber</h3>
+                    <p><input type="button" value="Show" class="btn btn-default" onclick="showSubscribers()"/></p>
+                    <p id="table"></p>
                     <form method="POST" id="edit_subscr_form" action="">
                         <div class="input-group">
                             <label for="editemail">Email</label>
@@ -304,7 +253,6 @@
                             <p><input type="text" id="editname" required class="form-control"/></p>
                             <label for="editrss">RSS</label>
                             <p><input type="url" id="editrss" required class="form-control"/></p>
-                            <security:csrfInput/>
                             <p><input type="submit" value="Apply" class="btn btn-default"/></p>
                         </div>
                     </form>
@@ -315,7 +263,6 @@
                         <div class="input-group">
                             <label for="removeemail">Enter email of subscriber</label>
                             <input type="email" id="removeemail" required class="form-control"/>
-                            <security:csrfInput/>
                             <span class="input-group-btn">
                                 <input type="submit" value="Remove" class="btn btn-default"/>
                             </span>
@@ -327,7 +274,7 @@
     </div>
 
 </div>
-<%--
+<!--
 <div class="container" id="forms">
     <div class="row" id="forms_row">
 
@@ -410,7 +357,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <!--<p><input type="submit" value="Apply"/></p>-->
+                        <p><input type="submit" value="Apply"/></p>>
                     </form>
                 </section>
             </div>
@@ -424,11 +371,10 @@
         </article>
     </div>
 </div>
---%>
+-->
 
 <!--<aside>This aside</aside>-->
 
 
-<%@include file="footer.jsp"%>
 </body>
 </html>

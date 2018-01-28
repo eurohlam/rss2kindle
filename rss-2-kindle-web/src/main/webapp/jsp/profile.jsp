@@ -43,7 +43,10 @@
 
             $('#dashboard_user_data').append(
                 '<p>Created: ' + data.dateCreated + '</p>' +
-                '<p>Status: ' + data.status + '</p>');
+                '<p>Status: ' + data.status + '</p>' +
+                '<p>Last logged in: ' + data.lastLogin + '</p>' +
+                '<p>Modified: ' + data.dateModified + '</p>'
+            );
 
             $('#dashboard_subscribers_data').append('<p>' + data.subscribers.length + '</p>');
 

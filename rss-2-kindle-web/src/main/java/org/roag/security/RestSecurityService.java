@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,7 +38,7 @@ public class RestSecurityService implements SecurityService
 
     private static final Logger logger = LoggerFactory.getLogger(RestSecurityService.class);
 
-    private ThreadLocal<SimpleDateFormat> dateFormat = new ThreadLocal<SimpleDateFormat>(){
+    private static final ThreadLocal<SimpleDateFormat> dateFormat = new ThreadLocal<SimpleDateFormat>(){
         @Override
         protected SimpleDateFormat initialValue()
         {
