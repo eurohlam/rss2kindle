@@ -244,7 +244,9 @@
                 <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
                     <h3>Edit subscriber</h3>
                     <p><input type="button" value="Show" class="btn btn-default" onclick="showSubscribers()"/></p>
-                    <p id="table"></p>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeModal" data-whatever="@mdo">Open modal for @mdo</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@fat">Open modal for @fat</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@getbootstrap">Open modal for @getbootstrap</button> <p id="table"></p>
                     <form method="POST" id="edit_subscr_form" action="">
                         <div class="input-group">
                             <label for="editemail">Email</label>
@@ -273,6 +275,37 @@
         </main>
     </div>
 
+</div>
+
+<div class="modal fade" id="changeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Change subscriber and subscriptions</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="subscriber-email" class="control-label">Subscriber email:</label>
+                        <input type="text" class="form-control" id="subscriber-email">
+                    </div>
+                    <div class="form-group">
+                        <label for="subscriber-name" class="control-label">Subscriber name:</label>
+                        <input type="text" class="form-control" id="subscriber-name">
+                    </div>
+                    <div class="form-group">
+                        <label for="subscription-list" class="control-label">Subscriptions:</label>
+                        <textarea class="form-control" id="subscription-list"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
 </div>
 <!--
 <div class="container" id="forms">

@@ -41,7 +41,7 @@
 
     $(document).ready(function () {
 
-        //show subscribers for edit
+        //show subscribers table for edit
         $.getJSON(restURL + username, function (data) {
             userData = data;
             var table = '<table class="table table-hover"><thead>' +
@@ -66,9 +66,9 @@
                     + item.email + '</td><td>'
                     + item.status + '</td><td>'
                     + '<div class="btn-group" role="group">'
-                    + '<button id="btn_change" type="button" class="btn btn-primary">Change</button>'
-                    + '<button id="btn_suspend" type="button" class="btn btn-warning">Suspend</button>'
-                    + '<button id="btn_remove" type="button" class="btn btn-danger">Remove</button>'
+                    + '<button id="btn_update" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email +'">Update</button>'
+                    + '<button id="btn_suspend" type="button" class="btn btn-warning" data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email +'">Suspend</button>'
+                    + '<button id="btn_remove" type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email +'">Remove</button>'
                     + '</div></td></tr>';
 
 /*
@@ -92,37 +92,45 @@
             $('#edit').append(table);
         });
 
-        //toggling
-        $('#getsubscr').click(function (event) {
-            $('#newsubscrview').hide('fast');
-            $('#removesubscrview').hide('fast');
-            $('#editsubscrview').hide('fast');
-            $('#suspendsubscrview').hide('fast');
-            $('#getsubscrview').show('slow');
-        });
-        $('#newsubscr').click(function (event) {
-            $('#removesubscrview').hide('fast');
-            $('#getsubscrview').hide('fast');
-            $('#editsubscrview').hide('fast');
-            $('#suspendsubscrview').hide('fast');
-            $('#newsubscrview').show('slow');
-        });
-        $('#removesubscr').click(function (event) {
-            $('#newsubscrview').hide('fast');
-            $('#getsubscrview').hide('fast');
-            $('#editsubscrview').hide('fast');
-            $('#suspendsubscrview').hide('fast');
-            $('#removesubscrview').show('slow');
-        });
-        $('#suspendsubscr').click(function (event) {
-            $('#newsubscrview').hide('fast');
-            $('#getsubscrview').hide('fast');
-            $('#editsubscrview').hide('fast');
-            $('#removesubscrview').hide('fast');
-            $('#suspendsubscrview').show('slow');
+        //activate the first tab by default
+        $('#operationsTab a:first').tab('show');
+
+        //show modal for update
+        $('#updateModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var email = button.data('email'); // Extract info from data-* attributes
+            var name = button.data('name');
+            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var modal = $(this);
+            modal.find('.modal-title').text('Update subscriber ' + email);
+            $('#subscriber-name').val(name);
+            $('#subscriber-email').val(email);
         });
 
-        //on submit
+        //show modal for suspend
+        $('#suspendModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var email = button.data('email'); // Extract info from data-* attributes
+            var name = button.data('name');
+            var modal = $(this);
+            modal.find('.modal-title').text('Suspend subscriber ' + email);
+            $('#suspend_alert_box').append('<strong>Warning!</strong> You are going to suspend subscriber <strong>' + name + '</strong> with associated email <strong>' + email + '</strong>.</br>Do you confirm?');
+        });
+
+        //show modal for remove
+        $('#removeModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var email = button.data('email'); // Extract info from data-* attributes
+            var name = button.data('name');
+            var modal = $(this);
+            modal.find('.modal-title').text('Remove subscriber ' + email);
+            $('#remove_alert_box').append('You are going to remove subscriber ' + name + ' with email ' + email + '. Do you confirm?');
+        });
+
+
+
+        //TODO: remove on submit
         $('#get_subscr_form').submit(function () {
             findSubscriberById($('#email').val());
             return false;
@@ -144,7 +152,7 @@
             return false;
         });
 
-        //error view
+        //TODO: remove error view
         $(document).ajaxError(function (event, request, settings) {
             $('#errorview').append('<h1>Error in getting data.</h1>');
         })
@@ -327,107 +335,84 @@
     </div>
 
 </div>
-<%--
-<div class="container" id="forms">
-    <div class="row" id="forms_row">
 
-        <div class="col-md-3" id="forms_aside">
-            <div class="list-group">
-                <button type="button" class="list-group-item" id="getsubscr">Edit subscriber</button>
-                <button type="button" class="list-group-item" id="newsubscr">New subscriber</button>
-                <button type="button" class="list-group-item" id="removesubscr">Remove subsciber</button>
-                <button type="button" class="list-group-item" id="suspendsubscr">Suspend/resume subsciber</button>
+<!--Modal windows -->
+<!-- Update modal -->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="updateModalLabel">Update subscriber and subscriptions</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="subscriber-email" class="control-label">Subscriber email:</label>
+                        <input type="text" class="form-control" id="subscriber-email">
+                    </div>
+                    <div class="form-group">
+                        <label for="subscriber-name" class="control-label">Subscriber name:</label>
+                        <input type="text" class="form-control" id="subscriber-name"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="subscription-list" class="control-label">Subscriptions:</label>
+                        <textarea class="form-control" id="subscription-list"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Update</button>
             </div>
         </div>
-
-        <article>
-            <div class="col-md-3" id="forms_col">
-                <section id="getsubscrview" hidden>
-                    <h3>Get subscriber</h3>
-                    <form method="GET" id="get_subscr_form" action="">
-                        <label for="email">Enter email of subscriber</label>
-                        <div class="input-group">
-                            <input type="email" id="email" required class="form-control"/>
-                            <span class="input-group-btn">
-                                <input type="submit" value="Fetch" class="btn btn-default"/>
-                            </span>
-                        </div>
-                    </form>
-                </section>
-                <section id="editsubscrview" hidden>
-                    <h3>Edit subscriber</h3>
-                    <form method="POST" id="edit_subscr_form" action="">
-                        <div class="input-group">
-                            <label for="editemail">Email</label>
-                            <p><input type="email" id="editemail" readonly class="form-control"/><p/>
-                            <label for="editname">Name</label>
-                            <p><input type="text" id="editname" required class="form-control"/><p/>
-                            <label for="editrss">RSS</label>
-                            <p><input type="url" id="editrss" required class="form-control"/><p/>
-                            <p><input type="submit" value="Apply" class="btn btn-default"/></p>
-                        </div>
-                    </form>
-                </section>
-                <section id="newsubscrview" hidden>
-                    <h3>Add new subscriber</h3>
-                    <form method="POST" id="new_subscr_form" action="">
-                        <div class="input-group">
-                            <label for="newemail">Email</label>
-                            <p><input type="email" id="newemail" required class="form-control"/></p>
-                            <label for="name">Name</label>
-                            <p><input type="text" id="name" required class="form-control"/></p>
-                            <label for="rss">RSS</label>
-                            <p><input type="url" id="rss" required class="form-control"/></p>
-                            <label for="starttime">Start date</label>
-                            <p><input type="date" id="starttime" class="form-control"/></p>
-                            <input type="submit" value="Create" class="btn btn-default"/>
-                        </div>
-                    </form>
-                </section>
-                <section id="removesubscrview" hidden>
-                    <h3>Remove subscriber</h3>
-                    <form method="GET" id="remove_subscr_form" action="">
-                        <label for="removeemail">Enter email of subscriber</label>
-                        <div class="input-group">
-                            <input type="email" id="removeemail" required class="form-control"/>
-                            <span class="input-group-btn">
-                                <input type="submit" value="Remove" class="btn btn-default"/>
-                            </span>
-                        </div>
-                    </form>
-                </section>
-                <section id="suspendsubscrview" hidden>
-                    <h3>Suspend or resume subscriber</h3>
-                    <form method="GET" id="suspend_subscr_form" action="">
-                        <label for="suspendemail">Enter email of subscriber</label>
-                        <div class="input-group">
-                            <input type="email" id="suspendemail" required class="form-control"/>
-                            <div class="input-group-btn">
-                                <button type="submit" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
-                                <ul class="dropdown-menu dropdown-menu-right">
-                                    <li><a href="#">Suspend</a></li>
-                                    <li><a href="#">Resume</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <!--<p><input type="submit" value="Apply"/></p>-->
-                    </form>
-                </section>
-            </div>
-
-            <div class="col-md-6">
-                <div id="getresult" class="table-responsive">
-
-                </div>
-                <p id="errorview">Jopa</p>
-            </div>
-        </article>
     </div>
 </div>
---%>
 
-<!--<aside>This aside</aside>-->
+<!-- Suspend modal -->
+<div class="modal fade" id="suspendModal" tabindex="-1" role="dialog" aria-labelledby="suspendModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="suspendModalLabel">Suspend subscriber</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div id="suspend_alert_box" class="alert alert-warning" role="alert"></div>
+                    <input hidden type="email">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Suspend</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Remove modal -->
+<div class="modal fade" id="removeModal" tabindex="-1" role="dialog" aria-labelledby="removeModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="removeModalLabel">Remove subscriber</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div id="remove_alert_box" class="alert alert-danger" role="alert"></div>
+                    <input hidden type="text" id="user">
+                    <input hidden type="email" id="subscriber">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Remove</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <%@include file="footer.jsp"%>
 </body>
