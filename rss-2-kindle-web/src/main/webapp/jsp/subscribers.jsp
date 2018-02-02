@@ -139,9 +139,12 @@
         //TODO: get subscibers email from request
         $('#suspend_subscriber_form').submit(function () {
             $.getJSON(rootURL + username + '/eurohlam@gmail.com/suspend', function (data) {
+                showAlert('success', 'Subscriber has been suspended');
+/*
                 $('#edit_alerts').html('<div class="alert alert-success alert-dismissible" role="alert">'
                     + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
                     + '<strong>Success!</strong> Subscriber has been suspended </div>');
+*/
             });
         });
 
@@ -179,6 +182,23 @@
             })
         }
     });
+
+    function showAlert(type, text){
+        if (type == 'error') {
+            $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
+                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                + '<strong>Error!</strong>'+ text + '</div>');
+        } else if (type == 'warning') {
+            $('#alerts_panel').html('<div class="alert alert-warning alert-dismissible" role="alert">'
+                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                + '<strong>Warning!</strong>' + text + '</div>');
+        } else {
+            $('#alerts_panel').html('<div class="alert alert-success alert-dismissible" role="alert">'
+                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                + '<strong>Success!</strong>' + text + '</div>');
+        }
+    }
+
 
     function isEmptyText(text) {
         if (text == null || text == '' || text == 'undefined') {
@@ -305,7 +325,7 @@
                 <div id="alerts_panel"></div>
                 <div class="tab-pane fade active" id="new" role="tabpanel" aria-labelledby="new-tab">
                     <h3>Add new subscriber</h3>
-                    <form method="POST" id="new_subscr_form" action="">
+                    <form method="POST" id="new_subscriber_form" action="">
                         <div class="input-group">
                             <label for="newemail">Email</label>
                             <p><input type="email" id="newemail" required class="form-control"/></p>
@@ -313,8 +333,8 @@
                             <p><input type="text" id="name" required class="form-control"/></p>
                             <label for="rss">RSS</label>
                             <p><input type="url" id="rss" required class="form-control"/></p>
-                            <label for="starttime">Start date</label>
-                            <p><input type="date" id="starttime" class="form-control"/></p>
+                            <%--<label for="starttime">Start date</label>--%>
+                            <%--<p><input type="date" id="starttime" class="form-control"/></p>--%>
                             <security:csrfInput/>
                             <input type="submit" value="Create" class="btn btn-default"/>
                         </div>
@@ -323,24 +343,10 @@
                 <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
                     <h3>Edit subscriber</h3>
                     <div id="edit_alerts"></div>
-<%--
-                    <form method="POST" id="edit_subscr_form" action="">
-                        <div class="input-group">
-                            <label for="editemail">Email</label>
-                            <p><input type="email" id="editemail" readonly class="form-control"/></p>
-                            <label for="editname">Name</label>
-                            <p><input type="text" id="editname" required class="form-control"/></p>
-                            <label for="editrss">RSS</label>
-                            <p><input type="url" id="editrss" required class="form-control"/></p>
-                            <security:csrfInput/>
-                            <p><input type="submit" value="Apply" class="btn btn-default"/></p>
-                        </div>
-                    </form>
---%>
                 </div>
                 <div class="tab-pane fade" id="remove" role="tabpanel" aria-labelledby="remove-tab">
                     <h3>Remove subscriber</h3>
-                    <form method="GET" id="remove_subscr_form" action="">
+                    <form method="GET" id="remove_subscriber_form" action="">
                         <div class="input-group">
                             <label for="removeemail">Enter email of subscriber</label>
                             <input type="email" id="removeemail" required class="form-control"/>
