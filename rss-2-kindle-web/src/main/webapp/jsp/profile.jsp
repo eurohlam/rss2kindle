@@ -59,12 +59,8 @@
 
             $.each(data.subscribers, function (i, item) {
                 var tr;
-                if (item.status === 'locked')
+                if (item.status === 'suspended')
                     tr = '<tr class="danger"><td>';
-                /*
-                 else if (item.status === 'suspended')
-                 tr='<tr class="warning"><td>';
-                 */
                 else
                     tr = '<tr class="active"><td>';
 

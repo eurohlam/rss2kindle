@@ -53,10 +53,8 @@
 
             $.each(data.subscribers, function (i, item) {
                 var tr;
-                if (item.status === 'locked')
-                    tr = '<tr class="danger"><td>';
-                else if (item.status === 'suspended')
-                    tr='<tr class="warning"><td>';
+                if (item.status === 'suspended')
+                    tr='<tr class="danger"><td>';
                 else
                     tr = '<tr class="active"><td>';
 
@@ -66,10 +64,14 @@
                     + item.email + '</td><td>'
                     + item.status + '</td><td>'
                     + '<div class="btn-group" role="group">'
-                    + '<button id="btn_update" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email +'">Update</button>'
-                    + '<button id="btn_suspend" type="button" class="btn btn-warning" data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email +'">Suspend</button>'
-                    + '<button id="btn_remove" type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email +'">Remove</button>'
-                    + '</div></td></tr>';
+                    + '<button id="btn_update" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email +'">Update</button>';
+
+                if (item.status === 'suspended')
+                    table = table + '<button id="btn_resume" type="button" class="btn btn-warning" data-toggle="modal" data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email +'">Resume</button>'
+                else
+                    table = table + '<button id="btn_suspend" type="button" class="btn btn-warning" data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email +'">Suspend</button>';
+
+                table = table + '<button id="btn_remove" type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email +'">Remove</button></div></td></tr>';
 
 /*
                 var rss = item.rsslist;
@@ -100,13 +102,11 @@
             var button = $(event.relatedTarget); // Button that triggered the modal
             var email = button.data('email'); // Extract info from data-* attributes
             var name = button.data('name');
-            var rsslist = button.data('rss');
-            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+            var rsslist = button.data('rss');//TODO: rsslist
             var modal = $(this);
-            modal.find('.modal-title').text('Update subscriber ' + email);
-            $('#subscriber-name').val(name);
-            $('#subscriber-email').val(email);
+            modal.find('.modal-title').text('Update subscriber ' + name);
+            $('#update_subscriber_name').val(name);
+            $('#update_subscriber_email').val(email);
             $('#tarea').text(getSubscriberById(email));
 //            $('#subscription-list').()
         });
@@ -117,9 +117,22 @@
             var email = button.data('email'); // Extract info from data-* attributes
             var name = button.data('name');
             var modal = $(this);
-            modal.find('.modal-title').text('Suspend subscriber ' + email);
-            $('#suspend_email').val = email;
+            modal.find('.modal-title').text('Suspend subscriber ' + name);
+            $('#suspend_subscriber_email').val(email);
+            $('#suspend_subscriber_name').val(name);
             $('#suspend_alert_box').html('<strong>Warning!</strong> You are going to suspend subscriber <strong>' + name + '</strong> associated with email <strong>' + email + '</strong>.</br>Do you confirm?');
+        });
+
+        //show modal for resume
+        $('#resumeModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var email = button.data('email'); // Extract info from data-* attributes
+            var name = button.data('name');
+            var modal = $(this);
+            modal.find('.modal-title').text('Resume subscriber ' + name);
+            $('#resume_subscriber_email').val(email);
+            $('#resume_subscriber_name').val(name);
+            $('#resume_alert_box').html('<strong>Warning!</strong> You are going to resume subscriber <strong>' + name + '</strong> associated with email <strong>' + email + '</strong>.</br>Do you confirm?');
         });
 
         //show modal for remove
@@ -128,24 +141,31 @@
             var email = button.data('email'); // Extract info from data-* attributes
             var name = button.data('name');
             var modal = $(this);
-            modal.find('.modal-title').text('Remove subscriber ' + email);
-            $('#remove_user').val = username;
-            $('#remove_subscriber').val = email;
+            modal.find('.modal-title').text('Remove subscriber ' + name);
+            $('#remove_subscriber_name').val(name);
+            $('#remove_subscriber_email').val(email);
             $('#remove_alert_box').html('<strong>Warning!</strong> You are going to remove subscriber <strong>' + name + '</strong> associated with email <strong>' + email + '</strong>.</br>Do you confirm?');
         });
 
         //suspend subscriber on submit
         //TODO: need to show correct tab after submit
-        //TODO: get subscibers email from request
         $('#suspend_subscriber_form').submit(function () {
-            $.getJSON(rootURL + username + '/eurohlam@gmail.com/suspend', function (data) {
-                showAlert('success', 'Subscriber has been suspended');
-/*
-                $('#edit_alerts').html('<div class="alert alert-success alert-dismissible" role="alert">'
-                    + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                    + '<strong>Success!</strong> Subscriber has been suspended </div>');
-*/
+            var email = $('#suspend_subscriber_email').val();
+            var name = $('#suspend_subscriber_name').val();
+            $.getJSON(rootURL + username + '/' + email + '/suspend', function (data) {
+                showAlert('success', 'Subscriber <strong>' + name + '</strong> has been suspended');
             });
+            return true;
+        });
+
+        //resume subscriber on submit
+        $('#resume_subscriber_form').submit(function () {
+            var email = $('#resume_subscriber_email').val();
+            var name = $('#resume_subscriber_name').val();
+            $.getJSON(rootURL + username + '/' + email + '/resume', function (data) {
+                showAlert('success', 'Subscriber <strong>' + name + '</strong> has been resumed');
+            });
+            return true;
         });
 
         //add new subscriber on submit
@@ -158,7 +178,8 @@
                     rss: $('#new_subscriber_rss').val()
                 },
                 function (data) {
-                    showAlert('success', 'New subscriber ' + name + ' has been added successfully');
+                    showAlert('success', 'New subscriber <strong>' + name + '</strong> has been added successfully');
+                    return true;
                 },
                 'json');
             return false;
@@ -166,27 +187,17 @@
 
         //remove subscriber on submit
         $('#remove_subscriber_form').submit(function () {
-            var email = $('#remove_subscriber_email');
-            var name = $('#remove_subscriber_name');
-            $.getJSON(rootURL + '/' + username + '/' + email +'/remove', function (data) {
-                showAlert('success', 'Subscriber ' + name +' has been removed');
+            var email = $('#remove_subscriber_email').val();
+            var name = $('#remove_subscriber_name').val();
+            $.getJSON(rootURL + username + '/' + email +'/remove', function (data) {
+                showAlert('success', 'Subscriber <strong>' + name +'</strong> has been removed');
             });
-            return false;
-        });
-
-        //TODO: remove on submit
-        $('#get_subscr_form').submit(function () {
-            findSubscriberById($('#email').val());
-            return false;
-        });
-        $('#edit_subscr_form').submit(function () {
-            editSubscriber();
-            return false;
+            return true;
         });
 
         //Show ajax error messages
-        $(document).ajaxError(function (event, request, settings) {
-            showAlert('error', 'Internal error');
+        $(document).ajaxError(function (event, request, settings, thrownError) {
+            showAlert('error', 'Internal error: ' + thrownError + settings + request);
         });
 
         function getSubscriberById(id)
@@ -194,7 +205,8 @@
             $.each(userData.subscribers, function (i, item) {
                 if (item.email == id)
                     return item;
-            })
+            });
+            return false;
         }
     });
 
@@ -222,6 +234,7 @@
         return false;
     }
 
+    //TODO: deprecated
     function findSubscriberById(id) {
         $('#getresult').append('<p>trying to get data</p>');
         if (!isEmptyText(id)) {
@@ -267,26 +280,7 @@
         }
     }
 
-    function removeSubscriberById(id) {
-        $.getJSON(rootURL + '/' + id + '/remove', function (data) {
-            $('#getresult').append('<p>' + id + '</p><p>Result jopa' + '</p>');
-        });
-    }
-
-    function newSubscriber() {
-        $.post(rootURL + '/new',
-            {
-                email: $('#newemail').val(),
-                name: $('#name').val(),
-                rss: $('#rss').val()
-            },
-            function (data) {
-//                $('#getresult').append('<p>Result ' + data.updateOfExisting + ' n=' + data.n + '</p>');
-                $('#getresult').append('<p>Result ' + data + '</p>');
-            },
-            'json');
-    }
-
+    //TODO: deprecated
     function editSubscriber() {
         $.post(rootURL + '/update',
             {
@@ -332,45 +326,35 @@
                 <li class="nav-item">
                     <a class="nav-link" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="profile" aria-selected="false">Edit subscribers</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="remove-tab" data-toggle="tab" href="#remove" role="tab" aria-controls="contact" aria-selected="false">Remove subscribers</a>
-                </li>
             </ul>
             <div class="tab-content" id="operationsTabContent">
                 <div id="alerts_panel"></div>
                 <div class="tab-pane fade active" id="new" role="tabpanel" aria-labelledby="new-tab">
                     <h3>Add new subscriber</h3>
-                    <form method="POST" id="new_subscriber_form" action="">
-                        <div class="input-group">
+                    <form method="get" id="new_subscriber_form" action="#">
+                        <div class="form-group">
                             <label for="new_subscriber_email">Email</label>
-                            <p><input type="email" id="new_subscriber_email" required class="form-control"/></p>
+                            <input type="email" id="new_subscriber_email" required class="form-control"/>
+                        </div>
+                        <div class="form-group">
                             <label for="new_subscriber_name">Name</label>
-                            <p><input type="text" id="new_subscriber_name" required class="form-control"/></p>
+                            <input type="text" id="new_subscriber_name" required class="form-control"/>
+                        </div>
+                        <div class="form-group">
                             <label for="new_subscriber_rss">Subscription (RSS)</label>
                             <p><input type="url" id="new_subscriber_rss" required class="form-control"/></p>
+                        </div>
+                        <div class="form-group">
                             <%--<label for="starttime">Start date</label>--%>
                             <%--<p><input type="date" id="starttime" class="form-control"/></p>--%>
                             <security:csrfInput/>
-                            <input type="submit" value="Create" class="btn btn-default"/>
+                            <input type="submit" value="Create" class="btn btn-primary"/>
                         </div>
                     </form>
                 </div>
                 <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
                     <h3>Edit subscriber</h3>
                     <div id="edit_alerts"></div>
-                </div>
-                <div class="tab-pane fade" id="remove" role="tabpanel" aria-labelledby="remove-tab">
-                    <h3>Remove subscriber</h3>
-                    <form method="GET" id="remove_subscriber_form" action="">
-                        <div class="input-group">
-                            <label for="removeemail">Enter email of subscriber</label>
-                            <input type="email" id="removeemail" required class="form-control"/>
-                            <security:csrfInput/>
-                            <span class="input-group-btn">
-                                <input type="submit" value="Remove" class="btn btn-default"/>
-                            </span>
-                        </div>
-                    </form>
                 </div>
             </div>
         </main>
@@ -390,12 +374,12 @@
             <form method="post" action="#" id="update_subscriber_form">
                 <div class="modal-body">
                         <div class="form-group">
-                            <label for="subscriber-email" class="control-label">Subscriber email:</label>
-                            <input type="email" class="form-control" id="subscriber-email"/>
+                            <label for="update_subscriber_email" class="control-label">Subscriber email:</label>
+                            <input type="email" class="form-control" id="update_subscriber_email"/>
                         </div>
                         <div class="form-group">
-                            <label for="subscriber-name" class="control-label">Subscriber name:</label>
-                            <input type="text" class="form-control" id="subscriber-name"/>
+                            <label for="update_subscriber_name" class="control-label">Subscriber name:</label>
+                            <input type="text" class="form-control" id="update_subscriber_name"/>
                         </div>
                         <div class="form-group">
                             <label for="subscription-list" class="control-label">Subscriptions:</label>
@@ -421,12 +405,36 @@
             </div>
             <form method="get" id="suspend_subscriber_form" action="#">
                 <div class="modal-body">
-                        <div id="suspend_alert_box" class="alert alert-warning" role="alert"></div>
-                        <input hidden type="email" id="suspend_email" name="suspend_email" value="jopa@mail.ru"/>
+                    <div id="suspend_alert_box" class="alert alert-warning" role="alert"></div>
+                    <input hidden type="text" id="suspend_subscriber_name"/>
+                    <input hidden type="email" id="suspend_subscriber_email"/>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary" name="btn_suspend">Suspend</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Resume modal -->
+<div class="modal fade" id="resumeModal" tabindex="-1" role="dialog" aria-labelledby="resumeModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="resumeModalLabel">Suspend subscriber</h4>
+            </div>
+            <form method="get" id="resume_subscriber_form" action="#">
+                <div class="modal-body">
+                    <div id="resume_alert_box" class="alert alert-warning" role="alert"></div>
+                    <input hidden type="text" id="resume_subscriber_name"/>
+                    <input hidden type="email" id="resume_subscriber_email"/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" name="btn_resume">Resume</button>
                 </div>
             </form>
         </div>
@@ -441,17 +449,17 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="removeModalLabel">Remove subscriber</h4>
             </div>
-            <div class="modal-body">
-                <form>
+            <form method="get" id="remove_subscriber_form" action="#">
+                <div class="modal-body">
                     <div id="remove_alert_box" class="alert alert-danger" role="alert"></div>
-                    <input hidden type="text" id="remove_subscriber_name" value="jopa"/>
-                    <input hidden type="email" id="remove_subscriber_email" value="jopa"/>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="btn_remove">Remove</button>
-            </div>
+                    <input hidden type="text" id="remove_subscriber_name"/>
+                    <input hidden type="email" id="remove_subscriber_email"/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn_remove">Remove</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
