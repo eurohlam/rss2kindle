@@ -148,6 +148,31 @@
             });
         });
 
+        //add new subscriber on submit
+        $('#new_subscriber_form').submit(function () {
+            var name = $('#new_subscriber_name').val();
+            $.post(rootURL + username + '/new',
+                {
+                    email: $('#new_subscriber_email').val(),
+                    name: name,
+                    rss: $('#new_subscriber_rss').val()
+                },
+                function (data) {
+                    showAlert('success', 'New subscriber ' + name + ' has been added successfully');
+                },
+                'json');
+            return false;
+        });
+
+        //remove subscriber on submit
+        $('#remove_subscriber_form').submit(function () {
+            var email = $('#remove_subscriber_email');
+            var name = $('#remove_subscriber_name');
+            $.getJSON(rootURL + '/' + username + '/' + email +'/remove', function (data) {
+                showAlert('success', 'Subscriber ' + name +' has been removed');
+            });
+            return false;
+        });
 
         //TODO: remove on submit
         $('#get_subscr_form').submit(function () {
@@ -158,20 +183,10 @@
             editSubscriber();
             return false;
         });
-        $('#remove_subscr_form').submit(function () {
-            removeSubscriberById($('#removeemail').val());
-            return false;
-        });
-        $('#new_subscr_form').submit(function () {
-            newSubscriber();
-            return false;
-        });
 
         //Show ajax error messages
         $(document).ajaxError(function (event, request, settings) {
-            $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Error!</strong> Internal error </div>');
+            showAlert('error', 'Internal error');
         });
 
         function getSubscriberById(id)
@@ -187,15 +202,15 @@
         if (type == 'error') {
             $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
                 + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Error!</strong>'+ text + '</div>');
+                + '<strong>Error! </strong>'+ text + '</div>');
         } else if (type == 'warning') {
             $('#alerts_panel').html('<div class="alert alert-warning alert-dismissible" role="alert">'
                 + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Warning!</strong>' + text + '</div>');
+                + '<strong>Warning! </strong>' + text + '</div>');
         } else {
             $('#alerts_panel').html('<div class="alert alert-success alert-dismissible" role="alert">'
                 + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Success!</strong>' + text + '</div>');
+                + '<strong>Success! </strong> ' + text + '</div>');
         }
     }
 
@@ -327,12 +342,12 @@
                     <h3>Add new subscriber</h3>
                     <form method="POST" id="new_subscriber_form" action="">
                         <div class="input-group">
-                            <label for="newemail">Email</label>
-                            <p><input type="email" id="newemail" required class="form-control"/></p>
-                            <label for="name">Name</label>
-                            <p><input type="text" id="name" required class="form-control"/></p>
-                            <label for="rss">RSS</label>
-                            <p><input type="url" id="rss" required class="form-control"/></p>
+                            <label for="new_subscriber_email">Email</label>
+                            <p><input type="email" id="new_subscriber_email" required class="form-control"/></p>
+                            <label for="new_subscriber_name">Name</label>
+                            <p><input type="text" id="new_subscriber_name" required class="form-control"/></p>
+                            <label for="new_subscriber_rss">Subscription (RSS)</label>
+                            <p><input type="url" id="new_subscriber_rss" required class="form-control"/></p>
                             <%--<label for="starttime">Start date</label>--%>
                             <%--<p><input type="date" id="starttime" class="form-control"/></p>--%>
                             <security:csrfInput/>
@@ -372,26 +387,26 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="updateModalLabel">Update subscriber and subscriptions</h4>
             </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label for="subscriber-email" class="control-label">Subscriber email:</label>
-                        <input type="email" class="form-control" id="subscriber-email">
-                    </div>
-                    <div class="form-group">
-                        <label for="subscriber-name" class="control-label">Subscriber name:</label>
-                        <input type="text" class="form-control" id="subscriber-name"/>
-                    </div>
-                    <div class="form-group">
-                        <label for="subscription-list" class="control-label">Subscriptions:</label>
-                        <textarea class="form-control" id="tarea"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary">Update</button>
-            </div>
+            <form method="post" action="#" id="update_subscriber_form">
+                <div class="modal-body">
+                        <div class="form-group">
+                            <label for="subscriber-email" class="control-label">Subscriber email:</label>
+                            <input type="email" class="form-control" id="subscriber-email"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="subscriber-name" class="control-label">Subscriber name:</label>
+                            <input type="text" class="form-control" id="subscriber-name"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="subscription-list" class="control-label">Subscriptions:</label>
+                            <textarea class="form-control" id="tarea"></textarea>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -407,7 +422,7 @@
             <form method="get" id="suspend_subscriber_form" action="#">
                 <div class="modal-body">
                         <div id="suspend_alert_box" class="alert alert-warning" role="alert"></div>
-                        <input hidden type="email" id="suspend_email" name="suspend_email" value="jopa@mail.ru">
+                        <input hidden type="email" id="suspend_email" name="suspend_email" value="jopa@mail.ru"/>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -429,8 +444,8 @@
             <div class="modal-body">
                 <form>
                     <div id="remove_alert_box" class="alert alert-danger" role="alert"></div>
-                    <input hidden type="text" id="remove_user" value="jopa">
-                    <input hidden type="email" id="remove_subscriber" value="jopa">
+                    <input hidden type="text" id="remove_subscriber_name" value="jopa"/>
+                    <input hidden type="email" id="remove_subscriber_email" value="jopa"/>
                 </form>
             </div>
             <div class="modal-footer">
