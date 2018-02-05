@@ -46,7 +46,7 @@
             userData = data;
             var table = '<table class="table table-hover"><thead>' +
                 '<tr><th>#</th>' +
-                '<th>title</th>' +
+                '<th>name</th>' +
                 '<th>email</th>' +
                 '<th>status</th>' +
                 '<th>action</th></tr></thead><tbody>';
@@ -64,7 +64,7 @@
                     + item.email + '</td><td>'
                     + item.status + '</td><td>'
                     + '<div class="btn-group" role="group">'
-                    + '<button id="btn_update" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email +'">Update</button>';
+                    + '<button id="btn_update" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email +'" data-status="' + item.status + '">Update</button>';
 
                 if (item.status === 'suspended')
                     table = table + '<button id="btn_resume" type="button" class="btn btn-warning" data-toggle="modal" data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email +'">Resume</button>'
@@ -95,6 +95,7 @@
         });
 
         //activate the first tab by default
+        //TODO: change active tab in depends on input parameter
         $('#operationsTab a:first').tab('show');
 
         //show modal for update
@@ -102,14 +103,32 @@
             var button = $(event.relatedTarget); // Button that triggered the modal
             var email = button.data('email'); // Extract info from data-* attributes
             var name = button.data('name');
-            var rsslist = button.data('rss');//TODO: rsslist
             var modal = $(this);
             modal.find('.modal-title').text('Update subscriber ' + name);
             $('#update_subscriber_name').val(name);
             $('#update_subscriber_email').val(email);
-            $('#tarea').text(getSubscriberById(email));
+            $('#update_subscriber_status').val(button.data('status'));
+
+            var rssTable = '';
+            $.each(userData.subscribers, function (i, item) {
+                if (item.email === email) {
+                    var rss = item.rsslist;
+                    for (j = 0; j < rss.length; j++) {
+                        rssTable = rssTable + '<option value="' + rss[j].rss + '">' + rss[j].rss + '</option>';
+                    }
+                }
+            });
+            $('#update_subscriber_rsslist').html(rssTable);//TODO: change textarea to list
 //            $('#subscription-list').()
         });
+        $('#btn_update_subscriber_addrss').click(function (event) {
+            var rss = $('#update_subscriber_addrss').val();//TODO: add validation of rss url
+            $('#update_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
+        });
+        $('#btn_update_subscriber_deleterss').click(function (event) {
+            $('#update_subscriber_rsslist option:selected').remove();
+        });
+
 
         //show modal for suspend
         $('#suspendModal').on('show.bs.modal', function (event) {
@@ -147,8 +166,26 @@
             $('#remove_alert_box').html('<strong>Warning!</strong> You are going to remove subscriber <strong>' + name + '</strong> associated with email <strong>' + email + '</strong>.</br>Do you confirm?');
         });
 
+        //update subscriber on submit
+        $('#update_subscriber_form').submit(function () {
+            var email = $('#update_subscriber_email').val();
+            var name = $('#update_subscriber_name').val();
+            var rsslist = $('#update_subscriber_rsslist').val();
+            $.post(rootURL + username + '/update',
+                {
+                    email: $(email).val(),
+                    name: name,
+                    rss: $('#new_subscriber_rss').val()
+                },
+                function (data) {
+                    showAlert('success', 'New subscriber <strong>' + name + '</strong> has been added successfully');
+                    return true;
+                },
+                'json');
+            return true;
+        });
+
         //suspend subscriber on submit
-        //TODO: need to show correct tab after submit
         $('#suspend_subscriber_form').submit(function () {
             var email = $('#suspend_subscriber_email').val();
             var name = $('#suspend_subscriber_name').val();
@@ -200,14 +237,7 @@
             showAlert('error', 'Internal error: ' + thrownError + settings + request);
         });
 
-        function getSubscriberById(id)
-        {
-            $.each(userData.subscribers, function (i, item) {
-                if (item.email == id)
-                    return item;
-            });
-            return false;
-        }
+
     });
 
     function showAlert(type, text){
@@ -375,15 +405,26 @@
                 <div class="modal-body">
                         <div class="form-group">
                             <label for="update_subscriber_email" class="control-label">Subscriber email:</label>
-                            <input type="email" class="form-control" id="update_subscriber_email"/>
+                            <input type="email" class="form-control" id="update_subscriber_email" readonly/>
+                            <label for="update_subscriber_status" class="control-label">Status:</label>
+                            <input type="text" class="form-control" id="update_subscriber_status" readonly/>
                         </div>
                         <div class="form-group">
                             <label for="update_subscriber_name" class="control-label">Subscriber name:</label>
                             <input type="text" class="form-control" id="update_subscriber_name"/>
                         </div>
                         <div class="form-group">
-                            <label for="subscription-list" class="control-label">Subscriptions:</label>
-                            <textarea class="form-control" id="tarea"></textarea>
+                            <label for="update_subscriber_rsslist" class="control-label">Subscriptions:</label>
+                            <select class="form-control" id="update_subscriber_rsslist" size="10"></select>
+                            <security:csrfInput/>
+                            <div class="form-group">
+                                <label for="update_subscriber_addrss" class="control-label">Add new subscription (RSS):</label>
+                                <input type="url" class="form-control" id="update_subscriber_addrss"/>
+                                <div class="btn-group-xs" role="group">
+                                    <button type="button" class="btn btn-primary" id="btn_update_subscriber_addrss">+</button>
+                                    <button type="button" class="btn btn-primary" id="btn_update_subscriber_deleterss">-</button>
+                                </div>
+                            </div>
                         </div>
                 </div>
                 <div class="modal-footer">

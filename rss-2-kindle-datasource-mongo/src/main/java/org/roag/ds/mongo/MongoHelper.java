@@ -145,6 +145,7 @@ public class MongoHelper
 
     public OperationResult addUser(User user, ProducerTemplate producerTemplate) throws Exception
     {
+        user.setDateCreated(dateFormat.get().format(new Date()));
         Map<String, String> cond= new HashMap<>(1);
         cond.put("username", user.getUsername());
         DBObject r=findOneByCondition(producerTemplate,cond);

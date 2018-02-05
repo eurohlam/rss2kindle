@@ -7,6 +7,7 @@ import org.roag.ds.UserRepository;
 import org.roag.model.Rss;
 import org.roag.model.RssStatus;
 import org.roag.model.Subscriber;
+import org.roag.model.User;
 import org.roag.service.SubscriberFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,6 +174,29 @@ public class ProfileManager
         try
         {
             OperationResult result = subscriberRepository.updateSubscriber(username, subscriberFactory.newSubscriber(email, name, rss));
+            if (result == OperationResult.SUCCESS)
+                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+            else
+                return Response.status(Response.Status.CONFLICT).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @POST
+    @Path("/update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateSubscriber(@PathParam("username") String username, String message)
+    {
+        logger.warn("Requested to update existing subscriber for user {} with data {}", username, message);
+        try
+        {
+            Subscriber subscriber =subscriberFactory.convertJson2Pojo(Subscriber.class, message);
+            OperationResult result = subscriberRepository.updateSubscriber(username, subscriber);
             if (result == OperationResult.SUCCESS)
                 return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
             else
