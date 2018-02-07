@@ -7,6 +7,7 @@ import org.roag.ds.UserRepository;
 import org.roag.model.Rss;
 import org.roag.model.RssStatus;
 import org.roag.model.Subscriber;
+import org.roag.model.User;
 import org.roag.service.SubscriberFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ public class ProfileManager
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserDetails(@PathParam("username") String username)
     {
-        logger.debug("Fetch user details from repository");
+        logger.debug("Fetch user details for user {}", username);
         try
         {
             String subscribers=subscriberFactory.convertPojo2Json(userRepository.getUser(username));
@@ -62,7 +63,7 @@ public class ProfileManager
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllSubscribers(@PathParam("username") String username)
     {
-        logger.debug("Fetch all subscribers from repository");
+        logger.debug("Fetch all subscribers for user {}", username);
         try
         {
             String subscribers=subscriberFactory.convertPojo2Json(subscriberRepository.findAllSubscribersByUser(username));
@@ -80,7 +81,7 @@ public class ProfileManager
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSubscriber(@PathParam("username") String username, @PathParam("email") String id)
     {
-        logger.debug("Fetch subscriber {} from repository", id);
+        logger.debug("Fetch subscriber {} for user {}", id, username);
         try
         {
             String subscriber = subscriberRepository.getSubscriberAsJSON(username, id);
@@ -98,7 +99,7 @@ public class ProfileManager
     @Produces(MediaType.APPLICATION_JSON)
     public Response suspendSubscriber(@PathParam("username") String username, @PathParam("email") String id)
     {
-        logger.debug("Suspend subscriber {}", id);
+        logger.warn("Suspend subscriber {} for user {}", id, username);
         try
         {
             OperationResult result= subscriberRepository.suspendSubscriber(username, id);
@@ -119,7 +120,7 @@ public class ProfileManager
     @Produces(MediaType.APPLICATION_JSON)
     public Response resumeSubscriber(@PathParam("username") String username, @PathParam("email") String id)
     {
-        logger.debug("Resume subscriber {}", id);
+        logger.warn("Resume subscriber {} for user {}", id, username);
         try
         {
             OperationResult result = subscriberRepository.resumeSubscriber(username, id);
@@ -136,18 +137,41 @@ public class ProfileManager
 
     @POST
     @Path("/new")
-    @Consumes("application/x-www-form-urlencoded")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSubscriber(@PathParam("username") String username,
                                   @FormParam("email") String email,
                                   @FormParam("name") String name,
                                   @FormParam("rss") String rss)
     {
-        logger.debug("Add new subscriber {}", email);
+        logger.info("Add new subscriber {} for user {}", email, username);
         try
         {
             OperationResult result = subscriberRepository.addSubscriber(username, subscriberFactory.newSubscriber(email, name, rss));
-            logger.info(result.toString());
+            if (result == OperationResult.SUCCESS)
+                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+            else
+                return Response.status(Response.Status.CONFLICT).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PUT
+    @Path("/new")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addSubscriber(@PathParam("username") String username,
+                                  String message)
+    {
+        logger.info("Requested to add a new subscriber for user {} with data {}", username, message);
+        try
+        {
+            Subscriber subscriber =subscriberFactory.convertJson2Pojo(Subscriber.class, message);
+            OperationResult result = subscriberRepository.addSubscriber(username, subscriber);
             if (result == OperationResult.SUCCESS)
                 return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
             else
@@ -162,14 +186,14 @@ public class ProfileManager
 
     @POST
     @Path("/update")
-    @Consumes("application/x-www-form-urlencoded")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateSubscriber(@PathParam("username") String username,
                                      @FormParam("email") String email,
                                      @FormParam("name") String name,
                                      @FormParam("rss") String rss)
     {
-        logger.debug("Update existing subscriber {}", email);
+        logger.warn("Update existing subscriber {} for user {}", email, username);
         try
         {
             OperationResult result = subscriberRepository.updateSubscriber(username, subscriberFactory.newSubscriber(email, name, rss));
@@ -185,12 +209,35 @@ public class ProfileManager
         }
     }
 
-    @GET
+    @PUT
+    @Path("/update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateSubscriber(@PathParam("username") String username, String message)
+    {
+        logger.warn("Requested to update existing subscriber for user {} with data {}", username, message);
+        try
+        {
+            Subscriber subscriber =subscriberFactory.convertJson2Pojo(Subscriber.class, message);
+            OperationResult result = subscriberRepository.updateSubscriber(username, subscriber);
+            if (result == OperationResult.SUCCESS)
+                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+            else
+                return Response.status(Response.Status.CONFLICT).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @DELETE
     @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/remove")
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeSubscriber(@PathParam("username") String username, @PathParam("email") String id)
     {
-        logger.debug("Remove subscriber {}", id);
+        logger.warn("Remove subscriber {} for user {}", id, username);
         try
         {
             OperationResult  result = subscriberRepository.removeSubscriber(username, id);
@@ -211,7 +258,7 @@ public class ProfileManager
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllSubscriptions(@PathParam("username") String username, @PathParam("email") String id)
     {
-        logger.debug("Fetch all subscriptions for {}", id);
+        logger.debug("Fetch all subscriptions for subscriber {} by user {}", id, username);
         try
         {
             Subscriber subscriber = subscriberRepository.getSubscriber(username, id);
@@ -227,13 +274,13 @@ public class ProfileManager
 
     @POST
     @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/subscribe")
-    @Consumes("application/x-www-form-urlencoded")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSubscription(@PathParam("username") String username,
                                     @PathParam("email") String id,
                                     @FormParam("rss") String rss)
     {
-        logger.debug("Add new subscription {} for {}", rss, id);
+        logger.info("Add new subscription {} for subscriber {} by user {}", rss, id, username);
         try
         {
             Subscriber subscriber = subscriberRepository.getSubscriber(username, id);
@@ -260,13 +307,13 @@ public class ProfileManager
 
     @POST
     @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/unsubscribe")
-    @Consumes("application/x-www-form-urlencoded")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeSubscription(@PathParam("username") String username,
                                        @PathParam("email") String id,
                                        @FormParam("rss") String rss)
     {
-        logger.debug("Remove subscription {} for {}", rss, id);
+        logger.warn("Remove subscription {} for subscriber {} by user {]", rss, id, username);
         try
         {
             Subscriber subscriber = subscriberRepository.getSubscriber(username, id);

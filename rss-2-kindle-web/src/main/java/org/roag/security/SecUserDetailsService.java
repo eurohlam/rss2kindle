@@ -28,7 +28,7 @@ public class SecUserDetailsService implements UserDetailsService {
             logger.debug("Trying to find a User {} in repository", s);
             User user=userRepository.getUser(s);
             logger.debug("User {} exists with roles {}", user.getUsername(), user.getRoles());
-            SecUserDetails ud=new SecUserDetails(user);
+            SpringUserDetailsImpl ud=new SpringUserDetailsImpl(user);
             return ud;
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

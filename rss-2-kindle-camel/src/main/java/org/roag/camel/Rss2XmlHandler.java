@@ -90,9 +90,18 @@ public class Rss2XmlHandler
     }
 
 
+    public void runCustomRssPolling(String email, String rss) throws Exception
+    {
+        logger.info("Anonymous polling for email {} from rss {}", email, rss);
+        Future<Map<String, String>> result= executor.submit(new RssPollingTask(rssConsumer,getCamelRssUri(rss),
+                getPathForRss("guest", email, rss),getRssFileNameFormat().format(new Date())));
+        logger.info("Anonymous polling for email {} from rss {} is completed with result {}", email, rss, result.get().get(getCamelRssUri(rss)));
+
+    }
+
     public void runRssPollingForAllUsers() throws Exception
     {
-        logger.debug("Start polling RSS for all active users");
+        logger.debug("Start polling for all active users");
         for (User user: subscriberRepository.getUserRepository().findAll())
             if (UserStatus.fromValue(user.getStatus()) == UserStatus.ACTIVE)
                 runRssPollingForList(user.getUsername(), user.getSubscribers());
@@ -109,22 +118,45 @@ public class Rss2XmlHandler
     }
 */
 
-    public void runRssPollingForList(String username, List<Subscriber> subscriberList) throws Exception
+    /**
+     *
+     * @param username
+     * @param subscriberList
+     * @return number of successfully polled subscriptions
+     * @throws Exception
+     */
+    public int runRssPollingForList(String username, List<Subscriber> subscriberList) throws Exception
     {
+        int count = 0;
         for (Subscriber subscriber:subscriberList)
-            runRssPollingForSubscriber(username, subscriber);
+            count = count + runRssPollingForSubscriber(username, subscriber);
+        return count;
     }
 
 
+    /**
+     *
+     * @param username
+     * @param email
+     * @return number of successfully polled subscriptions
+     * @throws Exception
+     */
     public short runRssPollingForSubscriber(String username, String email) throws Exception
     {
         return runRssPollingForSubscriber(username, subscriberRepository.getSubscriber(username, email));
     }
 
+    /**
+     *
+     * @param username
+     * @param subscriber
+     * @return number of successfully polled subscriptions
+     * @throws Exception
+     */
     public short runRssPollingForSubscriber(String username, Subscriber subscriber) throws Exception
     {
         short count= 0;
-        logger.debug("Start polling RSS for subscriber: email = {}; name = {}", subscriber.getEmail(), subscriber.getName());
+        logger.debug("Start polling: user = {}; subscriber = {}; subscriber.name = {}", username, subscriber.getEmail(), subscriber.getName());
         for (int i = 0; i < subscriber.getRsslist().size(); i++)
         {
             Rss rss = subscriber.getRsslist().get(i);
@@ -132,7 +164,7 @@ public class Rss2XmlHandler
             {
                 try
                 {
-                    logger.info("Started polling RSS {}", rss.getRss());
+                    logger.info("Polling RSS {}: user={}; subscriber = {}", rss.getRss(), username, subscriber.getEmail());
                     Future<Map<String, String>> result= executor.submit(new RssPollingTask(rssConsumer,getCamelRssUri(rss.getRss()),
                             getPathForRss(username, subscriber.getEmail(),
                                     rss.getRss()),getRssFileNameFormat().format(new Date())));
@@ -141,12 +173,12 @@ public class Rss2XmlHandler
                         Map<String, String> map = result.get();
                         if (map.size()==1)
                         {
-                            logger.info("RSS has been polled successfully to {}", map.get(rss.getRss()));
+                            logger.info("RSS {} has been polled successfully to {}. user = {}; subscriber = {}", rss.getRss(), map.get(rss.getRss()), username, subscriber.getEmail());
                             count++;
                         }
                         else
                         {
-                            logger.error("RSS has not been polled due to error {}", rss.getRss());
+                            logger.error("RSS {} has not been polled due to undefined error.  username = {}; subscriber = {}", rss.getRss(), username, subscriber.getEmail());
                             throw new Exception("RSS " + rss.getRss() +" has not been polled");
                         }
                     }

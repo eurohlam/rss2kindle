@@ -75,7 +75,7 @@ public class UserManager
     @Produces(MediaType.APPLICATION_JSON)
     public Response lockUser(@PathParam("username") String id)
     {
-        logger.debug("Lock user {}", id);
+        logger.warn("Lock user {}", id);
         try
         {
             OperationResult result= userRepository.lockUser(id);
@@ -96,7 +96,7 @@ public class UserManager
     @Produces(MediaType.APPLICATION_JSON)
     public Response unlockUser(@PathParam("username") String id)
     {
-        logger.debug("Unlock user {}", id);
+        logger.warn("Unlock user {}", id);
         try
         {
             OperationResult result = userRepository.unlockUser(id);
@@ -113,15 +113,40 @@ public class UserManager
 
     @POST
     @Path("/new")
-    @Consumes("application/x-www-form-urlencoded")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addUser(@FormParam("username") String username,
+                            @FormParam("email") String email,
                             @FormParam("password") String password)
     {
-        logger.debug("Add new user {}", username);
+        logger.info("Add new user {}", username);
         try
         {
-            OperationResult result = userRepository.addUser(subscriberFactory.newUser(username, password));
+            OperationResult result = userRepository.addUser(subscriberFactory.newUser(username, email, password));
+            logger.info(result.toString());
+            if (result == OperationResult.SUCCESS)
+                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+            else
+                return Response.status(Response.Status.CONFLICT).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @POST
+    @Path("/new")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addUser(String message)
+    {
+        logger.info("Requested to add new user from data {}", message);
+        try
+        {
+            User user=subscriberFactory.convertJson2Pojo(User.class, message);
+            OperationResult result = userRepository.addUser(user);
             logger.info(result.toString());
             if (result == OperationResult.SUCCESS)
                 return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
@@ -137,12 +162,12 @@ public class UserManager
 
     @POST
     @Path("/update")
-    @Consumes("application/x-www-form-urlencoded")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUser(@FormParam("username") String username,
                                @FormParam("password") String password)
     {
-        logger.debug("Update existing user {}", username);
+        logger.warn("Update existing user {}", username);
         try
         {
             User user= userRepository.getUser(username);
@@ -160,12 +185,35 @@ public class UserManager
         }
     }
 
-    @GET
+    @PUT
+    @Path("/update")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateUser(String message)
+    {
+        logger.warn("Requested to update existing user with data {}", message);
+        try
+        {
+            User user = subscriberFactory.convertJson2Pojo(User.class, message);
+            OperationResult result = userRepository.updateUser(user);
+            if (result == OperationResult.SUCCESS)
+                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+            else
+                return Response.status(Response.Status.CONFLICT).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @DELETE
     @Path("/{username: [a-zA-Z][a-zA-Z_0-9]*}/remove")
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeUser(@PathParam("username") String id)
     {
-        logger.debug("Remove user {}", id);
+        logger.warn("Remove user {}", id);
         try
         {
             OperationResult  result = userRepository.removeUser(id);

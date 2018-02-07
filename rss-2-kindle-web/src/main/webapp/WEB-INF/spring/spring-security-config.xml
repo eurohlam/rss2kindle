@@ -10,92 +10,42 @@
     <context:component-scan base-package="org.roag.security"/>
     <context:property-placeholder location="WEB-INF/spring/web-context.properties"/>
 
-    <bean name="bcryptEncoder"
+    <bean name="passwordEncoder"
                 class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
-<!--
-    <b:bean id="daoAuthenticationProvider"
-          class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
-        <b:property name="userDetailsService" ref="inMemoryUserDetailsManager"/>
-        <b:property name="passwordEncoder" ref="bcryptEncoder"/>
-    </b:bean>
--->
+    <bean id="userDetailsService" class="org.roag.security.SpringUserDetailsServiceImpl"/>
 
-<!--
-    <bean id="subscriberFactory" class="org.roag.service.SubscriberFactory"/>
-
-    <bean id="testUser" factory-bean="subscriberFactory" factory-method="newUser">
-        <constructor-arg index="0" value="test"/>
-        <constructor-arg index="1" value="test"/>
-        <property name="subscribers">
-            <list>
-                <ref bean="testSubscriber"/>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="testSubscriber" factory-bean="subscriberFactory" factory-method="newSubscriber">
-        <constructor-arg index="0" value="test@test.com"/>
-        <constructor-arg index="1" value="test"/>
-        <constructor-arg index="2" value="http://test.com/rss"/>
-    </bean>
-
-    &lt;!&ndash;Using in memory repository for testing goals  &ndash;&gt;
-    <bean id="userRepository" class="org.roag.ds.impl.MemoryUserRepository" factory-method="getInstance">
-        <property name="users">
-            <map>
-                <entry key="test" value-ref="testUser"/>
-            </map>
-        </property>
-    </bean>
-
-    <bean id="userDetailsService" class="org.roag.security.SecUserDetailsService">
-        &lt;!&ndash;<b:property name="subscriberRepository" ref="subscriberRepository"/>&ndash;&gt;
-    </bean>
--->
-
-    <bean id="restUserDetailsService" class="org.roag.security.RestUserDetailsService">
-        <constructor-arg index="0" value="${rest.host}"/>
-        <constructor-arg index="1" value="${rest.port}"/>
-        <constructor-arg index="2" value="${rest.path}"/>
-    </bean>
+    <bean id="authenticationSuccessHandler" class="org.roag.security.UrlAuthenticationSuccessHandler"/>
 
     <security:http realm="" use-expressions="false">
         <security:intercept-url pattern="/" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <security:intercept-url pattern="/index.html*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <security:intercept-url pattern="/login.jsp*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <!--<security:intercept-url pattern="/index.html*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>-->
+        <security:intercept-url pattern="/login.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <security:intercept-url pattern="/view/register" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <security:intercept-url pattern="/view/admin*" access="ROLE_ADMIN"/>
-        <security:intercept-url pattern="/jsp/admin*" access="ROLE_ADMIN"/>
-        <security:intercept-url pattern="/exitUser*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <security:intercept-url pattern="/**" access="ROLE_USER"/>
+        <security:intercept-url pattern="/jsp/admin/*" access="ROLE_ADMIN"/>
+        <security:intercept-url pattern="/view/*" access="ROLE_USER"/>
+        <security:intercept-url pattern="/jsp/*" access="ROLE_USER"/>
+        <security:intercept-url pattern="/jsp/exitUser*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <security:intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY,ROLE_USER,ROLE_ADMIN"/>
 
         <security:form-login login-page="/login.jsp"
                     authentication-failure-url="/login.jsp?login_error=1"
-                    default-target-url="/view/profile" />
+                             username-parameter="username" password-parameter="password"
+                             authentication-success-handler-ref="authenticationSuccessHandler"/>
         <security:http-basic/>
-        <security:logout logout-success-url="/jsp/exitUser.jsp"/>
+        <security:logout logout-success-url="/login.jsp"/>
         <security:remember-me />
         <security:headers/>
         <security:csrf/>
     </security:http>
 
     <security:authentication-manager>
-        <security:authentication-provider user-service-ref="restUserDetailsService">
-
+        <security:authentication-provider user-service-ref="userDetailsService">
+            <security:password-encoder ref="passwordEncoder"/>
         </security:authentication-provider>
-<!--
-        <authentication-provider>
-            &lt;!&ndash; adding encryption for passwords &ndash;&gt;
-            &lt;!&ndash;<password-encoder ref="bcryptEncoder"/>&ndash;&gt;
-            <user-service id="inMemoryUserDetailsManager" properties="WEB-INF/spring/users.properties">
-&lt;!&ndash;
-                <user name="admin" password="admin" authorities="ROLE_USER, ROLE_ADMIN" />
-                <user name="user" password="user" authorities="ROLE_USER" />
-                <user name="guest" password="guest" authorities="ROLE_GUEST" />
-&ndash;&gt;
-            </user-service>
-        </authentication-provider>
--->
     </security:authentication-manager>
+
+
 
 </beans>

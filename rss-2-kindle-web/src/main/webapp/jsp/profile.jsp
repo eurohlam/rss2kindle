@@ -1,17 +1,14 @@
-<%@ page import="org.springframework.security.core.Authentication" %>
-<%@ page import="org.springframework.security.core.context.SecurityContextHolder" %>
-<%@ page import="org.springframework.security.core.userdetails.UserDetails" %><%--
+<%--
   User: eurohlam
   Date: 19/10/2017
-  Time: 13:59
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="include.jsp"%>
+<%@include file="include.jsp" %>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>RSS-2-Kindle Management</title>
+    <title>RSS-2-KINDLE Profile</title>
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
     <!-- JQuery -->
@@ -37,78 +34,123 @@
 <body>
 <script>
     var rootURL = '/rss2kindle/rest/profile/<%=username%>';
+    var userData;
 
     $(document).ready(function () {
-        $('#profile_view').append('<p>Getting profile. Please wait...</p>');
+        $('#profile_view').append('<p id="message">Getting subscribers. Please wait...</p>');
         $.getJSON(rootURL, function (data) {
-            $('#profile_view').append('<p><h3>Welcome, '+data.username + '!</h3></p>' +
-                '<p>Created: ' + data.dateCreated + '</p>' +
-                '<p>Status: ' + data.status + '</p>');
+            userData = data;
 
-            var table = '<table class="table table-hover">' +
+            $('#dashboard_user_data').append(
+                 'User status: ' +data.status
+            );
+            $('#dashboard_user_info').append(
+                'Created: ' + data.dateCreated + '<br/>' +
+                'Modified: ' + data.dateModified + '<br/>' +
+                'Last logged in: ' + data.lastLogin
+            );
+
+            $('#dashboard_subscribers_data').append('Number of subscribers: ' + data.subscribers.length);
+
+            var number_of_subscriptions = 0;
+            var table = '<table class="table table-hover"><thead>' +
                 '<tr><th>#</th>' +
-                '<th>email</th>' +
                 '<th>title</th>' +
-                '<th>status</th>'+
-                '<th>rss</th></tr>';
+                '<th>email</th>' +
+                '<th>status</th>' +
+                '<th>rss</th></tr></thead><tbody>';
 
             $.each(data.subscribers, function (i, item) {
                 var tr;
-                if (item.status === 'locked')
-                    tr='<tr class="danger"><td>';
-                /*
-                 else if (item.status === 'suspended')
-                 tr='<tr class="warning"><td>';
-                 */
+                if (item.status === 'suspended')
+                    tr = '<tr class="danger"><td>';
                 else
-                    tr='<tr class="active"><td>';
+                    tr = '<tr class="active"><td>';
 
-                table = table + tr
-                    + i + '</td><td>'
-                    + item.email + '</td><td>'
+                table += tr + (i + 1) + '</td><td>'
                     + item.name + '</td><td>'
+                    + item.email + '</td><td>'
                     + item.status + '</td><td>';
                 var rss = item.rsslist;
-                rssTable='<table width="100%"><tr><td>';
+                number_of_subscriptions = number_of_subscriptions + rss.length;
+                rssTable = '<table width="100%"><tr><td>';
                 for (j = 0; j < rss.length; j++) {
                     rssTable = rssTable + '<a href="' + rss[j].rss + '">' + rss[j].rss + '</a></td><td>';
                     if (rss[j].status === 'active')
-                        rssTable = rssTable + '<label></label><input type="checkbox" checked disabled />'+ rss[j].status + '</label>';
+                        rssTable += '<label></label><input type="checkbox" checked disabled />' + rss[j].status + '</label>';
                     else
-                        rssTable = rssTable + '<label></label><input type="checkbox" disabled />' + rss[j].status + '</label>';
+                        rssTable += '<label></label><input type="checkbox" disabled />' + rss[j].status + '</label>';
 
-                    rssTable = rssTable  + '<td/></tr>';
+                    rssTable += '<td/></tr>';
                 }
-                rssTable = rssTable + '</table>';
+                rssTable += '</table>';
 
-                table = table + rssTable + '</td></tr>';
+                table += rssTable + '</td></tr>';
             });
-            table = table + '</table>';
+            table += '</tbody></table>';
+            $('#message').remove();
+            $('#dashboard_subscriptions_data').append("Number of subscriptions: " + number_of_subscriptions);
             $('#profile_view').append(table);
         })
     });
+
+    function getUserData() {
+        return userData;
+    }
 </script>
-<header role="banner">
-    <h1>RSS-2-Kindle rules</h1>
-</header>
 
-<div class="container">
-    <nav class="navbar navbar-default" role="navigation">
-        <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a href="#">My Profile</a></li>
-            <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
-            <li role="presentation"><a href="service.html">Services</a></li>
-        </ul>
-    </nav>
-</div>
+<div class="container-fluid">
+    <header class="header clearfix">
+        <nav>
+            <ul class="nav nav-pills pull-right">
+                <li role="presentation" class="active"><a href="../index.html">Home</a></li>
+                <li role="presentation"><a href="#">About</a></li>
+                <li role="presentation"><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">RSS-2-KINDLE</h3>
+    </header>
+    <hr/>
 
-<div class="container">
-    <div class="table-responsive" id="profile_view">
+    <div class="row">
+        <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
+            <ul class="nav nav-pills flex-column">
+                <li role="presentation" class="active"><a href="#">My Profile</a></li>
+                <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
+                <li role="presentation"><a href="service">Services</a></li>
+            </ul>
+        </nav>
+        <main role="main" class="col-sm-9 col-md-10">
+            <div class="jumbotron jumbotron-fluid">
+            <h1><%=username%> dashboard</h1>
+            <section class="row text-center placeholders">
+                <div class="col-6 col-sm-3 placeholder">
+                    <div id="dashboard_user_data"></div>
+                    <h4>User info</h4>
+                    <div class="text-muted" id="dashboard_user_info"></div>
+                </div>
+                <div class="col-6 col-sm-3 placeholder">
+                    <div id="dashboard_subscribers_data"></div>
+                    <h4>Subscribers</h4>
+                    <div class="text-muted">Something else</div>
+                </div>
+                <div class="col-6 col-sm-3 placeholder">
+                    <div id="dashboard_subscriptions_data"></div>
+                    <h4>Subscriptions</h4>
+                    <div class="text-muted">Something else</div>
+                </div>
+            </section>
+            </div>
+            <h1>Subscribers</h1>
+            <div class="table-responsive" id="profile_view">
 
+            </div>
+        </main>
     </div>
+
 </div>
 
-<%@include file="footer.jsp"%>
+<%@include file="footer.jsp" %>
 
 </body>
 </html>

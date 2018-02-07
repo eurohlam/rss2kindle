@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>RSS-2-Kindle Service</title>
+    <title>RSS-2-KINDLE Service</title>
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
     <!-- JQuery -->
@@ -20,30 +20,60 @@
     <![endif]-->
 
     <!-- Custom css -->
-    <link href="css/sticky-footer.css" rel="stylesheet">
+    <link href="css/landing-theme.css" rel="stylesheet">
 
 </head>
 
 <body>
-<script>
-</script>
-<header role="banner">
-    <h1>RSS-2-Kindle rules</h1>
-</header>
-<p>
-    Welcome to RSS to KINDLE service.
-</p>
-<p>
-    Please, <a href="login.jsp">login</a>
-</p>
+<div class="container">
+    <div class="header clearfix">
+        <nav>
+            <ul class="nav nav-pills pull-right">
+                <li role="presentation" class="active"><a href="#">Home</a></li>
+                <li role="presentation"><a href="#">About</a></li>
+                <li role="presentation"><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+        <h3 class="text-muted">RSS-2-KINDLE</h3>
+    </div>
 
-<footer class="footer">
-    <div class="container">
+    <div class="jumbotron">
+        <h1>Just read your RSS in Kindle</h1>
+        <p class="lead">RSS-2-KINDLE is a free service that allows you to redirect your RSS-subscriptions into your favorite kindle device.
+            All you need is just sign up and create a subscriber for your kindle</p>
         <div class="row">
-            <p align="center">Created by Eurohlam. 2016</p>
+        <div class="col-lg-6">
+            <p><a id="btn_signin" class="btn btn-lg btn-success" href="view/login" role="button">Sign in</a></p>
+        </div>
+        <div class="col-lg-6">
+            <p><a id="btn_signup" class="btn btn-lg btn-success" href="view/register" role="button">Sign up today</a></p>
+        </div>
         </div>
     </div>
-</footer>
+
+    <div class="row marketing">
+        <div class="col-lg-6">
+            <h4>Unlimited number of subscribers</h4>
+            <p>You can create a separated subscriber for each of your kindle devices.</p>
+
+            <h4>Manage your subscriptions for each kindle</h4>
+            <p>You can manage list of subscriptions for each kindle device independently</p>
+        </div>
+
+        <div class="col-lg-6">
+            <h4>Pretty view</h4>
+            <p>Each channel comes to kindle as a book</p>
+
+            <h4>Flexibility</h4>
+            <p>You can set up any email for subscriber, not only kindle email.</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; Created by Eurohlam. 2017</p>
+    </footer>
+
+</div> <!-- /container -->
 
 </body>
 </html>
