@@ -201,7 +201,7 @@
             $.getJSON(rootURL + username + '/' + email + '/suspend', function (data) {
                 showAlert('success', 'Subscriber <strong>' + name + '</strong> has been suspended');
             });
-            return true;
+            return;
         });
 
         //resume subscriber on submit
@@ -221,24 +221,28 @@
                 {
                     email: $('#new_subscriber_email').val(),
                     name: name,
-                    rss: $('#new_subscriber_rss').val()
+                    rss: $('#new_subscriber_rss').val() //todo: select for rss list
                 },
                 function (data) {
                     showAlert('success', 'New subscriber <strong>' + name + '</strong> has been added successfully');
-                    return true;
                 },
                 'json');
-            return false;
+            return;
         });
 
         //remove subscriber on submit
         $('#remove_subscriber_form').submit(function () {
             var email = $('#remove_subscriber_email').val();
             var name = $('#remove_subscriber_name').val();
-            $.getJSON(rootURL + username + '/' + email +'/remove', function (data) {
-                showAlert('success', 'Subscriber <strong>' + name +'</strong> has been removed');
+            $.ajax({
+                url: rootURL + username + '/' + email + '/remove',
+                type: 'DELETE',
+                dataType: 'json',
+                success: function (data) {
+                    showAlert('success', 'Subscriber <strong>' + name + '</strong> has been removed');
+                }
             });
-            return true;
+            return;
         });
 
         //Show ajax error messages

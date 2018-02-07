@@ -185,7 +185,7 @@ public class UserManager
         }
     }
 
-    @POST
+    @PUT
     @Path("/update")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -208,7 +208,7 @@ public class UserManager
         }
     }
 
-    @GET
+    @DELETE
     @Path("/{username: [a-zA-Z][a-zA-Z_0-9]*}/remove")
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeUser(@PathParam("username") String id)

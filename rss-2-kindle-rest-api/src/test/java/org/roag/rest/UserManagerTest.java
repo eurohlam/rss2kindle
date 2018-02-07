@@ -117,7 +117,7 @@ public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest
         //update
         user.setPassword(new_password);
         user.getSubscribers().add(factory.newSubscriber("json@json.org", "json", "http://json.org"));
-        response = target(PATH + "update").request().post(Entity.json(factory.convertPojo2Json(user)), Response.class);
+        response = target(PATH + "update").request().put(Entity.json(factory.convertPojo2Json(user)), Response.class);
         assertEquals(200, response.getStatus());
 
         //read
@@ -128,7 +128,7 @@ public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest
         assertEquals("Reading updated User failed", new_password, user.getPassword());
 
         //delete
-        response = target(PATH + new_user + "/remove").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        response = target(PATH + new_user + "/remove").request().delete();
         assertEquals(200, response.getStatus());
 
     }

@@ -148,7 +148,30 @@ public class ProfileManager
         try
         {
             OperationResult result = subscriberRepository.addSubscriber(username, subscriberFactory.newSubscriber(email, name, rss));
-            logger.info(result.toString());
+            if (result == OperationResult.SUCCESS)
+                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+            else
+                return Response.status(Response.Status.CONFLICT).build();
+        }
+        catch (Exception e)
+        {
+            logger.error(e.getMessage(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PUT
+    @Path("/new")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addSubscriber(@PathParam("username") String username,
+                                  String message)
+    {
+        logger.info("Requested to add a new subscriber for user {} with data {}", username, message);
+        try
+        {
+            Subscriber subscriber =subscriberFactory.convertJson2Pojo(Subscriber.class, message);
+            OperationResult result = subscriberRepository.addSubscriber(username, subscriber);
             if (result == OperationResult.SUCCESS)
                 return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
             else
@@ -209,7 +232,7 @@ public class ProfileManager
         }
     }
 
-    @GET
+    @DELETE
     @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/remove")
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeSubscriber(@PathParam("username") String username, @PathParam("email") String id)
