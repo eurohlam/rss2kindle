@@ -161,6 +161,7 @@ public class ProfileManager
         }
     }
 
+/*
     @POST
     @Path("/update")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -185,6 +186,7 @@ public class ProfileManager
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
+*/
 
     @POST
     @Path("/update")

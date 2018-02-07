@@ -42,14 +42,17 @@
             userData = data;
 
             $('#dashboard_user_data').append(
-                '<p>Created: ' + data.dateCreated + '</p>' +
-                '<p>Status: ' + data.status + '</p>' +
-                '<p>Last logged in: ' + data.lastLogin + '</p>' +
-                '<p>Modified: ' + data.dateModified + '</p>'
+                 'User status: ' +data.status
+            );
+            $('#dashboard_user_info').append(
+                'Created: ' + data.dateCreated + '<br/>' +
+                'Modified: ' + data.dateModified + '<br/>' +
+                'Last logged in: ' + data.lastLogin
             );
 
-            $('#dashboard_subscribers_data').append('<p>' + data.subscribers.length + '</p>');
+            $('#dashboard_subscribers_data').append('Number of subscribers: ' + data.subscribers.length);
 
+            var number_of_subscriptions = 0;
             var table = '<table class="table table-hover"><thead>' +
                 '<tr><th>#</th>' +
                 '<th>title</th>' +
@@ -65,11 +68,12 @@
                     tr = '<tr class="active"><td>';
 
                 table = table + tr
-                    + i + '</td><td>'
+                    + (i + 1) + '</td><td>'
                     + item.name + '</td><td>'
                     + item.email + '</td><td>'
                     + item.status + '</td><td>';
                 var rss = item.rsslist;
+                number_of_subscriptions = number_of_subscriptions + rss.length;
                 rssTable = '<table width="100%"><tr><td>';
                 for (j = 0; j < rss.length; j++) {
                     rssTable = rssTable + '<a href="' + rss[j].rss + '">' + rss[j].rss + '</a></td><td>';
@@ -86,6 +90,7 @@
             });
             table = table + '</tbody></table>';
             $('#message').remove();
+            $('#dashboard_subscriptions_data').append("Number of subscriptions: " + number_of_subscriptions);
             $('#profile_view').append(table);
         })
     });
@@ -122,19 +127,17 @@
             <section class="row text-center placeholders">
                 <div class="col-6 col-sm-3 placeholder">
                     <div id="dashboard_user_data"></div>
-                    <h4>Profile data</h4>
-                    <div class="text-muted">General Information</div>
+                    <h4>User info</h4>
+                    <div class="text-muted" id="dashboard_user_info"></div>
                 </div>
                 <div class="col-6 col-sm-3 placeholder">
                     <div id="dashboard_subscribers_data"></div>
-                    <h4>Number of subscribers</h4>
+                    <h4>Subscribers</h4>
                     <div class="text-muted">Something else</div>
                 </div>
                 <div class="col-6 col-sm-3 placeholder">
-                    <div id="dashboard_subscriptions_data">
-                        <p>Tralala</p>
-                    </div>
-                    <h4>Number of subscriptions</h4>
+                    <div id="dashboard_subscriptions_data"></div>
+                    <h4>Subscriptions</h4>
                     <div class="text-muted">Something else</div>
                 </div>
             </section>

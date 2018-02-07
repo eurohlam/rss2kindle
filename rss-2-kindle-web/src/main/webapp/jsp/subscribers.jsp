@@ -59,7 +59,7 @@
                     tr = '<tr class="active"><td>';
 
                 table = table + tr
-                    + i + '</td><td>'
+                    + (i + 1) + '</td><td>'
                     + item.name + '</td><td>'
                     + item.email + '</td><td>'
                     + item.status + '</td><td>'
@@ -170,18 +170,33 @@
         $('#update_subscriber_form').submit(function () {
             var email = $('#update_subscriber_email').val();
             var name = $('#update_subscriber_name').val();
-            var rsslist = $('#update_subscriber_rsslist').val();
-            $.post(rootURL + username + '/update',
-                {
-                    email: $(email).val(),
-                    name: name,
-                    rss: $('#new_subscriber_rss').val()
-                },
-                function (data) {
-                    showAlert('success', 'New subscriber <strong>' + name + '</strong> has been added successfully');
+            var status = $('#update_subscriber_status').val();
+            var rsslist = $('#update_subscriber_rsslist').val();//TODO: rsslist from select
+            $.ajax({
+                url: rootURL + username + '/update',
+                contentType: 'application/json',
+                type: 'POST',
+                data: '{' +
+                'email: "' + email + '",' +
+                'name: "' + name + '",' +
+                'rsslist: [ ' +
+                '    {' +
+                '        rss: "http://hrenasebe.com/jopa",' +
+                '        status: "active"' +
+                '    },' +
+                '    {' +
+                '        rss: "http://hrenasebe.com/feed/150",' +
+                '        status: "active"' +
+                '    }' +
+                '    ],' +
+                'status: "status"' +
+                '}',
+                dataType: 'json'
+            })
+                .done (function (data) {
+                    showAlert('success', 'Subscriber <strong>' + name + '</strong> has been updated successfully');
                     return true;
-                },
-                'json');
+                });
             return true;
         });
 
@@ -401,7 +416,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="updateModalLabel">Update subscriber and subscriptions</h4>
             </div>
-            <form method="post" action="#" id="update_subscriber_form">
+            <form method="get" action="#" id="update_subscriber_form">
                 <div class="modal-body">
                         <div class="form-group">
                             <label for="update_subscriber_email" class="control-label">Subscriber email:</label>
