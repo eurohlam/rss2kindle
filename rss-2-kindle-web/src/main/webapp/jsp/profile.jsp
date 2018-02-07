@@ -67,8 +67,7 @@
                 else
                     tr = '<tr class="active"><td>';
 
-                table = table + tr
-                    + (i + 1) + '</td><td>'
+                table += tr + (i + 1) + '</td><td>'
                     + item.name + '</td><td>'
                     + item.email + '</td><td>'
                     + item.status + '</td><td>';
@@ -78,17 +77,17 @@
                 for (j = 0; j < rss.length; j++) {
                     rssTable = rssTable + '<a href="' + rss[j].rss + '">' + rss[j].rss + '</a></td><td>';
                     if (rss[j].status === 'active')
-                        rssTable = rssTable + '<label></label><input type="checkbox" checked disabled />' + rss[j].status + '</label>';
+                        rssTable += '<label></label><input type="checkbox" checked disabled />' + rss[j].status + '</label>';
                     else
-                        rssTable = rssTable + '<label></label><input type="checkbox" disabled />' + rss[j].status + '</label>';
+                        rssTable += '<label></label><input type="checkbox" disabled />' + rss[j].status + '</label>';
 
-                    rssTable = rssTable + '<td/></tr>';
+                    rssTable += '<td/></tr>';
                 }
-                rssTable = rssTable + '</table>';
+                rssTable += '</table>';
 
-                table = table + rssTable + '</td></tr>';
+                table += rssTable + '</td></tr>';
             });
-            table = table + '</tbody></table>';
+            table += '</tbody></table>';
             $('#message').remove();
             $('#dashboard_subscriptions_data').append("Number of subscriptions: " + number_of_subscriptions);
             $('#profile_view').append(table);

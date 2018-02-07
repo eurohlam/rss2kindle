@@ -30,7 +30,6 @@
 
     <!-- Custom css -->
     <link href="../css/sticky-footer.css" rel="stylesheet">
-    <script src="../js/profile.js"></script>
 
 </head>
 <body>
@@ -42,7 +41,7 @@
     $(document).ready(function () {
 
         //show subscribers table for edit
-        $.getJSON(restURL + username, function (data) {
+        $.getJSON(rootURL + username, function (data) {
             userData = data;
             var table = '<table class="table table-hover"><thead>' +
                 '<tr><th>#</th>' +
@@ -58,8 +57,7 @@
                 else
                     tr = '<tr class="active"><td>';
 
-                table = table + tr
-                    + (i + 1) + '</td><td>'
+                table += tr + (i + 1) + '</td><td>'
                     + item.name + '</td><td>'
                     + item.email + '</td><td>'
                     + item.status + '</td><td>'
@@ -67,11 +65,11 @@
                     + '<button id="btn_update" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email +'" data-status="' + item.status + '">Update</button>';
 
                 if (item.status === 'suspended')
-                    table = table + '<button id="btn_resume" type="button" class="btn btn-warning" data-toggle="modal" data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email +'">Resume</button>'
+                    table += '<button id="btn_resume" type="button" class="btn btn-warning" data-toggle="modal" data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email +'">Resume</button>'
                 else
-                    table = table + '<button id="btn_suspend" type="button" class="btn btn-warning" data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email +'">Suspend</button>';
+                    table += '<button id="btn_suspend" type="button" class="btn btn-warning" data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email +'">Suspend</button>';
 
-                table = table + '<button id="btn_remove" type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email +'">Remove</button></div></td></tr>';
+                table += '<button id="btn_remove" type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email +'">Remove</button></div></td></tr>';
 
 /*
                 var rss = item.rsslist;
@@ -90,7 +88,7 @@
                 table = table + rssTable + '</td></tr>';
 */
             });
-            table = table + '</tbody></table>';
+            table += '</tbody></table>';
             $('#edit').append(table);
         });
 
@@ -118,13 +116,14 @@
                     }
                 }
             });
-            $('#update_subscriber_rsslist').html(rssTable);//TODO: change textarea to list
-//            $('#subscription-list').()
+            $('#update_subscriber_rsslist').html(rssTable);
         });
+
         $('#btn_update_subscriber_addrss').click(function (event) {
             var rss = $('#update_subscriber_addrss').val();//TODO: add validation of rss url
             $('#update_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
         });
+
         $('#btn_update_subscriber_deleterss').click(function (event) {
             $('#update_subscriber_rsslist option:selected').remove();
         });
@@ -171,26 +170,21 @@
             var email = $('#update_subscriber_email').val();
             var name = $('#update_subscriber_name').val();
             var status = $('#update_subscriber_status').val();
-            var rsslist = $('#update_subscriber_rsslist').val();//TODO: rsslist from select
+            var updateJson = '{' +
+                'email: "' + email + '",' +
+                'name: "' + name + '",' +
+                'status: "' + status + '",' +
+                'rsslist: [ ';
+            $('#update_subscriber_rsslist option').each(function() {
+                updateJson += '{ rss: "' + $(this).val() + '", status: "active"},';
+            });
+            updateJson = updateJson.substr(0, updateJson.length - 1) + ']}';
+
             $.ajax({
                 url: rootURL + username + '/update',
                 contentType: 'application/json',
-                type: 'POST',
-                data: '{' +
-                'email: "' + email + '",' +
-                'name: "' + name + '",' +
-                'rsslist: [ ' +
-                '    {' +
-                '        rss: "http://hrenasebe.com/jopa",' +
-                '        status: "active"' +
-                '    },' +
-                '    {' +
-                '        rss: "http://hrenasebe.com/feed/150",' +
-                '        status: "active"' +
-                '    }' +
-                '    ],' +
-                'status: "status"' +
-                '}',
+                type: 'PUT',
+                data: updateJson,
                 dataType: 'json'
             })
                 .done (function (data) {
@@ -253,7 +247,7 @@
         });
 
 
-    });
+    });//end of $(document).ready(function ())
 
     function showAlert(type, text){
         if (type == 'error') {
@@ -270,76 +264,6 @@
                 + '<strong>Success! </strong> ' + text + '</div>');
         }
     }
-
-
-    function isEmptyText(text) {
-        if (text == null || text == '' || text == 'undefined') {
-            return true;
-        }
-        return false;
-    }
-
-    //TODO: deprecated
-    function findSubscriberById(id) {
-        $('#getresult').append('<p>trying to get data</p>');
-        if (!isEmptyText(id)) {
-            $.getJSON(rootURL + '/' + id, function (data) {
-                //TODO: it should be array
-                var table = '<table class="table table-hover">' +
-                    '<tr>' +
-                    '<th>email</th>' +
-                    '<th>name</th>' +
-                    '<th>status</th>' +
-                    '<th>rss</th></tr>';
-
-                var tr;
-                if (data.status === 'terminated')
-                    tr = '<tr class="danger"><td>';
-                else if (data.status === 'suspended')
-                    tr = '<tr class="warning"><td>';
-                else
-                    tr = '<tr class="active"><td>';
-
-                table = table + tr
-                    + data.email + '</td><td>'
-                    + data.name + '</td><td>'
-                    + data.status + '</td><td>';
-                var rsslist = data.rsslist;
-                for (j = 0; j < rsslist.length; j++)
-                    table = table + rsslist[j].rss + '  status=' + rsslist[j].status + '<br/>';
-
-                table = table + '</td></tr>';
-                table = table + '</table>';
-                $('#getresult').append(table);
-
-                //show edit form
-                $('#editemail').val(data.email);
-                $('#editname').val(data.name);
-                $('#editrss').val(data.rsslist[0].rss);
-                $('#getsubscrview').hide('fast');
-                $('#editsubscrview').show('fast');
-            })
-        }
-        else {
-            $('#getresult').append('<p>email is empty</p>');
-        }
-    }
-
-    //TODO: deprecated
-    function editSubscriber() {
-        $.post(rootURL + '/update',
-            {
-                email: $('#editemail').val(),
-                name: $('#editname').val(),
-                rss: $('#editrss').val()
-            },
-            function (data) {
-//                $('#getresult').append('<p>Result ' + data.updateOfExisting + ' n=' + data.n + '</p>');
-                $('#getresult').append('<p>Result ' + data + '</p>');
-            },
-            'json');
-    }
-
 
 </script>
 
@@ -366,10 +290,10 @@
         <main role="main" class="col-sm-9 col-md-10">
             <ul class="nav nav-tabs" id="operationsTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="new-tab" data-toggle="tab" href="#new" role="tab" aria-controls="home" aria-selected="true">New subscriber</a>
+                    <a class="nav-link" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="profile" aria-selected="false">Edit subscribers</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="profile" aria-selected="false">Edit subscribers</a>
+                    <a class="nav-link active" id="new-tab" data-toggle="tab" href="#new" role="tab" aria-controls="home" aria-selected="true">New subscriber</a>
                 </li>
             </ul>
             <div class="tab-content" id="operationsTabContent">

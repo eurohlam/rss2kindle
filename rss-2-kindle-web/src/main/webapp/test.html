@@ -34,6 +34,61 @@
 
     $(document).ready(function () {
 
+        $('#btn_update_subscriber_addrss').click(function (event) {
+            var rss = $('#update_subscriber_addrss').val();//TODO: add validation of rss url
+            $('#update_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
+        });
+        $('#btn_update_subscriber_deleterss').click(function (event) {
+            $('#update_subscriber_rsslist option:selected').remove();
+        });
+
+//update subscriber on submit
+        $('#update_subscriber_form').submit(function () {
+            var email = $('#update_subscriber_email').val();
+            var name = $('#update_subscriber_name').val();
+            var status = $('#update_subscriber_status').val();
+            var optionElements = $('#update_subscriber_rsslist option');//TODO: rsslist from select
+            var rsslist = $.map($('#update_subscriber_rsslist option'), function(element, i) { return $(element).val();});
+            console.log(rsslist);
+            var json = '{' +
+                'email: "' + email + '",' +
+                'name: "' + name + '",' +
+                'status: "' + status + '",' +
+                'rsslist: [ ';
+            $('#update_subscriber_rsslist option').each(function() {
+                json += '{ rss: "' + $(this).val() + '", status: "active"},';
+            });
+            console.log(json.substr(0, json.length-1));
+/*
+            $.ajax({
+                url: rootURL + username + '/update',
+                contentType: 'application/json',
+                type: 'PUT',
+                data: '{' +
+                'email: "' + email + '",' +
+                'name: "' + name + '",' +
+                'rsslist: [ ' +
+                '    {' +
+                '        rss: "http://hrenasebe.com/jopa",' +
+                '        status: "active"' +
+                '    },' +
+                '    {' +
+                '        rss: "http://hrenasebe.com/feed/150",' +
+                '        status: "active"' +
+                '    }' +
+                '    ],' +
+                'status: "status"' +
+                '}',
+                dataType: 'json'
+            })
+                .done (function (data) {
+                    showAlert('success', 'Subscriber <strong>' + name + '</strong> has been updated successfully');
+                    return true;
+                });
+*/
+            return true;
+        });
+
         subscriberTable = getSubscribersAsTable(username);
 
         //toggling
@@ -247,15 +302,34 @@
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeModal" data-whatever="@mdo">Open modal for @mdo</button>
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@fat">Open modal for @fat</button>
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@getbootstrap">Open modal for @getbootstrap</button> <p id="table"></p>
-                    <form method="POST" id="edit_subscr_form" action="">
-                        <div class="input-group">
-                            <label for="editemail">Email</label>
-                            <p><input type="email" id="editemail" readonly class="form-control"/></p>
-                            <label for="editname">Name</label>
-                            <p><input type="text" id="editname" required class="form-control"/></p>
-                            <label for="editrss">RSS</label>
-                            <p><input type="url" id="editrss" required class="form-control"/></p>
-                            <p><input type="submit" value="Apply" class="btn btn-default"/></p>
+                    <form method="get" action="#" id="update_subscriber_form">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="update_subscriber_email" class="control-label">Subscriber email:</label>
+                                <input type="email" class="form-control" id="update_subscriber_email" readonly/>
+                                <label for="update_subscriber_status" class="control-label">Status:</label>
+                                <input type="text" class="form-control" id="update_subscriber_status" readonly/>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_subscriber_name" class="control-label">Subscriber name:</label>
+                                <input type="text" class="form-control" id="update_subscriber_name"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="update_subscriber_rsslist" class="control-label">Subscriptions:</label>
+                                <select class="form-control" id="update_subscriber_rsslist" size="10"></select>
+                                <div class="form-group">
+                                    <label for="update_subscriber_addrss" class="control-label">Add new subscription (RSS):</label>
+                                    <input type="url" class="form-control" id="update_subscriber_addrss"/>
+                                    <div class="btn-group-xs" role="group">
+                                        <button type="button" class="btn btn-primary" id="btn_update_subscriber_addrss">+</button>
+                                        <button type="button" class="btn btn-primary" id="btn_update_subscriber_deleterss">-</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
                         </div>
                     </form>
                 </div>
