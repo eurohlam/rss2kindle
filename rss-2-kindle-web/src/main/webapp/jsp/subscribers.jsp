@@ -216,18 +216,40 @@
 
         //add new subscriber on submit
         $('#new_subscriber_form').submit(function () {
+            var email = $('#new_subscriber_email').val();
             var name = $('#new_subscriber_name').val();
-            $.post(rootURL + username + '/new',
-                {
-                    email: $('#new_subscriber_email').val(),
-                    name: name,
-                    rss: $('#new_subscriber_rss').val() //todo: select for rss list
-                },
-                function (data) {
+            var status = $('#new_subscriber_status').val();
+            var updateJson = '{' +
+                'email: "' + email + '",' +
+                'name: "' + name + '",' +
+                'status: "active",' +
+                'rsslist: [ ';
+            $('#new_subscriber_rsslist option').each(function() {
+                updateJson += '{ rss: "' + $(this).val() + '", status: "active"},';
+            });
+            updateJson = updateJson.substr(0, updateJson.length - 1) + ']}';
+
+            $.ajax({
+                url: rootURL + username + '/new',
+                contentType: 'application/json',
+                type: 'PUT',
+                data: updateJson,
+                dataType: 'json'
+            })
+                .done (function (data) {
                     showAlert('success', 'New subscriber <strong>' + name + '</strong> has been added successfully');
-                },
-                'json');
-            return;
+                    return true;
+                });
+//            return true;
+        });
+
+        $('#btn_new_subscriber_addrss').click(function (event) {
+            var rss = $('#new_subscriber_addrss').val();//TODO: add validation of rss url
+            $('#new_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
+        });
+
+        $('#btn_new_subscriber_deleterss').click(function (event) {
+            $('#new_subscriber_rsslist option:selected').remove();
         });
 
         //remove subscriber on submit
@@ -242,7 +264,7 @@
                     showAlert('success', 'Subscriber <strong>' + name + '</strong> has been removed');
                 }
             });
-            return;
+//            return;
         });
 
         //Show ajax error messages
@@ -314,8 +336,16 @@
                             <input type="text" id="new_subscriber_name" required class="form-control"/>
                         </div>
                         <div class="form-group">
-                            <label for="new_subscriber_rss">Subscription (RSS)</label>
-                            <p><input type="url" id="new_subscriber_rss" required class="form-control"/></p>
+                            <label for="new_subscriber_rsslist">Subscriptions</label>
+                            <select class="form-control" id="new_subscriber_rsslist" size="10"></select>
+                            <div class="form-group">
+                                <label for="new_subscriber_addrss" class="control-label">Add new subscription (RSS):</label>
+                                <input type="url" class="form-control" id="new_subscriber_addrss"/>
+                                <div class="btn-group-xs" role="group">
+                                    <button type="button" class="btn btn-primary" id="btn_new_subscriber_addrss">+</button>
+                                    <button type="button" class="btn btn-primary" id="btn_new_subscriber_deleterss">-</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <%--<label for="starttime">Start date</label>--%>
