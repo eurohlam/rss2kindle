@@ -36,7 +36,10 @@
 
         $('#btn_update_subscriber_addrss').click(function (event) {
             var rss = $('#update_subscriber_addrss').val();//TODO: add validation of rss url
-            $('#update_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
+            if (validateURL(rss))
+                $('#update_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
+            else
+                $('#update_subscriber_addrss').popover('show');
         });
         $('#btn_update_subscriber_deleterss').click(function (event) {
             $('#update_subscriber_rsslist option:selected').remove();
@@ -148,6 +151,17 @@
             $('#errorview').append('<h1>Error in getting data.</h1>');
         })
     });
+
+    function validateURL(url) {
+        alert(url);
+        var regexp = /((https?\:\/\/)|(www\.))(\S+)(\w{2,4})(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/g;
+        if(url.match(regexp)){
+            return true;
+        }else{
+            alert(url + " is not valid URL. Please correct it and try again");
+            return false;
+        }
+    }
 
     function isEmptyText(text) {
         if (text == null || text == '' || text == 'undefined') {
@@ -319,9 +333,9 @@
                                 <select class="form-control" id="update_subscriber_rsslist" size="10"></select>
                                 <div class="form-group">
                                     <label for="update_subscriber_addrss" class="control-label">Add new subscription (RSS):</label>
-                                    <input type="url" class="form-control" id="update_subscriber_addrss"/>
+                                    <input type="url" class="form-control" id="update_subscriber_addrss" data-toggle="popover" title="Fuck yourself" data-content="Incorrect URL?"/>
                                     <div class="btn-group-xs" role="group">
-                                        <button type="button" class="btn btn-primary" id="btn_update_subscriber_addrss">+</button>
+                                        <button type="button" class="btn btn-primary" id="btn_update_subscriber_addrss" >+</button>
                                         <button type="button" class="btn btn-primary" id="btn_update_subscriber_deleterss">-</button>
                                     </div>
                                 </div>

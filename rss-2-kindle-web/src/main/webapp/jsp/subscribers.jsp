@@ -121,7 +121,8 @@
 
         $('#btn_update_subscriber_addrss').click(function (event) {
             var rss = $('#update_subscriber_addrss').val();//TODO: add validation of rss url
-            $('#update_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
+            if (validateURL(rss))
+                $('#update_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
         });
 
         $('#btn_update_subscriber_deleterss').click(function (event) {
@@ -288,6 +289,16 @@
             $('#alerts_panel').html('<div class="alert alert-success alert-dismissible" role="alert">'
                 + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
                 + '<strong>Success! </strong> ' + text + '</div>');
+        }
+    }
+
+    function validateURL($URL) {
+        var regexp = /((https?\:\/\/)|(www\.))(\S+)(\w{2,4})(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/g;
+        if(url.match(regexp)){
+            return true;
+        }else{
+            alert(url + " does not look like a valid URL. Please correct it and try again");
+            return false;
         }
     }
 
