@@ -30,6 +30,7 @@
 
     <!-- Custom css -->
     <link href="../css/sticky-footer.css" rel="stylesheet">
+    <link href="../css/profile-theme.css" rel="stylesheet">
 
 </head>
 <body>
@@ -120,9 +121,11 @@
         });
 
         $('#btn_update_subscriber_addrss').click(function (event) {
-            var rss = $('#update_subscriber_addrss').val();//TODO: add validation of rss url
+            var rss = $('#update_subscriber_addrss').val();
             if (validateURL(rss))
                 $('#update_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
+            else
+                alert(rss + " does not look like a valid URL. Please correct it and try again");
         });
 
         $('#btn_update_subscriber_deleterss').click(function (event) {
@@ -245,8 +248,11 @@
         });
 
         $('#btn_new_subscriber_addrss').click(function (event) {
-            var rss = $('#new_subscriber_addrss').val();//TODO: add validation of rss url
-            $('#new_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
+            var rss = $('#new_subscriber_addrss').val();
+            if (validateURL(rss))
+                $('#new_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
+            else
+                alert(rss + " does not look like a valid URL. Please correct it and try again");
         });
 
         $('#btn_new_subscriber_deleterss').click(function (event) {
@@ -292,14 +298,9 @@
         }
     }
 
-    function validateURL($URL) {
-        var regexp = /((https?\:\/\/)|(www\.))(\S+)(\w{2,4})(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/g;
-        if(url.match(regexp)){
-            return true;
-        }else{
-            alert(url + " does not look like a valid URL. Please correct it and try again");
-            return false;
-        }
+    function validateURL(url) {
+        var regexp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
+        return url.match(regexp);
     }
 
 </script>
@@ -315,7 +316,7 @@
         </nav>
         <h3 class="text-muted">RSS-2-KINDLE</h3>
     </header>
-    <hr/>
+
     <div class="row">
         <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
             <ul class="nav nav-pills flex-column">
@@ -324,7 +325,7 @@
                 <li role="presentation"><a href="service">Services</a></li>
             </ul>
         </nav>
-        <main role="main" class="col-sm-9 col-md-10">
+        <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <ul class="nav nav-tabs" id="operationsTab" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="profile" aria-selected="false">Edit subscribers</a>
@@ -333,10 +334,11 @@
                     <a class="nav-link active" id="new-tab" data-toggle="tab" href="#new" role="tab" aria-controls="home" aria-selected="true">New subscriber</a>
                 </li>
             </ul>
-            <div class="tab-content" id="operationsTabContent">
+            <section class="row">
+                <div class="tab-content" id="operationsTabContent">
                 <div id="alerts_panel"></div>
-                <div class="tab-pane fade active" id="new" role="tabpanel" aria-labelledby="new-tab">
-                    <h3>Add new subscriber</h3>
+                <div class="tab-pane fade active placeholder" id="new" role="tabpanel" aria-labelledby="new-tab">
+                    <h2 class="sub-header">Add new subscriber</h2>
                     <form method="get" id="new_subscriber_form" action="#">
                         <div class="form-group">
                             <label for="new_subscriber_email">Email</label>
@@ -366,11 +368,11 @@
                         </div>
                     </form>
                 </div>
-                <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
-                    <h3>Edit subscriber</h3>
-                    <div id="edit_alerts"></div>
+                <div class="tab-pane fade placeholder" id="edit" role="tabpanel" aria-labelledby="edit-tab">
+                    <h2 class="sub-header">Edit subscriber</h2>
                 </div>
             </div>
+            </section>
         </main>
     </div>
 

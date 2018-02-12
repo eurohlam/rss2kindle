@@ -28,6 +28,7 @@
 
     <!-- Custom css -->
     <link href="../css/sticky-footer.css" rel="stylesheet">
+    <link href="../css/profile-theme.css" rel="stylesheet">
 
 </head>
 <body>
@@ -63,7 +64,6 @@
         </nav>
         <h3 class="text-muted">RSS-2-KINDLE</h3>
     </header>
-    <hr/>
 
     <div class="row">
         <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
@@ -73,11 +73,10 @@
                 <li role="presentation" class="active"><a href="#">Services</a></li>
             </ul>
         </nav>
-        <main role="main" class="col-sm-9 col-md-10">
-            <section class="row text-center placeholders">
-                <div class="col-md-8">
-                    <button id="run_all" type="button" class="btn btn-primary btn-lg btn-block">Poll my subscriptions immediately</button>
-                </div>
+        <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <section class="row text-center placeholder">
+                <h1 class="page-header">Polling subscriptions</h1>
+                <button id="run_all" type="button" class="btn btn-primary btn-lg btn-block">Poll my subscriptions immediately</button>
             </section>
 
             <div class="col-md-6">

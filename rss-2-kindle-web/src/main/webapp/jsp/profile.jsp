@@ -28,6 +28,7 @@
 
     <!-- Custom css -->
     <link href="../css/sticky-footer.css" rel="stylesheet">
+    <link href="../css/profile-theme.css" rel="stylesheet">
 
 </head>
 
@@ -110,19 +111,17 @@
         </nav>
         <h3 class="text-muted">RSS-2-KINDLE</h3>
     </header>
-    <hr/>
 
     <div class="row">
         <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
-            <ul class="nav nav-pills flex-column">
+            <ul class="nav nav-pills">
                 <li role="presentation" class="active"><a href="#">My Profile</a></li>
                 <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
                 <li role="presentation"><a href="service">Services</a></li>
             </ul>
         </nav>
-        <main role="main" class="col-sm-9 col-md-10">
-            <div class="jumbotron jumbotron-fluid">
-            <h1><%=username%> dashboard</h1>
+        <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header"><%=username%> dashboard</h1>
             <section class="row text-center placeholders">
                 <div class="col-6 col-sm-3 placeholder">
                     <div id="dashboard_user_data"></div>
@@ -140,11 +139,11 @@
                     <div class="text-muted">Something else</div>
                 </div>
             </section>
-            </div>
-            <h1>Subscribers</h1>
-            <div class="table-responsive" id="profile_view">
-
-            </div>
+            <h2 class="sub-header">Subscribers</h2>
+            <section class="row placeholders">
+                <div class="table-responsive" id="profile_view">
+                </div>
+            </section>
         </main>
     </div>
 
