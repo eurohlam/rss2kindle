@@ -54,28 +54,20 @@
 </script>
 
 <div class="container-fluid">
-    <header class="header clearfix">
-        <nav>
-            <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="active"><a href="../index.html">Home</a></li>
-                <li role="presentation"><a href="#">About</a></li>
-                <li role="presentation"><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-        <h3 class="text-muted">RSS-2-KINDLE</h3>
-    </header>
+    <%@include file="header.jsp"%>
 
     <div class="row">
         <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
-            <ul class="nav nav-pills flex-column">
+            <ul class="nav nav-pills nav-stacked">
                 <li role="presentation"><a href="profile">My Profile</a></li>
                 <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
                 <li role="presentation" class="active"><a href="#">Services</a></li>
             </ul>
         </nav>
+
         <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header">Polling subscriptions</h1>
             <section class="row text-center placeholder">
-                <h1 class="page-header">Polling subscriptions</h1>
                 <button id="run_all" type="button" class="btn btn-primary btn-lg btn-block">Poll my subscriptions immediately</button>
             </section>
 

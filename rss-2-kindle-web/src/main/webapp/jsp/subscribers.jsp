@@ -306,20 +306,11 @@
 </script>
 
 <div class="container-fluid">
-    <header class="header clearfix">
-        <nav>
-            <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="active"><a href="../index.html">Home</a></li>
-                <li role="presentation"><a href="#">About</a></li>
-                <li role="presentation"><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-        <h3 class="text-muted">RSS-2-KINDLE</h3>
-    </header>
+    <%@include file="header.jsp"%>
 
     <div class="row">
         <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
-            <ul class="nav nav-pills flex-column">
+            <ul class="nav nav-pills nav-stacked">
                 <li role="presentation"><a href="profile">My Profile</a></li>
                 <li role="presentation" class="active"><a href="#">Subscriber Management</a></li>
                 <li role="presentation"><a href="service">Services</a></li>
