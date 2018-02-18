@@ -27,29 +27,95 @@
 
 <body>
 <script>
+    var rootURL = 'http://localhost:8080/rss2kindle/rest/profile/euro';
+    var userData;
+
+    $(document).ready(function () {
+        $('#profile_view').append('<p id="message">Getting subscribers. Please wait...</p>');
+        $.getJSON(rootURL, function (data) {
+            userData = data;
+
+            $('#dashboard_user_data').append(
+                'User status: ' + data.status
+            );
+            $('#dashboard_user_info').append(
+                'Created: ' + data.dateCreated + '<br/>' +
+                'Modified: ' + data.dateModified + '<br/>' +
+                'Last logged in: ' + data.lastLogin
+            );
+
+            $('#dashboard_subscribers_data').append('Number of subscribers: ' + data.subscribers.length);
+
+            var number_of_subscriptions = 0;
+            var table = '<table class="table table-hover"><thead>' +
+                '<tr><th>#</th>' +
+                '<th>title</th>' +
+                '<th>email</th>' +
+                '<th>status</th>' +
+                '<th>rss</th></tr></thead><tbody>';
+
+            $.each(data.subscribers, function (i, item) {
+                var tr;
+                if (item.status === 'suspended')
+                    tr = '<tr class="danger"><td>';
+                else
+                    tr = '<tr class="active"><td>';
+
+                table += tr + (i + 1) + '</td><td>'
+                    + item.name + '</td><td>'
+                    + item.email + '</td><td>'
+                    + item.status + '</td><td>';
+                var rss = item.rsslist;
+                number_of_subscriptions = number_of_subscriptions + rss.length;
+                rssTable = '<table width="100%"><tr><td>';
+                for (j = 0; j < rss.length; j++) {
+                    rssTable = rssTable + '<a href="' + rss[j].rss + '">' + rss[j].rss + '</a></td><td>';
+                    if (rss[j].status === 'active')
+                        rssTable += '<label></label><input type="checkbox" checked disabled />' + rss[j].status + '</label>';
+                    else
+                        rssTable += '<label></label><input type="checkbox" disabled />' + rss[j].status + '</label>';
+
+                    rssTable += '<td/></tr>';
+                }
+                rssTable += '</table>';
+
+                table += rssTable + '</td></tr>';
+            });
+            table += '</tbody></table>';
+            $('#message').remove();
+            $('#dashboard_subscriptions_data').append("Number of subscriptions: " + number_of_subscriptions);
+            $('#profile_view').append(table);
+        })
+    });
+
+    function getUserData() {
+        return userData;
+    }
 </script>
 
 <div class="container-fluid">
     <header class="header clearfix">
         <nav>
-            <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="dropdown active">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
-                       aria-expanded="false">
-                        euro <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li role="presentation">
-                            <a href="javascript:{}" onclick="document.getElementById('logout').submit(); return false;">Log
-                                out</a>
-                        </li>
-                    </ul>
-                </li>
-                <li role="separator" class="divider"></li>
-                <li role="presentation"><a href="../index.html">Home</a></li>
-                <li role="presentation"><a href="#">About</a></li>
-                <li role="presentation"><a href="#">Contact</a></li>
-            </ul>
+            <form id="logout" action="logout" method="post">
+                <ul class="nav nav-pills pull-right">
+                    <li role="presentation" class="dropdown active">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
+                           aria-expanded="false">
+                            <%=username%> <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li role="presentation">
+                                <a href="javascript:{}"
+                                   onclick="document.getElementById('logout').submit(); return false;">Log out</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li role="separator" class="divider"></li>
+                    <li role="presentation"><a href="../index.html">Home</a></li>
+                    <li role="presentation"><a href="../about.html">About</a></li>
+                    <li role="presentation"><a href="../contact.html">Contact</a></li>
+                </ul>
+            </form>
         </nav>
         <h3 class="text-muted">RSS-2-KINDLE</h3>
     </header>
@@ -57,22 +123,91 @@
     <div class="row">
         <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
             <ul class="nav nav-pills nav-stacked">
-                <li role="presentation"><a href="profile">My Profile</a></li>
+                <li role="presentation" class="active"><a href="#">My Profile</a></li>
                 <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
-                <li role="presentation" class="active"><a href="#">Services</a></li>
+                <li role="presentation"><a href="service">Services</a></li>
             </ul>
         </nav>
         <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <h2 class="sub-header">Polling subscriptions</h2>
-            <section class="row placeholders">
-                <button id="run_all" type="button" class="btn btn-primary btn-lg btn-block">Poll my subscriptions
-                    immediately
-                </button>
+            <h1 class="page-header"><%=username%> dashboard</h1>
+            <section class="row text-center placeholders">
+                <div class="col-6 col-sm-3 placeholder">
+                    <div id="dashboard_user_data"></div>
+                    <h4>User info</h4>
+                    <div class="text-muted" id="dashboard_user_info"></div>
+                </div>
+                <div class="col-6 col-sm-3 placeholder">
+                    <div id="dashboard_subscribers_data"></div>
+                    <h4>Subscribers</h4>
+                    <div class="text-muted">Something else</div>
+                </div>
+                <div class="col-6 col-sm-3 placeholder">
+                    <div id="dashboard_subscriptions_data"></div>
+                    <h4>Subscriptions</h4>
+                    <div class="text-muted">Something else</div>
+                </div>
             </section>
-
+            <section class="row placeholders">
+                <div class="col-lg-6 placeholder text-left" id="profile_view">
+                    <h2 class="sub-header">Subscribers</h2>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Subscriber</th>
+                            <th>email</th>
+                            <th>status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="active">
+                            <td>1</td>
+                            <td>My Kindle</td>
+                            <td>dshjs@jdks.ru</td>
+                            <td>active</td>
+                        </tr>
+                        <tr class="danger">
+                            <td>2</td>
+                            <td>My Kindle</td>
+                            <td>dshjs@jdks.ru</td>
+                            <td>active</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-6 placeholder text-left">
+                    <h2 class="sub-header">Subsriptions</h2>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Subscription</th>
+                            <th>status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>http://jdkfjdk.ru</td>
+                            <td>active</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>http://kjhdkfhk.rui</td>
+                            <td>active</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>http://kjhdkfhk.rui</td>
+                            <td>failed</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </main>
     </div>
-</div>
 
+</div>
 </body>
 </html>

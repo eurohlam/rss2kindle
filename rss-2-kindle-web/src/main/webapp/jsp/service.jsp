@@ -67,8 +67,15 @@
 
         <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Polling subscriptions</h1>
-            <section class="row text-center placeholder">
-                <button id="run_all" type="button" class="btn btn-primary btn-lg btn-block">Poll my subscriptions immediately</button>
+            <section class="row placeholders">
+                <div class="alert alert-info" role="alert">
+                    All subscriptions are polled every day automatically at 02 am.
+                    If you wish to poll you subscriptions right now just push the button below
+                </div>
+                <button id="run_all" type="button" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-import" aria-hidden="true"></span>
+                    Poll my subscriptions immediately
+                </button>
             </section>
 
             <div class="col-md-6">
