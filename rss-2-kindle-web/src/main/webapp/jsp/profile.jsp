@@ -58,12 +58,14 @@
                 '<th>subscriber</th>' +
                 '<th>email</th>' +
                 '<th>status</th>' +
+                '<th>number of subscriptions</th>' +
                 '</tr></thead><tbody>';
 
             var rssTable = '<table class="table table-hover"><thead>' +
                 '<tr><th>#</th>' +
                 '<th>subscription</th>' +
                 '<th>status</th>' +
+                '<th>send to</th>' +
                 '</tr></thead><tbody>';
             var rssNumber = 0;
 
@@ -78,19 +80,22 @@
                     + item.name + '</td><td>'
                     + item.email + '</td><td>'
                     + item.status + '</td><td>';
-                subscribersTable += '</td></tr>';
 
                 var rss = item.rsslist;
+                subscribersTable += rss.length + '</td></tr>';
+
                 for (j = 0; j < rss.length; j++) {
                     if (rss[j].status === 'dead')
                         tr = '<tr class="danger"><td>';
                     else
                         tr = '<tr class="active"><td>';
 
+                    rssNumber++;
+
                     rssTable += tr + rssNumber + '</td><td>'
                         + '<a href="' + rss[j].rss + '">' + rss[j].rss + '</a></td><td>'
-                        + rss[j].status + '</td></tr>';
-                    rssNumber++;
+                        + rss[j].status + '</td><td>'
+                        + item.email +'</td></tr>';
                 }
 
             });

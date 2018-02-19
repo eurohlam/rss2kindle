@@ -202,6 +202,7 @@
         $('#suspend_subscriber_form').submit(function () {
             var email = $('#suspend_subscriber_email').val();
             var name = $('#suspend_subscriber_name').val();
+            var response= <%=%>
             $.getJSON(rootURL + username + '/' + email + '/suspend', function (data) {
                 showAlert('success', 'Subscriber <strong>' + name + '</strong> has been suspended');
             });
