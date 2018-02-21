@@ -12,17 +12,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 /**
  * Created by eurohlam on 19/02/2018.
  */
-@Controller
-@RequestMapping("rest/profile")
+//@Controller
+//@RequestMapping("rest/profile")
 //@Secured(Roles.ROLE_USER)
 public class RestController
 {
     @Autowired
     private RestClient client;
 
-    @RequestMapping(value = "/service", method = RequestMethod.GET)
-    public String servicePage(@PathVariable("viewId")ModelMap model)
+    @RequestMapping(value = "/{username}", method = RequestMethod.GET)
+    public String servicePage(@PathVariable("username") String username)
     {
-        return "service";
+        return client.getUserData(username);
     }
 }

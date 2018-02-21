@@ -27,6 +27,4 @@
                 }
             }
         }
-        client = WebApplicationContext
-
 %>

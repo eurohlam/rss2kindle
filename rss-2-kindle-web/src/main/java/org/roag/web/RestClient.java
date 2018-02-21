@@ -2,6 +2,7 @@ package org.roag.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -15,8 +16,8 @@ import javax.ws.rs.core.Response;
 /**
  * Created by eurohlam on 19/02/2018.
  */
-@Component
-@Scope("session")
+//@Component
+//@Scope("prototype")
 public class RestClient
 {
 
@@ -29,6 +30,7 @@ public class RestClient
     private Client restClient;
     private WebTarget target;
 
+    @Autowired
     public RestClient(@Value("${rest.host}") String restHost, @Value("${rest.port}") String restPort, @Value("${rest.path}") String restPath)
     {
         this.restPath = restPath;
