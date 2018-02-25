@@ -89,7 +89,7 @@ public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest
         assertEquals("Reading updated User failed", new_password, user.getPassword());
 
         //delete
-        response = target(PATH + new_user + "/remove").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        response = target(PATH + new_user + "/remove").request().delete();
         assertEquals(200, response.getStatus());
 
     }
