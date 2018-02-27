@@ -16,8 +16,8 @@ import javax.ws.rs.core.Response;
 /**
  * Created by eurohlam on 19/02/2018.
  */
-//@Component
-//@Scope("prototype")
+@Component
+@Scope("prototype")
 public class RestClient
 {
 
@@ -67,9 +67,24 @@ public class RestClient
         return sendGETRequest("profile/" + username + "/" + subscriberId + "/suspend");
     }
 
-    public String updateSubscriber()
+    public String removeSubscriber(String username, String subscriberId)
     {
-        return null;
+        logger.debug("Trying to remove user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        Response response = target.path("profile/" + username + "/" + subscriberId + "/remove").request().delete();
+        if (response.getStatus() == 200) {
+            return response.readEntity(String.class);
+        } else
+            return "ERROR: " + Response.Status.fromStatusCode(response.getStatus()).getReasonPhrase();
+    }
+
+    public String updateSubscriber(String username, String message)
+    {
+        logger.debug("Trying to update user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        Response response = target.path("profile/" + username + "/update").request().put(Entity.json(message));
+        if (response.getStatus() == 200) {
+            return response.readEntity(String.class);
+        } else
+            return "ERROR: " + Response.Status.fromStatusCode(response.getStatus()).getReasonPhrase();
     }
 
 /*

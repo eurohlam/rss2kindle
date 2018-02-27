@@ -36,7 +36,7 @@
 <body>
 <script>
     var username='<%=username%>';
-    var rootURL = '/rss2kindle/rest/profile/';
+    var rootURL = 'rest/';
     var userData;
 
     $(document).ready(function () {
