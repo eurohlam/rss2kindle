@@ -12,6 +12,7 @@
     <title>RSS-2-KINDLE Subscribers Management</title>
 
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
+    <security:csrfMetaTags />
 
     <!-- JQuery -->
     <script src="../js/jquery-3.1.1.js"></script>
@@ -36,8 +37,12 @@
 <body>
 <script>
     var username='<%=username%>';
-    var rootURL = 'rest/';
+    var rootURL = 'rest/profile/';
     var userData;
+    var csrf_token = $("meta[name='_csrf']").attr("content");
+    var csrf_header = $("meta[name='_csrf_header']").attr("content");
+    var csrf_headers = {};
+    csrf_headers[csrf_header] = csrf_token;
 
     $(document).ready(function () {
 
@@ -72,22 +77,6 @@
 
                 table += '<button id="btn_remove" type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email +'">Remove</button></div></td></tr>';
 
-/*
-                var rss = item.rsslist;
-                rssTable = '<table width="100%"><tr><td>';
-                for (j = 0; j < rss.length; j++) {
-                    rssTable = rssTable + '<a href="' + rss[j].rss + '">' + rss[j].rss + '</a></td><td>';
-                    if (rss[j].status === 'active')
-                        rssTable = rssTable + '<label></label><input type="checkbox" checked disabled />' + rss[j].status + '</label>';
-                    else
-                        rssTable = rssTable + '<label></label><input type="checkbox" disabled />' + rss[j].status + '</label>';
-
-                    rssTable = rssTable + '<td/></tr>';
-                }
-                rssTable = rssTable + '</table>';
-
-                table = table + rssTable + '</td></tr>';
-*/
             });
             table += '</tbody></table>';
             $('#edit').append(table);
@@ -189,7 +178,8 @@
                 contentType: 'application/json',
                 type: 'PUT',
                 data: updateJson,
-                dataType: 'json'
+                dataType: 'json',
+                headers: csrf_headers
             })
                 .done (function (data) {
                     showAlert('success', 'Subscriber <strong>' + name + '</strong> has been updated successfully');
@@ -238,11 +228,19 @@
                 contentType: 'application/json',
                 type: 'PUT',
                 data: updateJson,
-                dataType: 'json'
+                dataType: 'json',
+                headers: csrf_headers
             })
-                .done (function (data) {
+                .done (function () {
                     showAlert('success', 'New subscriber <strong>' + name + '</strong> has been added successfully');
                     return true;
+                })
+                .fail (function () {
+                    showAlert('error', 'New subscriber <strong>' + name + '</strong> creation fail');
+                    return false;
+                })
+                .always (function () {
+                    alert("Complete");
                 });
 //            return true;
         });
@@ -267,6 +265,7 @@
                 url: rootURL + username + '/' + email + '/remove',
                 type: 'DELETE',
                 dataType: 'json',
+                headers: csrf_headers,
                 success: function (data) {
                     showAlert('success', 'Subscriber <strong>' + name + '</strong> has been removed');
                 }
@@ -276,7 +275,7 @@
 
         //Show ajax error messages
         $(document).ajaxError(function (event, request, settings, thrownError) {
-            showAlert('error', 'Internal error: ' + thrownError + settings + request);
+            showAlert('error', 'Internal error: ' + thrownError + settings.url + settings.type + request.toString());
         });
 
 
@@ -354,7 +353,6 @@
                         <div class="form-group">
                             <%--<label for="starttime">Start date</label>--%>
                             <%--<p><input type="date" id="starttime" class="form-control"/></p>--%>
-                            <security:csrfInput/>
                             <input type="submit" value="Create" class="btn btn-primary"/>
                         </div>
                     </form>
@@ -393,7 +391,6 @@
                         <div class="form-group">
                             <label for="update_subscriber_rsslist" class="control-label">Subscriptions:</label>
                             <select class="form-control" id="update_subscriber_rsslist" size="10"></select>
-                            <security:csrfInput/>
                             <div class="form-group">
                                 <label for="update_subscriber_addrss" class="control-label">Add new subscription (RSS):</label>
                                 <input type="url" class="form-control" id="update_subscriber_addrss"/>

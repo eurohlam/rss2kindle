@@ -34,11 +34,10 @@
 
 <body>
 <script>
-    var rootURL = 'rest/<%=username%>';
+    var rootURL = 'rest/profile/<%=username%>';
     var userData;
 
     $(document).ready(function () {
-        $('#profile_view').append('<p id="message">Getting subscribers. Please wait...</p>');
         $.getJSON(rootURL, function (data) {
             userData = data;
 

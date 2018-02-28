@@ -30,6 +30,14 @@ public class RestClient
     private Client restClient;
     private WebTarget target;
 
+    private enum METHOD {
+        GET,
+        PUT,
+        POST,
+        DELETE,
+        PATCH
+    }
+
     @Autowired
     public RestClient(@Value("${rest.host}") String restHost, @Value("${rest.port}") String restPort, @Value("${rest.path}") String restPath)
     {
@@ -40,64 +48,62 @@ public class RestClient
         target = restClient.target(restHost + ":" + restPort + restPath);
     }
 
-    private String sendGETRequest(String path)
+    private String sendRequest(String path, METHOD method, String json)
     {
-        Response response = target.path(path).request().get();
+        Response response = null;
+        if (method == METHOD.GET)
+            response= target.path(path).request().get();
+        else if (method == METHOD.PUT)
+            response= target.path(path).request().put(Entity.json(json));
+        else if (method == METHOD.DELETE)
+            response= target.path(path).request().delete();
+
         if (response.getStatus() == 200) {
             return response.readEntity(String.class);
         } else
-            return "ERROR: " + Response.Status.fromStatusCode(response.getStatus()).getReasonPhrase();
+            return "ERROR: " + Response.Status.fromStatusCode(response.getStatus()).getReasonPhrase(); //TODO: handle REST error message
     }
 
     public String getUserData(String username)
     {
         logger.debug("Trying to get data for user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendGETRequest("profile/" + username);
+        return sendRequest("profile/" + username, METHOD.GET, null);
     }
 
     public String resumeSubscriber(String username, String subscriberId)
     {
         logger.debug("Trying to resume user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendGETRequest("profile/" + username + "/" + subscriberId + "/resume");
+        return sendRequest("profile/" + username + "/" + subscriberId + "/resume", METHOD.GET, null);
     }
 
     public String suspendSubscriber(String username, String subscriberId)
     {
         logger.debug("Trying to suspend user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendGETRequest("profile/" + username + "/" + subscriberId + "/suspend");
+        return sendRequest("profile/" + username + "/" + subscriberId + "/suspend", METHOD.GET, null);
     }
 
     public String removeSubscriber(String username, String subscriberId)
     {
         logger.debug("Trying to remove user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        Response response = target.path("profile/" + username + "/" + subscriberId + "/remove").request().delete();
-        if (response.getStatus() == 200) {
-            return response.readEntity(String.class);
-        } else
-            return "ERROR: " + Response.Status.fromStatusCode(response.getStatus()).getReasonPhrase();
+        return sendRequest("profile/" + username + "/" + subscriberId + "/remove", METHOD.DELETE, null);
     }
 
     public String updateSubscriber(String username, String message)
     {
         logger.debug("Trying to update user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        Response response = target.path("profile/" + username + "/update").request().put(Entity.json(message));
-        if (response.getStatus() == 200) {
-            return response.readEntity(String.class);
-        } else
-            return "ERROR: " + Response.Status.fromStatusCode(response.getStatus()).getReasonPhrase();
+        return sendRequest("profile/" + username + "/update", METHOD.PUT, message);
     }
 
-/*
-    public String addSubscriber(String username, String email, String name, String rss)
+    public String addSubscriber(String username, String message)
     {
-        Response response = target.request().put(Entity.json(factory.convertPojo2Json(factory.newSubscriber(new_email, new_name, new_rss))), Response.class);
-        if (response.getStatus() == 200) {
-            logger.debug("Received data for user {} from REST service {}:{}{}", restHost, restPort, restPath);
-            return response.readEntity(String.class);
-        } else
-            return "ERROR: " + Response.Status.fromStatusCode(response.getStatus()).getReasonPhrase();
-
+        logger.debug("Trying to add new subscriber for user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        return sendRequest("profile/" + username + "/new", METHOD.PUT, message);
     }
-*/
+
+    public String runPolling(String username)
+    {
+        logger.debug("Trying to run polling subscription for user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        return sendRequest("service/" + username, METHOD.GET, null);
+    }
 
 }
