@@ -108,9 +108,6 @@
         })
     });
 
-    function getUserData() {
-        return userData;
-    }
 </script>
 
 <div class="container-fluid">

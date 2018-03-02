@@ -48,8 +48,19 @@
 
     function runPollingForUser() {
         $.getJSON(rootURL, function (data) {
-            $('#getresult').append('<p>Result jopa</p>');
-        });
+        })
+            .done(function () {
+                $('#alerts_panel').html('<div class="alert alert-success alert-dismissible" role="alert">'
+                    + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                    + '<strong>Success! </strong>Polling process has been launched</div>');
+                return true;
+            })
+            .fail(function () {
+                $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
+                    + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                    + '<strong>Error! </strong>Unexpected problem</div>');
+                return false;
+            });
     }
 </script>
 
@@ -68,6 +79,7 @@
         <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header">Polling subscriptions</h1>
             <section class="row placeholders">
+                <div id="alerts_panel"></div>
                 <div class="alert alert-info" role="alert">
                     All subscriptions are polled every day automatically at 02 am.
                     If you wish to poll you subscriptions right now just push the button below
@@ -78,18 +90,10 @@
                 </button>
             </section>
 
-            <div class="col-md-6">
-                <div id="getresult" class="table-responsive">
-
-                </div>
-            </div>
         </main>
     </div>
 
 </div>
-
-
-
 
 <%@include file="footer.jsp"%>
 

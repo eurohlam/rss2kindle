@@ -48,62 +48,89 @@ public class RestClient
         target = restClient.target(restHost + ":" + restPort + restPath);
     }
 
-    private String sendRequest(String path, METHOD method, String json)
+    private Response sendRequest(String path, METHOD method, String json)
     {
         Response response = null;
         if (method == METHOD.GET)
-            response= target.path(path).request().get();
+            response= target.path(path).request().get(Response.class);
         else if (method == METHOD.PUT)
-            response= target.path(path).request().put(Entity.json(json));
+            response= target.path(path).request().put(Entity.json(json), Response.class);
         else if (method == METHOD.DELETE)
-            response= target.path(path).request().delete();
+            response= target.path(path).request().delete(Response.class);
+        else if (method == METHOD.POST)
+            response= target.path(path).request().post(Entity.json(json), Response.class);
 
-        if (response.getStatus() == 200) {
-            return response.readEntity(String.class);
-        } else
-            return "ERROR: " + Response.Status.fromStatusCode(response.getStatus()).getReasonPhrase(); //TODO: handle REST error message
+        if (response == null)
+            logger.error("Response from RESt service is null. Probably, unsupported method has been called");
+        else if (response.getStatus() != 200)
+            logger.error("Failure during interaction with REST service. Code: {}; errorMessage: {}", response.getStatus(),
+                    Response.Status.fromStatusCode(response.getStatus()).getReasonPhrase());
+        return response;
     }
 
-    public String getUserData(String username)
+    public Response getUserData(String username)
     {
         logger.debug("Trying to get data for user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
         return sendRequest("profile/" + username, METHOD.GET, null);
     }
 
-    public String resumeSubscriber(String username, String subscriberId)
+    public Response resumeSubscriber(String username, String subscriberId)
     {
         logger.debug("Trying to resume user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
         return sendRequest("profile/" + username + "/" + subscriberId + "/resume", METHOD.GET, null);
     }
 
-    public String suspendSubscriber(String username, String subscriberId)
+    public Response suspendSubscriber(String username, String subscriberId)
     {
         logger.debug("Trying to suspend user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
         return sendRequest("profile/" + username + "/" + subscriberId + "/suspend", METHOD.GET, null);
     }
 
-    public String removeSubscriber(String username, String subscriberId)
+    public Response removeSubscriber(String username, String subscriberId)
     {
         logger.debug("Trying to remove user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
         return sendRequest("profile/" + username + "/" + subscriberId + "/remove", METHOD.DELETE, null);
     }
 
-    public String updateSubscriber(String username, String message)
+    public Response updateSubscriber(String username, String json)
     {
         logger.debug("Trying to update user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendRequest("profile/" + username + "/update", METHOD.PUT, message);
+        return sendRequest("profile/" + username + "/update", METHOD.PUT, json);
     }
 
-    public String addSubscriber(String username, String message)
+    public Response addSubscriber(String username, String json)
     {
         logger.debug("Trying to add new subscriber for user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendRequest("profile/" + username + "/new", METHOD.PUT, message);
+        return sendRequest("profile/" + username + "/new", METHOD.PUT, json);
     }
 
-    public String runPolling(String username)
+    public Response runPolling(String username)
     {
         logger.debug("Trying to run polling subscription for user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
         return sendRequest("service/" + username, METHOD.GET, null);
     }
 
+    public Response addUser(String json)
+    {
+        logger.debug("Trying to add new user via REST service {}:{}{}", restHost, restPort, restPath);
+        return sendRequest("users/new", METHOD.POST, json);
+    }
+
+    public Response getUser(String username)
+    {
+        logger.debug("Trying to get user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        return sendRequest("users/" + username, METHOD.GET, null);
+    }
+
+    public Response updateUser(String json)
+    {
+        logger.debug("Trying to update user via REST service {}:{}{}", restHost, restPort, restPath);
+        return sendRequest("users/update", METHOD.PUT, json);
+    }
+
+    public Response removeUser(String username)
+    {
+        logger.debug("Trying to remove user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        return sendRequest("users/" + username + "/remove", METHOD.DELETE, null);
+    }
 }

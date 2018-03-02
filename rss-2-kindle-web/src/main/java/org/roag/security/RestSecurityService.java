@@ -2,6 +2,7 @@ package org.roag.security;
 
 import org.roag.model.User;
 import org.roag.service.SubscriberFactory;
+import org.roag.web.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,29 +49,21 @@ public class RestSecurityService implements SecurityService
 
     private SubscriberFactory subscriberFactory = new SubscriberFactory();
 
-    private String restHost;
-
-    private String restPort;
-
-    private String restPath;
+    @Autowired
+    private RestClient restClient;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public RestSecurityService(@Value("${rest.host}")String restHost,  @Value("${rest.port}")String restPort, @Value("${rest.path}")String restPath)
+    public RestSecurityService()
     {
-        this.restPath = restPath;
-        this.restPort = restPort;
-        this.restHost = restHost;
+
     }
 
     @Override
     public UserDetails findUser(String username) throws UsernameNotFoundException
     {
-        //TODO: cache for Rest Client
-        Client restClient = ClientBuilder.newClient();
-        Response response = restClient.target(restHost + ":" + restPort + restPath).path("users/"+username).request().get();
+        Response response = restClient.getUser(username);
         if (response.getStatus() == 200) {
             User user=subscriberFactory.convertJson2Pojo(User.class, response.readEntity(String.class));
             logger.debug("User {} exists with roles {}", user.getUsername(), user.getRoles());
@@ -92,9 +85,8 @@ public class RestSecurityService implements SecurityService
                 throw new AuthenticationServiceException("User can't be created due to username is null or empty");
 
             User user = subscriberFactory.newUser(username, email, passwordEncoder!=null?passwordEncoder.encode(password):password);
-            //TODO: cache for Rest Client
-            logger.info("Sending request to create a new user {} with email {} to REST service {}:{}{}", username, email, restHost, restPort, restPath);
-            Response response= ClientBuilder.newClient().target(restHost + ":" + restPort + restPath).path("users/new").request().post(Entity.json(subscriberFactory.convertPojo2Json(user)), Response.class);
+            logger.info("Sending request to create a new user {} with email {} to REST service", username, email);
+            Response response = restClient.addUser(subscriberFactory.convertPojo2Json(user));
             logger.info("Response from REST service {} ", response.toString());
             if (response.getStatus() == 200) {
 
