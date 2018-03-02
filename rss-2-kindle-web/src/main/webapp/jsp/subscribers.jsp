@@ -46,41 +46,45 @@
 
     $(document).ready(function () {
 
+        reloadSubscribersTable();
+
         //show subscribers table for edit
-        $.getJSON(rootURL + username, function (data) {
-            userData = data;
-            var table = '<table class="table table-hover"><thead>' +
-                '<tr><th>#</th>' +
-                '<th>name</th>' +
-                '<th>email</th>' +
-                '<th>status</th>' +
-                '<th>action</th></tr></thead><tbody>';
+        function reloadSubscribersTable() {
+            $.getJSON(rootURL + username, function (data) {
+                userData = data;
+                var table = '<table class="table table-hover"><thead>' +
+                    '<tr><th>#</th>' +
+                    '<th>name</th>' +
+                    '<th>email</th>' +
+                    '<th>status</th>' +
+                    '<th>action</th></tr></thead><tbody>';
 
-            $.each(data.subscribers, function (i, item) {
-                var tr;
-                if (item.status === 'suspended')
-                    tr = '<tr class="danger"><td>';
-                else
-                    tr = '<tr class="active"><td>';
+                $.each(data.subscribers, function (i, item) {
+                    var tr;
+                    if (item.status === 'suspended')
+                        tr = '<tr class="danger"><td>';
+                    else
+                        tr = '<tr class="active"><td>';
 
-                table += tr + (i + 1) + '</td><td>'
-                    + item.name + '</td><td>'
-                    + item.email + '</td><td>'
-                    + item.status + '</td><td>'
-                    + '<div class="btn-group" role="group">'
-                    + '<button id="btn_update" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">Update</button>';
+                    table += tr + (i + 1) + '</td><td>'
+                        + item.name + '</td><td>'
+                        + item.email + '</td><td>'
+                        + item.status + '</td><td>'
+                        + '<div class="btn-group" role="group">'
+                        + '<button id="btn_update" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">Update</button>';
 
-                if (item.status === 'suspended')
-                    table += '<button id="btn_resume" type="button" class="btn btn-warning" data-toggle="modal" data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">Resume</button>'
-                else
-                    table += '<button id="btn_suspend" type="button" class="btn btn-warning" data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">Suspend</button>';
+                    if (item.status === 'suspended')
+                        table += '<button id="btn_resume" type="button" class="btn btn-warning" data-toggle="modal" data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">Resume</button>'
+                    else
+                        table += '<button id="btn_suspend" type="button" class="btn btn-warning" data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">Suspend</button>';
 
-                table += '<button id="btn_remove" type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">Remove</button></div></td></tr>';
+                    table += '<button id="btn_remove" type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">Remove</button></div></td></tr>';
 
+                });
+                table += '</tbody></table>';
+                $('#edit').html(table);
             });
-            table += '</tbody></table>';
-            $('#edit').append(table);
-        });
+        }
 
         //activate the first tab by default
         //TODO: change active tab in depends on input parameter
@@ -159,7 +163,7 @@
         });
 
         //update subscriber on submit
-        $('#update_subscriber_form').submit(function () {
+        $('#update_subscriber_form').submit(function (e) {
             var email = $('#update_subscriber_email').val();
             var name = $('#update_subscriber_name').val();
             var status = $('#update_subscriber_status').val();
@@ -168,6 +172,7 @@
                 'name: "' + name + '",' +
                 'status: "' + status + '",' +
                 'rsslist: [ ';
+            e.preventDefault();
             $('#update_subscriber_rsslist option').each(function () {
                 updateJson += '{ rss: "' + $(this).val() + '", status: "active"},';
             });
@@ -188,13 +193,19 @@
                 .fail(function () {
                     showAlert('error', 'Subscriber <strong>' + name + '</strong> update fail');
                     return false;
+                })
+                .always(function (){
+                    $('#updateModal').modal('hide');
+                    reloadSubscribersTable();
                 });
+
         });
 
         //suspend subscriber on submit
-        $('#suspend_subscriber_form').submit(function () {
+        $('#suspend_subscriber_form').submit(function (e) {
             var email = $('#suspend_subscriber_email').val();
             var name = $('#suspend_subscriber_name').val();
+            e.preventDefault();
             $.getJSON(rootURL + username + '/' + email + '/suspend', function (data) {
             })
                 .done(function () {
@@ -204,13 +215,18 @@
                 .fail(function () {
                     showAlert('error', 'Subscriber <strong>' + name + '</strong> suspending fail');
                     return false;
+                })
+                .always(function (){
+                    $('#suspendModal').modal('hide');
+                    reloadSubscribersTable();
                 });
         });
 
         //resume subscriber on submit
-        $('#resume_subscriber_form').submit(function () {
+        $('#resume_subscriber_form').submit(function (e) {
             var email = $('#resume_subscriber_email').val();
             var name = $('#resume_subscriber_name').val();
+            e.preventDefault();
             $.getJSON(rootURL + username + '/' + email + '/resume', function (data) {
             })
                 .done(function () {
@@ -220,7 +236,12 @@
                 .fail(function () {
                     showAlert('error', 'Subscriber <strong>' + name + '</strong> resuming fail');
                     return false;
+                })
+                .always(function (){
+                    $('#resumeModal').modal('hide');
+                    reloadSubscribersTable();
                 });
+
         });
 
         //add new subscriber on submit
@@ -269,9 +290,10 @@
         });
 
         //remove subscriber on submit
-        $('#remove_subscriber_form').submit(function () {
+        $('#remove_subscriber_form').submit(function (e) {
             var email = $('#remove_subscriber_email').val();
             var name = $('#remove_subscriber_name').val();
+            e.preventDefault();
             $.ajax({
                 url: rootURL + username + '/' + email + '/remove',
                 type: 'DELETE',
@@ -287,6 +309,10 @@
                 .fail(function () {
                     showAlert('error', 'Subscriber <strong>' + name + '</strong> removing fail');
                     return false;
+                })
+                .always(function (){
+                    $('#removeModal').modal('hide');
+                    reloadSubscribersTable();
                 });
 
         });
@@ -479,7 +505,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary" name="btn_resume">Resume</button>
+                    <button type="submit" class="btn btn-primary"" name="btn_resume">Resume</button>
                 </div>
             </form>
         </div>
