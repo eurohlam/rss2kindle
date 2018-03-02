@@ -3,7 +3,7 @@
   Date: 19/10/2017
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="include.jsp"%>
+<%@include file="include.jsp" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,6 +12,7 @@
     <title>RSS-2-KINDLE Subscribers Management</title>
 
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
+    <security:csrfMetaTags/>
 
     <!-- JQuery -->
     <script src="../js/jquery-3.1.1.js"></script>
@@ -30,67 +31,60 @@
 
     <!-- Custom css -->
     <link href="../css/sticky-footer.css" rel="stylesheet">
+    <link href="../css/profile-theme.css" rel="stylesheet">
 
 </head>
 <body>
 <script>
-    var username='<%=username%>';
-    var rootURL = '/rss2kindle/rest/profile/';
+    var username = '<%=username%>';
+    var rootURL = 'rest/profile/';
     var userData;
+    var csrf_token = $("meta[name='_csrf']").attr("content");
+    var csrf_header = $("meta[name='_csrf_header']").attr("content");
+    var csrf_headers = {};
+    csrf_headers[csrf_header] = csrf_token;
 
     $(document).ready(function () {
 
+        reloadSubscribersTable();
+
         //show subscribers table for edit
-        $.getJSON(rootURL + username, function (data) {
-            userData = data;
-            var table = '<table class="table table-hover"><thead>' +
-                '<tr><th>#</th>' +
-                '<th>name</th>' +
-                '<th>email</th>' +
-                '<th>status</th>' +
-                '<th>action</th></tr></thead><tbody>';
+        function reloadSubscribersTable() {
+            $.getJSON(rootURL + username, function (data) {
+                userData = data;
+                var table = '<table class="table table-hover"><thead>' +
+                    '<tr><th>#</th>' +
+                    '<th>name</th>' +
+                    '<th>email</th>' +
+                    '<th>status</th>' +
+                    '<th>action</th></tr></thead><tbody>';
 
-            $.each(data.subscribers, function (i, item) {
-                var tr;
-                if (item.status === 'suspended')
-                    tr='<tr class="danger"><td>';
-                else
-                    tr = '<tr class="active"><td>';
-
-                table += tr + (i + 1) + '</td><td>'
-                    + item.name + '</td><td>'
-                    + item.email + '</td><td>'
-                    + item.status + '</td><td>'
-                    + '<div class="btn-group" role="group">'
-                    + '<button id="btn_update" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email +'" data-status="' + item.status + '">Update</button>';
-
-                if (item.status === 'suspended')
-                    table += '<button id="btn_resume" type="button" class="btn btn-warning" data-toggle="modal" data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email +'">Resume</button>'
-                else
-                    table += '<button id="btn_suspend" type="button" class="btn btn-warning" data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email +'">Suspend</button>';
-
-                table += '<button id="btn_remove" type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email +'">Remove</button></div></td></tr>';
-
-/*
-                var rss = item.rsslist;
-                rssTable = '<table width="100%"><tr><td>';
-                for (j = 0; j < rss.length; j++) {
-                    rssTable = rssTable + '<a href="' + rss[j].rss + '">' + rss[j].rss + '</a></td><td>';
-                    if (rss[j].status === 'active')
-                        rssTable = rssTable + '<label></label><input type="checkbox" checked disabled />' + rss[j].status + '</label>';
+                $.each(data.subscribers, function (i, item) {
+                    var tr;
+                    if (item.status === 'suspended')
+                        tr = '<tr class="danger"><td>';
                     else
-                        rssTable = rssTable + '<label></label><input type="checkbox" disabled />' + rss[j].status + '</label>';
+                        tr = '<tr class="active"><td>';
 
-                    rssTable = rssTable + '<td/></tr>';
-                }
-                rssTable = rssTable + '</table>';
+                    table += tr + (i + 1) + '</td><td>'
+                        + item.name + '</td><td>'
+                        + item.email + '</td><td>'
+                        + item.status + '</td><td>'
+                        + '<div class="btn-group" role="group">'
+                        + '<button id="btn_update" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">Update</button>';
 
-                table = table + rssTable + '</td></tr>';
-*/
+                    if (item.status === 'suspended')
+                        table += '<button id="btn_resume" type="button" class="btn btn-warning" data-toggle="modal" data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">Resume</button>'
+                    else
+                        table += '<button id="btn_suspend" type="button" class="btn btn-warning" data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">Suspend</button>';
+
+                    table += '<button id="btn_remove" type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">Remove</button></div></td></tr>';
+
+                });
+                table += '</tbody></table>';
+                $('#edit').html(table);
             });
-            table += '</tbody></table>';
-            $('#edit').append(table);
-        });
+        }
 
         //activate the first tab by default
         //TODO: change active tab in depends on input parameter
@@ -120,8 +114,11 @@
         });
 
         $('#btn_update_subscriber_addrss').click(function (event) {
-            var rss = $('#update_subscriber_addrss').val();//TODO: add validation of rss url
-            $('#update_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
+            var rss = $('#update_subscriber_addrss').val();
+            if (validateURL(rss))
+                $('#update_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
+            else
+                alert(rss + " does not look like a valid URL. Please correct it and try again");
         });
 
         $('#btn_update_subscriber_deleterss').click(function (event) {
@@ -166,7 +163,7 @@
         });
 
         //update subscriber on submit
-        $('#update_subscriber_form').submit(function () {
+        $('#update_subscriber_form').submit(function (e) {
             var email = $('#update_subscriber_email').val();
             var name = $('#update_subscriber_name').val();
             var status = $('#update_subscriber_status').val();
@@ -175,7 +172,8 @@
                 'name: "' + name + '",' +
                 'status: "' + status + '",' +
                 'rsslist: [ ';
-            $('#update_subscriber_rsslist option').each(function() {
+            e.preventDefault();
+            $('#update_subscriber_rsslist option').each(function () {
                 updateJson += '{ rss: "' + $(this).val() + '", status: "active"},';
             });
             updateJson = updateJson.substr(0, updateJson.length - 1) + ']}';
@@ -185,79 +183,153 @@
                 contentType: 'application/json',
                 type: 'PUT',
                 data: updateJson,
-                dataType: 'json'
+                dataType: 'json',
+                headers: csrf_headers
             })
-                .done (function (data) {
+                .done(function (data) {
                     showAlert('success', 'Subscriber <strong>' + name + '</strong> has been updated successfully');
                     return true;
+                })
+                .fail(function () {
+                    showAlert('error', 'Subscriber <strong>' + name + '</strong> update fail');
+                    return false;
+                })
+                .always(function (){
+                    $('#updateModal').modal('hide');
+                    reloadSubscribersTable();
                 });
-            return true;
+
         });
 
         //suspend subscriber on submit
-        $('#suspend_subscriber_form').submit(function () {
+        $('#suspend_subscriber_form').submit(function (e) {
             var email = $('#suspend_subscriber_email').val();
             var name = $('#suspend_subscriber_name').val();
+            e.preventDefault();
             $.getJSON(rootURL + username + '/' + email + '/suspend', function (data) {
-                showAlert('success', 'Subscriber <strong>' + name + '</strong> has been suspended');
-            });
-            return;
+            })
+                .done(function () {
+                    showAlert('success', 'Subscriber <strong>' + name + '</strong> has been suspended');
+                    return true;
+                })
+                .fail(function () {
+                    showAlert('error', 'Subscriber <strong>' + name + '</strong> suspending fail');
+                    return false;
+                })
+                .always(function (){
+                    $('#suspendModal').modal('hide');
+                    reloadSubscribersTable();
+                });
         });
 
         //resume subscriber on submit
-        $('#resume_subscriber_form').submit(function () {
+        $('#resume_subscriber_form').submit(function (e) {
             var email = $('#resume_subscriber_email').val();
             var name = $('#resume_subscriber_name').val();
+            e.preventDefault();
             $.getJSON(rootURL + username + '/' + email + '/resume', function (data) {
-                showAlert('success', 'Subscriber <strong>' + name + '</strong> has been resumed');
-            });
-            return true;
+            })
+                .done(function () {
+                    showAlert('success', 'Subscriber <strong>' + name + '</strong> has been resumed');
+                    return true;
+                })
+                .fail(function () {
+                    showAlert('error', 'Subscriber <strong>' + name + '</strong> resuming fail');
+                    return false;
+                })
+                .always(function (){
+                    $('#resumeModal').modal('hide');
+                    reloadSubscribersTable();
+                });
+
         });
 
         //add new subscriber on submit
         $('#new_subscriber_form').submit(function () {
+            var email = $('#new_subscriber_email').val();
             var name = $('#new_subscriber_name').val();
-            $.post(rootURL + username + '/new',
-                {
-                    email: $('#new_subscriber_email').val(),
-                    name: name,
-                    rss: $('#new_subscriber_rss').val() //todo: select for rss list
-                },
-                function (data) {
+            var status = $('#new_subscriber_status').val();
+            var updateJson = '{' +
+                'email: "' + email + '",' +
+                'name: "' + name + '",' +
+                'status: "active",' +
+                'rsslist: [ ';
+            $('#new_subscriber_rsslist option').each(function () {
+                updateJson += '{ rss: "' + $(this).val() + '", status: "active"},';
+            });
+            updateJson = updateJson.substr(0, updateJson.length - 1) + ']}';
+
+            $.ajax({
+                url: rootURL + username + '/new',
+                contentType: 'application/json',
+                type: 'PUT',
+                data: updateJson,
+                dataType: 'json',
+                headers: csrf_headers
+            })
+                .done(function () {
                     showAlert('success', 'New subscriber <strong>' + name + '</strong> has been added successfully');
-                },
-                'json');
-            return;
+                    return true;
+                })
+                .fail(function () {
+                    showAlert('error', 'New subscriber <strong>' + name + '</strong> creation fail');
+                    return false;
+                });
+        });
+
+        $('#btn_new_subscriber_addrss').click(function (event) {
+            var rss = $('#new_subscriber_addrss').val();
+            if (validateURL(rss))
+                $('#new_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
+            else
+                alert(rss + " does not look like a valid URL. Please correct it and try again");
+        });
+
+        $('#btn_new_subscriber_deleterss').click(function (event) {
+            $('#new_subscriber_rsslist option:selected').remove();
         });
 
         //remove subscriber on submit
-        $('#remove_subscriber_form').submit(function () {
+        $('#remove_subscriber_form').submit(function (e) {
             var email = $('#remove_subscriber_email').val();
             var name = $('#remove_subscriber_name').val();
+            e.preventDefault();
             $.ajax({
                 url: rootURL + username + '/' + email + '/remove',
                 type: 'DELETE',
                 dataType: 'json',
+                headers: csrf_headers,
                 success: function (data) {
-                    showAlert('success', 'Subscriber <strong>' + name + '</strong> has been removed');
                 }
-            });
-            return;
+            })
+                .done(function () {
+                    showAlert('success', 'Subscriber <strong>' + name + '</strong> has been removed');
+                    return true;
+                })
+                .fail(function () {
+                    showAlert('error', 'Subscriber <strong>' + name + '</strong> removing fail');
+                    return false;
+                })
+                .always(function (){
+                    $('#removeModal').modal('hide');
+                    reloadSubscribersTable();
+                });
+
         });
 
         //Show ajax error messages
         $(document).ajaxError(function (event, request, settings, thrownError) {
-            showAlert('error', 'Internal error: ' + thrownError + settings + request);
+            showAlert('error', 'Ajax error: code:' + request.status + " calling url: " + settings.url + " method: " + settings.type + " " + thrownError);
         });
 
 
     });//end of $(document).ready(function ())
 
-    function showAlert(type, text){
+    function showAlert(type, text) {
         if (type == 'error') {
             $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
                 + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Error! </strong>'+ text + '</div>');
+                + '<strong>Error! </strong>' + text + '</div>');
         } else if (type == 'warning') {
             $('#alerts_panel').html('<div class="alert alert-warning alert-dismissible" role="alert">'
                 + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
@@ -269,67 +341,77 @@
         }
     }
 
+    function validateURL(url) {
+        var regexp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
+        return url.match(regexp);
+    }
+
 </script>
 
 <div class="container-fluid">
-    <header class="header clearfix">
-        <nav>
-            <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="active"><a href="../index.html">Home</a></li>
-                <li role="presentation"><a href="#">About</a></li>
-                <li role="presentation"><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-        <h3 class="text-muted">RSS-2-KINDLE</h3>
-    </header>
-    <hr/>
+    <%@include file="header.jsp" %>
+
     <div class="row">
         <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
-            <ul class="nav nav-pills flex-column">
+            <ul class="nav nav-pills nav-stacked">
                 <li role="presentation"><a href="profile">My Profile</a></li>
                 <li role="presentation" class="active"><a href="#">Subscriber Management</a></li>
                 <li role="presentation"><a href="service">Services</a></li>
             </ul>
         </nav>
-        <main role="main" class="col-sm-9 col-md-10">
+        <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <ul class="nav nav-tabs" id="operationsTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="profile" aria-selected="false">Edit subscribers</a>
+                    <a class="nav-link" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="profile"
+                       aria-selected="false">Edit subscribers</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" id="new-tab" data-toggle="tab" href="#new" role="tab" aria-controls="home" aria-selected="true">New subscriber</a>
+                    <a class="nav-link active" id="new-tab" data-toggle="tab" href="#new" role="tab"
+                       aria-controls="home" aria-selected="true">New subscriber</a>
                 </li>
             </ul>
-            <div class="tab-content" id="operationsTabContent">
-                <div id="alerts_panel"></div>
-                <div class="tab-pane fade active" id="new" role="tabpanel" aria-labelledby="new-tab">
-                    <h3>Add new subscriber</h3>
-                    <form method="get" id="new_subscriber_form" action="#">
-                        <div class="form-group">
-                            <label for="new_subscriber_email">Email</label>
-                            <input type="email" id="new_subscriber_email" required class="form-control"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="new_subscriber_name">Name</label>
-                            <input type="text" id="new_subscriber_name" required class="form-control"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="new_subscriber_rss">Subscription (RSS)</label>
-                            <p><input type="url" id="new_subscriber_rss" required class="form-control"/></p>
-                        </div>
-                        <div class="form-group">
-                            <%--<label for="starttime">Start date</label>--%>
-                            <%--<p><input type="date" id="starttime" class="form-control"/></p>--%>
-                            <security:csrfInput/>
-                            <input type="submit" value="Create" class="btn btn-primary"/>
-                        </div>
-                    </form>
+            <section class="row">
+                <div class="tab-content" id="operationsTabContent">
+                    <div id="alerts_panel"></div>
+                    <div class="tab-pane fade active placeholder" id="new" role="tabpanel" aria-labelledby="new-tab">
+                        <h2 class="sub-header">Add new subscriber</h2>
+                        <form method="get" id="new_subscriber_form" action="#">
+                            <div class="form-group">
+                                <label for="new_subscriber_email">Email</label>
+                                <input type="email" id="new_subscriber_email" required class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="new_subscriber_name">Name</label>
+                                <input type="text" id="new_subscriber_name" required class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="new_subscriber_rsslist">Subscriptions</label>
+                                <select class="form-control" id="new_subscriber_rsslist" size="10"></select>
+                                <div class="form-group">
+                                    <label for="new_subscriber_addrss" class="control-label">Add new subscription
+                                        (RSS):</label>
+                                    <input type="url" class="form-control" id="new_subscriber_addrss"/>
+                                    <div class="btn-group-xs" role="group">
+                                        <button type="button" class="btn btn-primary" id="btn_new_subscriber_addrss">+
+                                        </button>
+                                        <button type="button" class="btn btn-primary" id="btn_new_subscriber_deleterss">
+                                            -
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <%--<label for="starttime">Start date</label>--%>
+                                <%--<p><input type="date" id="starttime" class="form-control"/></p>--%>
+                                <input type="submit" value="Create" class="btn btn-primary"/>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade placeholder" id="edit" role="tabpanel" aria-labelledby="edit-tab">
+                        <h2 class="sub-header">Edit subscriber</h2>
+                    </div>
                 </div>
-                <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
-                    <h3>Edit subscriber</h3>
-                    <div id="edit_alerts"></div>
-                </div>
-            </div>
+            </section>
         </main>
     </div>
 
@@ -341,34 +423,37 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="updateModalLabel">Update subscriber and subscriptions</h4>
             </div>
             <form method="get" action="#" id="update_subscriber_form">
                 <div class="modal-body">
+                    <div class="form-group">
+                        <label for="update_subscriber_email" class="control-label">Subscriber email:</label>
+                        <input type="email" class="form-control" id="update_subscriber_email" readonly/>
+                        <label for="update_subscriber_status" class="control-label">Status:</label>
+                        <input type="text" class="form-control" id="update_subscriber_status" readonly/>
+                    </div>
+                    <div class="form-group">
+                        <label for="update_subscriber_name" class="control-label">Subscriber name:</label>
+                        <input type="text" class="form-control" id="update_subscriber_name"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="update_subscriber_rsslist" class="control-label">Subscriptions:</label>
+                        <select class="form-control" id="update_subscriber_rsslist" size="10"></select>
                         <div class="form-group">
-                            <label for="update_subscriber_email" class="control-label">Subscriber email:</label>
-                            <input type="email" class="form-control" id="update_subscriber_email" readonly/>
-                            <label for="update_subscriber_status" class="control-label">Status:</label>
-                            <input type="text" class="form-control" id="update_subscriber_status" readonly/>
-                        </div>
-                        <div class="form-group">
-                            <label for="update_subscriber_name" class="control-label">Subscriber name:</label>
-                            <input type="text" class="form-control" id="update_subscriber_name"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="update_subscriber_rsslist" class="control-label">Subscriptions:</label>
-                            <select class="form-control" id="update_subscriber_rsslist" size="10"></select>
-                            <security:csrfInput/>
-                            <div class="form-group">
-                                <label for="update_subscriber_addrss" class="control-label">Add new subscription (RSS):</label>
-                                <input type="url" class="form-control" id="update_subscriber_addrss"/>
-                                <div class="btn-group-xs" role="group">
-                                    <button type="button" class="btn btn-primary" id="btn_update_subscriber_addrss">+</button>
-                                    <button type="button" class="btn btn-primary" id="btn_update_subscriber_deleterss">-</button>
-                                </div>
+                            <label for="update_subscriber_addrss" class="control-label">Add new subscription
+                                (RSS):</label>
+                            <input type="url" class="form-control" id="update_subscriber_addrss"/>
+                            <div class="btn-group-xs" role="group">
+                                <button type="button" class="btn btn-primary" id="btn_update_subscriber_addrss">+
+                                </button>
+                                <button type="button" class="btn btn-primary" id="btn_update_subscriber_deleterss">-
+                                </button>
                             </div>
                         </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -384,7 +469,8 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="suspendModalLabel">Suspend subscriber</h4>
             </div>
             <form method="get" id="suspend_subscriber_form" action="#">
@@ -407,7 +493,8 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="resumeModalLabel">Suspend subscriber</h4>
             </div>
             <form method="get" id="resume_subscriber_form" action="#">
@@ -418,7 +505,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary" name="btn_resume">Resume</button>
+                    <button type="submit" class="btn btn-primary"" name="btn_resume">Resume</button>
                 </div>
             </form>
         </div>
@@ -430,7 +517,8 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="removeModalLabel">Remove subscriber</h4>
             </div>
             <form method="get" id="remove_subscriber_form" action="#">
@@ -448,6 +536,6 @@
     </div>
 </div>
 
-<%@include file="footer.jsp"%>
+<%@include file="footer.jsp" %>
 </body>
 </html>

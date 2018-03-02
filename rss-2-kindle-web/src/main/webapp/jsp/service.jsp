@@ -28,11 +28,12 @@
 
     <!-- Custom css -->
     <link href="../css/sticky-footer.css" rel="stylesheet">
+    <link href="../css/profile-theme.css" rel="stylesheet">
 
 </head>
 <body>
 <script>
-    var rootURL = '/rss2kindle/rest/service/<%=username%>';
+    var rootURL = 'rest/service/<%=username%>';
     $(document).ready(function () {
         $("#run_all").click(function () {
             runPollingForUser();
@@ -47,51 +48,52 @@
 
     function runPollingForUser() {
         $.getJSON(rootURL, function (data) {
-            $('#getresult').append('<p>Result jopa</p>');
-        });
+        })
+            .done(function () {
+                $('#alerts_panel').html('<div class="alert alert-success alert-dismissible" role="alert">'
+                    + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                    + '<strong>Success! </strong>Polling process has been launched</div>');
+                return true;
+            })
+            .fail(function () {
+                $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
+                    + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                    + '<strong>Error! </strong>Unexpected problem</div>');
+                return false;
+            });
     }
 </script>
 
 <div class="container-fluid">
-    <header class="header clearfix">
-        <nav>
-            <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="active"><a href="../index.html">Home</a></li>
-                <li role="presentation"><a href="#">About</a></li>
-                <li role="presentation"><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-        <h3 class="text-muted">RSS-2-KINDLE</h3>
-    </header>
-    <hr/>
+    <%@include file="header.jsp"%>
 
     <div class="row">
         <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
-            <ul class="nav nav-pills flex-column">
+            <ul class="nav nav-pills nav-stacked">
                 <li role="presentation"><a href="profile">My Profile</a></li>
                 <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
                 <li role="presentation" class="active"><a href="#">Services</a></li>
             </ul>
         </nav>
-        <main role="main" class="col-sm-9 col-md-10">
-            <section class="row text-center placeholders">
-                <div class="col-md-8">
-                    <button id="run_all" type="button" class="btn btn-primary btn-lg btn-block">Poll my subscriptions immediately</button>
+
+        <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header">Polling subscriptions</h1>
+            <section class="row placeholders">
+                <div id="alerts_panel"></div>
+                <div class="alert alert-info" role="alert">
+                    All subscriptions are polled every day automatically at 02 am.
+                    If you wish to poll you subscriptions right now just push the button below
                 </div>
+                <button id="run_all" type="button" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-import" aria-hidden="true"></span>
+                    Poll my subscriptions immediately
+                </button>
             </section>
 
-            <div class="col-md-6">
-                <div id="getresult" class="table-responsive">
-
-                </div>
-            </div>
         </main>
     </div>
 
 </div>
-
-
-
 
 <%@include file="footer.jsp"%>
 

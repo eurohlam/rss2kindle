@@ -23,7 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 
 
 @Controller
-public class MainController {
+public class MainController
+{
 
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
@@ -31,25 +32,28 @@ public class MainController {
     private SecurityService securityService;
 
     @RequestMapping(value = "/subscribers", method = RequestMethod.GET)
-    public String subscribersPage(ModelMap model) {
+    public String subscribersPage(ModelMap model)
+    {
         model.addAttribute("username", getPrincipal());
         return "subscribers";
     }
 
     @RequestMapping(value = "/service", method = RequestMethod.GET)
-    public String servicePage(ModelMap model) {
+    public String servicePage(ModelMap model)
+    {
         model.addAttribute("username", getPrincipal());
         return "service";
     }
 
     @RequestMapping(value = "/admin", method = RequestMethod.GET)
-    public String adminPage(ModelMap model) {
+    public String adminPage(ModelMap model)
+    {
         model.addAttribute("username", getPrincipal());
         return "admin/adminPage";
     }
 
 
-    @RequestMapping(value ="/profile", method = RequestMethod.GET)
+    @RequestMapping(value = "/profile", method = RequestMethod.GET)
     public String profilePage(ModelMap model)
     {
         model.addAttribute("username", getPrincipal());
@@ -57,7 +61,7 @@ public class MainController {
     }
 
 
-    @RequestMapping(value ="/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(@RequestParam(value = "error", required = false) String error)
     {
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated())
@@ -66,23 +70,24 @@ public class MainController {
             return "login";
     }
 
-    @RequestMapping(value="/logout", method = RequestMethod.POST)
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public String logout(HttpServletRequest request, HttpServletResponse response)
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null){
+        if (auth != null) {
             logger.info("Logout user {}", auth.getPrincipal());
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
         return "redirect:login?logout";
     }
 
-    private String getPrincipal(){
+    private String getPrincipal()
+    {
         String userName = null;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof UserDetails) {
-            userName = ((UserDetails)principal).getUsername();
+            userName = ((UserDetails) principal).getUsername();
         } else {
             userName = principal.toString();
         }
@@ -93,14 +98,13 @@ public class MainController {
     public String registerUser(@ModelAttribute("newUserForm") NewUserForm user, BindingResult result, ModelMap model)
     {
         if (result.hasErrors()) {
-            for (ObjectError er:result.getAllErrors())
+            for (ObjectError er : result.getAllErrors())
                 logger.error(er.toString());
             return "error";
         }
 
         logger.info("Trying to register a new user {} with email {}", user.getUsername(), user.getEmail());
-        if (!user.getPassword().equals(user.getConfirmPassword()))
-        {
+        if (!user.getPassword().equals(user.getConfirmPassword())) {
             logger.error("Password {} not verified by {}", user.getPassword(), user.getConfirmPassword());
             //TODO: verification error
         }

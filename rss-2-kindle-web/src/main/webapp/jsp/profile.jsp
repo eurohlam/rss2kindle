@@ -28,16 +28,16 @@
 
     <!-- Custom css -->
     <link href="../css/sticky-footer.css" rel="stylesheet">
+    <link href="../css/profile-theme.css" rel="stylesheet">
 
 </head>
 
 <body>
 <script>
-    var rootURL = '/rss2kindle/rest/profile/<%=username%>';
+    var rootURL = 'rest/profile/<%=username%>';
     var userData;
 
     $(document).ready(function () {
-        $('#profile_view').append('<p id="message">Getting subscribers. Please wait...</p>');
         $.getJSON(rootURL, function (data) {
             userData = data;
 
@@ -52,13 +52,21 @@
 
             $('#dashboard_subscribers_data').append('Number of subscribers: ' + data.subscribers.length);
 
-            var number_of_subscriptions = 0;
-            var table = '<table class="table table-hover"><thead>' +
+            var subscribersTable = '<table class="table table-hover"><thead>' +
                 '<tr><th>#</th>' +
-                '<th>title</th>' +
+                '<th>subscriber</th>' +
                 '<th>email</th>' +
                 '<th>status</th>' +
-                '<th>rss</th></tr></thead><tbody>';
+                '<th>number of subscriptions</th>' +
+                '</tr></thead><tbody>';
+
+            var rssTable = '<table class="table table-hover"><thead>' +
+                '<tr><th>#</th>' +
+                '<th>subscription</th>' +
+                '<th>status</th>' +
+                '<th>send to</th>' +
+                '</tr></thead><tbody>';
+            var rssNumber = 0;
 
             $.each(data.subscribers, function (i, item) {
                 var tr;
@@ -67,84 +75,79 @@
                 else
                     tr = '<tr class="active"><td>';
 
-                table += tr + (i + 1) + '</td><td>'
+                subscribersTable += tr + (i + 1) + '</td><td>'
                     + item.name + '</td><td>'
                     + item.email + '</td><td>'
                     + item.status + '</td><td>';
+
                 var rss = item.rsslist;
-                number_of_subscriptions = number_of_subscriptions + rss.length;
-                rssTable = '<table width="100%"><tr><td>';
+                subscribersTable += rss.length + '</td></tr>';
+
                 for (j = 0; j < rss.length; j++) {
-                    rssTable = rssTable + '<a href="' + rss[j].rss + '">' + rss[j].rss + '</a></td><td>';
-                    if (rss[j].status === 'active')
-                        rssTable += '<label></label><input type="checkbox" checked disabled />' + rss[j].status + '</label>';
+                    if (rss[j].status === 'dead')
+                        tr = '<tr class="danger"><td>';
                     else
-                        rssTable += '<label></label><input type="checkbox" disabled />' + rss[j].status + '</label>';
+                        tr = '<tr class="active"><td>';
 
-                    rssTable += '<td/></tr>';
+                    rssNumber++;
+
+                    rssTable += tr + rssNumber + '</td><td>'
+                        + '<a href="' + rss[j].rss + '">' + rss[j].rss + '</a></td><td>'
+                        + rss[j].status + '</td><td>'
+                        + item.email +'</td></tr>';
                 }
-                rssTable += '</table>';
 
-                table += rssTable + '</td></tr>';
             });
-            table += '</tbody></table>';
+            subscribersTable += '</tbody></table>';
+            rssTable += '</tbody></table>';
+
             $('#message').remove();
-            $('#dashboard_subscriptions_data').append("Number of subscriptions: " + number_of_subscriptions);
-            $('#profile_view').append(table);
+            $('#dashboard_subscriptions_data').append("Number of subscriptions: " + rssNumber);
+            $('#subscribers_view').append(subscribersTable);
+            $('#subscriptions_view').append(rssTable);
         })
     });
 
-    function getUserData() {
-        return userData;
-    }
 </script>
 
 <div class="container-fluid">
-    <header class="header clearfix">
-        <nav>
-            <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="active"><a href="../index.html">Home</a></li>
-                <li role="presentation"><a href="#">About</a></li>
-                <li role="presentation"><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-        <h3 class="text-muted">RSS-2-KINDLE</h3>
-    </header>
-    <hr/>
+    <%@include file="header.jsp"%>
 
     <div class="row">
         <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
-            <ul class="nav nav-pills flex-column">
+            <ul class="nav nav-pills nav-stacked">
                 <li role="presentation" class="active"><a href="#">My Profile</a></li>
                 <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
                 <li role="presentation"><a href="service">Services</a></li>
             </ul>
         </nav>
-        <main role="main" class="col-sm-9 col-md-10">
-            <div class="jumbotron jumbotron-fluid">
-            <h1><%=username%> dashboard</h1>
+        <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header"><%=username%> dashboard</h1>
             <section class="row text-center placeholders">
-                <div class="col-6 col-sm-3 placeholder">
+                <div class="col-md-4 col-sm-4 placeholder">
                     <div id="dashboard_user_data"></div>
                     <h4>User info</h4>
                     <div class="text-muted" id="dashboard_user_info"></div>
                 </div>
-                <div class="col-6 col-sm-3 placeholder">
+                <div class="col-md-4 col-sm-4 placeholder">
                     <div id="dashboard_subscribers_data"></div>
                     <h4>Subscribers</h4>
                     <div class="text-muted">Something else</div>
                 </div>
-                <div class="col-6 col-sm-3 placeholder">
+                <div class="col-md-4 col-sm-4 placeholder">
                     <div id="dashboard_subscriptions_data"></div>
                     <h4>Subscriptions</h4>
                     <div class="text-muted">Something else</div>
                 </div>
             </section>
-            </div>
-            <h1>Subscribers</h1>
-            <div class="table-responsive" id="profile_view">
-
-            </div>
+            <section class="row placeholders">
+                <div class="col-md-6 placeholder text-left" id="subscribers_view">
+                    <h2 class="sub-header">Subscribers</h2>
+                </div>
+                <div class="col-md-6 placeholder text-left" id="subscriptions_view">
+                    <h2 class="sub-header">Subscriptions</h2>
+                </div>
+            </section>
         </main>
     </div>
 

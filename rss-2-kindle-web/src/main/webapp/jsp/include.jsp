@@ -6,19 +6,21 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page pageEncoding="UTF-8" %>
-<%! String username = null; %>
+<%!
+    String username = null;
+%>
+
 <%
+    if (request.getAttribute("username") != null)
+        username = request.getAttribute("username").toString();
+    else {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
 
-        if (request.getAttribute("username")!= null)
-            username = request.getAttribute("username").toString();
-        else {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth != null) {
-
-                if (auth.getPrincipal() instanceof UserDetails) {
-                    UserDetails ud = (UserDetails) auth.getPrincipal();
-                    username = ud.getUsername();
-                }
+            if (auth.getPrincipal() instanceof UserDetails) {
+                UserDetails ud = (UserDetails) auth.getPrincipal();
+                username = ud.getUsername();
             }
         }
+    }
 %>

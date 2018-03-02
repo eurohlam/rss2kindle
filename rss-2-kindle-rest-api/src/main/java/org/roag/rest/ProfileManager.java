@@ -139,6 +139,7 @@ public class ProfileManager
     @Path("/new")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
+    @Deprecated
     public Response addSubscriber(@PathParam("username") String username,
                                   @FormParam("email") String email,
                                   @FormParam("name") String name,
@@ -188,6 +189,7 @@ public class ProfileManager
     @Path("/update")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
+    @Deprecated
     public Response updateSubscriber(@PathParam("username") String username,
                                      @FormParam("email") String email,
                                      @FormParam("name") String name,
