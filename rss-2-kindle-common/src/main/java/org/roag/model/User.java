@@ -27,6 +27,8 @@ public class User
     private String dateModified;
     @SerializedName("lastLogin")
     private String lastLogin;
+    @SerializedName("previousLogin")
+    private String previousLogin;
     @SerializedName("status")
     private String status;
     @SerializedName("subscribers")
@@ -85,6 +87,8 @@ public class User
 
     public void setLastLogin(String lastLogin)
     {
+        if (this.lastLogin != null)
+            this.previousLogin = this.lastLogin;
         this.lastLogin = lastLogin;
     }
 
@@ -120,5 +124,15 @@ public class User
     public void setRoles(Set<Roles> roles)
     {
         this.roles = roles;
+    }
+
+    public String getPreviousLogin()
+    {
+        return previousLogin;
+    }
+
+    public void setPreviousLogin(String previousLogin)
+    {
+        this.previousLogin = previousLogin;
     }
 }

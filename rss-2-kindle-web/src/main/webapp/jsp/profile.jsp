@@ -47,7 +47,7 @@
             $('#dashboard_user_info').append(
                 'Created: ' + data.dateCreated + '<br/>' +
                 'Modified: ' + data.dateModified + '<br/>' +
-                'Last logged in: ' + data.lastLogin
+                'Last logged in: ' + data.previousLogin
             );
 
             $('#dashboard_subscribers_data').append('Number of subscribers: ' + data.subscribers.length);

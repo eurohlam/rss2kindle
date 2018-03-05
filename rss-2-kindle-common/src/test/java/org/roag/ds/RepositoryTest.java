@@ -70,6 +70,14 @@ public class RepositoryTest
 
         Subscriber ns = factory.convertJson2Pojo(Subscriber.class, r);
         assertEquals(ns.getEmail(), subscriber.getEmail());
+
+        user.getSubscribers().add(ns);
+        user.setLastLogin("01-01-2018");
+        String u = factory.convertPojo2Json(user);
+        assertTrue(u.startsWith("{"));
+        User u1 = factory.convertJson2Pojo(User.class, u);
+        u1.setLastLogin("02-02-2018");
+        assertEquals(u1.getPreviousLogin(), "01-01-2018", "Incorrect parsing of lastLogin");
     }
 
     @Test(groups = {"Functionality Check"}, expectedExceptions = {IllegalArgumentException.class})
