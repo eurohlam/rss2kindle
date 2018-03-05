@@ -40,10 +40,12 @@
             return false;
         });
 
-        //error view
-        $(document).ajaxError(function (event, request, settings) {
-            $("#errorview").append("<h1>Error in getting data.</h1>");
-        })
+        //Show ajax error messages
+        $(document).ajaxError(function (event, request, settings, thrownError) {
+            $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
+                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                + '<strong>Error! </strong>Ajax error: code:' + request.status + ' calling url: ' + settings.url + ' method: ' + settings.type + ' ' + thrownError + '</div>');
+        });
     });
 
     function runPollingForUser() {
