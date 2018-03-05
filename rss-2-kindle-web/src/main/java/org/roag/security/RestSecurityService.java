@@ -67,8 +67,8 @@ public class RestSecurityService implements SecurityService
         if (response.getStatus() == 200) {
             User user=subscriberFactory.convertJson2Pojo(User.class, response.readEntity(String.class));
             logger.debug("User {} exists with roles {}", user.getUsername(), user.getRoles());
-//            user.setLastLogin(dateFormat.get().format(new Date()));
-//            response= restClient.target(restHost + ":" + restPort + restPath).path("users/update").request().post(Entity.json(subscriberFactory.convertPojo2Json(user)), Response.class);
+            user.setLastLogin(dateFormat.get().format(new Date()));
+            restClient.updateUser(subscriberFactory.convertPojo2Json(user));
             UserDetails ud=new SpringUserDetailsImpl(user);
             return ud;
         }
