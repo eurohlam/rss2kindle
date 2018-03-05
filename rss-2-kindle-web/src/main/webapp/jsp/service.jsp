@@ -37,7 +37,6 @@
     $(document).ready(function () {
         $("#run_all").click(function () {
             runPollingForUser();
-            return false;
         });
 
         //Show ajax error messages
@@ -50,19 +49,11 @@
 
     function runPollingForUser() {
         $.getJSON(rootURL, function (data) {
-        })
-            .done(function () {
-                $('#alerts_panel').html('<div class="alert alert-success alert-dismissible" role="alert">'
-                    + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                    + '<strong>Success! </strong>Polling process has been launched</div>');
-                return true;
-            })
-            .fail(function () {
-                $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
-                    + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                    + '<strong>Error! </strong>Unexpected problem</div>');
-                return false;
-            });
+            $('#alerts_panel').html('<div class="alert alert-success alert-dismissible" role="alert">'
+                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                + '<strong>Success! </strong>Polling process has been launched: ' + data.status + '</div>');
+            return true;
+        });
     }
 </script>
 
@@ -83,7 +74,7 @@
             <section class="row placeholders">
                 <div id="alerts_panel"></div>
                 <div class="alert alert-info" role="alert">
-                    All subscriptions are polled every day automatically at 02 am.
+                    All subscriptions are polled every day automatically at 02:00 am.
                     If you wish to poll you subscriptions right now just push the button below
                 </div>
                 <button id="run_all" type="button" class="btn btn-primary">
