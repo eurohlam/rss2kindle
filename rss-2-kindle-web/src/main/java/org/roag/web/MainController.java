@@ -97,10 +97,13 @@ public class MainController
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String registerUser(@ModelAttribute("newUserForm") NewUserForm user, BindingResult result, ModelMap model)
     {
+        NewUserFormValidator validator = new NewUserFormValidator();
+        validator.validate(user, result);
+
         if (result.hasErrors()) {
             for (ObjectError er : result.getAllErrors())
                 logger.error(er.toString());
-            return "error";
+            return "register";
         }
 
         logger.info("Trying to register a new user {} with email {}", user.getUsername(), user.getEmail());

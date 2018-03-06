@@ -15,6 +15,10 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
+    <bean class="org.springframework.context.support.ResourceBundleMessageSource" id="messageSource">
+        <property name="basename" value="messages" />
+    </bean>
+
     <context:component-scan base-package="org.roag.web"/>
     <context:annotation-config/>
     <context:property-placeholder location="WEB-INF/spring/web-context.properties"/>

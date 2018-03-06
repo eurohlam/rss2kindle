@@ -24,7 +24,6 @@
     <![endif]-->
 
     <!-- Custom css -->
-    <%--<link href="css/sticky-footer.css" rel="stylesheet">--%>
     <link href="../css/signin.css" rel="stylesheet">
     <link href="../css/landing-theme.css" rel="stylesheet">
 
@@ -44,28 +43,30 @@
     </div>
 
     <div id="signup" class="jumbotron">
-        <%--<form:input path="username"/>--%>
         <form:form class="form-signin" action="register" commandName="newUserForm" method="post" autocomplete="off">
             <h2 class="form-signin-heading">Please sign up</h2>
             <form:label path="username" class="sr-only">Username</form:label>
             <form:input type="text" id="username" path="username" class="form-control" placeholder="Username"/>
+            <form:errors path="username" cssClass="error"/>
             <form:label path="email" class="sr-only">E-mail</form:label>
             <form:input type="email" path="email" class="form-control" placeholder="e-mail"/>
+            <form:errors path="email" cssClass="error"/>
             <form:label path="password" class="sr-only">Password</form:label>
             <form:input type="password" path="password" class="form-control" placeholder="Password" />
+            <form:errors path="password" cssClass="error"/>
             <form:label path="confirmPassword" class="sr-only">Confirm Password</form:label>
             <form:input type="password" path="confirmPassword" class="form-control" placeholder="Confirm password" />
-            <input type="hidden" name="<c:out value="${_csrf.parameterName}"/>" value="<c:out value="${_csrf.token}"/>"/>
+            <form:errors path="confirmPassword" cssClass="error"/>
 
             <button class="btn btn-lg btn-success btn-block" type="submit">Sign up</button>
         </form:form>
 
-    </div> <!-- /container -->
+    </div>
 
     <footer class="footer">
         <p>&copy; Created by Eurohlam. 2017</p>
     </footer>
-</div> <!-- /container -->
+</div>
 
 </body>
 
