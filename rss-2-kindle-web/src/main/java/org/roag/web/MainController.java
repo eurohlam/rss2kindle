@@ -97,19 +97,14 @@ public class MainController
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String registerUser(@ModelAttribute("newUserForm") NewUserForm user, BindingResult result, ModelMap model)
     {
-        NewUserFormValidator validator = new NewUserFormValidator();
+        NewUserFormValidator validator = new NewUserFormValidator(securityService);
         validator.validate(user, result);
 
         if (result.hasErrors()) {
+            logger.error("Registration of a new user {} with email {} failed due to validation errors:", user.getUsername(), user.getEmail());
             for (ObjectError er : result.getAllErrors())
                 logger.error(er.toString());
             return "register";
-        }
-
-        logger.info("Trying to register a new user {} with email {}", user.getUsername(), user.getEmail());
-        if (!user.getPassword().equals(user.getConfirmPassword())) {
-            logger.error("Password {} not verified by {}", user.getPassword(), user.getConfirmPassword());
-            //TODO: verification error
         }
 
         securityService.registerUser(user.getUsername(), user.getEmail(), user.getPassword());
