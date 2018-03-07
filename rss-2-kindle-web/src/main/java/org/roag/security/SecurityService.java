@@ -11,6 +11,8 @@ public interface SecurityService
 {
     UserDetails findUser(String username) throws UsernameNotFoundException;
 
+    boolean isUserExist(String username);
+
     UserDetails registerUser(String username, String email, String password) throws AuthenticationServiceException;
 
     UserDetails autologin(String username, String password) throws UsernameNotFoundException;

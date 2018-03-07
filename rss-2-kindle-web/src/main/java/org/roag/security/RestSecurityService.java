@@ -6,20 +6,15 @@ import org.roag.web.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,12 +25,6 @@ import java.util.Date;
 @Service
 public class RestSecurityService implements SecurityService
 {
-
-//    @Autowired
-//    private AuthenticationManager authenticationManager;
-
-//    @Autowired
-//    private UserDetailsService userDetailsService;
 
     private static final Logger logger = LoggerFactory.getLogger(RestSecurityService.class);
 
@@ -116,4 +105,12 @@ public class RestSecurityService implements SecurityService
 */
         return null;
     }
+
+    @Override
+    public boolean isUserExist(String username)
+    {
+        Response response = restClient.getUser(username);
+        return (response.getStatus() == 200);
+    }
+
 }
