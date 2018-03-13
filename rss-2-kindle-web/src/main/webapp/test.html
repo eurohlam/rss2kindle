@@ -46,7 +46,9 @@
 
             $('#dashboard_subscribers_data').append('Number of subscribers: ' + data.subscribers.length);
 
+            var number_of_suspended_subscribers = 0;
             var number_of_subscriptions = 0;
+            var number_of_dead_subscriptions = 0;
             var table = '<table class="table table-hover"><thead>' +
                 '<tr><th>#</th>' +
                 '<th>title</th>' +
@@ -56,8 +58,10 @@
 
             $.each(data.subscribers, function (i, item) {
                 var tr;
-                if (item.status === 'suspended')
+                if (item.status === 'suspended') {
                     tr = '<tr class="danger"><td>';
+                    number_of_suspended_subscribers++;
+                }
                 else
                     tr = '<tr class="active"><td>';
 
@@ -131,20 +135,38 @@
         <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header"><%=username%> dashboard</h1>
             <section class="row text-center placeholders">
-                <div class="col-6 col-sm-3 placeholder">
-                    <div id="dashboard_user_data"></div>
-                    <h4>User info</h4>
-                    <div class="text-muted" id="dashboard_user_info"></div>
+                <div class="col-md-4 col-sm-4 placeholder" style="background-color: #c7ddef; border-radius: 70%">
+                    <div id="dashboard_user_data">
+                        <h4>Status: active</h4>
+					</div>
+                    <h3>User info</h3>
+                    <div class="text-muted" id="dashboard_user_info" >
+						Created: 2018-20-27 18:25:67 <br>
+						Modified: 2018-20-27 18:25:67 <br>
+						Last logged in: 2018-20-27 18:25:67
+					</div>
                 </div>
-                <div class="col-6 col-sm-3 placeholder">
-                    <div id="dashboard_subscribers_data"></div>
-                    <h4>Subscribers</h4>
-                    <div class="text-muted">Something else</div>
+                <div class="col-md-4 col-sm-4 placeholder" style="background-color: #f0ad4e; border-radius: 70%"">
+                    <div id="dashboard_subscribers_data">
+                        <h4>Number of subscribers: 2</h4>
+                    </div>
+                    <h3>Subscribers</h3>
+                    <div class="text-muted">
+                        Something else <br>
+                        something else again <br>
+                        again
+                    </div>
                 </div>
-                <div class="col-6 col-sm-3 placeholder">
-                    <div id="dashboard_subscriptions_data"></div>
-                    <h4>Subscriptions</h4>
-                    <div class="text-muted">Something else</div>
+                <div class="col-md-4 col-sm-4 placeholder" style="background-color: #c9e2b3 ">
+                    <div id="dashboard_subscriptions_data">
+                        <h4>Number of subscriptions: 7</h4>
+                    </div>
+                    <h3>Subscriptions</h3>
+                    <div class="text-muted">
+                        Something else <br>
+                        something else again <br>
+                        again
+                    </div>
                 </div>
             </section>
             <section class="row placeholders">

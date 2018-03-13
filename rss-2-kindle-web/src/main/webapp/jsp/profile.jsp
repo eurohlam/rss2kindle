@@ -41,17 +41,6 @@
         $.getJSON(rootURL, function (data) {
             userData = data;
 
-            $('#dashboard_user_data').append(
-                 'User status: ' +data.status
-            );
-            $('#dashboard_user_info').append(
-                'Created: ' + data.dateCreated + '<br/>' +
-                'Modified: ' + data.dateModified + '<br/>' +
-                'Last logged in: ' + data.previousLogin
-            );
-
-            $('#dashboard_subscribers_data').append('Number of subscribers: ' + data.subscribers.length);
-
             var subscribersTable = '<table class="table table-hover"><thead>' +
                 '<tr><th>#</th>' +
                 '<th>subscriber</th>' +
@@ -67,11 +56,15 @@
                 '<th>send to</th>' +
                 '</tr></thead><tbody>';
             var rssNumber = 0;
+            var suspendedSubscribersnumber = 0;
+            var deadRssNumber = 0;
 
             $.each(data.subscribers, function (i, item) {
                 var tr;
-                if (item.status === 'suspended')
+                if (item.status === 'suspended') {
                     tr = '<tr class="danger"><td>';
+                    suspendedSubscribersnumber++;
+                }
                 else
                     tr = '<tr class="active"><td>';
 
@@ -84,8 +77,10 @@
                 subscribersTable += rss.length + '</td></tr>';
 
                 for (j = 0; j < rss.length; j++) {
-                    if (rss[j].status === 'dead')
+                    if (rss[j].status === 'dead') {
                         tr = '<tr class="danger"><td>';
+                        deadRssNumber++;
+                    }
                     else
                         tr = '<tr class="active"><td>';
 
@@ -101,8 +96,25 @@
             subscribersTable += '</tbody></table>';
             rssTable += '</tbody></table>';
 
-            $('#message').remove();
-            $('#dashboard_subscriptions_data').append("Number of subscriptions: " + rssNumber);
+            $('#dashboard_user_status').append('<h4>User status: ' +data.status + '</h4>');
+            $('#dashboard_user_info').append(
+                'Created: ' + data.dateCreated + '<br>' +
+                'Modified: ' + data.dateModified + '<br>' +
+                'Last logged in: ' + data.previousLogin
+            );
+
+            $('#dashboard_subscribers_status').append('<h4>Number of subscribers: ' + data.subscribers.length + '</h4>');
+            $('#dashboard_subscribers_info').append(
+                'Active subscribers:' + (data.subscribers.length - suspendedSubscribersnumber) + '<br>' +
+                'Suspended subscribers: ' + suspendedSubscribersnumber + '<br><br>'
+            );
+
+            $('#dashboard_subscriptions_status').append('<h4>Number of subscriptions: ' + rssNumber + '</h4>');
+            $('#dashboard_subscriptions_info').append(
+                'Active subscriptions:' + (rssNumber - deadRssNumber) + '<br>' +
+                'Dead subscriptions: ' + deadRssNumber + '<br><br>'
+            );
+
             $('#subscribers_view').append(subscribersTable);
             $('#subscriptions_view').append(rssTable);
         })
@@ -124,20 +136,20 @@
         <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header"><%=username%> dashboard</h1>
             <section class="row text-center placeholders">
-                <div class="col-md-4 col-sm-4 placeholder">
-                    <div id="dashboard_user_data"></div>
-                    <h4>User info</h4>
+                <div class="col-md-4 col-sm-4 placeholder" style="background-color: #c7ddef">
+                    <div id="dashboard_user_status"></div>
+                    <h3>User info</h3>
                     <div class="text-muted" id="dashboard_user_info"></div>
                 </div>
-                <div class="col-md-4 col-sm-4 placeholder">
-                    <div id="dashboard_subscribers_data"></div>
-                    <h4>Subscribers</h4>
-                    <div class="text-muted">Something else</div>
+                <div class="col-md-4 col-sm-4 placeholder" style="background-color: #f0ad4e">
+                    <div id="dashboard_subscribers_status"></div>
+                    <h3>Subscribers</h3>
+                    <div class="text-muted" id="dashboard_subscribers_info"></div>
                 </div>
-                <div class="col-md-4 col-sm-4 placeholder">
-                    <div id="dashboard_subscriptions_data"></div>
-                    <h4>Subscriptions</h4>
-                    <div class="text-muted">Something else</div>
+                <div class="col-md-4 col-sm-4 placeholder" style="background-color: #c9e2b3">
+                    <div id="dashboard_subscriptions_status"></div>
+                    <h3>Subscriptions</h3>
+                    <div class="text-muted" id="dashboard_subscriptions_info"></div>
                 </div>
             </section>
             <section class="row placeholders">
