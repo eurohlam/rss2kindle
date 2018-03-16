@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  * Created by eurohlam on 03.10.16.
  */
 @Component
-@Scope("singleton")
+@Scope("prototype")  //TODO: can be a cause of concurrency issues or memeory leak
 @SuppressWarnings("unused")
 public class Rss2XmlHandler
 {
@@ -35,7 +35,8 @@ public class Rss2XmlHandler
     private CamelContext camelContext;
     private SubscriberRepository subscriberRepository;
     private ConsumerTemplate rssConsumer;
-    private ExecutorService executor;
+    private ExecutorService taskExecutor;
+    private ExecutorService resultExecutor;
 
     @Value("${rss.splitEntries}")
     private String splitEntries;
@@ -55,17 +56,29 @@ public class Rss2XmlHandler
     @Value("${rss.lastUpdate.timeunit}")
     private String lastUpdateTimeunit;
 
-    private static final ThreadLocal<DateFormat> RSS_LAST_UPDATE_FORMAT = new ThreadLocal<DateFormat>(){
+    private static final ThreadLocal<DateFormat> RSS_LAST_UPDATE_FORMAT = new ThreadLocal<DateFormat>()
+    {
         @Override
-        protected DateFormat initialValue() {
-            return  new SimpleDateFormat("yyyy-MM-dd'T'HH:MM:ss");
+        protected DateFormat initialValue()
+        {
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:MM:ss");
         }
     };
 
-    private static final ThreadLocal<DateFormat> RSS_FILE_NAME_FORMAT = new ThreadLocal<DateFormat>(){
+    private static final ThreadLocal<DateFormat> RSS_FILE_NAME_FORMAT = new ThreadLocal<DateFormat>()
+    {
         @Override
-        protected DateFormat initialValue() {
-            return  new SimpleDateFormat("yyMMddHHmmss");
+        protected DateFormat initialValue()
+        {
+            return new SimpleDateFormat("yyMMddHHmmss");
+        }
+    };
+
+    private static final ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat>(){
+        @Override
+        protected SimpleDateFormat initialValue()
+        {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         }
     };
 
@@ -76,7 +89,8 @@ public class Rss2XmlHandler
         this.subscriberRepository = subscriberRepository;
         this.camelContext = camelContext;
         this.rssConsumer = camelContext.createConsumerTemplate();
-        this.executor = Executors.newCachedThreadPool();//TODO: may be better to use pool
+        this.taskExecutor = Executors.newFixedThreadPool(10);
+        this.resultExecutor = Executors.newFixedThreadPool(10);
     }
 
     public static DateFormat getRssLastUpdateFormat()
@@ -93,16 +107,16 @@ public class Rss2XmlHandler
     public void runCustomRssPolling(String email, String rss) throws Exception
     {
         logger.info("Anonymous polling for email {} from rss {}", email, rss);
-        Future<Map<String, String>> result= executor.submit(new RssPollingTask(rssConsumer,getCamelRssUri(rss),
-                getPathForRss("guest", email, rss),getRssFileNameFormat().format(new Date())));
-        logger.info("Anonymous polling for email {} from rss {} is completed with result {}", email, rss, result.get().get(getCamelRssUri(rss)));
+        Future<RssPollingTask.PollingTaskResult> result = taskExecutor.submit(new RssPollingTask(rssConsumer, getCamelRssUri(rss),
+                getPathForRss("guest", email, rss), getRssFileNameFormat().format(new Date())));
+        logger.info("Anonymous polling for email {} from rss {} is completed with result {}", email, rss, result.get().getStatus());
 
     }
 
     public void runRssPollingForAllUsers() throws Exception
     {
         logger.debug("Start polling for all active users");
-        for (User user: subscriberRepository.getUserRepository().findAll())
+        for (User user : subscriberRepository.getUserRepository().findAll())
             if (UserStatus.fromValue(user.getStatus()) == UserStatus.ACTIVE)
                 runRssPollingForList(user.getUsername(), user.getSubscribers());
             else
@@ -119,7 +133,6 @@ public class Rss2XmlHandler
 */
 
     /**
-     *
      * @param username
      * @param subscriberList
      * @return number of successfully polled subscriptions
@@ -128,14 +141,13 @@ public class Rss2XmlHandler
     public int runRssPollingForList(String username, List<Subscriber> subscriberList) throws Exception
     {
         int count = 0;
-        for (Subscriber subscriber:subscriberList)
+        for (Subscriber subscriber : subscriberList)
             count = count + runRssPollingForSubscriber(username, subscriber);
         return count;
     }
 
 
     /**
-     *
      * @param username
      * @param email
      * @return number of successfully polled subscriptions
@@ -147,7 +159,6 @@ public class Rss2XmlHandler
     }
 
     /**
-     *
      * @param username
      * @param subscriber
      * @return number of successfully polled subscriptions
@@ -155,40 +166,57 @@ public class Rss2XmlHandler
      */
     public short runRssPollingForSubscriber(String username, Subscriber subscriber) throws Exception
     {
-        short count= 0;
+        short count = 0;
         logger.debug("Start polling: user = {}; subscriber = {}; subscriber.name = {}", username, subscriber.getEmail(), subscriber.getName());
         for (int i = 0; i < subscriber.getRsslist().size(); i++)
         {
             Rss rss = subscriber.getRsslist().get(i);
             if (RssStatus.DEAD != RssStatus.fromValue(rss.getStatus()))
             {
+                logger.info("Polling RSS {}: user={}; subscriber = {}", rss.getRss(), username, subscriber.getEmail());
+                rss.setLastPollingDate(dateFormat.get().format(new Date()));
                 try
                 {
-                    logger.info("Polling RSS {}: user={}; subscriber = {}", rss.getRss(), username, subscriber.getEmail());
-                    Future<Map<String, String>> result= executor.submit(new RssPollingTask(rssConsumer,getCamelRssUri(rss.getRss()),
+                    Future<RssPollingTask.PollingTaskResult> result = taskExecutor.submit(new RssPollingTask(rssConsumer, getCamelRssUri(rss.getRss()),
                             getPathForRss(username, subscriber.getEmail(),
-                                    rss.getRss()),getRssFileNameFormat().format(new Date())));
-                    if (result.isDone())
+                                    rss.getRss()), getRssFileNameFormat().format(new Date())));
+
+                    TaskResultHandler resultHandler = new TaskResultHandler(result, username, rss);
+                    resultExecutor.submit(resultHandler);
+/*
+                    RssPollingTask.PollingTaskResult taskResult = result.get(60, TimeUnit.SECONDS);
+                    //TODO: it is blocking execution now, need to think about unblocked execution
+                    if (taskResult.getStatus() == RssPollingTask.TaskStatus.COMPLETED)
                     {
-                        Map<String, String> map = result.get();
-                        if (map.size()==1)
-                        {
-                            logger.info("RSS {} has been polled successfully to {}. user = {}; subscriber = {}", rss.getRss(), map.get(rss.getRss()), username, subscriber.getEmail());
-                            count++;
-                        }
-                        else
-                        {
-                            logger.error("RSS {} has not been polled due to undefined error.  username = {}; subscriber = {}", rss.getRss(), username, subscriber.getEmail());
-                            throw new Exception("RSS " + rss.getRss() +" has not been polled");
-                        }
+                        logger.info("RSS {} has been polled successfully to {}; user = {}; subscriber = {}", rss.getRss(), taskResult.getFileName(), username, subscriber.getEmail());
+                        rss.setStatus(RssStatus.ACTIVE.toString());
+                        rss.setRetryCount((short)0);
+                        rss.setErrorMessage("");
+                        count++;
                     }
-                } catch (Exception e)
+                    else
+                    {
+                        logger.error("RSS {} has not been polled due to undefined error.  username = {}; subscriber = {}", rss.getRss(), username, subscriber.getEmail());
+                        throw new Exception("RSS " + rss.getRss() + " has not been polled");
+                    }
+*/
+                }
+                catch (Exception e)
                 {
-                    logger.error(e.getMessage());
-                    //TODO: change status of failed rss
+                    logger.error(e.getMessage(), e);
+
+/*
+                    rss.setErrorMessage(e.getMessage());
+                    rss.setRetryCount((short)(rss.getRetryCount() + 1));
+                    if (rss.getRetryCount() > 4)
+                        rss.setStatus(RssStatus.DEAD.toString());
+                    else
+                        rss.setStatus(RssStatus.OFFLINE.toString());
+*/
                 }
 
             }
+            subscriberRepository.updateSubscriber(username, subscriber);
         }
         return count;
     }
@@ -200,11 +228,13 @@ public class Rss2XmlHandler
         {
             calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - lastUpdateCount);
             lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
-        } else if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.HOURS)
+        }
+        else if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.HOURS)
         {
             calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - lastUpdateCount);
             lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
-        } else
+        }
+        else
         {
             calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 1);
             lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
@@ -225,5 +255,51 @@ public class Rss2XmlHandler
                 email + "/"
                 + rss.replace('/', '_').replace(":", "_");
         return fileUri;
+    }
+
+    private class TaskResultHandler implements Runnable
+    {
+        private Future<RssPollingTask.PollingTaskResult> future;
+        private Rss rss;
+        private String username;
+
+        public TaskResultHandler(Future<RssPollingTask.PollingTaskResult> future, String username, Rss rss)
+        {
+            this.future = future;
+            this.rss = rss;
+            this.username = username;
+        }
+
+        @Override
+        public void run()
+        {
+            try
+            {
+                RssPollingTask.PollingTaskResult taskResult = future.get(60, TimeUnit.SECONDS);
+                if (taskResult.getStatus() == RssPollingTask.TaskStatus.COMPLETED)
+                {
+                    logger.info("RSS {} has been polled successfully to {}; user = {};", rss.getRss(), taskResult.getFileName(), username);
+                    rss.setStatus(RssStatus.ACTIVE.toString());
+                    rss.setRetryCount((short)0);
+                    rss.setErrorMessage("");
+                }
+                else
+                {
+                    logger.error("RSS {} has not been polled due to undefined error.  username = {};", rss.getRss(), username);
+                    throw new Exception("RSS " + rss.getRss() + " has not been polled");
+                }
+            }
+            catch (Exception e)
+            {
+                logger.error(e.getMessage(), e);
+
+                rss.setErrorMessage(e.getMessage());
+                rss.setRetryCount((short)(rss.getRetryCount() + 1));
+                if (rss.getRetryCount() > 4)
+                    rss.setStatus(RssStatus.DEAD.toString());
+                else
+                    rss.setStatus(RssStatus.OFFLINE.toString());
+            }
+        }
     }
 }

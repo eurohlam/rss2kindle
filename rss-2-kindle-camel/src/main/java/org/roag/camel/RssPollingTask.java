@@ -11,17 +11,18 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Hashtable;
-import java.util.Map;
+import java.net.ConnectException;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Created by eurohlam on 29.06.17.
  */
-public class RssPollingTask implements Callable<Map<String, String>>
+class RssPollingTask implements Callable<RssPollingTask.PollingTaskResult>
 {
     final private static Logger logger = LoggerFactory.getLogger(RssPollingTask.class);
 
+    protected enum TaskStatus {NOT_STARTED, COMPLETED};
     final private ConsumerTemplate consumer;
     final private String rssURI;
     final private String path;
@@ -36,12 +37,24 @@ public class RssPollingTask implements Callable<Map<String, String>>
     }
 
     @Override
-    public Map<String, String> call() throws Exception
+    public PollingTaskResult call() throws Exception
     {
-        Map<String, String> map = new Hashtable<>(1);
-        map.put(rssURI, "Not polled yet");
+        PollingTaskResult result=new PollingTaskResult(rssURI);
         logger.debug("Started polling {}", rssURI);
-        SyndFeed feed = consumer.receiveBody(rssURI, SyndFeedImpl.class);
+        SyndFeed feed = null;
+        try
+        {
+            feed = consumer.receiveBody(rssURI, 60000, SyndFeedImpl.class);
+        } catch (RuntimeException e)
+        {
+            logger.error("Polling RSS {} failed due to error: {}, {}", rssURI, e.getMessage(), e);
+            throw new ConnectException("Polling RSS " + rssURI +" failed due to error: " + e.getMessage());
+        }
+
+        if (feed == null){
+            logger.error("Timeout error during the polling {}", rssURI);
+            throw new TimeoutException("Timeout error during the polling " + rssURI);
+        }
         logger.debug("Finished polling {}.\nTitle: {}.\nDescription: {}", rssURI, feed.getTitle(), feed.getDescription());
 
         File folder=new File(path);
@@ -63,8 +76,52 @@ public class RssPollingTask implements Callable<Map<String, String>>
                     out.close();
             }
             logger.debug("Feed {} marshaled into file {}", rssURI, file);
-            map.put(rssURI, file);
+            result.setFileName(file);
+            result.setStatus(TaskStatus.COMPLETED);
         }
-        return map;
+        return result;
+    }
+
+    protected class PollingTaskResult
+    {
+        private TaskStatus status;
+        private String fileName;
+        private String rssURI;
+
+        public PollingTaskResult(String rssURI)
+        {
+            this.rssURI = rssURI;
+            this.status = TaskStatus.NOT_STARTED;
+        }
+
+        public TaskStatus getStatus()
+        {
+            return status;
+        }
+
+        public void setStatus(TaskStatus status)
+        {
+            this.status = status;
+        }
+
+        public String getFileName()
+        {
+            return fileName;
+        }
+
+        public void setFileName(String fileName)
+        {
+            this.fileName = fileName;
+        }
+
+        public String getRssURI()
+        {
+            return rssURI;
+        }
+
+        public void setRssURI(String rssURI)
+        {
+            this.rssURI = rssURI;
+        }
     }
 }

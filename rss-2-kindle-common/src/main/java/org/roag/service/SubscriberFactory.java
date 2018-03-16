@@ -18,7 +18,13 @@ public class SubscriberFactory
     //default timeout is 24 hours
     final public long DEFAULT_TIMEOUT=24;
 
-    final private DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat>(){
+        @Override
+        protected SimpleDateFormat initialValue()
+        {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        }
+    };
 
 
     private Gson gson = new Gson();
@@ -27,7 +33,7 @@ public class SubscriberFactory
     {
         Set<Roles> roles=new HashSet<>(1);
         roles.add(Roles.ROLE_USER);
-        return newUser(username, email, password, format.format(new Date()), UserStatus.ACTIVE, roles, new ArrayList<Subscriber>(3));
+        return newUser(username, email, password, dateFormat.get().format(new Date()), UserStatus.ACTIVE, roles, new ArrayList<Subscriber>(3));
     }
 
     public User newUser(String username, String email, String password, String dateCreated, UserStatus status, Set<Roles> roles, List<Subscriber> subscribers)
@@ -63,6 +69,7 @@ public class SubscriberFactory
         s.setEmail(email);
         s.setName(name);
         s.setStatus(SubscriberStatus.ACTIVE.toString());
+        s.setDateCreated(dateFormat.get().format(new Date()));
 
         List<Rss> list = new ArrayList<>(rssList.length);
         for (String rss: rssList)
@@ -74,7 +81,7 @@ public class SubscriberFactory
         }
         s.setRsslist(list);
         Settings settings = new Settings();
-        settings.setStarttime(format.format(startDate));
+        settings.setStarttime(dateFormat.get().format(startDate));
         settings.setTimeout(Long.toString(timeUnit != TimeUnit.HOURS ? timeUnit.toHours(timeout):timeout));
         s.setSettings(settings);
         return s;
