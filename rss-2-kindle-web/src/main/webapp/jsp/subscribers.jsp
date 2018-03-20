@@ -198,7 +198,6 @@
                     $('#updateModal').modal('hide');
                     reloadSubscribersTable();
                 });
-
         });
 
         //suspend subscriber on submit
@@ -245,7 +244,8 @@
         });
 
         //add new subscriber on submit
-        $('#new_subscriber_form').submit(function () {
+        $('#new_subscriber_form').submit(function (e) {
+            e.preventDefault();
             var email = $('#new_subscriber_email').val();
             var name = $('#new_subscriber_name').val();
             var status = $('#new_subscriber_status').val();
@@ -274,6 +274,9 @@
                 .fail(function () {
                     showAlert('error', 'New subscriber <strong>' + name + '</strong> creation fail');
                     return false;
+                })
+                .always(function (){
+                    reloadSubscribersTable();
                 });
         });
 
@@ -314,12 +317,11 @@
                     $('#removeModal').modal('hide');
                     reloadSubscribersTable();
                 });
-
         });
 
         //Show ajax error messages
         $(document).ajaxError(function (event, request, settings, thrownError) {
-            showAlert('error', 'Ajax error: code:' + request.status + " calling url: " + settings.url + " method: " + settings.type + " " + thrownError);
+            showAlert('error', 'Ajax error: code:' + request.status + ": " + request.responseText + " calling url: " + settings.url + " method: " + settings.type + " " + thrownError);
         });
 
 
@@ -437,7 +439,7 @@
                     </div>
                     <div class="form-group">
                         <label for="update_subscriber_name" class="control-label">Subscriber name:</label>
-                        <input type="text" class="form-control" id="update_subscriber_name"/>
+                        <input type="text" class="form-control" id="update_subscriber_name" required/>
                     </div>
                     <div class="form-group">
                         <label for="update_subscriber_rsslist" class="control-label">Subscriptions:</label>

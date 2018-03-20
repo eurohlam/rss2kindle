@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * Created by eurohlam on 19/02/2018.
@@ -53,9 +54,9 @@ public class SpringRestController
     }
 
     @RequestMapping(value = "/profile/{username}/new", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON)
-    public String newSubscriber(@PathVariable("username") String username, @RequestBody String message)
+    public Response newSubscriber(@PathVariable("username") String username, @RequestBody String message)
     {
-        return isAccessAllowed(username)?client.addSubscriber(username, message).readEntity(String.class):ACCESS_DENIED_MESSAGE;
+        return isAccessAllowed(username)?client.addSubscriber(username, message):Response.status(Response.Status.UNAUTHORIZED).build();//TODO: error handling does not work properly
     }
 
     @RequestMapping(value = "/service/{username}", method = RequestMethod.GET)
