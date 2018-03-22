@@ -116,7 +116,7 @@
 
             $('#dashboard_subscriptions_status').append('<h4>Number of subscriptions: ' + rssNumber + '</h4>');
             $('#dashboard_subscriptions_info').append(
-                'Active subscriptions:' + (rssNumber - deadRssNumber) + '<br>' +
+                'Active subscriptions:' + (rssNumber - deadRssNumber - offlineRssNumber) + '<br>' +
                 'Dead subscriptions: ' + deadRssNumber + '<br>' +
                 'Offline subscriptions: ' + offlineRssNumber +'<br>'
             );
