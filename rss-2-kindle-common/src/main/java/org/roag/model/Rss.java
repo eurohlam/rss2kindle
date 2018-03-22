@@ -12,6 +12,12 @@ public class Rss
     private String mRss;
     @SerializedName("status")
     private String mStatus;
+    @SerializedName("lastPollingDate")
+    private String lastPollingDate;
+    @SerializedName("errorMessage")
+    private String errorMessage;
+    @SerializedName("retryCount")
+    private short retryCount = 0;
 
     public String getRss() {
         return mRss;
@@ -29,4 +35,33 @@ public class Rss
         mStatus = status;
     }
 
+    public String getLastPollingDate()
+    {
+        return lastPollingDate;
+    }
+
+    public void setLastPollingDate(String lastPollingDate)
+    {
+        this.lastPollingDate = lastPollingDate;
+    }
+
+    public String getErrorMessage()
+    {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage)
+    {
+        this.errorMessage = errorMessage;
+    }
+
+    public short getRetryCount()
+    {
+        return retryCount;
+    }
+
+    public void setRetryCount(short retryCount)
+    {
+        this.retryCount = retryCount;
+    }
 }
