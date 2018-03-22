@@ -9,8 +9,6 @@ import com.google.gson.annotations.SerializedName;
 @SuppressWarnings("unused")
 public class Subscriber {
 
-//    @SerializedName("_id")
-//    private String mId;
     @SerializedName("email")
     private String mEmail;
     @SerializedName("name")
@@ -21,17 +19,8 @@ public class Subscriber {
     private Settings mSettings;
     @SerializedName("status")
     private String mStatus;
-
-
-//    public String getId()
-//    {
-//        return mId;
-//    }
-
-//    public void setId(String _id)
-//    {
-//        this.mId = _id;
-//    }
+    @SerializedName("dateCreated")
+    private String dateCreated;
 
     public String getEmail() {
         return mEmail;
@@ -73,4 +62,13 @@ public class Subscriber {
         mStatus = status;
     }
 
+    public String getDateCreated()
+    {
+        return dateCreated;
+    }
+
+    public void setDateCreated(String dateCreated)
+    {
+        this.dateCreated = dateCreated;
+    }
 }

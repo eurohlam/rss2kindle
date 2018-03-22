@@ -36,12 +36,8 @@ public class ServiceManager {
         logger.info("Run RSS polling by demand: user {}, subscriber {}", username, id);
         try
         {
-            short count= rss2XmlHandler.runRssPollingForSubscriber(username, id);
-            if (count>0)
-                return Response.ok("{ \"status\" : \"Polled " + count + " subscriptions\" }", MediaType.APPLICATION_JSON_TYPE).build();
-            else
-                return Response.status(Response.Status.BAD_REQUEST).build();
-
+            rss2XmlHandler.runRssPollingForSubscriber(username, id);
+            return Response.ok("{ \"status\" : \"Polled all subscriptions for subscriber "+ id + "\" }", MediaType.APPLICATION_JSON_TYPE).build();
         }
         catch (Exception e)
         {

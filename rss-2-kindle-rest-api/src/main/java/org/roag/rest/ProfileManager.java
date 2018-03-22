@@ -178,7 +178,11 @@ public class ProfileManager
             else
                 return Response.status(Response.Status.CONFLICT).build();
         }
-        catch (Exception e)
+        catch (IllegalArgumentException ie)
+        {
+            logger.error(ie.getMessage(), ie);
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        } catch (Exception e)
         {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

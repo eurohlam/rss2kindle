@@ -31,70 +31,75 @@
     var userData;
 
     $(document).ready(function () {
-        $('#profile_view').append('<p id="message">Getting subscribers. Please wait...</p>');
-        $.getJSON(rootURL, function (data) {
-            userData = data;
-
-            $('#dashboard_user_data').append(
-                'User status: ' + data.status
-            );
-            $('#dashboard_user_info').append(
-                'Created: ' + data.dateCreated + '<br/>' +
-                'Modified: ' + data.dateModified + '<br/>' +
-                'Last logged in: ' + data.lastLogin
-            );
-
-            $('#dashboard_subscribers_data').append('Number of subscribers: ' + data.subscribers.length);
-
-            var number_of_suspended_subscribers = 0;
-            var number_of_subscriptions = 0;
-            var number_of_dead_subscriptions = 0;
-            var table = '<table class="table table-hover"><thead>' +
-                '<tr><th>#</th>' +
-                '<th>title</th>' +
-                '<th>email</th>' +
-                '<th>status</th>' +
-                '<th>rss</th></tr></thead><tbody>';
-
-            $.each(data.subscribers, function (i, item) {
-                var tr;
-                if (item.status === 'suspended') {
-                    tr = '<tr class="danger"><td>';
-                    number_of_suspended_subscribers++;
-                }
-                else
-                    tr = '<tr class="active"><td>';
-
-                table += tr + (i + 1) + '</td><td>'
-                    + item.name + '</td><td>'
-                    + item.email + '</td><td>'
-                    + item.status + '</td><td>';
-                var rss = item.rsslist;
-                number_of_subscriptions = number_of_subscriptions + rss.length;
-                rssTable = '<table width="100%"><tr><td>';
-                for (j = 0; j < rss.length; j++) {
-                    rssTable = rssTable + '<a href="' + rss[j].rss + '">' + rss[j].rss + '</a></td><td>';
-                    if (rss[j].status === 'active')
-                        rssTable += '<label></label><input type="checkbox" checked disabled />' + rss[j].status + '</label>';
-                    else
-                        rssTable += '<label></label><input type="checkbox" disabled />' + rss[j].status + '</label>';
-
-                    rssTable += '<td/></tr>';
-                }
-                rssTable += '</table>';
-
-                table += rssTable + '</td></tr>';
+        //add new subscriber on submit
+        $('#new_subscriber_form').submit(function (e) {
+            e.preventDefault();
+            var email = $('#new_subscriber_email').val();
+            var name = $('#new_subscriber_name').val();
+            var status = $('#new_subscriber_status').val();
+            var updateJson = '{' +
+                'email: "' + email + '",' +
+                'name: "' + name + '",' +
+                'status: "active",' +
+                'rsslist: [ ';
+            $('#new_subscriber_rsslist option').each(function () {
+                updateJson += '{ rss: "' + $(this).val() + '", status: "active"},';
             });
-            table += '</tbody></table>';
-            $('#message').remove();
-            $('#dashboard_subscriptions_data').append("Number of subscriptions: " + number_of_subscriptions);
-            $('#profile_view').append(table);
-        })
+            updateJson = updateJson.substr(0, updateJson.length - 1) + ']}';
+
+            $.ajax({
+                url: rootURL + username + '/new',
+                contentType: 'application/json',
+                type: 'PUT',
+                data: updateJson,
+                dataType: 'json',
+                headers: csrf_headers
+            })
+                .done(function () {
+                    showAlert('success', 'New subscriber <strong>' + name + '</strong> has been added successfully');
+                    return true;
+                })
+                .fail(function () {
+                    showAlert('error', 'New subscriber <strong>' + name + '</strong> creation fail');
+                    return false;
+                })
+                .always(function (){
+                    reloadSubscribersTable();
+                });
+        });
+
+        $('#btn_new_subscriber_addrss').click(function (event) {
+            var rss = $('#new_subscriber_addrss').val();
+            $('#new_subscriber_addrss').popover('destroy');
+            if (validateURL(rss))
+                $('#new_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
+            else {
+                $('#new_subscriber_addrss').popover(
+                    {
+                        content: rss + ' does not look like a valid URL. Please correct it and try again',
+                        trigger: 'manual',
+                        placement: 'top auto',
+                        delay: {"show": 5000, "hide": 20000}
+                    });
+                $('#new_subscriber_addrss').popover('show');
+                //                alert(rss + " does not look like a valid URL. Please correct it and try again");
+            }
+        });
+
+        $('#btn_new_subscriber_deleterss').click(function (event) {
+            $('#new_subscriber_rsslist option:selected').remove();
+        });
     });
 
     function getUserData() {
         return userData;
     }
+
+    function validateURL(url) {
+        var regexp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
+        return url.match(regexp);
+    }
+
 </script>
 
 <div class="container-fluid">
@@ -146,7 +151,7 @@
 						Last logged in: 2018-20-27 18:25:67
 					</div>
                 </div>
-                <div class="col-md-4 col-sm-4 placeholder" style="background-color: #f0ad4e; border-radius: 70%"">
+                <div class="col-md-4 col-sm-4 placeholder" style="background-color: #f0ad4e; border-radius: 70%">
                     <div id="dashboard_subscribers_data">
                         <h4>Number of subscribers: 2</h4>
                     </div>
@@ -227,6 +232,37 @@
                     </table>
                 </div>
             </section>
+    <section>
+        <form method="get" id="new_subscriber_form" action="#">
+            <div class="form-group">
+                <label for="new_subscriber_email">Email</label>
+                <input type="email" id="new_subscriber_email" required class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label for="new_subscriber_name">Name</label>
+                <input type="text" id="new_subscriber_name" required class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label for="new_subscriber_rsslist">Subscriptions</label>
+                <select class="form-control" id="new_subscriber_rsslist" size="5"></select>
+                <div class="form-group">
+                    <label for="new_subscriber_addrss" class="control-label">Add new subscription
+                        (RSS):</label>
+                    <input type="url" class="form-control" id="new_subscriber_addrss"/>
+                    <div class="btn-group-xs" role="group">
+                        <button type="button" class="btn btn-primary" id="btn_new_subscriber_addrss">+
+                        </button>
+                        <button type="button" class="btn btn-primary" id="btn_new_subscriber_deleterss">
+                            -
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary"/>
+            </div>
+        </form>
+    </section>
         </main>
     </div>
 

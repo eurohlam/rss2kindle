@@ -115,10 +115,18 @@
 
         $('#btn_update_subscriber_addrss').click(function (event) {
             var rss = $('#update_subscriber_addrss').val();
+            $('#update_subscriber_addrss').popover('destroy');
             if (validateURL(rss))
                 $('#update_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
-            else
-                alert(rss + " does not look like a valid URL. Please correct it and try again");
+            else {
+                $('#update_subscriber_addrss').popover(
+                    {
+                        content: rss + ' does not look like a valid URL. Please correct it and try again',
+                        trigger: 'manual',
+                        placement: 'top auto'
+                    });
+                $('#update_subscriber_addrss').popover('show');
+            }
         });
 
         $('#btn_update_subscriber_deleterss').click(function (event) {
@@ -164,15 +172,29 @@
 
         //update subscriber on submit
         $('#update_subscriber_form').submit(function (e) {
+            e.preventDefault();
             var email = $('#update_subscriber_email').val();
             var name = $('#update_subscriber_name').val();
             var status = $('#update_subscriber_status').val();
+            //validate rss list
+            $('#update_subscriber_rsslist').popover('destroy');
+            if ($('#update_subscriber_rsslist option').length === 0) {
+                $('#update_subscriber_rsslist').popover(
+                    {
+                        content: 'At least one RSS is required',
+                        trigger: 'manual',
+                        placement: 'top auto'
+                    });
+                $('#update_subscriber_rsslist').popover('show');
+
+                return false;
+            }
+
             var updateJson = '{' +
                 'email: "' + email + '",' +
                 'name: "' + name + '",' +
                 'status: "' + status + '",' +
                 'rsslist: [ ';
-            e.preventDefault();
             $('#update_subscriber_rsslist option').each(function () {
                 updateJson += '{ rss: "' + $(this).val() + '", status: "active"},';
             });
@@ -194,11 +216,10 @@
                     showAlert('error', 'Subscriber <strong>' + name + '</strong> update fail');
                     return false;
                 })
-                .always(function (){
+                .always(function () {
                     $('#updateModal').modal('hide');
                     reloadSubscribersTable();
                 });
-
         });
 
         //suspend subscriber on submit
@@ -216,7 +237,7 @@
                     showAlert('error', 'Subscriber <strong>' + name + '</strong> suspending fail');
                     return false;
                 })
-                .always(function (){
+                .always(function () {
                     $('#suspendModal').modal('hide');
                     reloadSubscribersTable();
                 });
@@ -237,7 +258,7 @@
                     showAlert('error', 'Subscriber <strong>' + name + '</strong> resuming fail');
                     return false;
                 })
-                .always(function (){
+                .always(function () {
                     $('#resumeModal').modal('hide');
                     reloadSubscribersTable();
                 });
@@ -245,10 +266,39 @@
         });
 
         //add new subscriber on submit
-        $('#new_subscriber_form').submit(function () {
+        $('#new_subscriber_form').submit(function (e) {
+            e.preventDefault();
             var email = $('#new_subscriber_email').val();
             var name = $('#new_subscriber_name').val();
             var status = $('#new_subscriber_status').val();
+            //validate email
+            $('#new_subscriber_email').popover('destroy');
+            $('#new_subscriber_rsslist').popover('destroy');
+            $.each(userData.subscribers, function (i, item) {
+                if (item.email === email) {
+                    $('#new_subscriber_email').popover(
+                        {
+                            content: 'Subscriber with email ' + email + ' already exists',
+                            trigger: 'manual',
+                            placement: 'bottom auto'
+                        });
+                    $('#new_subscriber_email').popover('show');
+
+                    return false;
+                }
+            });
+            //validate rss list
+            if ($('#new_subscriber_rsslist option').length === 0) {
+                $('#new_subscriber_rsslist').popover(
+                    {
+                        content: 'At least one RSS is required',
+                        trigger: 'manual',
+                        placement: 'top auto'
+                    });
+                $('#new_subscriber_rsslist').popover('show');
+
+                return false;
+            }
             var updateJson = '{' +
                 'email: "' + email + '",' +
                 'name: "' + name + '",' +
@@ -274,15 +324,26 @@
                 .fail(function () {
                     showAlert('error', 'New subscriber <strong>' + name + '</strong> creation fail');
                     return false;
+                })
+                .always(function () {
+                    reloadSubscribersTable();
                 });
         });
 
         $('#btn_new_subscriber_addrss').click(function (event) {
             var rss = $('#new_subscriber_addrss').val();
+            $('#new_subscriber_addrss').popover('destroy');
             if (validateURL(rss))
                 $('#new_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
-            else
-                alert(rss + " does not look like a valid URL. Please correct it and try again");
+            else {
+                $('#new_subscriber_addrss').popover(
+                    {
+                        content: rss + ' does not look like a valid URL. Please correct it and try again',
+                        trigger: 'manual',
+                        placement: 'top auto'
+                    });
+                $('#new_subscriber_addrss').popover('show');
+            }
         });
 
         $('#btn_new_subscriber_deleterss').click(function (event) {
@@ -310,16 +371,15 @@
                     showAlert('error', 'Subscriber <strong>' + name + '</strong> removing fail');
                     return false;
                 })
-                .always(function (){
+                .always(function () {
                     $('#removeModal').modal('hide');
                     reloadSubscribersTable();
                 });
-
         });
 
         //Show ajax error messages
         $(document).ajaxError(function (event, request, settings, thrownError) {
-            showAlert('error', 'Ajax error: code:' + request.status + " calling url: " + settings.url + " method: " + settings.type + " " + thrownError);
+            showAlert('error', 'Ajax error: code:' + request.status + ": " + request.responseText + " calling url: " + settings.url + " method: " + settings.type + " " + thrownError);
         });
 
 
@@ -386,7 +446,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="new_subscriber_rsslist">Subscriptions</label>
-                                <select class="form-control" id="new_subscriber_rsslist" size="10"></select>
+                                <select class="form-control" id="new_subscriber_rsslist" size="5"></select>
                                 <div class="form-group">
                                     <label for="new_subscriber_addrss" class="control-label">Add new subscription
                                         (RSS):</label>
@@ -437,11 +497,11 @@
                     </div>
                     <div class="form-group">
                         <label for="update_subscriber_name" class="control-label">Subscriber name:</label>
-                        <input type="text" class="form-control" id="update_subscriber_name"/>
+                        <input type="text" class="form-control" id="update_subscriber_name" required/>
                     </div>
                     <div class="form-group">
                         <label for="update_subscriber_rsslist" class="control-label">Subscriptions:</label>
-                        <select class="form-control" id="update_subscriber_rsslist" size="10"></select>
+                        <select class="form-control" id="update_subscriber_rsslist" size="7"></select>
                         <div class="form-group">
                             <label for="update_subscriber_addrss" class="control-label">Add new subscription
                                 (RSS):</label>
@@ -505,7 +565,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary"" name="btn_resume">Resume</button>
+                    <button type="submit" class="btn btn-primary"
+                    " name="btn_resume">Resume</button>
                 </div>
             </form>
         </div>

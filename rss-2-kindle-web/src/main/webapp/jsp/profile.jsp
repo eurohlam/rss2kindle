@@ -58,6 +58,7 @@
             var rssNumber = 0;
             var suspendedSubscribersnumber = 0;
             var deadRssNumber = 0;
+            var offlineRssNumber = 0;
 
             $.each(data.subscribers, function (i, item) {
                 var tr;
@@ -81,6 +82,10 @@
                         tr = '<tr class="danger"><td>';
                         deadRssNumber++;
                     }
+                    else if (rss[j].status === 'offline') {
+                        tr = '<tr class="warning"><td>';
+                        offlineRssNumber++;
+                    }
                     else
                         tr = '<tr class="active"><td>';
 
@@ -100,7 +105,7 @@
             $('#dashboard_user_info').append(
                 'Created: ' + data.dateCreated + '<br>' +
                 'Modified: ' + data.dateModified + '<br>' +
-                'Last logged in: ' + data.previousLogin
+                'Last logged in: ' + data.previousLogin + '<br>'
             );
 
             $('#dashboard_subscribers_status').append('<h4>Number of subscribers: ' + data.subscribers.length + '</h4>');
@@ -111,8 +116,9 @@
 
             $('#dashboard_subscriptions_status').append('<h4>Number of subscriptions: ' + rssNumber + '</h4>');
             $('#dashboard_subscriptions_info').append(
-                'Active subscriptions:' + (rssNumber - deadRssNumber) + '<br>' +
-                'Dead subscriptions: ' + deadRssNumber + '<br><br>'
+                'Active subscriptions:' + (rssNumber - deadRssNumber - offlineRssNumber) + '<br>' +
+                'Dead subscriptions: ' + deadRssNumber + '<br>' +
+                'Offline subscriptions: ' + offlineRssNumber +'<br>'
             );
 
             $('#subscribers_view').append(subscribersTable);
