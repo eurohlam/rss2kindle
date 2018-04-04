@@ -271,34 +271,45 @@
             var email = $('#new_subscriber_email').val();
             var name = $('#new_subscriber_name').val();
             var status = $('#new_subscriber_status').val();
+
+            //create validation popovers
+            $('#new_subscriber_email').popover(
+                {
+                    content: 'Subscriber with such email already exists',
+                    trigger: 'manual',
+                    placement: 'bottom auto'
+                });
+            $('#new_subscriber_rsslist').popover(
+                {
+                    content: 'At least one RSS is required',
+                    trigger: 'manual',
+                    placement: 'top auto'
+                });
+
             //validate email
-            $('#new_subscriber_email').popover('destroy');
-            $('#new_subscriber_rsslist').popover('destroy');
+            var isEmailValid = true;
             $.each(userData.subscribers, function (i, item) {
                 if (item.email === email) {
-                    $('#new_subscriber_email').popover(
-                        {
-                            content: 'Subscriber with email ' + email + ' already exists',
-                            trigger: 'manual',
-                            placement: 'bottom auto'
-                        });
-                    $('#new_subscriber_email').popover('show');
-
+                    //we need to update content directly via jquery
+                    $('#new_subscriber_email').data('bs.popover').options.content='Subscriber with email ' + email + ' already exists';
+                    isEmailValid = false;
                     return false;
                 }
             });
-            //validate rss list
-            if ($('#new_subscriber_rsslist option').length === 0) {
-                $('#new_subscriber_rsslist').popover(
-                    {
-                        content: 'At least one RSS is required',
-                        trigger: 'manual',
-                        placement: 'top auto'
-                    });
-                $('#new_subscriber_rsslist').popover('show');
-
+            if (!isEmailValid) {
+                $('#new_subscriber_email').popover('show');
                 return false;
             }
+            $('#new_subscriber_email').popover('hide');
+
+            //validate rss list
+            if ($('#new_subscriber_rsslist option').length === 0) {
+                $('#new_subscriber_rsslist').popover('show');
+                return false;
+            }
+            $('#new_subscriber_rsslist').popover('hide');
+
+            //prepare json
             var updateJson = '{' +
                 'email: "' + email + '",' +
                 'name: "' + name + '",' +

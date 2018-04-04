@@ -16,7 +16,7 @@
         <!-- let Camel use those @Component scanned route builders -->
         <camel:contextScan/>
 
-        <camel:errorHandler id="defErrorHandler" type="DeadLetterChannel" deadLetterUri="deadLetterErrorHandler">
+        <camel:errorHandler id="defErrorHandler" type="DeadLetterChannel" deadLetterUri="seda:deadLetterErrorHandler">
             <camel:redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="5000" retryAttemptedLogLevel="ERROR"/>
         </camel:errorHandler>
 
