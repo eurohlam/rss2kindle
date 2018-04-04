@@ -103,6 +103,7 @@
 
             $('#dashboard_user_status').append('<h4>User status: ' +data.status + '</h4>');
             $('#dashboard_user_info').append(
+                'Contact email: ' + data.email + '<br>' +
                 'Created: ' + data.dateCreated + '<br>' +
                 'Modified: ' + data.dateModified + '<br>' +
                 'Last logged in: ' + data.previousLogin + '<br>'
@@ -111,14 +112,14 @@
             $('#dashboard_subscribers_status').append('<h4>Number of subscribers: ' + data.subscribers.length + '</h4>');
             $('#dashboard_subscribers_info').append(
                 'Active subscribers:' + (data.subscribers.length - suspendedSubscribersnumber) + '<br>' +
-                'Suspended subscribers: ' + suspendedSubscribersnumber + '<br><br>'
+                'Suspended subscribers: ' + suspendedSubscribersnumber + '<br><br><br>'
             );
 
             $('#dashboard_subscriptions_status').append('<h4>Number of subscriptions: ' + rssNumber + '</h4>');
             $('#dashboard_subscriptions_info').append(
                 'Active subscriptions:' + (rssNumber - deadRssNumber - offlineRssNumber) + '<br>' +
                 'Dead subscriptions: ' + deadRssNumber + '<br>' +
-                'Offline subscriptions: ' + offlineRssNumber +'<br>'
+                'Offline subscriptions: ' + offlineRssNumber +'<br><br>'
             );
 
             $('#subscribers_view').append(subscribersTable);

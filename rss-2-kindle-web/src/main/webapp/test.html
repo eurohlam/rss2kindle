@@ -27,8 +27,47 @@
 
 <body>
 <script>
-    var rootURL = 'http://localhost:8080/rss2kindle/rest/profile/euro';
-    var userData;
+    var rootURL = 'http://localhost:8080/rss2kindle/rest/profile/';
+    var username="euro";
+    var userData={
+        "_id" : "8a60e197-3ad8-4581-83e5-09c17bd3ee96" ,
+        "username" : "test" ,
+        "password" : "test" ,
+        "dateCreated" : "2017-11-13" ,
+        "status" : "active" ,
+        "subscribers" :
+            [
+                {
+                    "email" : "test@gmail.com" ,
+                    "name" : "test" ,
+                    "rsslist" :
+                        [
+                            { "rss" : "test.org/feed" ,
+                                "status" : "active"}
+                        ] ,
+                    "settings" : {
+                        "starttime" : "2017-11-13" ,
+                        "timeout" : "24"
+                    } ,
+                    "status" : "active"
+                },
+                {
+                    "email" : "test1@gmail.com" ,
+                    "name" : "test" ,
+                    "rsslist" :
+                        [
+                            { "rss" : "test.org/feed" ,
+                                "status" : "active"}
+                        ] ,
+                    "settings" : {
+                        "starttime" : "2017-11-13" ,
+                        "timeout" : "24"
+                    } ,
+                    "status" : "active"
+                }
+            ] ,
+        "roles" : [ "ROLE_USER"]
+    };
 
     $(document).ready(function () {
         //add new subscriber on submit
@@ -37,6 +76,45 @@
             var email = $('#new_subscriber_email').val();
             var name = $('#new_subscriber_name').val();
             var status = $('#new_subscriber_status').val();
+
+            //create validation popovers
+            $('#new_subscriber_email').popover(
+                {
+                    content: 'Subscriber with such email already exists',
+                    trigger: 'manual',
+                    placement: 'bottom auto'
+                });
+            $('#new_subscriber_rsslist').popover(
+                {
+                    content: 'At least one RSS is required',
+                    trigger: 'manual',
+                    placement: 'top auto'
+                });
+
+            //validate email
+            var isEmailValid = true;
+            $.each(userData.subscribers, function (i, item) {
+                if (item.email === email) {
+                    console.log(item.email);
+                    $('#new_subscriber_email').data('bs.popover').options.content='Subscriber with email ' + email + ' already exists';
+                    isEmailValid = false;
+
+                    return false;
+                }
+            });
+            if (!isEmailValid) {
+                $('#new_subscriber_email').popover('show');
+                return false;
+            }
+            $('#new_subscriber_email').popover('hide');
+            //validate rss list
+            if ($('#new_subscriber_rsslist option').length === 0) {
+                $('#new_subscriber_rsslist').popover('show');
+
+                return false;
+            }
+            $('#new_subscriber_rsslist').popover('hide');
+            console.log("Why we are here?");
             var updateJson = '{' +
                 'email: "' + email + '",' +
                 'name: "' + name + '",' +
@@ -63,7 +141,7 @@
                     showAlert('error', 'New subscriber <strong>' + name + '</strong> creation fail');
                     return false;
                 })
-                .always(function (){
+                .always(function () {
                     reloadSubscribersTable();
                 });
         });
@@ -98,6 +176,21 @@
     function validateURL(url) {
         var regexp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
         return url.match(regexp);
+    }
+    function showAlert(type, text) {
+        if (type == 'error') {
+            $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
+                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                + '<strong>Error! </strong>' + text + '</div>');
+        } else if (type == 'warning') {
+            $('#alerts_panel').html('<div class="alert alert-warning alert-dismissible" role="alert">'
+                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                + '<strong>Warning! </strong>' + text + '</div>');
+        } else {
+            $('#alerts_panel').html('<div class="alert alert-success alert-dismissible" role="alert">'
+                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                + '<strong>Success! </strong> ' + text + '</div>');
+        }
     }
 
 </script>
