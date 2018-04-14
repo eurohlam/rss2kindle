@@ -6,6 +6,10 @@ services:
     container_name: mongo_act
     ports:
       - "27017:27017/tcp"
+  mailhog:
+    build:
+      context: ./mailhog
+    container_name: mailhog_act
   tomcat:
     build: 
       context: ./tomcat
@@ -14,3 +18,4 @@ services:
       - "8080:8080/tcp"
     links:
       - "mongo:localhost"
+      - "mailhog:localhost"
