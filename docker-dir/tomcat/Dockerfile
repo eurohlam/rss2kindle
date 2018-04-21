@@ -7,6 +7,7 @@ COPY resources/manager/META-INF/context.xml /usr/local/tomcat/webapps/manager/ME
 COPY resources/host-manager/META-INF/context.xml /usr/local/tomcat/webapps/host-manager/META-INF/context.xml
 
 COPY resources/rss2kindle.war /usr/local/tomcat/webapps/rss2kindle.war
+COPY resources/r2kweb.war /usr/local/tomcat/webapps/r2kweb.war
 #VOLUME ["/usr/local/tomcat/webapps", "/usr/local/tomcat/conf", "/usr/local/tomcat/logs"]
 
 EXPOSE 8080
