@@ -26,5 +26,9 @@ services:
       - "8080:8080/tcp"
     networks:
       - rss2kindle
+    volumes:
+      - ../kindle:/usr/local/kindle
+      - ../logs:/usr/local/tomcat/logs:rw
+      - ../data:/usr/local/tomcat/data:rw
 networks:
   rss2kindle:
