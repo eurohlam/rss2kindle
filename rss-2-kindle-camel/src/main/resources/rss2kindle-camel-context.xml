@@ -109,6 +109,9 @@
             <camel:log message=" ${header.email}" loggingLevel="DEBUG" logName="org.roag.camel.smtp"/>
             <camel:filter>
                 <camel:simple>${header.email} != null</camel:simple>
+                <camel:setHeader headerName="mobiFileName">
+                    <camel:javaScript>request.headers.get('mobiFile').replace(new RegExp('.*/','g'),'')</camel:javaScript>
+                </camel:setHeader>
                 <camel:setHeader headerName="feed">
                     <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('.*/\\w+@[\\w\\.]+/(.*)/.*','g'),'$1').replace(new RegExp('(https?)_', 'g'), '$1:').replace(new RegExp('_', 'g'), '/')</camel:javaScript>
                 </camel:setHeader>

@@ -6,16 +6,29 @@ services:
     container_name: mongo_act
     ports:
       - "27017:27017/tcp"
+    networks:
+      rss2kindle:
+        aliases:
+          - mongodb
   mailhog:
     build:
       context: ./mailhog
     container_name: mailhog_act
+    networks:
+      rss2kindle:
+        aliases:
+          - mailhog
   tomcat:
     build: 
       context: ./tomcat
     container_name: tomcat_act
     ports:
       - "8080:8080/tcp"
-    links:
-      - "mongo:localhost"
-      - "mailhog:localhost"
+    networks:
+      - rss2kindle
+    volumes:
+      - ../kindle:/usr/local/kindle
+      - ../logs:/usr/local/tomcat/logs:rw
+      - ../data:/usr/local/tomcat/data:rw
+networks:
+  rss2kindle:
