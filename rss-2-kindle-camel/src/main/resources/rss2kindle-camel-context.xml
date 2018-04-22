@@ -87,14 +87,16 @@
         </camel:route>
 
 
-
         <!--html to mobi transforming by kindlegen -->
         <camel:route id="kindlegen">
             <camel:from uri="seda:kindlegen"/>
             <camel:log message="Start kindlegen: {{kindlegen.path}} for file ${header.CamelFileName}" loggingLevel="DEBUG" logName="org.roag.camel.html2mobi"/>
             <camel:toD uri="exec:{{kindlegen.path}}?args={{storage.path.mobi}}${header.CamelFileName} {{kindlegen.home}}"/>
-            <camel:setHeader headerName="email">
+            <camel:setHeader headerName="name">
                 <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('/.*$','g'),'')</camel:javaScript>
+            </camel:setHeader>
+            <camel:setHeader headerName="email">
+                <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('.*/(\\w+@[\\w\\.]+).*','g'),'$1')</camel:javaScript>
             </camel:setHeader>
             <camel:setHeader headerName="mobiFile">
                 <camel:javaScript>'{{storage.path.mobi}}' +request.headers.get('CamelFileName').replace(new RegExp('opf','g'),'mobi')</camel:javaScript>
@@ -108,18 +110,18 @@
             <camel:filter>
                 <camel:simple>${header.email} != null</camel:simple>
                 <camel:setHeader headerName="feed">
-                    <camel:javaScript>request.headers.get('mobiFile').replace(new RegExp('.*/','g'),'')</camel:javaScript>
+                    <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('.*/\\w+@[\\w\\.]+/(.*)/.*','g'),'$1').replace(new RegExp('(https?)_', 'g'), '$1:').replace(new RegExp('_', 'g'), '/')</camel:javaScript>
                 </camel:setHeader>
                 <camel:setHeader headerName="attachment">
                     <camel:simple>${header.mobiFile}</camel:simple>
                 </camel:setHeader>
                 <camel:setBody>
-                    <camel:simple>Dear ${header.name}.\n\nPlease, have a look on updates from ${header.rss}.\n\nCheers\nEurohlam
+                    <camel:simple>Dear ${header.name}.\n\nPlease, have a look on updates from ${header.feed}.\n\nCheers\nEurohlam
                     </camel:simple>
                 </camel:setBody>
                 <camel:process ref="SMTPAttachmentProcessor"/>
                 <camel:log message="Send file ${header.mobiFile} to ${header.email}" loggingLevel="INFO" logName="org.roag.camel.smtp"/>
-                <camel:toD uri="{{smtp.uri}}?to=${header.email}&amp;from={{smtp.from}}&amp;subject=Update from ${header.rss}&amp;contentType=text/plain"/>
+                <camel:toD uri="{{smtp.uri}}?to=${header.email}&amp;from={{smtp.from}}&amp;subject=Update from ${header.feed}&amp;contentType=text/plain"/>
             </camel:filter>
         </camel:route>
 
