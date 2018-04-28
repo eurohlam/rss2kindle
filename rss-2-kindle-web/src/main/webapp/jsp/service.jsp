@@ -33,7 +33,7 @@
 </head>
 <body>
 <script>
-    var rootURL = 'rest/service/<%=username%>';
+    var rootURL = 'rest/service/${username}';
     $(document).ready(function () {
         $("#run_all").click(function () {
             runPollingForUser();

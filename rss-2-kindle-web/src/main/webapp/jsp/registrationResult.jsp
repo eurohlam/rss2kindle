@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,8 +40,8 @@
 
     <div class="jumbotron">
         <h1>Thank you for using RSS-2-KINDLE service!</h1>
-        <p class="lead">User <span style="color: red;"><%=request.getAttribute("username")%></span> has been registered successfully.
-            The confirmation will be sent to email <span style="color: red;"><%=request.getAttribute("email")%></span>.
+        <p class="lead">User <span style="color: red;">${username}</span> has been registered successfully.
+            The confirmation will be sent to email <span style="color: red;">${email}</span>.
         You can start working with your account right now if you sign in</p>
         <div class="row">
             <div class="col-lg-8">

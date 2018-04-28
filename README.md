@@ -12,6 +12,7 @@ and send resulted mobi-files by email.
 3. kindlegen. kindlegen is command-line tool for transformation of documents from xml-format to mobi-format
 kindlegen is developed and supported by amazon.  kindlegen has to be deployed independently. To download kindlegen go to https://www.amazon.com/gp/feature.html?docId=1000765211
 4. SMTP-server. Any SMTP-server that allows to send messages from external applications
+5. Java 1.8
 
 
 ## How to configure
@@ -55,22 +56,37 @@ To run whole environment:
     
 ## How to run
 
-* To run this project from within Tomcat
+* Web UI should be available by URL:
 
-Get CONTAINER_ID of tomcat
+        http://localhost:8080/r2kweb
+        
+* Tomcat admin console should be available by URL:
+        
+        http://localhost:8080
+        
+* MailHog Web UI should be available by URL:
+        
+        http://localhost:8025
+
+
+* Alternative way to get URL is by container IP:
+
+   Get CONTAINER_ID of tomcat
  
         docker ps  
 
-Get IP Address of tomcat
+   Get IP Address of tomcat
 
         docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $CONTAINER_ID
 
-Web UI will be available as
+   Web UI will be available as
 
         http://ip_address:8080/r2kweb
 
 
-* MailHog Web UI is available on port 8025. SMTP port is 1025 
+* MailHog SMTP port is 1025
+ 
+* MongoDB port is 27017 
 
 
 * To run this project from within Maven in command-line mode use

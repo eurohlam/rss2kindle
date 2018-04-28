@@ -34,7 +34,7 @@
 
 <body>
 <script>
-    var rootURL = 'rest/profile/<%=username%>';
+    var rootURL = 'rest/profile/${username}';
     var userData;
 
     $(document).ready(function () {
@@ -141,7 +141,7 @@
             </ul>
         </nav>
         <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <h1 class="page-header"><%=username%> dashboard</h1>
+            <h1 class="page-header">${username} dashboard</h1>
             <section class="row text-center placeholders">
                 <div class="col-md-4 col-sm-4 placeholder" style="background-color: #c7ddef">
                     <div id="dashboard_user_status"></div>

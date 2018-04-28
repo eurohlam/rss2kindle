@@ -36,7 +36,7 @@
 </head>
 <body>
 <script>
-    var username = '<%=username%>';
+    var username = '${username}';
     var rootURL = 'rest/profile/';
     var userData;
     var csrf_token = $("meta[name='_csrf']").attr("content");
