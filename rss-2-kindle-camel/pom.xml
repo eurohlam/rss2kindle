@@ -118,16 +118,5 @@
         </plugins>
     </build>
 
-    <distributionManagement>
-        <site>
-            <id>rss2kindle</id>
-            <url>http://localhost:8080</url>
-        </site>
-        <!--repository>
-          <id>internal.repo</id>
-          <name>MyCo Internal Repository</name>
-          <url>http://localhost:8080</url>
-        </repository-->
-    </distributionManagement>
 
 </project>

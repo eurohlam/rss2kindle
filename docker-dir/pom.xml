@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.roag</groupId>
+        <artifactId>rss-2-kindle</artifactId>
+        <version>2.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>rss-2-kindle-docker</artifactId>
+    <packaging>pom</packaging>
+
+    <dependencies>
+        <!--internal dependencies -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>rss-2-kindle-rest-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>rss-2-kindle-web</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <artifactItems>
+                        <artifactItem>
+                            <groupId>org.roag</groupId>
+                            <artifactId>rss-2-kindle-rest-api</artifactId>
+                            <version>${project.version}</version>
+                            <type>war</type>
+                            <overWrite>true</overWrite>
+                            <!--<outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>-->
+                            <destFileName>rss2kindle.war</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>org.roag</groupId>
+                            <artifactId>rss-2-kindle-web</artifactId>
+                            <version>${project.version}</version>
+                            <type>war</type>
+                            <overWrite>true</overWrite>
+                            <!--<outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>-->
+                            <destFileName>r2kweb.war</destFileName>
+                        </artifactItem>
+                    </artifactItems>
+                    <outputDirectory>${basedir}/../${docker.artifact.directory}</outputDirectory>
+                    <!--<overWriteReleases>false</overWriteReleases>-->
+                    <!--<overWriteSnapshots>true</overWriteSnapshots>-->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
