@@ -27,6 +27,7 @@ services:
     container_name: tomcat_act
     ports:
       - "8080:8080"
+      - "8443:8443"
     networks:
       - rss2kindle
     volumes:

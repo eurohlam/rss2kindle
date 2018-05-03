@@ -41,14 +41,22 @@ There are three containers that have to be run:
 * Tomcat 9.0. Dockerfile is located into docker-dir/tomcat. https://hub.docker.com/_/tomcat/
 * MailHog 1.0. Dockerfile is located into docker-dir/mailhog. https://hub.docker.com/r/mailhog/mailhog/
 
-To run whole environment:
+To run whole environment using docker:
 
-* copy war files into docker-dir/tomcat
+* build the project:
         
-        cp rss-2-kindle-web/target/r2kweb.war docker-dir/tomcat
-        cp rss-2-kindle-rest-api/target/rss2kindle.war docker-dir/tomcat
-
-* run docker
+        mvn clean install
+        
+* make sure that war files have been copied to docker folder:
+        
+        docker-dir/tomcat/resources/rss2kindle.war
+        docker-dir/tomcat/resources/r2kweb.war
+        
+* go to docker directory
+        
+        cd docker-dir
+        
+* run docker:
  
         docker-compose build
         docker-compose up 

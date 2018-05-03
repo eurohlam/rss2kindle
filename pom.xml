@@ -30,6 +30,8 @@
     <resources.plugin.version>2.6</resources.plugin.version>
     <compiler.plugin.version>3.5.1</compiler.plugin.version>
     <checkstyle.plugin.version>2.17</checkstyle.plugin.version>
+    <!-- Docker resources -->
+    <docker.artifact.directory>docker-dir/tomcat/resources</docker.artifact.directory>
   </properties>
 
 
@@ -39,6 +41,7 @@
     <module>rss-2-kindle-camel</module>
     <module>rss-2-kindle-rest-api</module>
     <module>rss-2-kindle-web</module>
+    <module>docker-dir</module>
   </modules>
 
   <dependencies>
@@ -105,7 +108,6 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
-    <!--<finalName>rss2kindle</finalName>-->
 
     <plugins>
       <plugin>
