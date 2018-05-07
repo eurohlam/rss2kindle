@@ -7,20 +7,14 @@
     <title>RSS-2-Kindle Service</title>
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
-    <!-- JQuery -->
-    <script src="js/jquery.min.js"></script>
+    <!-- Custom fonts for this template -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
 
     <!-- Bootstrap -->
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="bootstrap/js/bootstrap.min.js"></script>
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
 
     <!-- Custom css -->
     <%--<link href="css/sticky-footer.css" rel="stylesheet">--%>
@@ -68,10 +62,15 @@
     </div>
 
     <footer class="footer">
-        <p>&copy; Created by Eurohlam. 2017</p>
+        <p>Copyright &copy; Roundkick Studio. 2018</p>
     </footer>
 </div> <!-- /container -->
 
+<!-- Bootstrap core JavaScript -->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Custom scripts for this template -->
+<script src="js/freelancer.min.js"></script>
 </body>
 
 </html>
