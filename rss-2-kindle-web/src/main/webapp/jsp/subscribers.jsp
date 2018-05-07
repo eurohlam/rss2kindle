@@ -17,6 +17,11 @@
     <!-- JQuery -->
     <script src="../js/jquery.min.js"></script>
 
+    <!-- Custom Fonts -->
+    <link href="../font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
     <!-- Bootstrap -->
     <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="../bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
@@ -28,6 +33,11 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
+
+    <!-- Theme CSS -->
+    <link href="../css/freelancer.css" rel="stylesheet">
+    <!-- Theme JavaScript -->
+    <script src="../js/freelancer.min.js"></script>
 
     <!-- Custom css -->
     <link href="../css/sticky-footer.css" rel="stylesheet">

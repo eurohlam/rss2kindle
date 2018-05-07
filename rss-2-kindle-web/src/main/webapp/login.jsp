@@ -8,7 +8,7 @@
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
     <!-- JQuery -->
-    <script src="js/jquery-3.1.1.js"></script>
+    <script src="js/jquery.min.js"></script>
 
     <!-- Bootstrap -->
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -35,8 +35,8 @@
         <nav>
             <ul class="nav nav-pills pull-right">
                 <li role="presentation" class="active"><a href="index.html">Home</a></li>
-                <li role="presentation"><a href="#">About</a></li>
-                <li role="presentation"><a href="#">Contact</a></li>
+                <li role="presentation"><a href="index.html#about">About</a></li>
+                <li role="presentation"><a href="index.html#contact">Contact</a></li>
             </ul>
         </nav>
         <h3 class="text-muted">RSS-2-KINDLE</h3>
