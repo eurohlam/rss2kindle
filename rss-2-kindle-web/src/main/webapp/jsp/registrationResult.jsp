@@ -6,7 +6,7 @@
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
     <!-- JQuery -->
-    <script src="../js/jquery-3.1.1.js"></script>
+    <script src="../js/jquery.min.js"></script>
 
     <!-- Bootstrap -->
     <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
