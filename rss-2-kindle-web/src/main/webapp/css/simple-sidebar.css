@@ -17,7 +17,7 @@ body {
 }
 
 #wrapper.toggled {
-  padding-left: 250px;
+  padding-left: 0;
 }
 
 #sidebar-wrapper {
@@ -28,7 +28,7 @@ body {
   height: 100%;
   margin-left: -250px;
   overflow-y: auto;
-  background: #000;
+  background: #2C3E50;
   -webkit-transition: all 0.5s ease;
   -moz-transition: all 0.5s ease;
   -o-transition: all 0.5s ease;
@@ -43,6 +43,7 @@ body {
   width: 100%;
   position: absolute;
   padding: 15px;
+  top: 100px;
 }
 
 #wrapper.toggled #page-content-wrapper {
@@ -55,11 +56,11 @@ body {
 
 .sidebar-nav {
   position: absolute;
-  top: 0;
   width: 250px;
   margin: 0;
   padding: 0;
   list-style: none;
+  top: 20%
 }
 
 .sidebar-nav li {
