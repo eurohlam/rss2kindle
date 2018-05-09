@@ -14,7 +14,6 @@
 
     <!-- Bootstrap -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="vendor/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
 
     <!-- Custom css -->
     <%--<link href="css/sticky-footer.css" rel="stylesheet">--%>
@@ -70,7 +69,7 @@
 <script src="vendor/jquery/jquery.min.js"></script>
 <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- Custom scripts for this template -->
-<script src="js/freelancer.min.js"></script>
+<%--<script src="js/freelancer.min.js"></script>--%>
 </body>
 
 </html>

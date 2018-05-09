@@ -26,11 +26,10 @@
     <link href="../css/freelancer.css" rel="stylesheet">
 
     <!-- Custom css -->
-    <link href="../css/sticky-footer.css" rel="stylesheet">
     <link href="../css/simple-sidebar.css" rel="stylesheet">
 
     <!-- JQuery -->
-    <script src="../vendor/jquery/jquery.js"></script>
+    <script src="../vendor/jquery/jquery.min.js"></script>
 
 </head>
 <body>
@@ -424,8 +423,8 @@
     <div id="wrapper" class="row">
         <aside id="sidebar-wrapper">
             <ul class="nav nav-pills nav-stacked sidebar-nav">
-                <li role="presentation" class="active"><a href="#">My Profile</a></li>
-                <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
+                <li role="presentation" class="active"><a href="profile">My Profile</a></li>
+                <li role="presentation"><a href="#">Subscriber Management</a></li>
                 <li role="presentation"><a href="service">Services</a></li>
             </ul>
         </aside>
@@ -493,9 +492,9 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="modal-title" id="updateModalLabel">Update subscriber and subscriptions</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="updateModalLabel">Update subscriber and subscriptions</h4>
             </div>
             <form method="get" action="#" id="update_subscriber_form">
                 <div class="modal-body">
@@ -539,9 +538,9 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="modal-title" id="suspendModalLabel">Suspend subscriber</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="suspendModalLabel">Suspend subscriber</h4>
             </div>
             <form method="get" id="suspend_subscriber_form" action="#">
                 <div class="modal-body">
@@ -563,9 +562,9 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="modal-title" id="resumeModalLabel">Suspend subscriber</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="resumeModalLabel">Suspend subscriber</h4>
             </div>
             <form method="get" id="resume_subscriber_form" action="#">
                 <div class="modal-body">
@@ -575,8 +574,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary"
-                    " name="btn_resume">Resume</button>
+                    <button type="submit" class="btn btn-primary" name="btn_resume">Resume</button>
                 </div>
             </form>
         </div>
@@ -588,9 +586,9 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="modal-title" id="removeModalLabel">Remove subscriber</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="removeModalLabel">Remove subscriber</h4>
             </div>
             <form method="get" id="remove_subscriber_form" action="#">
                 <div class="modal-body">

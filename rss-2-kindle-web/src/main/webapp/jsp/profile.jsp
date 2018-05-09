@@ -24,10 +24,9 @@
 
     <!-- Custom css -->
     <link href="../css/simple-sidebar.css" rel="stylesheet">
-    <link href="../css/sticky-footer.css" rel="stylesheet">
 
     <!-- JQuery -->
-    <script src="../vendor/jquery/jquery.js"></script>
+    <script src="../vendor/jquery/jquery.min.js"></script>
 </head>
 
 <body>
@@ -99,7 +98,7 @@
             subscribersTable += '</tbody></table>';
             rssTable += '</tbody></table>';
 
-            $('#dashboard_user_status').append('<h4>User status: ' +data.status + '</h4>');
+            $('#dashboard_user_status').append('<h5>User status: ' +data.status + '</h5>');
             $('#dashboard_user_info').append(
                 'Contact email: ' + data.email + '<br>' +
                 'Created: ' + data.dateCreated + '<br>' +
@@ -107,13 +106,13 @@
                 'Last logged in: ' + data.previousLogin + '<br>'
             );
 
-            $('#dashboard_subscribers_status').append('<h4>Number of subscribers: ' + data.subscribers.length + '</h4>');
+            $('#dashboard_subscribers_status').append('<h5>Number of subscribers: ' + data.subscribers.length + '</h5>');
             $('#dashboard_subscribers_info').append(
                 'Active subscribers:' + (data.subscribers.length - suspendedSubscribersnumber) + '<br>' +
                 'Suspended subscribers: ' + suspendedSubscribersnumber + '<br><br><br>'
             );
 
-            $('#dashboard_subscriptions_status').append('<h4>Number of subscriptions: ' + rssNumber + '</h4>');
+            $('#dashboard_subscriptions_status').append('<h5>Number of subscriptions: ' + rssNumber + '</h5>');
             $('#dashboard_subscriptions_info').append(
                 'Active subscriptions:' + (rssNumber - deadRssNumber - offlineRssNumber) + '<br>' +
                 'Dead subscriptions: ' + deadRssNumber + '<br>' +
@@ -143,26 +142,26 @@
             <section class="row text-center placeholders">
                 <div class="col-md-4 col-sm-4 placeholder" style="background-color: #c7ddef">
                     <div id="dashboard_user_status"></div>
-                    <h3>User info</h3>
+                    <h4>User info</h4>
                     <div class="text-muted" id="dashboard_user_info"></div>
                 </div>
                 <div class="col-md-4 col-sm-4 placeholder" style="background-color: #f0ad4e">
                     <div id="dashboard_subscribers_status"></div>
-                    <h3>Subscribers</h3>
+                    <h4>Subscribers</h4>
                     <div class="text-muted" id="dashboard_subscribers_info"></div>
                 </div>
                 <div class="col-md-4 col-sm-4 placeholder" style="background-color: #c9e2b3">
                     <div id="dashboard_subscriptions_status"></div>
-                    <h3>Subscriptions</h3>
+                    <h4>Subscriptions</h4>
                     <div class="text-muted" id="dashboard_subscriptions_info"></div>
                 </div>
             </section>
             <section class="row placeholders">
                 <div class="col-md-6 placeholder text-left" id="subscribers_view">
-                    <h2 class="sub-header">Subscribers</h2>
+                    <h3 class="sub-header">Subscribers</h3>
                 </div>
                 <div class="col-md-6 placeholder text-left" id="subscriptions_view">
-                    <h2 class="sub-header">Subscriptions</h2>
+                    <h3 class="sub-header">Subscriptions</h3>
                 </div>
             </section>
         </main>
@@ -170,7 +169,7 @@
 
 </div>
 
-<%@include file="footer.jsp" %>
+<jsp:include page="footer.jsp" />
 
 <!-- Bootstrap core JavaScript -->
 <%--<script src="../vendor/jquery/jquery.min.js"></script>--%>

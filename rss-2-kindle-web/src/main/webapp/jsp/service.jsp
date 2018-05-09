@@ -23,7 +23,6 @@
     <link href="../css/freelancer.min.css" rel="stylesheet">
 
     <!-- Custom css -->
-    <link href="../css/sticky-footer.css" rel="stylesheet">
     <link href="../css/simple-sidebar.css" rel="stylesheet">
 
     <!-- JQuery -->
@@ -62,9 +61,9 @@
     <div id="wrapper" class="row">
         <aside id="sidebar-wrapper">
             <ul class="nav nav-pills nav-stacked sidebar-nav">
-                <li role="presentation" class="active"><a href="#">My Profile</a></li>
+                <li role="presentation" class="active"><a href="profile">My Profile</a></li>
                 <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
-                <li role="presentation"><a href="service">Services</a></li>
+                <li role="presentation"><a href="#">Services</a></li>
             </ul>
         </aside>
         <main id="page-content-wrapper">
@@ -86,7 +85,9 @@
 
 </div>
 
-<%@include file="footer.jsp"%>
+<jsp:include page="footer.jsp">
+    <jsp:param name="stickyFooter" value="sticky-footer"/>
+</jsp:include>
 
 <!-- Bootstrap core JavaScript -->
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

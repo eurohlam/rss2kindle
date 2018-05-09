@@ -4,10 +4,6 @@
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-simple-sidebar/blob/master/LICENSE)
  */
 
-body {
-  overflow-x: hidden;
-}
-
 #wrapper {
   padding-left: 250px;
   -webkit-transition: all 0.5s ease;
@@ -120,4 +116,12 @@ body {
     position: relative;
     margin-right: 0;
   }
+}
+
+.sticky-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  /*height: 60px;*/
 }
