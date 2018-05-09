@@ -11,23 +11,23 @@
     <title>RSS-2-KINDLE Run Services </title>
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
+    <!-- Bootstrap -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
     <!-- Custom Fonts -->
     <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
 
-    <!-- Bootstrap -->
-    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../vendor/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
-
     <!-- Theme CSS -->
-    <link href="../css/freelancer.css" rel="stylesheet">
-    <!-- Theme JavaScript -->
-    <script src="../js/freelancer.min.js"></script>
+    <link href="../css/freelancer.min.css" rel="stylesheet">
 
     <!-- Custom css -->
     <link href="../css/sticky-footer.css" rel="stylesheet">
-    <link href="../css/profile-theme.css" rel="stylesheet">
+    <link href="../css/simple-sidebar.css" rel="stylesheet">
+
+    <!-- JQuery -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
 
 </head>
 <body>
@@ -59,16 +59,15 @@
 <div class="container-fluid">
     <%@include file="header.jsp"%>
 
-    <div class="row">
-        <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
-            <ul class="nav nav-pills nav-stacked">
-                <li role="presentation"><a href="profile">My Profile</a></li>
+    <div id="wrapper" class="row">
+        <aside id="sidebar-wrapper">
+            <ul class="nav nav-pills nav-stacked sidebar-nav">
+                <li role="presentation" class="active"><a href="#">My Profile</a></li>
                 <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
-                <li role="presentation" class="active"><a href="#">Services</a></li>
+                <li role="presentation"><a href="service">Services</a></li>
             </ul>
-        </nav>
-
-        <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        </aside>
+        <main id="page-content-wrapper">
             <h1 class="page-header">Polling subscriptions</h1>
             <section class="row placeholders">
                 <div id="alerts_panel"></div>
@@ -90,7 +89,6 @@
 <%@include file="footer.jsp"%>
 
 <!-- Bootstrap core JavaScript -->
-<script src="../vendor/jquery/jquery.min.js"></script>
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 <!-- Plugin JavaScript -->

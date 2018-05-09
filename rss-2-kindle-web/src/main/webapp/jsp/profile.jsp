@@ -23,9 +23,11 @@
     <link href="../css/freelancer.css" rel="stylesheet">
 
     <!-- Custom css -->
+    <link href="../css/simple-sidebar.css" rel="stylesheet">
     <link href="../css/sticky-footer.css" rel="stylesheet">
-    <link href="../css/profile-theme.css" rel="stylesheet">
 
+    <!-- JQuery -->
+    <script src="../vendor/jquery/jquery.js"></script>
 </head>
 
 <body>
@@ -128,15 +130,15 @@
 <div class="container-fluid">
     <%@include file="header.jsp"%>
 
-    <div class="row">
-        <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
-            <ul class="nav nav-pills nav-stacked">
+    <div id="wrapper" class="row">
+        <aside id="sidebar-wrapper">
+            <ul class="nav nav-pills nav-stacked sidebar-nav">
                 <li role="presentation" class="active"><a href="#">My Profile</a></li>
                 <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
                 <li role="presentation"><a href="service">Services</a></li>
             </ul>
-        </nav>
-        <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        </aside>
+        <main id="page-content-wrapper" class="container-fluid">
             <h1 class="page-header">${username} dashboard</h1>
             <section class="row text-center placeholders">
                 <div class="col-md-4 col-sm-4 placeholder" style="background-color: #c7ddef">
@@ -171,7 +173,7 @@
 <%@include file="footer.jsp" %>
 
 <!-- Bootstrap core JavaScript -->
-<script src="../vendor/jquery/jquery.min.js"></script>
+<%--<script src="../vendor/jquery/jquery.min.js"></script>--%>
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 <!-- Plugin JavaScript -->
