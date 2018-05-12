@@ -125,52 +125,48 @@
     });
 
 </script>
-
+<table><tbody><tr><td>
 <div class="container-fluid">
     <%@include file="header.jsp"%>
 
     <div id="wrapper" class="row">
-        <aside id="sidebar-wrapper">
-            <ul class="nav nav-pills nav-stacked sidebar-nav">
-                <li role="presentation" class="active"><a href="#">My Profile</a></li>
-                <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
-                <li role="presentation"><a href="service">Services</a></li>
-            </ul>
-        </aside>
+
+        <%@include file="aside.jsp"%>
+
         <main id="page-content-wrapper" class="container-fluid">
             <h1 class="page-header">${username} dashboard</h1>
-            <section class="row text-center placeholders">
-                <div class="col-md-4 col-sm-4 placeholder" style="background-color: #c7ddef">
+            <div class="row text-center" style="padding-top: 3rem; padding-bottom: 3rem">
+                <div class="col-md-4 col-sm-4"  style="background-color: #c7ddef">
                     <div id="dashboard_user_status"></div>
                     <h4>User info</h4>
                     <div class="text-muted" id="dashboard_user_info"></div>
                 </div>
-                <div class="col-md-4 col-sm-4 placeholder" style="background-color: #f0ad4e">
+                <div class="col-md-4 col-sm-4" style="background-color: #f0ad4e">
                     <div id="dashboard_subscribers_status"></div>
                     <h4>Subscribers</h4>
                     <div class="text-muted" id="dashboard_subscribers_info"></div>
                 </div>
-                <div class="col-md-4 col-sm-4 placeholder" style="background-color: #c9e2b3">
+                <div class="col-md-4 col-sm-4" style="background-color: #c9e2b3">
                     <div id="dashboard_subscriptions_status"></div>
                     <h4>Subscriptions</h4>
                     <div class="text-muted" id="dashboard_subscriptions_info"></div>
                 </div>
-            </section>
-            <section class="row placeholders">
-                <div class="col-md-6 placeholder text-left" id="subscribers_view">
+            </div>
+            <div class="row" style="padding-top: 3rem; padding-bottom: 3rem">
+                <div class="col-md-6 text-left" id="subscribers_view">
                     <h3 class="sub-header">Subscribers</h3>
                 </div>
-                <div class="col-md-6 placeholder text-left" id="subscriptions_view">
+                <div class="col-md-6 text-left" id="subscriptions_view">
                     <h3 class="sub-header">Subscriptions</h3>
                 </div>
-            </section>
+            </div>
         </main>
     </div>
 
 </div>
-
+</td></tr><tr><td>
 <jsp:include page="footer.jsp" />
-
+</td></tr></tbody></table>
 <!-- Bootstrap core JavaScript -->
 <%--<script src="../vendor/jquery/jquery.min.js"></script>--%>
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

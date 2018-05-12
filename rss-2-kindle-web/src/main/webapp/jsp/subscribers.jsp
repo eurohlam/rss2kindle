@@ -421,13 +421,9 @@
     <%@include file="header.jsp" %>
 
     <div id="wrapper" class="row">
-        <aside id="sidebar-wrapper">
-            <ul class="nav nav-pills nav-stacked sidebar-nav">
-                <li role="presentation" class="active"><a href="profile">My Profile</a></li>
-                <li role="presentation"><a href="#">Subscriber Management</a></li>
-                <li role="presentation"><a href="service">Services</a></li>
-            </ul>
-        </aside>
+
+        <%@include file="aside.jsp"%>
+
         <main id="page-content-wrapper">
             <ul class="nav nav-tabs" id="operationsTab" role="tablist">
                 <li class="nav-item">
@@ -439,7 +435,7 @@
                        aria-controls="home" aria-selected="true">New subscriber</a>
                 </li>
             </ul>
-            <section class="row">
+            <div class="row" style="padding-top: 3rem; padding-bottom: 3rem; padding-left: 2rem">
                 <div class="tab-content" id="operationsTabContent">
                     <div id="alerts_panel"></div>
                     <div class="tab-pane fade active placeholder" id="new" role="tabpanel" aria-labelledby="new-tab">
@@ -480,7 +476,7 @@
                         <h2 class="sub-header">Edit subscriber</h2>
                     </div>
                 </div>
-            </section>
+            </div>
         </main>
     </div>
 

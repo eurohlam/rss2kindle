@@ -59,13 +59,9 @@
     <%@include file="header.jsp"%>
 
     <div id="wrapper" class="row">
-        <aside id="sidebar-wrapper">
-            <ul class="nav nav-pills nav-stacked sidebar-nav">
-                <li role="presentation" class="active"><a href="profile">My Profile</a></li>
-                <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
-                <li role="presentation"><a href="#">Services</a></li>
-            </ul>
-        </aside>
+
+        <%@include file="aside.jsp"%>
+
         <main id="page-content-wrapper">
             <h1 class="page-header">Polling subscriptions</h1>
             <section class="row placeholders">

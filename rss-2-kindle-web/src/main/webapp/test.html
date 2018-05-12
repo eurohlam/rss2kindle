@@ -194,7 +194,8 @@
     }
 
 </script>
-
+<table><tbody>
+    <tr><td>
 <div class="container-fluid">
     <header class="header clearfix">
         <!-- Navigation -->
@@ -233,17 +234,17 @@
     </header>
 
     <div id="wrapper" class="row">
-        <aside id="sidebar-wrapper">
-            <ul class="nav nav-pills nav-stacked sidebar-nav">
-                <li role="presentation" class="active"><a href="#">My Profile</a></li>
-                <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
-                <li role="presentation"><a href="service">Services</a></li>
+        <aside id="sidebar-wrapper" class="navbar">
+            <ul class="nav navbar-nav flex-column sidebar-nav">
+                <li class="nav-item"><a class="nav-link active" href="profile">My Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="subscribers">SUBSCRIBERS</a></li>
+                <li class="nav-item"><a class="nav-link" href="service">Services</a></li>
             </ul>
         </aside>
         <main id="page-content-wrapper">
             <div class="container-fluid">
             <h1 class="page-header"><%=username%> dashboard</h1>
-            <section class="row text-center placeholders">
+            <div class="row text-center placeholders" style="padding-top: 3rem; padding-bottom: 3rem">
                 <div class="col-md-4 col-sm-4 placeholder" style="background-color: #c7ddef; border-radius: 70%">
                     <div id="dashboard_user_data">
                         <h4>Status: active</h4>
@@ -277,8 +278,8 @@
                         again
                     </div>
                 </div>
-            </section>
-            <section class="row placeholders">
+            </div>
+            <div class="row placeholders" style="padding-top: 3rem; padding-bottom: 3rem">
                 <div class="col-lg-6 placeholder text-left" id="profile_view">
                     <h2 class="sub-header">Subscribers</h2>
                     <table class="table table-hover">
@@ -335,7 +336,7 @@
                         </tbody>
                     </table>
                 </div>
-            </section>
+            </div>
     <section>
         <form method="get" id="new_subscriber_form" action="#">
             <div class="form-group">
@@ -372,8 +373,9 @@
     </div>
 
 </div>
+    </td><tr><td>
 <!-- Footer -->
-<footer class="footer sticky-footer copyright py-4 text-center text-white">
+<footer class="row footer copyright py-4 text-center text-white">
     <div class="container">
         <small>Copyright &copy; <a href="https://roundkick.studio">Roundkick Studio</a> 2018</small>
     </div>
@@ -385,6 +387,7 @@
         <i class="fa fa-chevron-up"></i>
     </a>
 </div>
+</td></tr></tbody></table>
 <!-- JQuery -->
 <script src="vendor/jquery/jquery.js"></script>
 
