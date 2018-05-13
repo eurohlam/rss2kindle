@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page pageEncoding="UTF-8" %>
 
 <!DOCTYPE html>
@@ -11,31 +11,51 @@
     <!-- Custom fonts for this template -->
     <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
+          type="text/css">
 
     <!-- Bootstrap -->
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom css -->
     <link href="../css/signin.css" rel="stylesheet">
-    <link href="../css/landing-theme.css" rel="stylesheet">
+    <link href="../css/freelancer.min.css" rel="stylesheet">
 
 </head>
 <body>
-
-<div class="container">
-    <div class="header clearfix">
-        <nav>
-            <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="active"><a href="../index.html">Home</a></li>
-                <li role="presentation"><a href="../index.html#about">About</a></li>
-                <li role="presentation"><a href="../index.html#contact">Contact</a></li>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="../index.html#page-top">RSS-2-KINDLE</a>
+        <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-white rounded" type="button"
+                data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation">
+            Menu
+            <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item mx-0 mx-lg-1">
+                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="login">Sign In</a>
+                </li>
+                <li class="nav-item mx-0 mx-lg-1">
+                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="../index.html#portfolio">Portfolio</a>
+                </li>
+                <li class="nav-item mx-0 mx-lg-1">
+                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="../index.html#about">About</a>
+                </li>
+                <li class="nav-item mx-0 mx-lg-1">
+                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
+                       href="../index.html#contact">Contact</a>
+                </li>
             </ul>
-        </nav>
-        <h3 class="text-muted">RSS-2-KINDLE</h3>
+        </div>
     </div>
+</nav>
 
-    <div id="signup" class="jumbotron">
+
+<header class="masthead bg-primary text-white text-center">
+    <div class="container">
         <form:form class="form-signin" action="register" commandName="newUserForm" method="post" autocomplete="off">
             <h2 class="form-signin-heading">Please sign up</h2>
             <form:label path="username" class="sr-only">Username</form:label>
@@ -45,21 +65,78 @@
             <form:input type="email" path="email" class="form-control" placeholder="e-mail"/>
             <form:errors path="email" cssClass="error"/>
             <form:label path="password" class="sr-only">Password</form:label>
-            <form:input type="password" path="password" class="form-control" placeholder="Password" />
+            <form:input type="password" path="password" class="form-control" placeholder="Password"/>
             <form:errors path="password" cssClass="error"/>
             <form:label path="confirmPassword" class="sr-only">Confirm Password</form:label>
-            <form:input type="password" path="confirmPassword" class="form-control" placeholder="Confirm password" />
+            <form:input type="password" path="confirmPassword" class="form-control" placeholder="Confirm password"/>
             <form:errors path="confirmPassword" cssClass="error"/>
 
             <button class="btn btn-lg btn-success btn-block" type="submit">Sign up</button>
         </form:form>
-
     </div>
+</header>
 
-    <footer class="footer">
-        <p>Copyright &copy; Roundkick Studio. 2018</p>
-    </footer>
+<!-- Footer -->
+<footer class="footer text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-5 mb-lg-0">
+                <h4 class="text-uppercase mb-4">Location</h4>
+                <p class="lead mb-0">Wellington
+                    <br>New Zealand, 6022</p>
+            </div>
+            <div class="col-md-4 mb-5 mb-lg-0">
+                <h4 class="text-uppercase mb-4">Around the Web</h4>
+                <ul class="list-inline mb-0">
+                    <li class="list-inline-item">
+                        <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
+                            <i class="fa fa-fw fa-facebook"></i>
+                        </a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
+                            <i class="fa fa-fw fa-google-plus"></i>
+                        </a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
+                            <i class="fa fa-fw fa-twitter"></i>
+                        </a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
+                            <i class="fa fa-fw fa-linkedin"></i>
+                        </a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
+                            <i class="fa fa-fw fa-dribbble"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h4 class="text-uppercase mb-4">About Roundkick Studio</h4>
+                <p class="lead mb-0">Wellcome to <a href="https://roundkick.studio">Roundkick Studio</a>. We develop
+                    software for people</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="copyright py-4 text-center text-white">
+    <div class="container">
+        <small>Copyright &copy; <a href="https://roundkick.studio">Roundkick Studio</a> 2018</small>
+    </div>
 </div>
+
+<!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
+<div class="scroll-to-top d-lg-none position-fixed ">
+    <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top">
+        <i class="fa fa-chevron-up"></i>
+    </a>
+</div>
+
 
 <!-- Bootstrap core JavaScript -->
 <script src="../vendor/jquery/jquery.min.js"></script>

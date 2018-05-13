@@ -1,4 +1,4 @@
-<%@ include file="/jsp/include.jsp" %>
+<%@ include file="/jsp/_include.jsp" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
@@ -99,7 +99,7 @@
     </div>
 </div>
 
-<%@include file="../footer.jsp" %>
+<%@include file="../_footer.jsp" %>
 
 </body>
 </html>

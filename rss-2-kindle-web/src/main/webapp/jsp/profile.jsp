@@ -3,7 +3,7 @@
   Date: 19/10/2017
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="include.jsp" %>
+<%@include file="_include.jsp" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,7 +14,8 @@
     <!-- Custom Fonts -->
     <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
+          type="text/css">
 
     <!-- Bootstrap -->
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -29,7 +30,7 @@
     <script src="../vendor/jquery/jquery.min.js"></script>
 </head>
 
-<body>
+<body id="page-top">
 <script>
     var rootURL = 'rest/profile/${username}';
     var userData;
@@ -60,11 +61,11 @@
             $.each(data.subscribers, function (i, item) {
                 var tr;
                 if (item.status === 'suspended') {
-                    tr = '<tr class="danger"><td>';
+                    tr = '<tr class="table-danger"><td>';
                     suspendedSubscribersnumber++;
                 }
                 else
-                    tr = '<tr class="active"><td>';
+                    tr = '<tr class="table-light"><td>';
 
                 subscribersTable += tr + (i + 1) + '</td><td>'
                     + item.name + '</td><td>'
@@ -76,29 +77,29 @@
 
                 for (j = 0; j < rss.length; j++) {
                     if (rss[j].status === 'dead') {
-                        tr = '<tr class="danger"><td>';
+                        tr = '<tr class="table-danger"><td>';
                         deadRssNumber++;
                     }
                     else if (rss[j].status === 'offline') {
-                        tr = '<tr class="warning"><td>';
+                        tr = '<tr class="table-warning"><td>';
                         offlineRssNumber++;
                     }
                     else
-                        tr = '<tr class="active"><td>';
+                        tr = '<tr class="table-light"><td>';
 
                     rssNumber++;
 
                     rssTable += tr + rssNumber + '</td><td>'
                         + '<a href="' + rss[j].rss + '">' + rss[j].rss + '</a></td><td>'
                         + rss[j].status + '</td><td>'
-                        + item.email +'</td></tr>';
+                        + item.email + '</td></tr>';
                 }
 
             });
             subscribersTable += '</tbody></table>';
             rssTable += '</tbody></table>';
 
-            $('#dashboard_user_status').append('<h5>User status: ' +data.status + '</h5>');
+            $('#dashboard_user_status').append('<h5>User status: ' + data.status + '</h5>');
             $('#dashboard_user_info').append(
                 'Contact email: ' + data.email + '<br>' +
                 'Created: ' + data.dateCreated + '<br>' +
@@ -116,7 +117,7 @@
             $('#dashboard_subscriptions_info').append(
                 'Active subscriptions:' + (rssNumber - deadRssNumber - offlineRssNumber) + '<br>' +
                 'Dead subscriptions: ' + deadRssNumber + '<br>' +
-                'Offline subscriptions: ' + offlineRssNumber +'<br><br>'
+                'Offline subscriptions: ' + offlineRssNumber + '<br><br>'
             );
 
             $('#subscribers_view').append(subscribersTable);
@@ -125,48 +126,48 @@
     });
 
 </script>
-<table><tbody><tr><td>
+
+<%@include file="_header.jsp" %>
+
 <div class="container-fluid">
-    <%@include file="header.jsp"%>
 
     <div id="wrapper" class="row">
 
-        <%@include file="aside.jsp"%>
+        <%@include file="_aside.jsp" %>
 
         <main id="page-content-wrapper" class="container-fluid">
             <h1 class="page-header">${username} dashboard</h1>
             <div class="row text-center" style="padding-top: 3rem; padding-bottom: 3rem">
-                <div class="col-md-4 col-sm-4"  style="background-color: #c7ddef">
+                <div class="col-md-4 col-lg-4" style="background-color: #c7ddef">
                     <div id="dashboard_user_status"></div>
                     <h4>User info</h4>
                     <div class="text-muted" id="dashboard_user_info"></div>
                 </div>
-                <div class="col-md-4 col-sm-4" style="background-color: #f0ad4e">
+                <div class="col-md-4 col-lg-4" style="background-color: #f0ad4e">
                     <div id="dashboard_subscribers_status"></div>
                     <h4>Subscribers</h4>
                     <div class="text-muted" id="dashboard_subscribers_info"></div>
                 </div>
-                <div class="col-md-4 col-sm-4" style="background-color: #c9e2b3">
+                <div class="col-md-4 col-lg-4" style="background-color: #c9e2b3">
                     <div id="dashboard_subscriptions_status"></div>
                     <h4>Subscriptions</h4>
                     <div class="text-muted" id="dashboard_subscriptions_info"></div>
                 </div>
             </div>
             <div class="row" style="padding-top: 3rem; padding-bottom: 3rem">
-                <div class="col-md-6 text-left" id="subscribers_view">
+                <div class="col-lg-6 text-left" id="subscribers_view">
                     <h3 class="sub-header">Subscribers</h3>
                 </div>
-                <div class="col-md-6 text-left" id="subscriptions_view">
+                <div class="col-lg-6 text-left" id="subscriptions_view">
                     <h3 class="sub-header">Subscriptions</h3>
                 </div>
             </div>
         </main>
     </div>
 
+    <jsp:include page="_footer.jsp"/>
 </div>
-</td></tr><tr><td>
-<jsp:include page="footer.jsp" />
-</td></tr></tbody></table>
+
 <!-- Bootstrap core JavaScript -->
 <%--<script src="../vendor/jquery/jquery.min.js"></script>--%>
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

@@ -3,7 +3,7 @@
   Date: 2/12/17
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="include.jsp"%>
+<%@include file="_include.jsp"%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,7 +29,7 @@
     <script src="../vendor/jquery/jquery.min.js"></script>
 
 </head>
-<body>
+<body id="page-top">
 <script>
     var rootURL = 'rest/service/${username}';
     $(document).ready(function () {
@@ -56,11 +56,11 @@
 </script>
 
 <div class="container-fluid">
-    <%@include file="header.jsp"%>
+    <%@include file="_header.jsp"%>
 
     <div id="wrapper" class="row">
 
-        <%@include file="aside.jsp"%>
+        <%@include file="_aside.jsp"%>
 
         <main id="page-content-wrapper">
             <h1 class="page-header">Polling subscriptions</h1>
@@ -79,11 +79,12 @@
         </main>
     </div>
 
+    <jsp:include page="_footer.jsp">
+        <jsp:param name="stickyFooter" value="sticky-footer"/>
+    </jsp:include>
 </div>
 
-<jsp:include page="footer.jsp">
-    <jsp:param name="stickyFooter" value="sticky-footer"/>
-</jsp:include>
+
 
 <!-- Bootstrap core JavaScript -->
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

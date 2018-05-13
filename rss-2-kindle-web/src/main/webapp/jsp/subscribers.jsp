@@ -3,7 +3,7 @@
   Date: 19/10/2017
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="include.jsp" %>
+<%@include file="_include.jsp" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -32,7 +32,7 @@
     <script src="../vendor/jquery/jquery.min.js"></script>
 
 </head>
-<body>
+<body id="page-top">
 <script>
     var username = '${username}';
     var rootURL = 'rest/profile/';
@@ -60,9 +60,9 @@
                 $.each(data.subscribers, function (i, item) {
                     var tr;
                     if (item.status === 'suspended')
-                        tr = '<tr class="danger"><td>';
+                        tr = '<tr class="table-danger"><td>';
                     else
-                        tr = '<tr class="active"><td>';
+                        tr = '<tr class="table-light"><td>';
 
                     table += tr + (i + 1) + '</td><td>'
                         + item.name + '</td><td>'
@@ -417,12 +417,13 @@
 
 </script>
 
+<%@include file="_header.jsp" %>
+
 <div class="container-fluid">
-    <%@include file="header.jsp" %>
 
     <div id="wrapper" class="row">
 
-        <%@include file="aside.jsp"%>
+        <%@include file="_aside.jsp"%>
 
         <main id="page-content-wrapper">
             <ul class="nav nav-tabs" id="operationsTab" role="tablist">
@@ -480,6 +481,7 @@
         </main>
     </div>
 
+    <%@include file="_footer.jsp" %>
 </div>
 
 <!--Modal windows -->
@@ -600,8 +602,6 @@
         </div>
     </div>
 </div>
-
-<%@include file="footer.jsp" %>
 
 <!-- Bootstrap core JavaScript -->
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

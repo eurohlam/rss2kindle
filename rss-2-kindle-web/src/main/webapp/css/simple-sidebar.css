@@ -38,7 +38,7 @@
 #page-content-wrapper {
   width: 100%;
   position: absolute;
-  padding: 15px;
+  padding: 40px;
   top: 100px;
 }
 
@@ -90,7 +90,7 @@
     width: 220px;
   }
   #page-content-wrapper {
-    padding: 20px;
+    padding: 30px;
     position: relative;
   }
   #wrapper.toggled #page-content-wrapper {

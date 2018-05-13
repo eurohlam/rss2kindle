@@ -6,7 +6,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!-- Footer -->
-<footer class="footer <c:out value="${param.stickyFooter}"/> copyright py-4 text-center text-white">
+<footer class="row footer <c:out value="${param.stickyFooter}"/> copyright py-4 text-center text-white">
     <div class="container">
         <small>Copyright &copy; <a href="https://roundkick.studio">Roundkick Studio</a> 2018</small>
     </div>
