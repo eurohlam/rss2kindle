@@ -127,39 +127,41 @@
 
 </script>
 
-<%@include file="_header.jsp" %>
 
 <div class="container-fluid">
+    <%@include file="_header.jsp" %>
 
     <div id="wrapper" class="row">
 
         <%@include file="_aside.jsp" %>
 
-        <main id="page-content-wrapper" class="container-fluid">
-            <h1 class="page-header">${username} dashboard</h1>
-            <div class="row text-center" style="padding-top: 3rem; padding-bottom: 3rem">
-                <div class="col-md-4 col-lg-4" style="background-color: #c7ddef">
-                    <div id="dashboard_user_status"></div>
-                    <h4>User info</h4>
-                    <div class="text-muted" id="dashboard_user_info"></div>
+        <main id="page-content-wrapper">
+            <div class="container-fluid">
+                <h1 class="page-header">${username} dashboard</h1>
+                <div class="row text-center" style="padding-top: 3rem; padding-bottom: 3rem">
+                    <div class="col-md-4 col-lg-4" style="background-color: #c7ddef">
+                        <div id="dashboard_user_status"></div>
+                        <h4>User info</h4>
+                        <div class="text-muted" id="dashboard_user_info"></div>
+                    </div>
+                    <div class="col-md-4 col-lg-4" style="background-color: #f0ad4e">
+                        <div id="dashboard_subscribers_status"></div>
+                        <h4>Subscribers</h4>
+                        <div class="text-muted" id="dashboard_subscribers_info"></div>
+                    </div>
+                    <div class="col-md-4 col-lg-4" style="background-color: #c9e2b3">
+                        <div id="dashboard_subscriptions_status"></div>
+                        <h4>Subscriptions</h4>
+                        <div class="text-muted" id="dashboard_subscriptions_info"></div>
+                    </div>
                 </div>
-                <div class="col-md-4 col-lg-4" style="background-color: #f0ad4e">
-                    <div id="dashboard_subscribers_status"></div>
-                    <h4>Subscribers</h4>
-                    <div class="text-muted" id="dashboard_subscribers_info"></div>
-                </div>
-                <div class="col-md-4 col-lg-4" style="background-color: #c9e2b3">
-                    <div id="dashboard_subscriptions_status"></div>
-                    <h4>Subscriptions</h4>
-                    <div class="text-muted" id="dashboard_subscriptions_info"></div>
-                </div>
-            </div>
-            <div class="row" style="padding-top: 3rem; padding-bottom: 3rem">
-                <div class="col-lg-6 text-left" id="subscribers_view">
-                    <h3 class="sub-header">Subscribers</h3>
-                </div>
-                <div class="col-lg-6 text-left" id="subscriptions_view">
-                    <h3 class="sub-header">Subscriptions</h3>
+                <div class="row" style="padding-top: 5rem; padding-bottom: 10rem">
+                    <div class="col-lg-6 text-left" id="subscribers_view" style="padding-left: 2rem; padding-right: 2rem">
+                        <h3 class="sub-header">Subscribers</h3>
+                    </div>
+                    <div class="col-lg-6 text-left" id="subscriptions_view" style="padding-left: 2rem; padding-right: 2rem">
+                        <h3 class="sub-header">Subscriptions</h3>
+                    </div>
                 </div>
             </div>
         </main>

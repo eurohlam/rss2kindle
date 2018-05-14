@@ -417,9 +417,8 @@
 
 </script>
 
-<%@include file="_header.jsp" %>
-
 <div class="container-fluid">
+    <%@include file="_header.jsp" %>
 
     <div id="wrapper" class="row">
 
@@ -436,10 +435,10 @@
                        aria-controls="home" aria-selected="true">New subscriber</a>
                 </li>
             </ul>
-            <div class="row" style="padding-top: 3rem; padding-bottom: 3rem; padding-left: 2rem">
+            <div class="row" style="padding-top: 3rem; padding-bottom: 10rem; padding-left: 2rem">
                 <div class="tab-content" id="operationsTabContent">
                     <div id="alerts_panel"></div>
-                    <div class="tab-pane fade active placeholder" id="new" role="tabpanel" aria-labelledby="new-tab">
+                    <div class="tab-pane fade active"  id="new" role="tabpanel" aria-labelledby="new-tab">
                         <h2 class="sub-header">Add new subscriber</h2>
                         <form method="get" id="new_subscriber_form" action="#">
                             <div class="form-group">
@@ -473,7 +472,7 @@
                             </div>
                         </form>
                     </div>
-                    <div class="tab-pane fade placeholder" id="edit" role="tabpanel" aria-labelledby="edit-tab">
+                    <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
                         <h2 class="sub-header">Edit subscriber</h2>
                     </div>
                 </div>

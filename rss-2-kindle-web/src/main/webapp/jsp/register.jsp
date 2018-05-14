@@ -93,11 +93,13 @@
                             <i class="fa fa-fw fa-facebook"></i>
                         </a>
                     </li>
+<%--
                     <li class="list-inline-item">
                         <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
                             <i class="fa fa-fw fa-google-plus"></i>
                         </a>
                     </li>
+--%>
                     <li class="list-inline-item">
                         <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
                             <i class="fa fa-fw fa-twitter"></i>
@@ -108,11 +110,13 @@
                             <i class="fa fa-fw fa-linkedin"></i>
                         </a>
                     </li>
+<%--
                     <li class="list-inline-item">
                         <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
                             <i class="fa fa-fw fa-dribbble"></i>
                         </a>
                     </li>
+--%>
                 </ul>
             </div>
             <div class="col-md-4">
