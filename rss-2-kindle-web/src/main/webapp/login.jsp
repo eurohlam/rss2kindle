@@ -22,7 +22,7 @@
     <link href="css/freelancer.min.css" rel="stylesheet">
 
 </head>
-<body>
+<body id="page-top">
 
 
 <!-- Navigation -->
@@ -80,7 +80,7 @@
                 Reason: <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/>
                 </span>
             </c:if>
-            <button class="btn btn-lg btn-success btn-block" type="submit">Sign in</button>
+            <button class="btn btn-outline-light btn-block btn-lg" type="submit">Sign in</button>
         </form>
     </div>
 </header>

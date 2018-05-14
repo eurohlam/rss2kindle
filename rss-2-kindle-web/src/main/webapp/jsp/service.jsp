@@ -70,7 +70,7 @@
                     All subscriptions are polled every day automatically at 02:00 am.
                     If you wish to poll you subscriptions right now just push the button below
                 </div>
-                <button id="run_all" type="button" class="btn btn-primary">
+                <button id="run_all" type="button" class="btn btn-outline-light btn-block btn-lg">
                     <span class="glyphicon glyphicon-import" aria-hidden="true"></span>
                     Poll my subscriptions immediately
                 </button>
