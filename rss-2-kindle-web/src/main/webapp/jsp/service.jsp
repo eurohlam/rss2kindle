@@ -3,7 +3,7 @@
   Date: 2/12/17
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="_include.jsp"%>
+<%@include file="_include.jsp" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -17,7 +17,8 @@
     <!-- Custom Fonts -->
     <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
+          type="text/css">
 
     <!-- Theme CSS -->
     <link href="../css/freelancer.min.css" rel="stylesheet">
@@ -56,26 +57,29 @@
 </script>
 
 <div class="container-fluid">
-    <%@include file="_header.jsp"%>
+    <%@include file="_header.jsp" %>
 
     <div id="wrapper" class="row">
 
-        <%@include file="_aside.jsp"%>
+        <%@include file="_aside.jsp" %>
 
         <main id="page-content-wrapper">
-            <h1 class="page-header">Polling subscriptions</h1>
-            <section class="row placeholders">
-                <div id="alerts_panel"></div>
-                <div class="alert alert-info" role="alert">
-                    All subscriptions are polled every day automatically at 02:00 am.
-                    If you wish to poll you subscriptions right now just push the button below
-                </div>
-                <button id="run_all" type="button" class="btn btn-outline-light btn-block btn-lg">
-                    <span class="glyphicon glyphicon-import" aria-hidden="true"></span>
-                    Poll my subscriptions immediately
-                </button>
-            </section>
-
+            <div class="container-fluid">
+                <h1 class="page-header">Polling subscriptions</h1>
+                <section class="container">
+                    <div id="alerts_panel" class="row"></div>
+                    <div class="alert alert-info row" role="alert">
+                        All subscriptions are scheduled for polling every day at 02:00 am.
+                        If you wish to poll you subscriptions right now just push the button below
+                    </div>
+                    <div class="text-center row">
+                        <button id="run_all" type="button" class="btn btn-primary btn-xl">
+                            <i class="fa fa-download mr-2"></i>
+                            Poll my subscriptions immediately
+                        </button>
+                    </div>
+                </section>
+            </div>
         </main>
     </div>
 
@@ -83,7 +87,6 @@
         <jsp:param name="stickyFooter" value="sticky-footer"/>
     </jsp:include>
 </div>
-
 
 
 <!-- Bootstrap core JavaScript -->

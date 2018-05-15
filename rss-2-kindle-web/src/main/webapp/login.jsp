@@ -80,7 +80,7 @@
                 Reason: <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/>
                 </span>
             </c:if>
-            <button class="btn btn-outline-light btn-block btn-lg" type="submit">Sign in</button>
+            <button class="btn btn-outline-light btn-block btn-lg" type="submit">SIGN IN</button>
         </form>
     </div>
 </header>

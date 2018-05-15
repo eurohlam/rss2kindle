@@ -435,7 +435,7 @@
                        aria-controls="home" aria-selected="true">New subscriber</a>
                 </li>
             </ul>
-            <div class="row" style="padding-top: 3rem; padding-bottom: 10rem; padding-left: 2rem">
+            <div class="row" style="padding-top: 3rem; padding-bottom: 15rem; padding-left: 2rem">
                 <div class="tab-content" id="operationsTabContent">
                     <div id="alerts_panel"></div>
                     <div class="tab-pane fade active"  id="new" role="tabpanel" aria-labelledby="new-tab">

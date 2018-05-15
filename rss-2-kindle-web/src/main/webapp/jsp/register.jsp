@@ -71,7 +71,7 @@
             <form:input type="password" path="confirmPassword" class="form-control" placeholder="Confirm password"/>
             <form:errors path="confirmPassword" cssClass="error"/>
 
-            <button class="btn btn-outline-light btn-block btn-lg" type="submit">Sign up</button>
+            <button class="btn btn-outline-light btn-block btn-lg" type="submit">SIGN UP</button>
         </form:form>
     </div>
 </header>

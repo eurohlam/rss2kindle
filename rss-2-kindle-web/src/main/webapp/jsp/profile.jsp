@@ -155,7 +155,7 @@
                         <div class="text-muted" id="dashboard_subscriptions_info"></div>
                     </div>
                 </div>
-                <div class="row" style="padding-top: 5rem; padding-bottom: 10rem">
+                <div class="row" style="padding-top: 5rem; padding-bottom: 15rem">
                     <div class="col-lg-6 text-left" id="subscribers_view" style="padding-left: 2rem; padding-right: 2rem">
                         <h3 class="sub-header">Subscribers</h3>
                     </div>

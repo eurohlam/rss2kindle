@@ -106,3 +106,8 @@
   /* Set the fixed height of the footer here */
   /*height: 60px;*/
 }
+
+.btn-outline-primary {
+  color: #18BC9C;
+  border-color: #18BC9C;
+}
