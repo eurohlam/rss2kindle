@@ -63,10 +63,10 @@
 
         <%@include file="_aside.jsp" %>
 
-        <main id="page-content-wrapper">
+        <main id="page-content-wrapper" style="padding-bottom: 10rem; padding-left: 2rem;">
             <div class="container-fluid">
                 <h1 class="page-header">Polling subscriptions</h1>
-                <section class="container">
+                <section class="container-fluid">
                     <div id="alerts_panel" class="row"></div>
                     <div class="alert alert-info row" role="alert">
                         All subscriptions are scheduled for polling every day at 02:00 am.
@@ -83,9 +83,7 @@
         </main>
     </div>
 
-    <jsp:include page="_footer.jsp">
-        <jsp:param name="stickyFooter" value="sticky-footer"/>
-    </jsp:include>
+    <jsp:include page="_footer.jsp"/>
 </div>
 
 

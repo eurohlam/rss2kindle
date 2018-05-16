@@ -55,11 +55,11 @@
 <header class="masthead bg-primary text-white text-center">
     <div class="container">
         <h4>Thank you for using RSS-2-KINDLE service!</h4>
-        <p class="lead">User <span style="color: red;">${username}</span> has been registered successfully.
-            The confirmation will be sent to email <span style="color: red;">${email}</span>.
+        <p class="lead">User <span style="color: #2C3E50;">${username}</span> has been registered successfully.
+            The confirmation will be sent to email <span style="color: #2C3E50;">${email}</span>.
             You can start working with your account right now</p>
         <div class="row">
-            <div class="col-lg-8">
+            <div class="container">
                 <p><a id="btn_signin" class="btn btn-outline-light btn-xl" href="login" role="button">SIGN IN</a></p>
             </div>
         </div>
