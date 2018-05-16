@@ -3,7 +3,7 @@
   Date: 19/10/2017
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@include file="include.jsp" %>
+<%@include file="_include.jsp" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,27 +14,25 @@
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
     <security:csrfMetaTags/>
 
-    <!-- JQuery -->
-    <script src="../js/jquery-3.1.1.js"></script>
-
     <!-- Bootstrap -->
-    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="../bootstrap/js/bootstrap.min.js"></script>
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- Theme CSS -->
+    <link href="../css/freelancer.css" rel="stylesheet">
 
     <!-- Custom css -->
-    <link href="../css/sticky-footer.css" rel="stylesheet">
-    <link href="../css/profile-theme.css" rel="stylesheet">
+    <link href="../css/simple-sidebar.css" rel="stylesheet">
+
+    <!-- JQuery -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
 
 </head>
-<body>
+<body id="page-top">
 <script>
     var username = '${username}';
     var rootURL = 'rest/profile/';
@@ -62,9 +60,9 @@
                 $.each(data.subscribers, function (i, item) {
                     var tr;
                     if (item.status === 'suspended')
-                        tr = '<tr class="danger"><td>';
+                        tr = '<tr class="table-danger"><td>';
                     else
-                        tr = '<tr class="active"><td>';
+                        tr = '<tr class="table-light"><td>';
 
                     table += tr + (i + 1) + '</td><td>'
                         + item.name + '</td><td>'
@@ -420,17 +418,13 @@
 </script>
 
 <div class="container-fluid">
-    <%@include file="header.jsp" %>
+    <%@include file="_header.jsp" %>
 
-    <div class="row">
-        <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
-            <ul class="nav nav-pills nav-stacked">
-                <li role="presentation"><a href="profile">My Profile</a></li>
-                <li role="presentation" class="active"><a href="#">Subscriber Management</a></li>
-                <li role="presentation"><a href="service">Services</a></li>
-            </ul>
-        </nav>
-        <main role="main" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div id="wrapper" class="row">
+
+        <%@include file="_aside.jsp"%>
+
+        <main id="page-content-wrapper">
             <ul class="nav nav-tabs" id="operationsTab" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="profile"
@@ -441,10 +435,10 @@
                        aria-controls="home" aria-selected="true">New subscriber</a>
                 </li>
             </ul>
-            <section class="row">
+            <div class="row" style="padding-top: 3rem; padding-bottom: 15rem; padding-left: 2rem">
                 <div class="tab-content" id="operationsTabContent">
                     <div id="alerts_panel"></div>
-                    <div class="tab-pane fade active placeholder" id="new" role="tabpanel" aria-labelledby="new-tab">
+                    <div class="tab-pane fade active"  id="new" role="tabpanel" aria-labelledby="new-tab">
                         <h2 class="sub-header">Add new subscriber</h2>
                         <form method="get" id="new_subscriber_form" action="#">
                             <div class="form-group">
@@ -478,14 +472,15 @@
                             </div>
                         </form>
                     </div>
-                    <div class="tab-pane fade placeholder" id="edit" role="tabpanel" aria-labelledby="edit-tab">
+                    <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
                         <h2 class="sub-header">Edit subscriber</h2>
                     </div>
                 </div>
-            </section>
+            </div>
         </main>
     </div>
 
+    <%@include file="_footer.jsp" %>
 </div>
 
 <!--Modal windows -->
@@ -494,9 +489,9 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="modal-title" id="updateModalLabel">Update subscriber and subscriptions</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="updateModalLabel">Update subscriber and subscriptions</h4>
             </div>
             <form method="get" action="#" id="update_subscriber_form">
                 <div class="modal-body">
@@ -540,9 +535,9 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="modal-title" id="suspendModalLabel">Suspend subscriber</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="suspendModalLabel">Suspend subscriber</h4>
             </div>
             <form method="get" id="suspend_subscriber_form" action="#">
                 <div class="modal-body">
@@ -564,9 +559,9 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="modal-title" id="resumeModalLabel">Suspend subscriber</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="resumeModalLabel">Suspend subscriber</h4>
             </div>
             <form method="get" id="resume_subscriber_form" action="#">
                 <div class="modal-body">
@@ -576,8 +571,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary"
-                    " name="btn_resume">Resume</button>
+                    <button type="submit" class="btn btn-primary" name="btn_resume">Resume</button>
                 </div>
             </form>
         </div>
@@ -589,9 +583,9 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
+                <h4 class="modal-title" id="removeModalLabel">Remove subscriber</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="removeModalLabel">Remove subscriber</h4>
             </div>
             <form method="get" id="remove_subscriber_form" action="#">
                 <div class="modal-body">
@@ -608,6 +602,15 @@
     </div>
 </div>
 
-<%@include file="footer.jsp" %>
+<!-- Bootstrap core JavaScript -->
+<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Plugin JavaScript -->
+<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+<!-- Custom scripts for this template -->
+<script src="../js/freelancer.min.js"></script>
+
 </body>
 </html>
