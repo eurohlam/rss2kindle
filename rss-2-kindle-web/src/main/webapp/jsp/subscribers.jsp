@@ -440,7 +440,7 @@
                     <div id="alerts_panel"></div>
                     <div class="tab-pane fade active"  id="new" role="tabpanel" aria-labelledby="new-tab">
                         <h2 class="sub-header">Add new subscriber</h2>
-                        <form method="get" id="new_subscriber_form" action="#">
+                        <form method="get" id="new_subscriber_form" action="#page-top">
                             <div class="form-group">
                                 <label for="new_subscriber_email">Email</label>
                                 <input type="email" id="new_subscriber_email" required class="form-control"/>
