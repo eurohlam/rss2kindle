@@ -112,18 +112,21 @@
         });
 
         $('#btn_update_subscriber_addrss').click(function (event) {
-            var rss = $('#update_subscriber_addrss').val();
-            $('#update_subscriber_addrss').popover('destroy');
-            if (validateURL(rss))
+            var _update_subscriber_addrss = $('#update_subscriber_addrss');
+            var rss = _update_subscriber_addrss.val();
+            _update_subscriber_addrss.popover(
+                {
+                    content: 'Entered text does not look like a valid URL. Please correct it and try again',
+                    trigger: 'manual',
+                    placement: 'auto'
+                });
+            _update_subscriber_addrss.popover('hide');
+            if (validateURL(rss)) {
                 $('#update_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
+            }
             else {
-                $('#update_subscriber_addrss').popover(
-                    {
-                        content: rss + ' does not look like a valid URL. Please correct it and try again',
-                        trigger: 'manual',
-                        placement: 'top auto'
-                    });
-                $('#update_subscriber_addrss').popover('show');
+                _update_subscriber_addrss.data('bs.popover').config.content = rss + ' does not look like a valid URL. Please correct it and try again';
+                _update_subscriber_addrss.popover('show');
             }
         });
 
@@ -175,15 +178,16 @@
             var name = $('#update_subscriber_name').val();
             var status = $('#update_subscriber_status').val();
             //validate rss list
-            $('#update_subscriber_rsslist').popover('destroy');
+            var _update_subscriber_rsslist = $('#update_subscriber_rsslist');
+            _update_subscriber_rsslist.popover('dispose');
             if ($('#update_subscriber_rsslist option').length === 0) {
-                $('#update_subscriber_rsslist').popover(
+                _update_subscriber_rsslist.popover(
                     {
                         content: 'At least one RSS is required',
                         trigger: 'manual',
-                        placement: 'top auto'
+                        placement: 'auto'
                     });
-                $('#update_subscriber_rsslist').popover('show');
+                _update_subscriber_rsslist.popover('show');
 
                 return false;
             }
@@ -266,22 +270,24 @@
         //add new subscriber on submit
         $('#new_subscriber_form').submit(function (e) {
             e.preventDefault();
-            var email = $('#new_subscriber_email').val();
+            var _new_subscriber_email = $('#new_subscriber_email');
+            var _new_subscriber_rsslist = $('#new_subscriber_rsslist');
+            var email = _new_subscriber_email.val();
             var name = $('#new_subscriber_name').val();
             var status = $('#new_subscriber_status').val();
 
             //create validation popovers
-            $('#new_subscriber_email').popover(
+            _new_subscriber_email.popover(
                 {
                     content: 'Subscriber with such email already exists',
                     trigger: 'manual',
-                    placement: 'bottom auto'
+                    placement: 'auto'
                 });
-            $('#new_subscriber_rsslist').popover(
+            _new_subscriber_rsslist.popover(
                 {
                     content: 'At least one RSS is required',
                     trigger: 'manual',
-                    placement: 'top auto'
+                    placement: 'auto'
                 });
 
             //validate email
@@ -289,23 +295,23 @@
             $.each(userData.subscribers, function (i, item) {
                 if (item.email === email) {
                     //we need to update content directly via jquery
-                    $('#new_subscriber_email').data('bs.popover').options.content='Subscriber with email ' + email + ' already exists';
+                    _new_subscriber_email.data('bs.popover').config.content = 'Subscriber with email ' + email + ' already exists';
                     isEmailValid = false;
                     return false;
                 }
             });
             if (!isEmailValid) {
-                $('#new_subscriber_email').popover('show');
+                _new_subscriber_email.popover('show');
                 return false;
             }
-            $('#new_subscriber_email').popover('hide');
+            _new_subscriber_email.popover('hide');
 
             //validate rss list
             if ($('#new_subscriber_rsslist option').length === 0) {
-                $('#new_subscriber_rsslist').popover('show');
+                _new_subscriber_rsslist.popover('show');
                 return false;
             }
-            $('#new_subscriber_rsslist').popover('hide');
+            _new_subscriber_rsslist.popover('hide');
 
             //prepare json
             var updateJson = '{' +
@@ -340,18 +346,21 @@
         });
 
         $('#btn_new_subscriber_addrss').click(function (event) {
-            var rss = $('#new_subscriber_addrss').val();
-            $('#new_subscriber_addrss').popover('destroy');
-            if (validateURL(rss))
+            var _new_subscriber_addrss=$('#new_subscriber_addrss');
+            var rss = _new_subscriber_addrss.val();
+            _new_subscriber_addrss.popover(
+                {
+                    content: 'Entered text does not look like a valid URL. Please correct it and try again',
+                    trigger: 'manual',
+                    placement: 'auto'
+                });
+            _new_subscriber_addrss.popover('hide');
+            if (validateURL(rss)) {
                 $('#new_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
+            }
             else {
-                $('#new_subscriber_addrss').popover(
-                    {
-                        content: rss + ' does not look like a valid URL. Please correct it and try again',
-                        trigger: 'manual',
-                        placement: 'top auto'
-                    });
-                $('#new_subscriber_addrss').popover('show');
+                _new_subscriber_addrss.data('bs.popover').config.content = rss + ' does not look like a valid URL. Please correct it and try again';
+                _new_subscriber_addrss.popover('show');
             }
         });
 
@@ -440,7 +449,7 @@
                     <div id="alerts_panel"></div>
                     <div class="tab-pane fade active"  id="new" role="tabpanel" aria-labelledby="new-tab">
                         <h2 class="sub-header">Add new subscriber</h2>
-                        <form method="get" id="new_subscriber_form" action="#">
+                        <form method="get" id="new_subscriber_form" action="#page-top">
                             <div class="form-group">
                                 <label for="new_subscriber_email">Email</label>
                                 <input type="email" id="new_subscriber_email" required class="form-control"/>

@@ -23,6 +23,7 @@
     <link href="css/simple-sidebar.css" rel="stylesheet">
     <!-- JQuery -->
     <script src="vendor/jquery/jquery.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
 </head>
 
@@ -84,13 +85,13 @@
                 {
                     content: 'Subscriber with such email already exists',
                     trigger: 'manual',
-                    placement: 'bottom auto'
+                    placement: 'auto'
                 });
             $('#new_subscriber_rsslist').popover(
                 {
                     content: 'At least one RSS is required',
                     trigger: 'manual',
-                    placement: 'top auto'
+                    placement: 'auto'
                 });
 
             //validate email
@@ -98,7 +99,7 @@
             $.each(userData.subscribers, function (i, item) {
                 if (item.email === email) {
                     console.log(item.email);
-                    $('#new_subscriber_email').data('bs.popover').options.content = 'Subscriber with email ' + email + ' already exists';
+                    $('#new_subscriber_email').data('bs.popover').config.content='Subscriber with email ' + email + ' already exists';
                     isEmailValid = false;
 
                     return false;
@@ -149,20 +150,19 @@
         });
 
         $('#btn_new_subscriber_addrss').click(function (event) {
-            var rss = $('#new_subscriber_addrss').val();
-            $('#new_subscriber_addrss').popover('destroy');
-            if (validateURL(rss))
+            var element=$('#new_subscriber_addrss');
+            var rss = element.val();
+            element.popover({
+                    content: 'Entered text does not look like a valid URL. Please correct it and try again',
+                    trigger: 'manual',
+                    placement: 'auto'
+                });
+            element.popover('hide');
+            if (validateURL(rss)) {
                 $('#new_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
-            else {
-                $('#new_subscriber_addrss').popover(
-                    {
-                        content: rss + ' does not look like a valid URL. Please correct it and try again',
-                        trigger: 'manual',
-                        placement: 'top auto',
-                        delay: {"show": 5000, "hide": 20000}
-                    });
-                $('#new_subscriber_addrss').popover('show');
-                //                alert(rss + " does not look like a valid URL. Please correct it and try again");
+            } else {
+                element.data('bs.popover').config.content = rss + ' does not look like a valid URL. Please correct it and try again';
+                element.popover('show');
             }
         });
 
@@ -346,7 +346,7 @@
                         </table>
                     </div>
                 </div>
-                <!--section>
+                <section>
                     <form method="get" id="new_subscriber_form" action="#">
                         <div class="form-group">
                             <label for="new_subscriber_email">Email</label>
@@ -376,7 +376,7 @@
                             <input type="submit" value="Create" class="btn btn-primary"/>
                         </div>
                     </form>
-                </section-->
+                </section>
             </div>
         </main>
     </div>
@@ -397,15 +397,11 @@
 
 
 
-<!-- JQuery -->
-<script src="vendor/jquery/jquery.js"></script>
-
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- Plugin JavaScript -->
-<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-<script src="vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+<script src="vendor/jquery-easing/jquery.easing.js"></script>
+<script src="vendor/magnific-popup/jquery.magnific-popup.js"></script>
 
 <!-- Custom scripts for this template -->
-<script src="js/freelancer.min.js"></script>
+<script src="js/freelancer.js"></script>
 </body>
 </html>

@@ -1,8 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ page pageEncoding="UTF-8" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>RSS-2-KINDLE Service</title>
+    <title>RSS-2-Kindle Service</title>
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
     <!-- Custom fonts for this template -->
@@ -19,9 +22,7 @@
     <link href="../css/freelancer.min.css" rel="stylesheet">
 
 </head>
-
 <body id="page-top">
-
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
     <div class="container">
@@ -38,7 +39,7 @@
                     <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="login">Sign In</a>
                 </li>
                 <li class="nav-item mx-0 mx-lg-1">
-                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="../index.html#portfolio">Portfolio</a>
+                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="../index.html#howto">Howto</a>
                 </li>
                 <li class="nav-item mx-0 mx-lg-1">
                     <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="../index.html#about">About</a>
@@ -52,17 +53,26 @@
     </div>
 </nav>
 
+
 <header class="masthead bg-primary text-white text-center">
     <div class="container">
-        <h4>Thank you for using RSS-2-KINDLE service!</h4>
-        <p class="lead">User <span style="color: #2C3E50;">${username}</span> has been registered successfully.
-            The confirmation will be sent to email <span style="color: #2C3E50;">${email}</span>.
-            You can start working with your account right now</p>
-        <div class="row">
-            <div class="container">
-                <p><a id="btn_signin" class="btn btn-outline-light btn-xl" href="login" role="button">SIGN IN</a></p>
-            </div>
-        </div>
+        <form:form class="form-signin" action="register" commandName="newUserForm" method="post" autocomplete="off">
+            <h2 class="form-signin-heading">Please sign up</h2>
+            <form:label path="username" class="sr-only">Username</form:label>
+            <form:input type="text" id="username" path="username" class="form-control" placeholder="Username"/>
+            <form:errors path="username" cssClass="error"/>
+            <form:label path="email" class="sr-only">E-mail</form:label>
+            <form:input type="email" path="email" class="form-control" placeholder="e-mail"/>
+            <form:errors path="email" cssClass="error"/>
+            <form:label path="password" class="sr-only">Password</form:label>
+            <form:input type="password" path="password" class="form-control" placeholder="Password"/>
+            <form:errors path="password" cssClass="error"/>
+            <form:label path="confirmPassword" class="sr-only">Confirm Password</form:label>
+            <form:input type="password" path="confirmPassword" class="form-control" placeholder="Confirm password"/>
+            <form:errors path="confirmPassword" cssClass="error"/>
+
+            <button class="btn btn-outline-light btn-block btn-lg" type="submit">SIGN UP</button>
+        </form:form>
     </div>
 </header>
 
@@ -83,13 +93,13 @@
                             <i class="fa fa-fw fa-facebook"></i>
                         </a>
                     </li>
-                    <%--
-                                        <li class="list-inline-item">
-                                            <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
-                                                <i class="fa fa-fw fa-google-plus"></i>
-                                            </a>
-                                        </li>
-                    --%>
+<%--
+                    <li class="list-inline-item">
+                        <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
+                            <i class="fa fa-fw fa-google-plus"></i>
+                        </a>
+                    </li>
+--%>
                     <li class="list-inline-item">
                         <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
                             <i class="fa fa-fw fa-twitter"></i>
@@ -100,13 +110,13 @@
                             <i class="fa fa-fw fa-linkedin"></i>
                         </a>
                     </li>
-                    <%--
-                                        <li class="list-inline-item">
-                                            <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
-                                                <i class="fa fa-fw fa-dribbble"></i>
-                                            </a>
-                                        </li>
-                    --%>
+<%--
+                    <li class="list-inline-item">
+                        <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
+                            <i class="fa fa-fw fa-dribbble"></i>
+                        </a>
+                    </li>
+--%>
                 </ul>
             </div>
             <div class="col-md-4">
@@ -120,19 +130,4 @@
 
 <div class="copyright py-4 text-center text-white">
     <div class="container">
-        <small>Copyright &copy; <a href="https://roundkick.studio">Roundkick Studio</a> 2018</small>
-    </div>
-</div>
-
-<!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
-<div class="scroll-to-top d-lg-none position-fixed ">
-    <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top">
-        <i class="fa fa-chevron-up"></i>
-    </a>
-</div>
-
-<!-- Bootstrap core JavaScript -->
-<script src="../vendor/jquery/jquery.min.js"></script>
-<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+        <small>Copyright &copy; <
