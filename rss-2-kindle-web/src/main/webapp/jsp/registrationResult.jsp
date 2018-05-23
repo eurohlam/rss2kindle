@@ -1,62 +1,133 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ page pageEncoding="UTF-8" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>RSS-2-KINDLE Service</title>
+    <title>RSS-2-Kindle Service</title>
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
-    <!-- JQuery -->
-    <script src="../js/jquery-3.1.1.js"></script>
+    <!-- Custom fonts for this template -->
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
+          type="text/css">
 
     <!-- Bootstrap -->
-    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="../bootstrap/js/bootstrap.min.js"></script>
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom css -->
-    <link href="../css/landing-theme.css" rel="stylesheet">
+    <link href="../css/signin.css" rel="stylesheet">
+    <link href="../css/freelancer.min.css" rel="stylesheet">
 
 </head>
-
-<body>
-<div class="container">
-    <div class="header clearfix">
-        <nav>
-            <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="active"><a href="#">Home</a></li>
-                <li role="presentation"><a href="#">About</a></li>
-                <li role="presentation"><a href="#">Contact</a></li>
+<body id="page-top">
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="../index.html#page-top">RSS-2-KINDLE</a>
+        <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-white rounded" type="button"
+                data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation">
+            Menu
+            <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item mx-0 mx-lg-1">
+                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="login">Sign In</a>
+                </li>
+                <li class="nav-item mx-0 mx-lg-1">
+                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="../index.html#howto">Howto</a>
+                </li>
+                <li class="nav-item mx-0 mx-lg-1">
+                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="../index.html#about">About</a>
+                </li>
+                <li class="nav-item mx-0 mx-lg-1">
+                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
+                       href="../index.html#contact">Contact</a>
+                </li>
             </ul>
-        </nav>
-        <h3 class="text-muted">RSS-2-KINDLE</h3>
+        </div>
     </div>
+</nav>
 
-    <div class="jumbotron">
-        <h1>Thank you for using RSS-2-KINDLE service!</h1>
-        <p class="lead">User <span style="color: red;">${username}</span> has been registered successfully.
-            The confirmation will be sent to email <span style="color: red;">${email}</span>.
-        You can start working with your account right now if you sign in</p>
+
+<header class="masthead bg-primary text-white text-center">
+    <div class="container">
+        <form:form class="form-signin" action="register" commandName="newUserForm" method="post" autocomplete="off">
+            <h2 class="form-signin-heading">Please sign up</h2>
+            <form:label path="username" class="sr-only">Username</form:label>
+            <form:input type="text" id="username" path="username" class="form-control" placeholder="Username"/>
+            <form:errors path="username" cssClass="error"/>
+            <form:label path="email" class="sr-only">E-mail</form:label>
+            <form:input type="email" path="email" class="form-control" placeholder="e-mail"/>
+            <form:errors path="email" cssClass="error"/>
+            <form:label path="password" class="sr-only">Password</form:label>
+            <form:input type="password" path="password" class="form-control" placeholder="Password"/>
+            <form:errors path="password" cssClass="error"/>
+            <form:label path="confirmPassword" class="sr-only">Confirm Password</form:label>
+            <form:input type="password" path="confirmPassword" class="form-control" placeholder="Confirm password"/>
+            <form:errors path="confirmPassword" cssClass="error"/>
+
+            <button class="btn btn-outline-light btn-block btn-lg" type="submit">SIGN UP</button>
+        </form:form>
+    </div>
+</header>
+
+<!-- Footer -->
+<footer class="footer text-center">
+    <div class="container">
         <div class="row">
-            <div class="col-lg-8">
-                <p><a id="btn_signin" class="btn btn-lg btn-success" href="login" role="button">Sign in</a></p>
+            <div class="col-md-4 mb-5 mb-lg-0">
+                <h4 class="text-uppercase mb-4">Location</h4>
+                <p class="lead mb-0">Wellington
+                    <br>New Zealand, 6022</p>
+            </div>
+            <div class="col-md-4 mb-5 mb-lg-0">
+                <h4 class="text-uppercase mb-4">Around the Web</h4>
+                <ul class="list-inline mb-0">
+                    <li class="list-inline-item">
+                        <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
+                            <i class="fa fa-fw fa-facebook"></i>
+                        </a>
+                    </li>
+<%--
+                    <li class="list-inline-item">
+                        <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
+                            <i class="fa fa-fw fa-google-plus"></i>
+                        </a>
+                    </li>
+--%>
+                    <li class="list-inline-item">
+                        <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
+                            <i class="fa fa-fw fa-twitter"></i>
+                        </a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
+                            <i class="fa fa-fw fa-linkedin"></i>
+                        </a>
+                    </li>
+<%--
+                    <li class="list-inline-item">
+                        <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
+                            <i class="fa fa-fw fa-dribbble"></i>
+                        </a>
+                    </li>
+--%>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h4 class="text-uppercase mb-4">About Roundkick Studio</h4>
+                <p class="lead mb-0">Wellcome to <a href="https://roundkick.studio">Roundkick Studio</a>. We develop
+                    software for people</p>
             </div>
         </div>
     </div>
+</footer>
 
-
-
-    <footer class="footer">
-        <p>&copy; Created by Eurohlam. 2017</p>
-    </footer>
-
-</div> <!-- /container -->
-
-</body>
-</html>
+<div class="copyright py-4 text-center text-white">
+    <div class="container">
+        <small>Copyright &copy; <
