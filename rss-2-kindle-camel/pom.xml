@@ -72,7 +72,18 @@
             <version>${camel.version}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.jvnet.mock-javamail</groupId>
+            <artifactId>mock-javamail</artifactId>
+            <version>1.9</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.mail</groupId>
+                    <artifactId>mail</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>

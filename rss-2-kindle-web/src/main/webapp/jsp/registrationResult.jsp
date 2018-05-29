@@ -56,23 +56,15 @@
 
 <header class="masthead bg-primary text-white text-center">
     <div class="container">
-        <form:form class="form-signin" action="register" commandName="newUserForm" method="post" autocomplete="off">
-            <h2 class="form-signin-heading">Please sign up</h2>
-            <form:label path="username" class="sr-only">Username</form:label>
-            <form:input type="text" id="username" path="username" class="form-control" placeholder="Username"/>
-            <form:errors path="username" cssClass="error"/>
-            <form:label path="email" class="sr-only">E-mail</form:label>
-            <form:input type="email" path="email" class="form-control" placeholder="e-mail"/>
-            <form:errors path="email" cssClass="error"/>
-            <form:label path="password" class="sr-only">Password</form:label>
-            <form:input type="password" path="password" class="form-control" placeholder="Password"/>
-            <form:errors path="password" cssClass="error"/>
-            <form:label path="confirmPassword" class="sr-only">Confirm Password</form:label>
-            <form:input type="password" path="confirmPassword" class="form-control" placeholder="Confirm password"/>
-            <form:errors path="confirmPassword" cssClass="error"/>
-
-            <button class="btn btn-outline-light btn-block btn-lg" type="submit">SIGN UP</button>
-        </form:form>
+        <h4>Thank you for using RSS-2-KINDLE service!</h4>
+        <p class="lead">User <span style="color: #2C3E50;">${username}</span> has been registered successfully.
+            The confirmation will be sent to email <span style="color: #2C3E50;">${email}</span>.
+            You can start working with your account right now</p>
+        <div class="row">
+            <div class="container">
+                <p><a id="btn_signin" class="btn btn-outline-light btn-xl" href="login" role="button">SIGN IN</a></p>
+            </div>
+        </div>
     </div>
 </header>
 
@@ -130,4 +122,19 @@
 
 <div class="copyright py-4 text-center text-white">
     <div class="container">
-        <small>Copyright &copy; <
+        <small>Copyright &copy; <a href="https://roundkick.studio">Roundkick Studio</a> 2018</small>
+    </div>
+</div>
+
+<!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
+<div class="scroll-to-top d-lg-none position-fixed ">
+    <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top">
+        <i class="fa fa-chevron-up"></i>
+    </a>
+</div>
+
+<!-- Bootstrap core JavaScript -->
+<script src="../vendor/jquery/jquery.min.js"></script>
+<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

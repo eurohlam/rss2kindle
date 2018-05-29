@@ -18,16 +18,19 @@ import javax.ws.rs.core.Response;
  */
 @Component
 @Scope("prototype")
-public class RestClient
-{
+public class RestClient {
 
-    final private Logger logger = LoggerFactory.getLogger(RestClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(RestClient.class);
+
+    private static final String PROFILE_PATH = "profile/";
+    private static final String USERS_PATH = "users/";
+    private static final String SERVICE_PATH = "service/";
 
     private String restHost;
     private String restPort;
     private String restPath;
 
-    private Client restClient;
+    private Client client;
     private WebTarget target;
 
     private enum METHOD {
@@ -39,26 +42,24 @@ public class RestClient
     }
 
     @Autowired
-    public RestClient(@Value("${rest.host}") String restHost, @Value("${rest.port}") String restPort, @Value("${rest.path}") String restPath)
-    {
+    public RestClient(@Value("${rest.host}") String restHost, @Value("${rest.port}") String restPort, @Value("${rest.path}") String restPath) {
         this.restPath = restPath;
         this.restPort = restPort;
         this.restHost = restHost;
-        restClient = ClientBuilder.newClient();
-        target = restClient.target(restHost + ":" + restPort + restPath);
+        client = ClientBuilder.newClient();
+        target = client.target(restHost + ":" + restPort + restPath);
     }
 
-    private Response sendRequest(String path, METHOD method, String json)
-    {
+    private Response sendRequest(String path, METHOD method, String json) {
         Response response = null;
         if (method == METHOD.GET)
-            response= target.path(path).request().get(Response.class);
+            response = target.path(path).request().get(Response.class);
         else if (method == METHOD.PUT)
-            response= target.path(path).request().put(Entity.json(json), Response.class);
+            response = target.path(path).request().put(Entity.json(json), Response.class);
         else if (method == METHOD.DELETE)
-            response= target.path(path).request().delete(Response.class);
+            response = target.path(path).request().delete(Response.class);
         else if (method == METHOD.POST)
-            response= target.path(path).request().post(Entity.json(json), Response.class);
+            response = target.path(path).request().post(Entity.json(json), Response.class);
 
         if (response == null)
             logger.error("Response from RESt service is null. Probably, unsupported method has been called");
@@ -68,69 +69,66 @@ public class RestClient
         return response;
     }
 
-    public Response getUserData(String username)
-    {
+    public Response getUserData(String username) {
         logger.debug("Trying to get data for user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendRequest("profile/" + username, METHOD.GET, null);
+        return sendRequest(PROFILE_PATH + username, METHOD.GET, null);
     }
 
-    public Response resumeSubscriber(String username, String subscriberId)
-    {
+    public Response resumeSubscriber(String username, String subscriberId) {
         logger.debug("Trying to resume user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendRequest("profile/" + username + "/" + subscriberId + "/resume", METHOD.GET, null);
+        return sendRequest(PROFILE_PATH + username + "/" + subscriberId + "/resume", METHOD.GET, null);
     }
 
-    public Response suspendSubscriber(String username, String subscriberId)
-    {
+    public Response suspendSubscriber(String username, String subscriberId) {
         logger.debug("Trying to suspend user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendRequest("profile/" + username + "/" + subscriberId + "/suspend", METHOD.GET, null);
+        return sendRequest(PROFILE_PATH + username + "/" + subscriberId + "/suspend", METHOD.GET, null);
     }
 
-    public Response removeSubscriber(String username, String subscriberId)
-    {
+    public Response removeSubscriber(String username, String subscriberId) {
         logger.debug("Trying to remove user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendRequest("profile/" + username + "/" + subscriberId + "/remove", METHOD.DELETE, null);
+        return sendRequest(PROFILE_PATH + username + "/" + subscriberId + "/remove", METHOD.DELETE, null);
     }
 
-    public Response updateSubscriber(String username, String json)
-    {
+    public Response updateSubscriber(String username, String json) {
         logger.debug("Trying to update user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendRequest("profile/" + username + "/update", METHOD.PUT, json);
+        return sendRequest(PROFILE_PATH + username + "/update", METHOD.PUT, json);
     }
 
-    public Response addSubscriber(String username, String json)
-    {
+    public Response addSubscriber(String username, String json) {
         logger.debug("Trying to add new subscriber for user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendRequest("profile/" + username + "/new", METHOD.PUT, json);
+        return sendRequest(PROFILE_PATH + username + "/new", METHOD.PUT, json);
     }
 
-    public Response runPolling(String username)
-    {
+    public Response runPolling(String username) {
         logger.debug("Trying to run polling subscription for user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendRequest("service/" + username, METHOD.GET, null);
+        return sendRequest(SERVICE_PATH + username, METHOD.GET, null);
     }
 
-    public Response addUser(String json)
-    {
+    public Response addUser(String json) {
         logger.debug("Trying to add new user via REST service {}:{}{}", restHost, restPort, restPath);
-        return sendRequest("users/new", METHOD.POST, json);
+        return sendRequest(USERS_PATH + "new", METHOD.POST, json);
     }
 
-    public Response getUser(String username)
-    {
+    public Response getUser(String username) {
         logger.debug("Trying to get user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendRequest("users/" + username, METHOD.GET, null);
+        return sendRequest(USERS_PATH + username, METHOD.GET, null);
     }
 
-    public Response updateUser(String json)
-    {
+    public Response updateUser(String json) {
         logger.debug("Trying to update user via REST service {}:{}{}", restHost, restPort, restPath);
-        return sendRequest("users/update", METHOD.PUT, json);
+        return sendRequest(USERS_PATH + "update", METHOD.PUT, json);
     }
 
-    public Response removeUser(String username)
-    {
+    public Response removeUser(String username) {
         logger.debug("Trying to remove user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendRequest("users/" + username + "/remove", METHOD.DELETE, null);
+        return sendRequest(USERS_PATH + username + "/remove", METHOD.DELETE, null);
+    }
+
+    public Response sendEmailToUser(String username, String subject, String message) {
+        logger.debug("Sending email to user {} with subject {}", username, subject);
+        return target.path(SERVICE_PATH + username + "/send").
+                queryParam("subject", subject).
+                queryParam("message", message).
+                request().get(Response.class);
     }
 }
