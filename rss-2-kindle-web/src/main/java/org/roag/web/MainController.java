@@ -23,8 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 @Controller
-public class MainController
-{
+public class MainController {
 
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
@@ -32,38 +31,29 @@ public class MainController
     private SecurityService securityService;
 
     @RequestMapping(value = "/subscribers", method = RequestMethod.GET)
-    public String subscribersPage(ModelMap model)
-    {
-        model.addAttribute("username", getPrincipal());
+    public String subscribersPage(ModelMap model) {
         return "subscribers";
     }
 
     @RequestMapping(value = "/service", method = RequestMethod.GET)
-    public String servicePage(ModelMap model)
-    {
-        model.addAttribute("username", getPrincipal());
+    public String servicePage(ModelMap model) {
         return "service";
     }
 
     @RequestMapping(value = "/admin", method = RequestMethod.GET)
-    public String adminPage(ModelMap model)
-    {
-        model.addAttribute("username", getPrincipal());
+    public String adminPage(ModelMap model) {
         return "admin/adminPage";
     }
 
 
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
-    public String profilePage(ModelMap model)
-    {
-        model.addAttribute("username", getPrincipal());
+    public String profilePage(ModelMap model) {
         return "profile";
     }
 
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(@RequestParam(value = "error", required = false) String error)
-    {
+    public String login(@RequestParam(value = "error", required = false) String error) {
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated())
             return "profile";
         else
@@ -71,8 +61,7 @@ public class MainController
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public String logout(HttpServletRequest request, HttpServletResponse response)
-    {
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             logger.info("Logout user {}", auth.getPrincipal());
@@ -81,8 +70,8 @@ public class MainController
         return "redirect:login?logout";
     }
 
-    private String getPrincipal()
-    {
+    @ModelAttribute("username")
+    public String getPrincipal() {
         String userName = null;
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
@@ -95,8 +84,7 @@ public class MainController
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public String registerUser(@ModelAttribute("newUserForm") NewUserForm user, BindingResult result, ModelMap model)
-    {
+    public String registerUser(@ModelAttribute("newUserForm") NewUserForm user, BindingResult result, ModelMap model) {
         NewUserFormValidator validator = new NewUserFormValidator(securityService);
         validator.validate(user, result);
 
@@ -108,14 +96,12 @@ public class MainController
         }
 
         securityService.registerUser(user.getUsername(), user.getEmail(), user.getPassword());
-        model.addAttribute("username", user.getUsername());
         model.addAttribute("email", user.getEmail());
         return "registrationResult";
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
-    public String showRegisterForm(Model model)
-    {
+    public String showRegisterForm(Model model) {
         model.addAttribute("newUserForm", new NewUserForm());
         return "/register";
     }

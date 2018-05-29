@@ -2,11 +2,9 @@ package org.roag.camel;
 
 import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +17,13 @@ import java.util.Map;
 @Service
 public class SMTPSender extends RouteBuilder {
 
-    final private static Logger logger = LoggerFactory.getLogger(SMTPSender.class);
+    private static final Logger logger = LoggerFactory.getLogger(SMTPSender.class);
 
     private String uri;
     private String from;
 
     @Autowired
-    public SMTPSender(@Value("${smtp.uri}") String uri, @Value("${smtp.from}") String from,
-                      @Qualifier("mainCamelContext") CamelContext camelContext) throws Exception {
+    public SMTPSender(@Value("${smtp.uri}") String uri, @Value("${smtp.from}") String from) {
         this.uri = uri;
         this.from = from;
     }
@@ -39,7 +36,7 @@ public class SMTPSender extends RouteBuilder {
     public void send(String host, String port, String to, String subject, String message) {
         logger.info("Sending new email via smtp: {}:{}; to: {}; from: {}; subject: {}; body: {}", host, port, to, from, subject, message);
         ProducerTemplate template = getContext().createProducerTemplate();
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("to", to);
         headers.put("from", from);
         headers.put("subject", subject);
@@ -50,17 +47,21 @@ public class SMTPSender extends RouteBuilder {
 
     public void send(String to, String subject, String message) {
         logger.info("Sending new email via smtp: {}; to: {}; from: {}; subject: {}; body: {}", uri, to, from, subject, message);
-        Endpoint endpoint = getContext().getEndpoint("direct:sendEmail");
-        Exchange exchange = endpoint.createExchange();
-        Message in = exchange.getIn();
-        in.setHeader("subject", subject);
-        in.setHeader("to", to);
-        in.setHeader("from", from);
-        in.setHeader("contentType", "text/plain");
-        in.setBody(message);
-        Producer producer = endpoint.createProducer();
-        producer.start();
-        producer.process(exchange);
-        logger.info("Email has been sent successfully");
+        try {
+            Endpoint endpoint = getContext().getEndpoint("direct:sendEmail");
+            Exchange exchange = endpoint.createExchange();
+            Message in = exchange.getIn();
+            in.setHeader("subject", subject);
+            in.setHeader("to", to);
+            in.setHeader("from", from);
+            in.setHeader("contentType", "text/plain");
+            in.setBody(message);
+            Producer producer = endpoint.createProducer();
+            producer.start();
+            producer.process(exchange);
+            logger.info("Email has been sent successfully");
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
     }
 }

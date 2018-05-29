@@ -118,13 +118,25 @@
                 <camel:setHeader headerName="attachment">
                     <camel:simple>${header.mobiFile}</camel:simple>
                 </camel:setHeader>
+                <camel:setHeader headerName="to">
+                    <camel:simple>${header.email}</camel:simple>
+                </camel:setHeader>
+                <camel:setHeader headerName="from">
+                    <camel:simple>{{smtp.from}}</camel:simple>
+                </camel:setHeader>
+                <camel:setHeader headerName="subject">
+                    <camel:simple>Update from ${header.feed}</camel:simple>
+                </camel:setHeader>
+                <camel:setHeader headerName="contentType">
+                    <camel:simple>text/plain</camel:simple>
+                </camel:setHeader>
                 <camel:setBody>
-                    <camel:simple>Dear ${header.name}.\n\nPlease, have a look on updates from ${header.feed}.\n\nCheers\nEurohlam
+                    <camel:simple>Dear ${header.name}.\n\nPlease, be aware about new updates from ${header.feed}.\n\nCheers\nEurohlam
                     </camel:simple>
                 </camel:setBody>
                 <camel:process ref="SMTPAttachmentProcessor"/>
                 <camel:log message="Send file ${header.mobiFile} to ${header.email}" loggingLevel="INFO" logName="org.roag.camel.smtp"/>
-                <camel:toD uri="{{smtp.uri}}?to=${header.email}&amp;from={{smtp.from}}&amp;subject=Update from ${header.feed}&amp;contentType=text/plain"/>
+                <camel:toD uri="{{smtp.uri}}"/>
             </camel:filter>
         </camel:route>
 
