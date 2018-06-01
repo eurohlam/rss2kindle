@@ -127,7 +127,7 @@ public class RestClient {
 
     public Response sendEmailToUser(String username, String subject, String message) {
         logger.debug("Sending email to user {} with subject {}", username, subject);
-        return target.path(SEND_EMAIL_PATH + username).
+        return target.path(SEND_EMAIL_PATH + "/" + username).
                 queryParam("subject", subject).
                 queryParam("message", message).
                 request().get(Response.class);
