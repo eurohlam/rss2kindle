@@ -21,6 +21,7 @@
     <security:http realm="" use-expressions="false">
         <security:intercept-url pattern="/" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <security:intercept-url pattern="/index.html" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <security:intercept-url pattern="/contact_me.jsp" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <security:intercept-url pattern="/js/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <security:intercept-url pattern="/css/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <security:intercept-url pattern="/img/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>

@@ -25,8 +25,6 @@ public class ServiceManager {
     private Rss2XmlHandler rss2XmlHandler;
     @Autowired
     private SubscriberRepository subscriberRepository;
-    @Autowired
-    private SMTPSender smtpSender;
 
     @GET
     @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}")
@@ -55,18 +53,4 @@ public class ServiceManager {
         }
     }
 
-    @GET
-    @Path("/send")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response sendEmailToUser(@PathParam("username") String username, @QueryParam("subject") String subject, @QueryParam("message") String message) {
-        logger.info("Sending email to {}", username);
-        try {
-            String email = subscriberRepository.getUserRepository().getUser(username).getEmail();
-            smtpSender.send(email, subject, message);
-            return Response.ok("{ \"status\" : \"Email has been sent to "+email + "\" }", MediaType.APPLICATION_JSON_TYPE).build();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-    }
 }
