@@ -59,16 +59,16 @@
         <form:form class="form-signin" action="register" commandName="newUserForm" method="post" autocomplete="off">
             <h2 class="form-signin-heading">Please sign up</h2>
             <form:label path="username" class="sr-only">Username</form:label>
-            <form:input type="text" id="username" path="username" class="form-control" placeholder="Username"/>
+            <form:input type="text" id="username" path="username" class="form-control" placeholder="Username" />
             <form:errors path="username" cssClass="error"/>
             <form:label path="email" class="sr-only">E-mail</form:label>
-            <form:input type="email" path="email" class="form-control" placeholder="e-mail"/>
+            <form:input type="email" path="email" class="form-control" placeholder="e-mail" />
             <form:errors path="email" cssClass="error"/>
             <form:label path="password" class="sr-only">Password</form:label>
-            <form:input type="password" path="password" class="form-control" placeholder="Password"/>
+            <form:input type="password" path="password" class="form-control" placeholder="Password" minlength="6" />
             <form:errors path="password" cssClass="error"/>
             <form:label path="confirmPassword" class="sr-only">Confirm Password</form:label>
-            <form:input type="password" path="confirmPassword" class="form-control" placeholder="Confirm password"/>
+            <form:input type="password" path="confirmPassword" class="form-control" placeholder="Confirm password" minlength="6" />
             <form:errors path="confirmPassword" cssClass="error"/>
 
             <button class="btn btn-outline-light btn-block btn-lg" type="submit">SIGN UP</button>

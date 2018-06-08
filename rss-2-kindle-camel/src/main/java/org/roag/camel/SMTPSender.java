@@ -46,6 +46,10 @@ public class SMTPSender extends RouteBuilder {
     }
 
     public void send(String to, String subject, String message) {
+        send(to, from, subject, message);
+    }
+
+    public void send(String to, String from, String subject, String message) {
         logger.info("Sending new email via smtp: {}; to: {}; from: {}; subject: {}; body: {}", uri, to, from, subject, message);
         try {
             Endpoint endpoint = getContext().getEndpoint("direct:sendEmail");

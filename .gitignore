@@ -2,5 +2,6 @@
 */target
 *.iml
 */log
-*/logs
+*logs
+*data
 .DS_Store

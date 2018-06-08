@@ -25,6 +25,7 @@ public class RestClient {
     private static final String PROFILE_PATH = "profile/";
     private static final String USERS_PATH = "users/";
     private static final String SERVICE_PATH = "service/";
+    private static final String SEND_EMAIL_PATH = "email/send";
 
     private String restHost;
     private String restPort;
@@ -126,7 +127,17 @@ public class RestClient {
 
     public Response sendEmailToUser(String username, String subject, String message) {
         logger.debug("Sending email to user {} with subject {}", username, subject);
-        return target.path(SERVICE_PATH + username + "/send").
+        return target.path(SEND_EMAIL_PATH + "/" + username).
+                queryParam("subject", subject).
+                queryParam("message", message).
+                request().get(Response.class);
+    }
+
+    public Response sendEmailToAny(String to, String from, String subject, String message) {
+        logger.debug("Sending email to {} from {} with subject {}", to, from, subject);
+        return target.path(SEND_EMAIL_PATH).
+                queryParam("to", to).
+                queryParam("from", from).
                 queryParam("subject", subject).
                 queryParam("message", message).
                 request().get(Response.class);
