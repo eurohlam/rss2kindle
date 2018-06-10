@@ -17,6 +17,6 @@ Created by eurohlam on 01.06.18
     String phone = request.getParameter("phone");
     String email = request.getParameter("email");
     String message = request.getParameter("message");
-    client.sendEmailToAny("roundkick@gmail.com", email, "Request from " + name + " phone: " + phone, message);
+    client.sendEmailToAny("info@roundkick.studio", "Request from " + name + " phone: " + phone, email, name, message);
 
 %>
