@@ -2,8 +2,6 @@ package org.roag.service;
 
 import com.google.gson.Gson;
 import org.roag.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,15 +11,13 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by eurohlam on 09.11.16.
  */
-public class SubscriberFactory
-{
+public class SubscriberFactory {
     //default timeout is 24 hours
-    final public long DEFAULT_TIMEOUT=24;
+    public static final long DEFAULT_TIMEOUT = 24;
 
-    private static final ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat>(){
+    private static final ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat>() {
         @Override
-        protected SimpleDateFormat initialValue()
-        {
+        protected SimpleDateFormat initialValue() {
             return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         }
     };
@@ -29,15 +25,13 @@ public class SubscriberFactory
 
     private Gson gson = new Gson();
 
-    public User newUser(String username, String email, String password)
-    {
-        Set<Roles> roles=new HashSet<>(1);
+    public User newUser(String username, String email, String password) {
+        Set<Roles> roles = new HashSet<>(1);
         roles.add(Roles.ROLE_USER);
         return newUser(username, email, password, dateFormat.get().format(new Date()), UserStatus.ACTIVE, roles, new ArrayList<Subscriber>(3));
     }
 
-    public User newUser(String username, String email, String password, String dateCreated, UserStatus status, Set<Roles> roles, List<Subscriber> subscribers)
-    {
+    public User newUser(String username, String email, String password, String dateCreated, UserStatus status, Set<Roles> roles, List<Subscriber> subscribers) {
         User user = new User();
         user.setId(UUID.randomUUID().toString());
         user.setUsername(username);
@@ -52,28 +46,25 @@ public class SubscriberFactory
         return user;
     }
 
-    public Subscriber newSubscriber(String email, String name, String rss) throws IllegalArgumentException
-    {
+    public Subscriber newSubscriber(String email, String name, String rss) {
         return newSubscriber(email, name, new String[]{rss}, new Date(), DEFAULT_TIMEOUT, TimeUnit.HOURS);//TODO: starttime
     }
 
-    public Subscriber newSubscriber(String email, String name, String[] rssList, Date startDate, long timeout, TimeUnit timeUnit) throws IllegalArgumentException
-    {
-        if (email == null || email.length()==0)
+    public Subscriber newSubscriber(String email, String name, String[] rssList, Date startDate, long timeout, TimeUnit timeUnit) {
+        if (email == null || email.length() == 0)
             throw new IllegalArgumentException("Email of new subscriber can not be empty");
 
         if (rssList == null || rssList.length == 0)
             throw new IllegalArgumentException("New subscriber has to have at least one rss");
 
-        Subscriber s=new Subscriber();
+        Subscriber s = new Subscriber();
         s.setEmail(email);
         s.setName(name);
         s.setStatus(SubscriberStatus.ACTIVE.toString());
         s.setDateCreated(dateFormat.get().format(new Date()));
 
         List<Rss> list = new ArrayList<>(rssList.length);
-        for (String rss: rssList)
-        {
+        for (String rss : rssList) {
             Rss rss_list = new Rss();
             rss_list.setRss(rss);
             rss_list.setStatus(RssStatus.ACTIVE.toString());
@@ -82,20 +73,18 @@ public class SubscriberFactory
         s.setRsslist(list);
         Settings settings = new Settings();
         settings.setStarttime(dateFormat.get().format(startDate));
-        settings.setTimeout(Long.toString(timeUnit != TimeUnit.HOURS ? timeUnit.toHours(timeout):timeout));
+        settings.setTimeout(Long.toString(timeUnit != TimeUnit.HOURS ? timeUnit.toHours(timeout) : timeout));
         s.setSettings(settings);
         return s;
 
     }
 
-    public <T> T convertJson2Pojo(Class<T> _class, String source_object)
-    {
+    public <T> T convertJson2Pojo(Class<T> _class, String source_object) {
         T subscr = gson.fromJson(source_object, _class);
         return subscr;
     }
 
-    public String convertPojo2Json(Object pojo)
-    {
+    public String convertPojo2Json(Object pojo) {
         return gson.toJson(pojo);
     }
 
