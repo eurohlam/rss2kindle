@@ -31,7 +31,6 @@ services:
     networks:
       - rss2kindle
     volumes:
-      - ../kindle:/usr/local/kindle
       - ../logs:/usr/local/tomcat/logs:rw
       - ../data:/usr/local/tomcat/data:rw
 networks:

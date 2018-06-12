@@ -27,7 +27,7 @@ public interface UserRepository
 
     public List<User> findAll() throws Exception;
 
-    public List<User> findAll(Map condition) throws Exception;
+    public List<User> findAll(Map<String, String> conditions) throws Exception;
 
     public OperationResult assignRole(String username, Roles role) throws Exception;
 

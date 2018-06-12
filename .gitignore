@@ -4,4 +4,5 @@
 */log
 *logs
 *data
+docker-dir/tomcat/resources/*.war
 .DS_Store

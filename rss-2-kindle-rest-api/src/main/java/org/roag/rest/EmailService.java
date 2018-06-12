@@ -42,10 +42,11 @@ public class EmailService {
     @GET
     @Path("/send")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response sendEmailToAny(@QueryParam("to") String to, @QueryParam("from") String from, @QueryParam("subject") String subject, @QueryParam("message") String message) {
+    public Response sendEmailToAny(@QueryParam("to") String to, @QueryParam("subject") String subject,
+                                   @QueryParam("from") String from, @QueryParam("fromPersonal") String fromPersonal, @QueryParam("message") String message) {
         logger.info("Sending email to {}", to);
         try {
-            smtpSender.send(to, from, subject, message);
+            smtpSender.send(to, subject, from, fromPersonal, message);
             return Response.ok("{ \"status\" : \"Email has been sent to " + to + " from " + from + "\" }", MediaType.APPLICATION_JSON_TYPE).build();
         }
         catch (Exception e) {

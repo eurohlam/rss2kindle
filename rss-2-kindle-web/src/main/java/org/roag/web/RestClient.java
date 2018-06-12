@@ -133,11 +133,12 @@ public class RestClient {
                 request().get(Response.class);
     }
 
-    public Response sendEmailToAny(String to, String from, String subject, String message) {
+    public Response sendEmailToAny(String to, String subject, String from, String fromPersonal, String message) {
         logger.debug("Sending email to {} from {} with subject {}", to, from, subject);
         return target.path(SEND_EMAIL_PATH).
                 queryParam("to", to).
                 queryParam("from", from).
+                queryParam("fromPersonal", fromPersonal).
                 queryParam("subject", subject).
                 queryParam("message", message).
                 request().get(Response.class);
