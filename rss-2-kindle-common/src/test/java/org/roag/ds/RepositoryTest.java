@@ -2,12 +2,12 @@ package org.roag.ds;
 
 import org.roag.ds.impl.MemorySubscriberRepository;
 import org.roag.ds.impl.MemoryUserRepository;
-import org.roag.model.Roles;
-import org.roag.model.Subscriber;
-import org.roag.model.User;
-import org.roag.model.UserStatus;
+import org.roag.model.*;
 import org.roag.service.SubscriberFactory;
 import org.testng.annotations.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.testng.Assert.*;
 
@@ -15,8 +15,7 @@ import static org.testng.Assert.*;
  * Created by eurohlam on 08.12.16.
  * Test for checking in memory subscriberRepository
  */
-public class RepositoryTest
-{
+public class RepositoryTest {
 
     private UserRepository userRepository;
     private SubscriberRepository subscriberRepository;
@@ -26,27 +25,36 @@ public class RepositoryTest
     private static String TEST_NAME = "test";
     private static String TEST_RSS = "http://testrss.com/feed";
 
-    public RepositoryTest()
-    {
+    public RepositoryTest() {
         userRepository = MemoryUserRepository.getInstance();
         subscriberRepository = MemorySubscriberRepository.getInstance(userRepository);
         factory = new SubscriberFactory();
     }
 
     @Test(groups = {"Functionality Check"})
-    public void crudSubscriberTest() throws Exception
-    {
-        User user=factory.newUser(TEST_USER, TEST_EMAIL,"123");
+    public void crudSubscriberTest() throws Exception {
+        User user = factory.newUser(TEST_USER, TEST_EMAIL, "123");
         userRepository.addUser(user);
         assertNotNull(userRepository.getUser(TEST_USER));
         assertEquals(userRepository.getUser(TEST_USER).getRoles().iterator().next(), Roles.ROLE_USER, "User has unexpected role.");
 
         Subscriber subscriber = factory.newSubscriber(TEST_EMAIL, TEST_NAME, TEST_RSS);
-        OperationResult r = subscriberRepository.addSubscriber(TEST_USER,subscriber);
+        OperationResult r = subscriberRepository.addSubscriber(TEST_USER, subscriber);
         assertEquals(r, OperationResult.SUCCESS);
 
         assertNotNull(subscriberRepository.getSubscriber(TEST_USER, TEST_EMAIL));
         assertEquals(subscriberRepository.suspendSubscriber(TEST_USER, TEST_EMAIL), OperationResult.SUCCESS);
+        assertTrue(SubscriberStatus.fromValue(subscriberRepository.getSubscriber(TEST_USER, TEST_EMAIL).getStatus()) == SubscriberStatus.SUSPENDED);
+
+        assertEquals(subscriberRepository.resumeSubscriber(TEST_USER, TEST_EMAIL), OperationResult.SUCCESS);
+        assertTrue(SubscriberStatus.fromValue(subscriberRepository.getSubscriber(TEST_USER, TEST_EMAIL).getStatus()) == SubscriberStatus.ACTIVE);
+
+        Rss rss = new Rss();
+        rss.setRss("http://newrss.com");
+        rss.setStatus(RssStatus.ACTIVE.toString());
+        subscriber.getRsslist().add(rss);
+        subscriberRepository.updateSubscriber(TEST_USER, subscriber);
+        assertEquals(subscriberRepository.getSubscriber(TEST_USER, TEST_EMAIL).getRsslist().size(), 2);
 
         assertTrue(subscriberRepository.findAllSubscribersByUser(TEST_USER).size() > 0);
         assertEquals(subscriberRepository.removeSubscriber(TEST_USER, subscriber), OperationResult.SUCCESS);
@@ -57,9 +65,8 @@ public class RepositoryTest
     }
 
     @Test(groups = {"Functionality Check"})
-    public void subscriberFactoryTest() throws Exception
-    {
-        User user=factory.newUser(TEST_USER, TEST_EMAIL, "123");
+    public void subscriberFactoryTest() throws Exception {
+        User user = factory.newUser(TEST_USER, TEST_EMAIL, "123");
         assertEquals(user.getStatus(), UserStatus.ACTIVE.toString());
 
         Subscriber subscriber = factory.newSubscriber(TEST_EMAIL, TEST_NAME, TEST_RSS);
@@ -81,12 +88,41 @@ public class RepositoryTest
     }
 
     @Test(groups = {"Functionality Check"}, expectedExceptions = {IllegalArgumentException.class})
-    public void duplicatedSubscriberTest() throws Exception
-    {
+    public void duplicatedSubscriberTest() throws Exception {
         userRepository.addUser(factory.newUser(TEST_USER, TEST_EMAIL, "123"));
-        Subscriber subscriber = factory.newSubscriber(TEST_EMAIL, TEST_NAME, TEST_RSS);
-        subscriberRepository.addSubscriber(TEST_USER, subscriber);
-        subscriberRepository.addSubscriber(TEST_USER, subscriber);
+        try {
+            Subscriber subscriber = factory.newSubscriber(TEST_EMAIL, TEST_NAME, TEST_RSS);
+            subscriberRepository.addSubscriber(TEST_USER, subscriber);
+            subscriberRepository.addSubscriber(TEST_USER, subscriber);
+        } finally {
+            userRepository.removeUser(TEST_USER);
+        }
     }
+
+    @Test(groups = {"Functionality Check"})
+    public void duplicatedUserRoleTest() throws Exception {
+        userRepository.addUser(factory.newUser(TEST_USER, TEST_EMAIL, "123"));
+        userRepository.assignRole(TEST_USER, Roles.ROLE_ADMIN);
+        assertTrue(userRepository.getUser(TEST_USER).getRoles().contains(Roles.ROLE_ADMIN));
+        assertTrue(userRepository.assignRole(TEST_USER, Roles.ROLE_ADMIN) == OperationResult.DUPLICATED);
+        userRepository.removeUser(TEST_USER);
+    }
+
+    @Test(groups = {"Functionality Check"})
+    public void findAllByConditionTest() throws Exception {
+        for (int i = 0; i < 10000; i++) {
+            User user = factory.newUser(TEST_USER + i, i + TEST_EMAIL, "123");
+            if (i % 2 == 0) {
+                user.setStatus(UserStatus.LOCKED.toString());
+            }
+            userRepository.addUser(user);
+        }
+        Map<String, String> conditions = new HashMap<>();
+        conditions.put("status", UserStatus.LOCKED.toString());
+        for (User user : userRepository.findAll(conditions)) {
+            assertTrue(UserStatus.fromValue(user.getStatus()) == UserStatus.LOCKED);
+        }
+    }
+
 
 }
