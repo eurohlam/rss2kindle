@@ -68,11 +68,19 @@ public class MemorySubscriberRepository implements SubscriberRepository {
 
     @Override
     public OperationResult updateSubscriber(String username, Subscriber subscriber) throws Exception {
-        User user = getUser(username);
-        user.getSubscribers().stream().filter(oldSubscriber -> oldSubscriber.getEmail().equals(subscriber.getEmail())).
-                forEach(oldSubscriber -> oldSubscriber = subscriber);//TODO: forEach does not change element properly. try to change it to map
+        if (username == null || subscriber == null)
+            return OperationResult.FAILURE;
 
-        return OperationResult.SUCCESS;
+        User user = getUser(username);
+        for (Subscriber s: user.getSubscribers()) {
+            if (s.getEmail().equals(subscriber.getEmail())) {
+                user.getSubscribers().remove(s);
+                user.getSubscribers().add(subscriber);
+                return OperationResult.SUCCESS;
+            }
+        }
+
+        return OperationResult.NOT_EXIST;
     }
 
     @Override

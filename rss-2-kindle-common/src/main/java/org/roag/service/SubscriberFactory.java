@@ -15,13 +15,7 @@ public class SubscriberFactory {
     //default timeout is 24 hours
     public static final long DEFAULT_TIMEOUT = 24;
 
-    private static final ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        }
-    };
-
+    private static final ThreadLocal<DateFormat> dateFormat = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyyMMdd HHmm"));
 
     private Gson gson = new Gson();
 
