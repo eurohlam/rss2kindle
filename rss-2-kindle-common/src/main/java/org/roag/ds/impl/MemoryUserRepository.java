@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 /**
  * Created by eurohlam on 30/10/2017.
@@ -45,13 +46,16 @@ public class MemoryUserRepository implements UserRepository {
 
     @Override
     public List<User> findAll(Map<String, String> condition) throws Exception {
-        List<User> allUsers = findAll();
-        List<User> filteredUsers = new ArrayList<>();
+        List<User> filteredUsers = findAll();
         for (Map.Entry entry: condition.entrySet()) {
             if ("email".equals(entry.getKey()))
-                allUsers.stream().filter(user -> user.getEmail().equals(entry.getValue())).forEach(filteredUsers::add);
-            else if ("status".equals(entry.getKey()))
-                allUsers.stream().filter(user -> user.getStatus().equals(entry.getValue())).forEach(filteredUsers::add);
+                filteredUsers = filteredUsers.stream().filter(user -> user.getEmail().equals(entry.getValue())).collect(Collectors.toList());
+            if ("status".equals(entry.getKey()))
+                filteredUsers = filteredUsers.stream().filter(user -> user.getStatus().equals(entry.getValue())).collect(Collectors.toList());
+            if ("roles".equals(entry.getKey()))
+                filteredUsers = filteredUsers.stream().
+                        filter(user -> user.getRoles().stream().anyMatch(roles -> roles.name().equals(entry.getValue()))).
+                        collect(Collectors.toList());
         }
 
         return filteredUsers;

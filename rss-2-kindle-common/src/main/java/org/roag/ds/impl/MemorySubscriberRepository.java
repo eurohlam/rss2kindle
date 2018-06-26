@@ -54,11 +54,8 @@ public class MemorySubscriberRepository implements SubscriberRepository {
         if (user == null)
             throw new IllegalArgumentException("User " + username + " does not exist");
 
-        for (Subscriber s : user.getSubscribers())
-            if (s.getEmail().equals(email))
-                return s;
-
-        return null;
+        Optional<Subscriber> subscriber= user.getSubscribers().stream().filter(s -> s.getEmail().equals(email)).findFirst();
+        return subscriber.isPresent() ? subscriber.get() : null;
     }
 
     @Override

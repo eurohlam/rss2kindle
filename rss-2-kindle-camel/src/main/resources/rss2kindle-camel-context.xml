@@ -141,7 +141,7 @@
         </camel:route>
 
         <camel:route id="startupQuartz">
-            <camel:from uri="quartz2:polling/runAll?cron=1+*+*+*+*+?"/>
+            <camel:from uri="quartz2:polling/runAll?cron={{cron.runAll}}"/>
             <camel:log message="Quartz job triggered runRssPollingForAllUsers" loggingLevel="INFO" logName="org.roag.camel.quartz"/>
             <camel:to uri="bean:rss2XmlHandler?method=runRssPollingForAllUsers"/>
         </camel:route>

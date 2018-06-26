@@ -6,7 +6,9 @@ import org.roag.model.*;
 import org.roag.service.SubscriberFactory;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import static org.testng.Assert.*;
@@ -115,13 +117,15 @@ public class RepositoryTest {
             if (i % 2 == 0) {
                 user.setStatus(UserStatus.LOCKED.toString());
             }
+            if (i % 10 == 0) {
+                user.setRoles(new HashSet<>(Arrays.asList(Roles.ROLE_ADMIN)));
+            }
             userRepository.addUser(user);
         }
         Map<String, String> conditions = new HashMap<>();
         conditions.put("status", UserStatus.LOCKED.toString());
-        for (User user : userRepository.findAll(conditions)) {
-            assertTrue(UserStatus.fromValue(user.getStatus()) == UserStatus.LOCKED);
-        }
+        conditions.put("roles", "ROLE_USER");
+        userRepository.findAll(conditions).stream().forEach(user -> assertTrue(UserStatus.fromValue(user.getStatus()) == UserStatus.LOCKED));
     }
 
 
