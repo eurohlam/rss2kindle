@@ -123,6 +123,7 @@ public class ProfileManagerTest extends JerseyTestNg.ContainerPerClassTest
         rss.setRss("http://newrss.com");
         rss.setStatus(RssStatus.ACTIVE.toString());
         subscriber.getRsslist().add(rss);
+        subscriber.setName("Kindle");
         response = target(PATH + username + "/update").request().put(Entity.json(factory.convertPojo2Json(subscriber)), Response.class);
         assertEquals(200, response.getStatus());
 
@@ -132,6 +133,7 @@ public class ProfileManagerTest extends JerseyTestNg.ContainerPerClassTest
         entity=response.readEntity(String.class);
         subscriber=factory.convertJson2Pojo(Subscriber.class, entity);
         assertEquals("Reading updated User failed", 2, subscriber.getRsslist().size());
+        assertEquals("Reading updated User failed", "Kindle", subscriber.getName());
 
         //delete
         response = target(PATH + username + "/" + new_email + "/remove").request().delete();

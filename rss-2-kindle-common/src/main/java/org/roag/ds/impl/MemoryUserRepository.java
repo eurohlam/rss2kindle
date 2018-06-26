@@ -12,53 +12,57 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 /**
  * Created by eurohlam on 30/10/2017.
  */
 @Service
-public class MemoryUserRepository implements UserRepository
-{
+public class MemoryUserRepository implements UserRepository {
 
     private Map<String, User> users;
     private static UserRepository repository;
 
-    private MemoryUserRepository()
-    {
+    private MemoryUserRepository() {
         this.users = new ConcurrentHashMap<>();
     }
 
-    public static UserRepository getInstance()
-    {
+    public static UserRepository getInstance() {
         ReentrantReadWriteLock.WriteLock lock = new ReentrantReadWriteLock().writeLock();
         lock.lock();
-        try
-        {
+        try {
             if (repository == null)
                 repository = new MemoryUserRepository();
             return repository;
-        }
-        finally
-        {
+        } finally {
             lock.unlock();
         }
     }
 
     @Override
-    public List<User> findAll() throws Exception
-    {
-        return new ArrayList<User>(users.values());
+    public List<User> findAll() throws Exception {
+        return new ArrayList<>(users.values());
     }
 
     @Override
-    public List<User> findAll(Map condition) throws Exception
-    {
-        return findAll(); //TODO: implement findAll with conditions
+    public List<User> findAll(Map<String, String> condition) throws Exception {
+        List<User> filteredUsers = findAll();
+        for (Map.Entry entry: condition.entrySet()) {
+            if ("email".equals(entry.getKey()))
+                filteredUsers = filteredUsers.stream().filter(user -> user.getEmail().equals(entry.getValue())).collect(Collectors.toList());
+            if ("status".equals(entry.getKey()))
+                filteredUsers = filteredUsers.stream().filter(user -> user.getStatus().equals(entry.getValue())).collect(Collectors.toList());
+            if ("roles".equals(entry.getKey()))
+                filteredUsers = filteredUsers.stream().
+                        filter(user -> user.getRoles().stream().anyMatch(roles -> roles.name().equals(entry.getValue()))).
+                        collect(Collectors.toList());
+        }
+
+        return filteredUsers;
     }
 
     @Override
-    public OperationResult addUser(User user) throws Exception
-    {
+    public OperationResult addUser(User user) throws Exception {
         if (users.containsKey(user.getUsername()))
             throw new IllegalArgumentException("User " + user.getUsername() + " already exists");
         users.put(user.getUsername(), user);
@@ -66,59 +70,50 @@ public class MemoryUserRepository implements UserRepository
     }
 
     @Override
-    public User getUser(String username) throws Exception
-    {
+    public User getUser(String username) throws Exception {
         return users.get(username);
     }
 
     @Override
-    public OperationResult updateUser(User user) throws Exception
-    {
+    public OperationResult updateUser(User user) throws Exception {
         User u = users.replace(user.getUsername(), user);
-        return u!=null? OperationResult.SUCCESS: OperationResult.FAILURE;
+        return u != null ? OperationResult.SUCCESS : OperationResult.FAILURE;
     }
 
     @Override
-    public OperationResult removeUser(String username) throws Exception
-    {
+    public OperationResult removeUser(String username) throws Exception {
         User u = users.remove(username);
-        return u!=null? OperationResult.SUCCESS: OperationResult.FAILURE;
+        return u != null ? OperationResult.SUCCESS : OperationResult.FAILURE;
     }
 
     @Override
-    public OperationResult lockUser(String username) throws Exception
-    {
+    public OperationResult lockUser(String username) throws Exception {
         User user = getUser(username);
         user.setStatus(UserStatus.LOCKED.toString());
         return updateUser(user);
     }
 
     @Override
-    public OperationResult unlockUser(String username) throws Exception
-    {
+    public OperationResult unlockUser(String username) throws Exception {
         User user = getUser(username);
         user.setStatus(UserStatus.ACTIVE.toString());
         return updateUser(user);
     }
 
     @Override
-    public OperationResult assignRole(String username, Roles role) throws Exception
-    {
-        User user=getUser(username);
-        for (Roles r: user.getRoles())
-            if (r == role)
-                return OperationResult.DUPLICATED;
+    public OperationResult assignRole(String username, Roles role) throws Exception {
+        User user = getUser(username);
+        if (user.getRoles().stream().anyMatch(r -> r == role))
+            return OperationResult.DUPLICATED;
         user.getRoles().add(role);
         return updateUser(user);
     }
 
     @Override
-    public OperationResult dismissRole(String username, Roles role) throws Exception
-    {
-        User user=getUser(username);
-        for (Roles r: user.getRoles())
-            if (r == role)
-            {
+    public OperationResult dismissRole(String username, Roles role) throws Exception {
+        User user = getUser(username);
+        for (Roles r : user.getRoles())
+            if (r == role) {
                 user.getRoles().remove(r);
                 return updateUser(user);
             }
