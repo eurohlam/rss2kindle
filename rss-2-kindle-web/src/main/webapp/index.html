@@ -271,12 +271,12 @@
                     <hr class="star-dark mb-5">
                     <!--img class="img-fluid mb-5" src="img/portfolio/cabin.png" alt=""-->
                     <ul class="mb-5" align="left" style="list-style-type:disc">
-                        <li>Do you love your little kindle?</li>
+                        <li>Do you love your little Kindle?</li>
                         <li>Do you you feel boring during commute but always forget to upload new articles into your
-                            kindle?
+                            Kindle?
                         </li>
-                        <li>Would you enjoy reading your favourite feeds in kindle?</li>
-                        <li>Do you have several kindle devices and would like to have different subscription for each of
+                        <li>Would you enjoy reading your favourite feeds in Kindle?</li>
+                        <li>Do you have several Kindle devices and would like to have different subscription for each of
                             them?
                         </li>
                     </ul>
@@ -284,14 +284,14 @@
                     <ul class="mb-5" align="left" style="list-style-type:circle">
                         <li>
                             <h6>Automation of everyday routine</h6>
-                            The service everyday will check updates on your RSS-feed and transform them into kindle
-                            format (MOBI) and send them by email to your kindle device.
+                            The service everyday will check updates on your RSS-feed and transform them into Kindle
+                            format (MOBI) and send them by email to your Kindle device.
                         </li>
                         <li>
                             <h6>Unlimited number of subscribers</h6>
                             That means you can associate different subscribers with different kindle devices. For
-                            example, somtimes you read books in kindle, somtemies in ipad or iphone.
-                            Each of those devices has own kindle-email. You can create a subscriber for each of them.
+                            example, sometimes you read books in Kindle, sometimes in iPad or iPhone.
+                            Each of those devices has own Kindle email. You can create a subscriber for each of them.
                             And of cause, you can manage a list of subscriptions for each subscriber independently.
                         </li>
                         <li>
@@ -326,13 +326,52 @@
                     <h2 class="text-secondary text-uppercase mb-0">How it works</h2>
                     <hr class="star-dark mb-5">
                     <!--img class="img-fluid mb-5" src="img/portfolio/cake.png" alt=""-->
-                    <p class="mb-5" align="left">
-                        Create a subscriber. Usually it corresponds to email of your kindle
-                        Create a list of subscriptions for the subscriber. It is just list of URLs of RSS-feeds
-                        Add email of this service into access list in your amazon account
-                        And vualya - every 24 hours the service will be checking updates in your feeds, convert them
-                        into mobi format and send them into subscriber's email
-                    </p>
+                    <ul class="mb-5" align="left" style="list-style-type:disc">
+                        <li>
+                            <h6 id="step1">Step 1: Register your Kindle to Amazon account</h6>
+                            Probably you are already aware that any Kindle device can be <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=201733370" target="_blank">registered</a> to Amazon account to buy, download, or deliver content to your device.
+                            After the registration a specific <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=201974220" target="_blank">"Send to Kindle Email Address"</a> will be assigned to your Kindle.
+                            You can check it in the settings of your Kindle. Email should look like xxxx@kindle.com.
+                        </li>
+                        <li>
+                            <h6>Step 2: Add RSS-2-KINDLE email address to approved emails list in Amazon account</h6>
+                            Due to security reason, it is not allowed to send messages to Kindle from any email. Kindle applies messages only from trusted addresses.
+							You have to add trusted emails into <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=201974240" target="_blank">approved e-mail list</a> in your Amazon account.
+							So, if you wish to receive updates from your RSS-feeds directly to your Kindle using RSS-2-KINDLE service, you need to add the email <strong>info@roundkick.studio</strong> into approved e-male list.
+							<strong>info@roundkick.studio</strong> is the email that we are using to send updates to your subscribers.
+                        </li>
+                        <li>
+                            <h6>Step 3: Create a subscriber in rss-2-kindle account</h6>
+                            Well done. Now you can start working with your rss-2-kindle account. It will be pretty easy and quick.
+							<p>
+                                Select "Subscribers" in the navigation menu and select tab "New subscriber".
+                            </p>
+                            <img class="img-fluid mb-5" src="img/howto/add_subscriber.png" alt="">
+                            <p>
+                                In the field "Email" put email of your Kindle that you found in the <a href="#step1">Step 1</a>.
+                            </p>
+                            <p>
+                                In the filed "Name" you can put any word that you would like to use for identification of your kindle.
+                            </p>
+                        </li>
+                        <li>
+                            <h6>Step 4: Create a list of subscriptions for the subscriber</h6>
+                            On the next step you need to add at least one URL of RSS-feed. You can add as much subscriptions as you wish. There are no limits.
+                            As soon as you finished with subscriptions, click the button "Create".
+                            <p>
+                                In "My profile" you can check your subscribers and subscriptions.
+                            </p>
+                        </li>
+                        <li>
+                            <h6>Step 5: Polling subscriptions</h6>
+                            Ideally now you can relax and even forget about RSS-2-KINDLE service. It automatically will check updates for your subscriptions,
+                            download them, convert into mobi-format and send to your Kindle once per day.
+                            <p>
+                                However, you can poll your subscriptions immediately. Just select "Service" in the navigation menu and push the button "Poll my subscriptions immediately"
+                            </p>
+                            <img class="img-fluid mb-5" src="img/howto/poll_subscriptions.png" alt="">
+                        </li>
+                    </ul>
                     <a class="btn btn-primary btn-lg rounded-pill portfolio-modal-dismiss" href="#">
                         <i class="fa fa-close"></i>
                         Close</a>
@@ -356,13 +395,19 @@
                     <!--img class="img-fluid mb-5" src="img/portfolio/circus.png" alt=""-->
                     <ul class="mb-5" align="left" style="list-style-type:disc">
                         <li>
-                            We do not require any private information of you.
+                            We do not require any sensible information of you.
                         </li>
                         <li>
-                            We keep only email addresses provided by you to get a service from us.
+                            We keep only information provided by you to get a service from us.
+                            In particular:
+                            <ul>
+                                <li>Your contact email required for registration</li>
+                                <li>Emails of your subscribers to send subscriptions to them</li>
+                                <li>URL-s of subscriptions</li>
+                            </ul>
                         </li>
                         <li>
-                            We do not analyse browser cookies.
+                            We do not analyse browser cookies and do not analyse content of subscriptions.
                         </li>
                         <li>
                             Your data is secured and not distributed to third party.
