@@ -59,11 +59,8 @@ public class Rss2XmlHandler {
     @Value("${rss.lastUpdate.timeunit}")
     private String lastUpdateTimeunit;
 
-    private static final ThreadLocal<DateFormat> RSS_LAST_UPDATE_FORMAT = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd'T'HH:MM:ss"));
 
-    private static final ThreadLocal<DateFormat> RSS_FILE_NAME_FORMAT = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyMMddHHmmss"));
-
-    private static final ThreadLocal<DateFormat> dateFormat = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     public Rss2XmlHandler(@Qualifier("subscriberRepository") SubscriberRepository subscriberRepository,
@@ -71,18 +68,9 @@ public class Rss2XmlHandler {
         this.subscriberRepository = subscriberRepository;
         this.camelContext = camelContext;
         this.rssConsumer = camelContext.createConsumerTemplate();
-        this.taskExecutor = Executors.newFixedThreadPool(10);
-        this.resultExecutor = Executors.newFixedThreadPool(10);
+        this.taskExecutor = Executors.newCachedThreadPool();//newFixedThreadPool(10);
+        this.resultExecutor = Executors.newCachedThreadPool(); //newFixedThreadPool(10);
     }
-
-    public static DateFormat getRssLastUpdateFormat() {
-        return RSS_LAST_UPDATE_FORMAT.get();
-    }
-
-    public static DateFormat getRssFileNameFormat() {
-        return RSS_FILE_NAME_FORMAT.get();
-    }
-
 
     public void runCustomRssPolling(String email, String rss) throws Exception {
         logger.info("Anonymous polling for email {} from rss {}", email, rss);
@@ -94,30 +82,33 @@ public class Rss2XmlHandler {
     }
 
     public void runRssPollingForAllUsers() throws Exception {
-        logger.debug("Start polling for all active users");
+        logger.info("Start polling for all active users");
         for (User user : subscriberRepository.getUserRepository().findAll())
             if (UserStatus.fromValue(user.getStatus()) == UserStatus.ACTIVE)
                 runRssPollingForList(user.getUsername(), user.getSubscribers());
             else
-                logger.debug("User {} is locked and will not be processed", user.getUsername());
+                logger.info("User {} is locked and will not be processed", user.getUsername());
     }
 
     /**
-     * @param username
-     * @param subscriberList
-     * @return number of successfully polled subscriptions
+     * @param username - unique name of user
+     * @param subscriberList - list of subscribers that belong to current user
      * @throws Exception
      */
     public void runRssPollingForList(String username, List<Subscriber> subscriberList) throws Exception {
-        for (Subscriber subscriber : subscriberList)
-            runRssPollingForSubscriber(username, subscriber);
+        for (Subscriber subscriber : subscriberList) {
+            if (SubscriberStatus.fromValue(subscriber.getStatus()) == SubscriberStatus.ACTIVE) {
+                runRssPollingForSubscriber(username, subscriber);
+            } else {
+                logger.info("Subscriber {} of user {} is suspended and will not be processed", subscriber.getEmail(), username);
+            }
+        }
     }
 
 
     /**
-     * @param username
-     * @param email
-     * @return number of successfully polled subscriptions
+     * @param username - unique name of user
+     * @param email - email of subscriber that belongs to current user
      * @throws Exception
      */
     public void runRssPollingForSubscriber(String username, String email) throws Exception {
@@ -125,9 +116,8 @@ public class Rss2XmlHandler {
     }
 
     /**
-     * @param username
-     * @param subscriber
-     * @return number of successfully polled subscriptions
+     * @param username - unique name of user
+     * @param subscriber - subscriber that belongs to current user
      * @throws Exception
      */
     public void runRssPollingForSubscriber(String username, Subscriber subscriber) throws Exception {
@@ -138,7 +128,7 @@ public class Rss2XmlHandler {
             Rss rss = subscriber.getRsslist().get(i);
             if (RssStatus.DEAD != RssStatus.fromValue(rss.getStatus())) {
                 logger.info("Polling RSS {}: user={}; subscriber = {}", rss.getRss(), username, subscriber.getEmail());
-                rss.setLastPollingDate(dateFormat.get().format(new Date()));
+                rss.setLastPollingDate(dateFormat.format(new Date()));
                 try {
                     Future<RssPollingTask.PollingTaskResult> result = taskExecutor.submit(
                             new RssPollingTask(rss, getPathForRss(username, subscriber.getEmail(), rss.getRss())));
@@ -168,6 +158,8 @@ public class Rss2XmlHandler {
 
     class RssPollingTask implements Callable<RssPollingTask.PollingTaskResult> {
 
+        private final DateFormat rssLastUpdateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:MM:ss");
+        private final DateFormat rssFileNameFormat = new SimpleDateFormat("yyMMddHHmmss");
         private Rss rss;
         private final String rssURI;
         private final String path;
@@ -177,7 +169,7 @@ public class Rss2XmlHandler {
             this.rss = rss;
             this.rssURI = getCamelRssUri(rss.getRss());
             this.path = path;
-            this.fileName = getRssFileNameFormat().format(new Date());
+            this.fileName = rssFileNameFormat.format(new Date());
         }
 
         private String getCamelRssUri(String rss) {
@@ -186,13 +178,13 @@ public class Rss2XmlHandler {
             String lastUpdate;
             if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.DAYS) {
                 calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - lastUpdateCount);
-                lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
+                lastUpdate = rssLastUpdateFormat.format(calendar.getTime());
             } else if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.HOURS) {
                 calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - lastUpdateCount);
-                lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
+                lastUpdate = rssLastUpdateFormat.format(calendar.getTime());
             } else {
                 calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 1);
-                lastUpdate = getRssLastUpdateFormat().format(calendar.getTime());
+                lastUpdate = rssLastUpdateFormat.format(calendar.getTime());
             }
 
             String rssUri = "rss:" + rss + "?feedHeader=" + feedHeaders
@@ -245,37 +237,37 @@ public class Rss2XmlHandler {
             return result;
         }
 
-        protected class PollingTaskResult {
+        class PollingTaskResult {
             private TaskStatus status;
             private String fileName;
             private String rss;
 
-            public PollingTaskResult(String rss) {
+            PollingTaskResult(String rss) {
                 this.rss = rss;
                 this.status = TaskStatus.NOT_STARTED;
             }
 
-            public TaskStatus getStatus() {
+            TaskStatus getStatus() {
                 return status;
             }
 
-            public void setStatus(TaskStatus status) {
+            void setStatus(TaskStatus status) {
                 this.status = status;
             }
 
-            public String getFileName() {
+            String getFileName() {
                 return fileName;
             }
 
-            public void setFileName(String fileName) {
+            void setFileName(String fileName) {
                 this.fileName = fileName;
             }
 
-            public String getRss() {
+            String getRss() {
                 return rss;
             }
 
-            public void setRss(String rss) {
+            void setRss(String rss) {
                 this.rss = rss;
             }
         }

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component("rssPolicy")
 public class RssRoutePolicy extends RoutePolicySupport
 {
-    final private static Logger logger = LoggerFactory.getLogger(RssRoutePolicy.class);
+    private final Logger logger = LoggerFactory.getLogger(RssRoutePolicy.class);
 
 
     @Override

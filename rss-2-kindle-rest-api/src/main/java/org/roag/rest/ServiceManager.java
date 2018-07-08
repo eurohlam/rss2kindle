@@ -19,7 +19,7 @@ import javax.ws.rs.core.Response;
 @Path("service/{username: [a-zA-Z][a-zA-Z_0-9]*}")
 public class ServiceManager {
 
-    private static final Logger logger = LoggerFactory.getLogger(ServiceManager.class);
+    private final Logger logger = LoggerFactory.getLogger(ServiceManager.class);
 
     @Autowired
     private Rss2XmlHandler rss2XmlHandler;

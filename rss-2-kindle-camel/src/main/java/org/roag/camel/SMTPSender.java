@@ -17,7 +17,7 @@ import java.util.Properties;
 @Service
 public class SMTPSender {
 
-    private static final Logger logger = LoggerFactory.getLogger(SMTPSender.class);
+    private final Logger logger = LoggerFactory.getLogger(SMTPSender.class);
 
     private String protocol;
     private String host;
@@ -44,7 +44,6 @@ public class SMTPSender {
         props.put("mail.smtp.port", port);
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.auth", "true");
-//        props.put("mail.smtp.localhost", InetAddress.getLocalHost().getHostName());
 
         Session session = Session.getDefaultInstance(props);
 

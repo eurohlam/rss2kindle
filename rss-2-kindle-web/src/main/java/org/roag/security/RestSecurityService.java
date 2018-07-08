@@ -25,14 +25,9 @@ import java.util.Date;
 @Service
 public class RestSecurityService implements SecurityService {
 
-    private static final Logger logger = LoggerFactory.getLogger(RestSecurityService.class);
+    private final Logger logger = LoggerFactory.getLogger(RestSecurityService.class);
 
-    private static final ThreadLocal<SimpleDateFormat> dateFormat = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        }
-    };
+    private final SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private SubscriberFactory subscriberFactory = new SubscriberFactory();
 
@@ -52,7 +47,7 @@ public class RestSecurityService implements SecurityService {
         if (response.getStatus() == 200) {
             User user = subscriberFactory.convertJson2Pojo(User.class, response.readEntity(String.class));
             logger.debug("User {} exists with roles {}", user.getUsername(), user.getRoles());
-            user.setLastLogin(dateFormat.get().format(new Date()));
+            user.setLastLogin(dateFormat.format(new Date()));
             restClient.updateUser(subscriberFactory.convertPojo2Json(user));
             UserDetails ud = new SpringUserDetailsImpl(user);
             return ud;

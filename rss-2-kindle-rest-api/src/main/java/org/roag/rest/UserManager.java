@@ -18,7 +18,8 @@ import javax.ws.rs.core.*;
 @Service
 @Path("users")
 public class UserManager {
-    private static final Logger logger = LoggerFactory.getLogger(UserManager.class);
+
+    private final Logger logger = LoggerFactory.getLogger(UserManager.class);
 
     @Context
     private Request request;
