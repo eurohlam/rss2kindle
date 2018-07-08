@@ -2,6 +2,7 @@ FROM tomcat:9.0.7-jre8
 MAINTAINER eurohlam
 LABEL vendor="eurohlam" version="2.0" project="rss2kindle"
 
+COPY resources/bin/setenv.sh /usr/local/tomcat/bin/setenv.sh
 COPY resources/conf/tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
 COPY resources/conf/server.xml /usr/local/tomcat/conf/server.xml
 COPY resources/conf/tomcat-ssl-keystore.jks /usr/local/tomcat/conf/tomcat-ssl-keystore.jks

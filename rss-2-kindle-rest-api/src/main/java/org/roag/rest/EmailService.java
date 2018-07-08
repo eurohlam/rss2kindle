@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response;
 @Path("email")
 public class EmailService {
 
-    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+    private final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
     @Autowired
     private UserRepository userRepository;

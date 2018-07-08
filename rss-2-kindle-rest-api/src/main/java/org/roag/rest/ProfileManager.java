@@ -25,7 +25,8 @@ import java.util.List;
 @Service
 @Path("profile/{username: [a-zA-Z][a-zA-Z_0-9]*}")
 public class ProfileManager {
-    private static final Logger logger = LoggerFactory.getLogger(ProfileManager.class);
+
+    private final Logger logger = LoggerFactory.getLogger(ProfileManager.class);
 
     @Context
     private Request request;

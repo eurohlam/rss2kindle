@@ -15,7 +15,7 @@ import javax.activation.FileDataSource;
 public class SMTPAttachmentProcessor implements org.apache.camel.Processor
 {
 
-    final private static Logger logger = LoggerFactory.getLogger(SMTPAttachmentProcessor.class);
+    private final Logger logger = LoggerFactory.getLogger(SMTPAttachmentProcessor.class);
 
     @Override
     public void process(Exchange exchange) throws Exception
