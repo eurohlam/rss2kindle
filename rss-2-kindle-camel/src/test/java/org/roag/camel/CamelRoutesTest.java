@@ -1,6 +1,7 @@
 package org.roag.camel;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -18,8 +19,7 @@ import org.testng.annotations.Test;
 /**
  * Created by eurohlam on 12.12.16.
  */
-public class CamelRoutesTest extends CamelSpringTestSupport
-{
+public class CamelRoutesTest extends CamelSpringTestSupport {
     private UserRepository userRepository;
     private SubscriberRepository subscriberRepository;
     private User testUser;
@@ -38,9 +38,8 @@ public class CamelRoutesTest extends CamelSpringTestSupport
     private String consumerDelay;
 
     @Override
-    protected AbstractApplicationContext createApplicationContext()
-    {
-        ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext("META-INF/spring/test-spring-context.xml");
+    protected AbstractApplicationContext createApplicationContext() {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("META-INF/spring/test-spring-context.xml");
         userRepository = (UserRepository) context.getBean("userRepository");
         subscriberRepository = (SubscriberRepository) context.getBean("subscriberRepository");
         testUser = (User) context.getBean("testUser");
@@ -50,31 +49,26 @@ public class CamelRoutesTest extends CamelSpringTestSupport
     }
 
     @Override
-    public boolean isCreateCamelContextPerClass()
-    {
+    public boolean isCreateCamelContextPerClass() {
         return true;
     }
 
     @Override
-    public boolean isUseAdviceWith()
-    {
+    public boolean isUseAdviceWith() {
         return false;
     }
 
-    public void startCamelContext() throws Exception
-    {
+    public void startCamelContext() throws Exception {
         context.start();
     }
 
 
-    public void stopCamelContext() throws Exception
-    {
+    public void stopCamelContext() throws Exception {
         context.stop();
     }
 
     @Test(groups = {"CamelTesting"})
-    public void runPollingTest() throws Exception
-    {
+    public void runPollingTest() throws Exception {
         userRepository.addUser(testUser);
         subscriberRepository.addSubscriber(testUser.getUsername(), testSubscriber);
         subscriberRepository.addSubscriber(testUser.getUsername(), subscriberFactory.newSubscriber("test2@test.com", "test2", "file:src/test/resources/testrss.xml"));
@@ -88,16 +82,27 @@ public class CamelRoutesTest extends CamelSpringTestSupport
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("rss:file:src/test/resources/testrss.xml?splitEntries="+splitEntries+"&sortEntries=true&consumer.delay="+ consumerDelay +"&feedHeader=" + feedHeader).
+                from("direct:rss").from("rss:file:src/test/resources/testrss.xml?splitEntries=" + splitEntries + "&sortEntries=true&consumer.delay=" + consumerDelay + "&feedHeader=" + feedHeader).
                         marshal().rss().to("mock:result");
+                from("direct:http")
+                        .setHeader(Exchange.HTTP_METHOD, constant(org.apache.camel.component.http4.HttpMethods.GET))
+                        .to("http4://justtralala.com/feed")
+                        .to("file://test/data/output.xml");
             }
         };
     }
 
     @Test
     public void testListOfEntriesIsSplitIntoPieces() throws Exception {
+
+        template.sendBody("direct:http", null);
+/*
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
+        mock.expectedMessageCount(1);
         mock.assertIsSatisfied();
+*/
+
+//        template.requestBody("direct:http", new Object());
     }
+
 }
