@@ -4,6 +4,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.testng.CamelSpringTestSupport;
 import org.roag.ds.SubscriberRepository;
 import org.roag.ds.UserRepository;
@@ -29,6 +30,12 @@ public class CamelRoutesTest extends CamelSpringTestSupport
     @PropertyInject("storage.path.rss")
     private String storagePathRss;
 
+    @PropertyInject("rss.splitEntries")
+    private String splitEntries;
+    @PropertyInject("rss.feedHeader")
+    private String feedHeader;
+    @PropertyInject("rss.consumer.delay")
+    private String consumerDelay;
 
     @Override
     protected AbstractApplicationContext createApplicationContext()
@@ -73,7 +80,24 @@ public class CamelRoutesTest extends CamelSpringTestSupport
         subscriberRepository.addSubscriber(testUser.getUsername(), subscriberFactory.newSubscriber("test2@test.com", "test2", "file:src/test/resources/testrss.xml"));
         builder.runRssPollingForAllUsers();
         //wait for polling before stopping of context
-        Thread.sleep(15000);
+        Thread.sleep(25000);
     }
 
+
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                from("rss:file:src/test/resources/testrss.xml?splitEntries="+splitEntries+"&sortEntries=true&consumer.delay="+ consumerDelay +"&feedHeader=" + feedHeader).
+                        marshal().rss().to("mock:result");
+            }
+        };
+    }
+
+    @Test
+    public void testListOfEntriesIsSplitIntoPieces() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.assertIsSatisfied();
+    }
 }
