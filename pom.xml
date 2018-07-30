@@ -166,7 +166,7 @@
         </plugins>
     </build>
     <scm>
-        <developerConnection>scm:git:https://git@github.com/eurohlam/rss2kindle.git</developerConnection>
+        <developerConnection>scm:git:https://eurohlam@github.com/eurohlam/rss2kindle.git</developerConnection>
     </scm>
 
 </project>
