@@ -76,22 +76,22 @@ public class RestClient {
     }
 
     public Response resumeSubscriber(String username, String subscriberId) {
-        logger.debug("Trying to resume user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        logger.debug("Trying to resume subscriber {} of user {} via REST service {}:{}{}", subscriberId, username, restHost, restPort, restPath);
         return sendRequest(PROFILE_PATH + username + "/" + subscriberId + "/resume", METHOD.GET, null);
     }
 
     public Response suspendSubscriber(String username, String subscriberId) {
-        logger.debug("Trying to suspend user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        logger.debug("Trying to suspend subscriber {} of user {} via REST service {}:{}{}", subscriberId, username, restHost, restPort, restPath);
         return sendRequest(PROFILE_PATH + username + "/" + subscriberId + "/suspend", METHOD.GET, null);
     }
 
     public Response removeSubscriber(String username, String subscriberId) {
-        logger.debug("Trying to remove user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        logger.debug("Trying to remove subscriber {} of user {} via REST service {}:{}{}", subscriberId, username, restHost, restPort, restPath);
         return sendRequest(PROFILE_PATH + username + "/" + subscriberId + "/remove", METHOD.DELETE, null);
     }
 
     public Response updateSubscriber(String username, String json) {
-        logger.debug("Trying to update user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        logger.debug("Trying to update subscriber of user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
         return sendRequest(PROFILE_PATH + username + "/update", METHOD.PUT, json);
     }
 
@@ -123,6 +123,11 @@ public class RestClient {
     public Response removeUser(String username) {
         logger.debug("Trying to remove user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
         return sendRequest(USERS_PATH + username + "/remove", METHOD.DELETE, null);
+    }
+
+    public Response getAllUsers() {
+        logger.debug("Trying to get all users via REST service {}:{}{}", restHost, restPort, restPath);
+        return sendRequest(USERS_PATH, METHOD.GET, null);
     }
 
     public Response sendEmailToUser(String username, String subject, String message) {

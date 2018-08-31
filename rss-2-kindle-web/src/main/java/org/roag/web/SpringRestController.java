@@ -57,6 +57,11 @@ public class SpringRestController {
         return isAccessAllowed(username) ? client.runPolling(username).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
     }
 
+    @RequestMapping(value = "/admin/users", method = RequestMethod.GET)
+    public String getAllUsers() {
+        return client.getAllUsers().readEntity(String.class);
+    }
+
     private boolean isAccessAllowed(String username) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getPrincipal() instanceof UserDetails) {

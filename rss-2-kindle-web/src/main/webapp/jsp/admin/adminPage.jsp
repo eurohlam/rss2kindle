@@ -4,102 +4,106 @@
 
 <html lang="en">
 <head>
-    <title>RSS-2-Kindle Management</title>
-    <meta name="viewport" content="width = device-width, initial-scale = 1.0">
+    <title>RSS-2-Kindle Administration</title>
 
-    <!-- JQuery -->
-    <script src="../js/jquery-3.1.1.js"></script>
+    <meta name="viewport" content="width = device-width, initial-scale = 1.0">
+    <security:csrfMetaTags/>
 
     <!-- Bootstrap -->
-    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="../bootstrap/js/bootstrap.min.js"></script>
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- Theme CSS -->
+    <link href="../css/freelancer.css" rel="stylesheet">
 
     <!-- Custom css -->
-    <link href="../css/sticky-footer.css" rel="stylesheet">
+    <link href="../css/simple-sidebar.css" rel="stylesheet">
+
+    <!-- JQuery -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
 
 </head>
 
 <body>
 <script>
-    var rootURL = '/rss2kindle/rest/users';
+    var username = '${username}';
+    var rootURL = 'rest/admin/users/';
+    var userData;
+    var csrf_token = $("meta[name='_csrf']").attr("content");
+    var csrf_header = $("meta[name='_csrf_header']").attr("content");
+    var csrf_headers = {};
+    csrf_headers[csrf_header] = csrf_token;
 
     $(document).ready(function () {
-        $('#all_users').append('<p>Getting users. Please wait...</p>');
         $.getJSON(rootURL, function (data) {
             var table = '<table class="table table-hover">' +
                 '<tr><th>#</th>' +
-                '<th>username</th>' +
-                '<th>date created</th>' +
-                '<th>status</th>';
-//                '<th>subscribers</th></tr>';
+                '<th>Username</th>' +
+                '<th>Contact email</th>' +
+                '<th>Created</th>' +
+                '<th>Modified</th>' +
+                '<th>Last logged in</th>' +
+                '<th>Status</th>';
 
             $.each(data, function (i, item) {
                 var tr;
                 if (item.status === 'locked')
                     tr = '<tr class="danger"><td>';
-                /*
-                 else if (item.status === 'suspended')
-                 tr='<tr class="warning"><td>';
-                 */
+
                 else
                     tr = '<tr class="active"><td>';
 
                 table = table + tr
                     + i + '</td><td>'
                     + item.username + '</td><td>'
+                    + item.email + '</td><td>'
                     + item.dateCreated + '</td><td>'
+                    + item.dateModified + '</td><td>'
+                    + item.previousLogin + '</td><td>'
                     + item.status + '</td></tr>';
-/*
-                var subscribers = item.subscribers;
-                rssTable = '<table width="100%"><tr><td>';
-                for (j = 0; j < subscribers.length; j++) {
-                    rssTable = rssTable + '<a href="' + subscribers[j].email + '">' + subscribers[j].email + '</a></td><td>';
-                    if (subscribers[j].status === 'active')
-                        rssTable = rssTable + '<label></label><input type="checkbox" checked disabled />' + subscribers[j].status + '</label>';
-                    else
-                        rssTable = rssTable + '<label></label><input type="checkbox" disabled />' + subscribers[j].status + '</label>';
 
-                    rssTable = rssTable + '<td/></tr>';
-                }
-                rssTable = rssTable + '</table>';
-
-                table = table + rssTable + '</td></tr>';
-*/
             });
             table = table + '</table>';
             $('#all_users').append(table);
         })
     });
 </script>
-<header role="banner">
-    <h1>RSS-2-Kindle rules</h1>
-</header>
+<div class="container-fluid">
+    <%@include file="../_header.jsp" %>
 
-<div class="container">
-    <nav class="navbar navbar-default" role="navigation">
-        <ul class="nav nav-tabs">
-            <li role="presentation" class="active"><a href="#">Home</a></li>
-            <li role="presentation"><a href="subscribers">Subscriber Management</a></li>
-            <li role="presentation"><a href="service">Services</a></li>
-        </ul>
-    </nav>
-</div>
+    <div id="wrapper" class="row">
 
-<div class="container">
-    <div class="table-responsive" id="all_users">
+        <%@include file="_adminAside.jsp" %>
 
+        <main id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row" style="padding-top: 5rem; padding-bottom: 15rem">
+                    <div id="all_users" class="col-xl-6 text-left" id="subscribers_view" style="padding-left: 2rem; padding-right: 2rem">
+                        <h3 class="sub-header">Users</h3>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
+
+    <jsp:include page="../_footer.jsp"/>
 </div>
 
-<%@include file="../_footer.jsp" %>
+<!-- Bootstrap core JavaScript -->
+<%--<script src="../vendor/jquery/jquery.min.js"></script>--%>
+<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Plugin JavaScript -->
+<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+<!-- Custom scripts for this template -->
+<script src="../js/freelancer.min.js"></script>
+
 
 </body>
 </html>
