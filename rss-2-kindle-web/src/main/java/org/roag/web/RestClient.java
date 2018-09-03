@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 @Scope("prototype")
 public class RestClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(RestClient.class);
+    private final Logger logger = LoggerFactory.getLogger(RestClient.class);
 
     private static final String PROFILE_PATH = "profile/";
     private static final String USERS_PATH = "users/";

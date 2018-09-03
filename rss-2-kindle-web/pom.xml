@@ -14,7 +14,7 @@
     <name>rss-2-kindle web</name>
 
     <properties>
-        <spring-security.version>4.2.3.RELEASE</spring-security.version>
+        <spring-security.version>4.2.7.RELEASE</spring-security.version>
     </properties>
 
     <dependencyManagement>

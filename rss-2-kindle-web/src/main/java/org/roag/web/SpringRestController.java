@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
  */
 @RestController
 @RequestMapping("rest")
-@Secured({"ROLE_USER", "ROLE_ADMIN"})
+//@Secured({"ROLE_USER", "ROLE_ADMIN"})
 public class SpringRestController {
     @Autowired
     private RestClient client;
@@ -57,6 +57,8 @@ public class SpringRestController {
         return isAccessAllowed(username) ? client.runPolling(username).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
     }
 
+    //TODO: security
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/admin/users", method = RequestMethod.GET)
     public String getAllUsers() {
         return client.getAllUsers().readEntity(String.class);

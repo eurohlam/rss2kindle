@@ -125,7 +125,7 @@ public class RepositoryTest {
         Map<String, String> conditions = new HashMap<>();
         conditions.put("status", UserStatus.LOCKED.toString());
         conditions.put("roles", "ROLE_USER");
-        userRepository.findAll(conditions).stream().forEach(user -> assertTrue(UserStatus.fromValue(user.getStatus()) == UserStatus.LOCKED));
+        userRepository.findAll(conditions).forEach(user -> assertTrue(UserStatus.fromValue(user.getStatus()) == UserStatus.LOCKED));
     }
 
 
