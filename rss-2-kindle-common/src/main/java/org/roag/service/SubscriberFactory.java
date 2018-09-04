@@ -3,8 +3,7 @@ package org.roag.service;
 import com.google.gson.Gson;
 import org.roag.model.*;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -15,14 +14,12 @@ public class SubscriberFactory {
     //default timeout is 24 hours
     public static final long DEFAULT_TIMEOUT = 24;
 
-    private final DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd HHmm");
-
     private Gson gson = new Gson();
 
     public User newUser(String username, String email, String password) {
         Set<Roles> roles = new HashSet<>(1);
         roles.add(Roles.ROLE_USER);
-        return newUser(username, email, password, dateFormat.format(new Date()), UserStatus.ACTIVE, roles, new ArrayList<Subscriber>(3));
+        return newUser(username, email, password, LocalDateTime.now().toString(), UserStatus.ACTIVE, roles, new ArrayList<Subscriber>(3));
     }
 
     public User newUser(String username, String email, String password, String dateCreated, UserStatus status, Set<Roles> roles, List<Subscriber> subscribers) {
@@ -41,10 +38,10 @@ public class SubscriberFactory {
     }
 
     public Subscriber newSubscriber(String email, String name, String rss) {
-        return newSubscriber(email, name, new String[]{rss}, new Date(), DEFAULT_TIMEOUT, TimeUnit.HOURS);//TODO: starttime
+        return newSubscriber(email, name, new String[]{rss}, LocalDateTime.now(), DEFAULT_TIMEOUT, TimeUnit.HOURS);//TODO: starttime
     }
 
-    public Subscriber newSubscriber(String email, String name, String[] rssList, Date startDate, long timeout, TimeUnit timeUnit) {
+    public Subscriber newSubscriber(String email, String name, String[] rssList, LocalDateTime startDate, long timeout, TimeUnit timeUnit) {
         if (email == null || email.length() == 0)
             throw new IllegalArgumentException("Email of new subscriber can not be empty");
 
@@ -55,7 +52,7 @@ public class SubscriberFactory {
         s.setEmail(email);
         s.setName(name);
         s.setStatus(SubscriberStatus.ACTIVE.toString());
-        s.setDateCreated(dateFormat.format(new Date()));
+        s.setDateCreated(LocalDateTime.now().toString());
 
         List<Rss> list = new ArrayList<>(rssList.length);
         for (String rss : rssList) {
@@ -66,7 +63,7 @@ public class SubscriberFactory {
         }
         s.setRsslist(list);
         Settings settings = new Settings();
-        settings.setStarttime(dateFormat.format(startDate));
+        settings.setStarttime(startDate.toString());
         settings.setTimeout(Long.toString(timeUnit != TimeUnit.HOURS ? timeUnit.toHours(timeout) : timeout));
         s.setSettings(settings);
         return s;

@@ -19,8 +19,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.ConnectException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -58,9 +59,6 @@ public class Rss2XmlHandler {
 
     @Value("${rss.lastUpdate.timeunit}")
     private String lastUpdateTimeunit;
-
-
-    private final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Autowired
     public Rss2XmlHandler(@Qualifier("subscriberRepository") SubscriberRepository subscriberRepository,
@@ -128,7 +126,7 @@ public class Rss2XmlHandler {
             Rss rss = subscriber.getRsslist().get(i);
             if (RssStatus.DEAD != RssStatus.fromValue(rss.getStatus())) {
                 logger.info("Polling RSS {}: user={}; subscriber = {}", rss.getRss(), username, subscriber.getEmail());
-                rss.setLastPollingDate(dateFormat.format(new Date()));
+                rss.setLastPollingDate(LocalDateTime.now().toString());
                 try {
                     Future<RssPollingTask.PollingTaskResult> result = taskExecutor.submit(
                             new RssPollingTask(rss, getPathForRss(username, subscriber.getEmail(), rss.getRss())));
@@ -158,8 +156,8 @@ public class Rss2XmlHandler {
 
     class RssPollingTask implements Callable<RssPollingTask.PollingTaskResult> {
 
-        private final DateFormat rssLastUpdateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:MM:ss");
-        private final DateFormat rssFileNameFormat = new SimpleDateFormat("yyMMddHHmmss");
+        private final DateTimeFormatter rssLastUpdateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:MM:ss");
+        private final DateTimeFormatter rssFileNameFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         private Rss rss;
         private final String rssURI;
         private final String path;
@@ -169,23 +167,15 @@ public class Rss2XmlHandler {
             this.rss = rss;
             this.rssURI = getCamelRssUri(rss.getRss());
             this.path = path;
-            this.fileName = rssFileNameFormat.format(new Date());
+            this.fileName = rssFileNameFormat.format(LocalDateTime.now());
         }
 
         private String getCamelRssUri(String rss) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
-            String lastUpdate;
-            if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.DAYS) {
-                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - lastUpdateCount);
-                lastUpdate = rssLastUpdateFormat.format(calendar.getTime());
-            } else if (TimeUnit.valueOf(lastUpdateTimeunit) == TimeUnit.HOURS) {
-                calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - lastUpdateCount);
-                lastUpdate = rssLastUpdateFormat.format(calendar.getTime());
-            } else {
-                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 1);
-                lastUpdate = rssLastUpdateFormat.format(calendar.getTime());
-            }
+            LocalDateTime dateTime = LocalDateTime.now();
+            ChronoUnit chronoUnit = ChronoUnit.valueOf(lastUpdateTimeunit);
+            String lastUpdate = rssLastUpdateFormat.format(dateTime.minus(lastUpdateCount, chronoUnit));
 
             String rssUri = "rss:" + rss + "?feedHeader=" + feedHeaders
                     + "&consumer.bridgeErrorHandler=true"

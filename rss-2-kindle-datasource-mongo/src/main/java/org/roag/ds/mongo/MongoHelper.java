@@ -9,7 +9,7 @@ import org.roag.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -18,8 +18,6 @@ import java.util.*;
 public class MongoHelper {
 
     private final Logger logger = LoggerFactory.getLogger(MongoHelper.class);
-
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private static final String MONGO_FIELD_USERNAME = "username";
     private static final String MONGO_FIELD_ID = "_id";
@@ -135,7 +133,7 @@ public class MongoHelper {
     }
 
     public OperationResult addUser(User user, ProducerTemplate producerTemplate) throws Exception {
-        user.setDateCreated(dateFormat.format(new Date()));
+        user.setDateCreated(LocalDateTime.now().toString());
         Map<String, String> cond = new HashMap<>(1);
         cond.put(MONGO_FIELD_USERNAME, user.getUsername());
         DBObject r = findOneByCondition(producerTemplate, cond);
@@ -152,7 +150,7 @@ public class MongoHelper {
     }
 
     public OperationResult updateUser(User user, ProducerTemplate producerTemplate) throws Exception {
-        user.setDateModified(dateFormat.format(new Date()));
+        user.setDateModified(LocalDateTime.now().toString());
         Map<String, String> cond = new HashMap<>(1);
         cond.put(MONGO_FIELD_USERNAME, user.getUsername());
         DBObject r = findOneByCondition(producerTemplate, cond);
