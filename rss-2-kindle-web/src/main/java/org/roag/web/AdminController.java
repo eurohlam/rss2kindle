@@ -18,6 +18,7 @@ public class AdminController extends AbstractController {
 
     private final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
+    @Secured({"ROLE_ADMIN"})
     @RequestMapping(value="users", method = RequestMethod.GET)
     public String adminPage(ModelMap model) {
         return "admin/users";

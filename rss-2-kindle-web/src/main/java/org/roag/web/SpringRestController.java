@@ -64,6 +64,21 @@ public class SpringRestController {
         return client.getAllUsers().readEntity(String.class);
     }
 
+    @RequestMapping(value = "/admin/{username}/lock", method = RequestMethod.GET)
+    public String lockUser(@PathVariable("username") String username) {
+        return client.lockUser(username).readEntity(String.class);
+    }
+
+    @RequestMapping(value = "/admin/{username}/unlock", method = RequestMethod.GET)
+    public String unlockUser(@PathVariable("username") String username) {
+        return client.unlockUser(username).readEntity(String.class);
+    }
+
+    @RequestMapping(value = "/admin/{username}/remove", method = RequestMethod.DELETE)
+    public String removeUser(@PathVariable("username") String username) {
+        return client.removeUser(username).readEntity(String.class);
+    }
+
     private boolean isAccessAllowed(String username) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getPrincipal() instanceof UserDetails) {

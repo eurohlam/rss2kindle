@@ -15,7 +15,8 @@
     <!-- Custom Fonts -->
     <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
+          type="text/css">
 
     <!-- Theme CSS -->
     <link href="../../css/freelancer.css" rel="stylesheet">
@@ -30,9 +31,8 @@
 
 <body>
 <script>
-    var username = '${username}';
-    var rootURL = '../rest/admin/users/';
-    var userData;
+    var adminUsername = '${username}';
+    var rootURL = '../rest/admin/';
     var csrf_token = $("meta[name='_csrf']").attr("content");
     var csrf_header = $("meta[name='_csrf_header']").attr("content");
     var csrf_headers = {};
@@ -43,7 +43,7 @@
         reloadUsersTable();
 
         function reloadUsersTable() {
-            $.getJSON(rootURL, function (data) {
+            $.getJSON(rootURL + 'users', function (data) {
                 var table = '<table class="table table-hover">' +
                     '<tr>' +
                     '<th><input type="checkbox" class="form-check-input" id="select_all_checkbox"/></th>' +
@@ -57,22 +57,16 @@
                     '<th>Roles</th>';
 
                 $.each(data, function (i, item) {
-                    var tr;
-                    if (item.status === 'locked')
-                        tr = '<tr class="danger">';
-
-                    else
-                        tr = '<tr class="active">';
-
+                    var tr = (item.status === 'locked') ? '<tr class="danger">' : '<tr class="active">';
                     table = table + tr
                         + '<td><input type="checkbox" class="form-check-input" id="' + item.username + '"/></td><td>'
-                        + i + '</td><td>'
+                        + (i + 1) + '</td><td>'
                         + item.username + '</td><td>'
                         + item.email + '</td><td>'
                         + item.dateCreated + '</td><td>'
                         + item.dateModified + '</td><td>'
                         + item.previousLogin + '</td><td>'
-                        + item.status + '</td></td>'
+                        + item.status + '</td><td>'
                         + item.roles + '</td></tr>'
 
                 });
@@ -81,27 +75,43 @@
             })
         } //reloadUsersTable
 
-        $('#lock_btn').submit(function(e){
+        $('#users_form').submit(function (e) {
             e.preventDefault();
-            $.ajax({
-                url: rootURL + username + '/lock',
-                type: 'POST',
-                dataType: 'json',
-                headers: csrf_headers,
-                success: function (data) {
-                }
-            })
-                .done(function () {
-                    showAlert('success', 'Users have been locked');
-                    return true;
+            var srcButtonId = $(document.activeElement).attr('id');
+            var operation;
+            var method;
+            var message;
+            if (srcButtonId == 'lock_btn') {
+                operation = '/lock';
+                message = 'Users locked successfully';
+                method = 'GET';
+            } else if (srcButtonId == 'unlock_btn') {
+                operation = '/unlock';
+                message = 'Users unlocked successfully';
+                method = 'GET';
+            } else if (srcButtonId == 'remove_btn') {
+                operation = '/remove';
+                message = 'Users removed successfully';
+                method = 'DELETE';
+            }
+            $("input:checked[id!='select_all_checkbox']").each(function (index) {
+                var checkedUser = $(this).attr('id');
+                $.ajax({
+                    url: rootURL + checkedUser + operation,
+                    type: method,
+                    dataType: 'json',
+                    headers: csrf_headers,
+                    success: function (data) {
+                    }
                 })
-                .fail(function () {
-                    showAlert('error', 'Users locking failed');
-                    return false;
-                })
-                .always(function () {
-                    reloadUsersTable();
-                });
+                    .fail(function () {
+                        showAlert('error', 'Failed updating user ' + checkedUser);
+                        return false;
+                    })
+            }); //each
+
+            showAlert('success', message);
+            reloadUsersTable();
 
         }); //lock_btn.submit
 
@@ -134,18 +144,21 @@
         <main id="page-content-wrapper">
             <div class="container-fluid">
                 <div class="row" style="padding-top: 5rem; padding-bottom: 15rem">
-                    <form id="users_form" action="#">
+                    <form id="users_form" action="" method="post">
                         <div class="text-left" id="subscribers_view" style="padding-left: 2rem; padding-right: 2rem">
                             <h3 class="sub-header">Users</h3>
                             <nav class="navbar navbar-light bg-light">
                                 <button id="lock_btn" class="navbar-brand" type="submit">
-                                    <img src="../../img/icons/if_pause-circle_2561308.svg" width="30" height="30" class="d-inline-block align-top" alt="Lock">
+                                    <img src="../../img/icons/if_pause-circle_2561308.svg" width="30" height="30"
+                                         class="d-inline-block align-top" alt="Lock">
                                 </button>
                                 <button id="unlock_btn" class="navbar-brand" type="submit">
-                                    <img src="../../img/icons/if_play-circle_2561292.svg" width="30" height="30" class="d-inline-block align-top" alt="Unlock">
+                                    <img src="../../img/icons/if_play-circle_2561292.svg" width="30" height="30"
+                                         class="d-inline-block align-top" alt="Unlock">
                                 </button>
                                 <button id="remove_btn" class="navbar-brand" type="submit">
-                                    <img src="../../img/icons/if_trash_2561481.svg" width="30" height="30" class="d-inline-block align-top" alt="Remove">
+                                    <img src="../../img/icons/if_trash_2561481.svg" width="30" height="30"
+                                         class="d-inline-block align-top" alt="Remove">
                                 </button>
                             </nav>
                             <div id="alerts_panel"></div>

@@ -125,6 +125,16 @@ public class RestClient {
         return sendRequest(USERS_PATH + username + "/remove", METHOD.DELETE, null);
     }
 
+    public Response lockUser(String username) {
+        logger.debug("Trying to lock user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        return sendRequest(USERS_PATH + username + "/lock", METHOD.GET, null);
+    }
+
+    public Response unlockUser(String username) {
+        logger.debug("Trying to unlock user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        return sendRequest(USERS_PATH + username + "/unlock", METHOD.GET, null);
+    }
+
     public Response getAllUsers() {
         logger.debug("Trying to get all users via REST service {}:{}{}", restHost, restPort, restPath);
         return sendRequest(USERS_PATH, METHOD.GET, null);

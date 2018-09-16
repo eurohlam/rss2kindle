@@ -73,112 +73,49 @@
     };
 
     $(document).ready(function () {
-        //add new subscriber on submit
-        $('#new_subscriber_form').submit(function (e) {
+
+
+        $('#users_form').submit(function (e) {
             e.preventDefault();
-            var email = $('#new_subscriber_email').val();
-            var name = $('#new_subscriber_name').val();
-            var status = $('#new_subscriber_status').val();
-
-            //create validation popovers
-            $('#new_subscriber_email').popover(
-                {
-                    content: 'Subscriber with such email already exists',
-                    trigger: 'manual',
-                    placement: 'auto'
-                });
-            $('#new_subscriber_rsslist').popover(
-                {
-                    content: 'At least one RSS is required',
-                    trigger: 'manual',
-                    placement: 'auto'
-                });
-
-            //validate email
-            var isEmailValid = true;
-            $.each(userData.subscribers, function (i, item) {
-                if (item.email === email) {
-                    console.log(item.email);
-                    $('#new_subscriber_email').data('bs.popover').config.content='Subscriber with email ' + email + ' already exists';
-                    isEmailValid = false;
-
-                    return false;
-                }
-            });
-            if (!isEmailValid) {
-                $('#new_subscriber_email').popover('show');
-                return false;
+            var srcButtonId = $(document.activeElement).attr('id');
+            var operation;
+            if (srcButtonId == 'lock_btn') {
+                operation = '/lock';
+            } else if (srcButtonId == 'unlock_btn') {
+                operation = '/unlock';
+            } else if (srcButtonId == 'remove_btn') {
+                operation = '/remove';
             }
-            $('#new_subscriber_email').popover('hide');
-            //validate rss list
-            if ($('#new_subscriber_rsslist option').length === 0) {
-                $('#new_subscriber_rsslist').popover('show');
+            console.log("Lock users submit!!!");
 
-                return false;
-            }
-            $('#new_subscriber_rsslist').popover('hide');
-            console.log("Why we are here?");
-            var updateJson = '{' +
-                'email: "' + email + '",' +
-                'name: "' + name + '",' +
-                'status: "active",' +
-                'rsslist: [ ';
-            $('#new_subscriber_rsslist option').each(function () {
-                updateJson += '{ rss: "' + $(this).val() + '", status: "active"},';
-            });
-            updateJson = updateJson.substr(0, updateJson.length - 1) + ']}';
-
-            $.ajax({
-                url: rootURL + username + '/new',
-                contentType: 'application/json',
-                type: 'PUT',
-                data: updateJson,
-                dataType: 'json',
-                headers: csrf_headers
-            })
-                .done(function () {
-                    showAlert('success', 'New subscriber <strong>' + name + '</strong> has been added successfully');
-                    return true;
+            $("input:checked[id!='select_all_checkbox']").each(function (index) {
+                var checkedUser = $(this).attr('id');
+                console.log(checkedUser);
+                $.ajax({
+                    url: rootURL + checkedUser + operation,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (data) {
+                    }
                 })
-                .fail(function () {
-                    showAlert('error', 'New subscriber <strong>' + name + '</strong> creation fail');
-                    return false;
-                })
-                .always(function () {
-                    reloadSubscribersTable();
-                });
-        });
+                    .fail(function () {
+                        showAlert('error', 'User ' + checkedUser +' locking failed');
+                        return false;
+                    })
+            }); //each
 
-        $('#btn_new_subscriber_addrss').click(function (event) {
-            var element=$('#new_subscriber_addrss');
-            var rss = element.val();
-            element.popover({
-                    content: 'Entered text does not look like a valid URL. Please correct it and try again',
-                    trigger: 'manual',
-                    placement: 'auto'
-                });
-            element.popover('hide');
-            if (validateURL(rss)) {
-                $('#new_subscriber_rsslist').append('<option value = "' + rss + '">' + rss + '</option>');
-            } else {
-                element.data('bs.popover').config.content = rss + ' does not look like a valid URL. Please correct it and try again';
-                element.popover('show');
-            }
-        });
 
-        $('#btn_new_subscriber_deleterss').click(function (event) {
-            $('#new_subscriber_rsslist option:selected').remove();
-        });
+            showAlert('success', 'Users locked successfully');
+
+
+        }); //lock_btn.submit
     });
 
     function getUserData() {
         return userData;
     }
 
-    function validateURL(url) {
-        var regexp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
-        return url.match(regexp);
-    }
+
     function showAlert(type, text) {
         if (type == 'error') {
             $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
@@ -201,16 +138,16 @@
     <header class="row clearfix">
         <!-- Navigation -->
         <form id="logout" action="" method="post">
-        <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
-            <div class="container">
-                <a class="navbar-brand js-scroll-trigger" href="#">RSS-2-KINDLE</a>
-                <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-white rounded"
-                        type="button" data-toggle="collapse" data-target="#navbarResponsive"
-                        aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                    Menu
-                    <i class="fa fa-bars"></i>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
+            <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
+                <div class="container">
+                    <a class="navbar-brand js-scroll-trigger" href="#">RSS-2-KINDLE</a>
+                    <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-white rounded"
+                            type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                            aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                        Menu
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarResponsive">
                         <ul class="navbar-nav ml-auto">
                             <li class="nav-item dropdown active mx-0 mx-lg-1">
                                 <a class="nav-link dropdown-toggle py-3 px-0 px-lg-3 rounded js-scroll-trigger"
@@ -236,9 +173,9 @@
                                    href="../index.html#contact">Contact</a>
                             </li>
                         </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
         </form>
     </header>
 
@@ -250,135 +187,76 @@
                 <li class="nav-item"><a class="nav-link" href="service">Services</a></li>
             </ul>
         </aside>
+
+
         <main id="page-content-wrapper">
             <div class="container-fluid">
-                <h1 class="page-header"><%=username%> dashboard</h1>
-                <div class="row text-center " style="padding-top: 3rem; padding-bottom: 3rem">
-                    <div class="col-md-4 col-sm-4 " style="background-color: #c7ddef; border-radius: 70%">
-                        <div id="dashboard_user_data">
-                            <h4>Status: active</h4>
-                        </div>
-                        <h3>User info</h3>
-                        <div class="text-muted" id="dashboard_user_info">
-                            Created: 2018-20-27 18:25:67 <br>
-                            Modified: 2018-20-27 18:25:67 <br>
-                            Last logged in: 2018-20-27 18:25:67
-                        </div>
-                    </div>
-                    <div class="col-md-4 col-sm-4 " style="background-color: #f0ad4e; border-radius: 70%">
-                        <div id="dashboard_subscribers_data">
-                            <h4>Number of subscribers: 2</h4>
-                        </div>
-                        <h3>Subscribers</h3>
-                        <div class="text-muted">
-                            Something else <br>
-                            something else again <br>
-                            again
-                        </div>
-                    </div>
-                    <div class="col-md-4 col-sm-4 " style="background-color: #c9e2b3 ">
-                        <div id="dashboard_subscriptions_data">
-                            <h4>Number of subscriptions: 7</h4>
-                        </div>
-                        <h3>Subscriptions</h3>
-                        <div class="text-muted">
-                            Something else <br>
-                            something else again <br>
-                            again
-                        </div>
-                    </div>
-                </div>
-                <div class="row " style="padding-top: 3rem; padding-bottom: 3rem">
-                    <div class="col-lg-6 placeholder text-left" id="profile_view">
-                        <h2 class="sub-header">Subscribers</h2>
-                        <table class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Subscriber</th>
-                                <th>email</th>
-                                <th>status</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr class="active">
-                                <td>1</td>
-                                <td>My Kindle</td>
-                                <td>dshjs@jdks.ru</td>
-                                <td>active</td>
-                            </tr>
-                            <tr class="danger">
-                                <td>2</td>
-                                <td>My Kindle</td>
-                                <td>dshjs@jdks.ru</td>
-                                <td>active</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-lg-6 placeholder text-left">
-                        <h2 class="sub-header">Subsriptions</h2>
-                        <table class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Subscription</th>
-                                <th>status</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>http://jdkfjdk.ru</td>
-                                <td>active</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>http://kjhdkfhk.rui</td>
-                                <td>active</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>http://kjhdkfhk.rui</td>
-                                <td>failed</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <section>
-                    <form method="get" id="new_subscriber_form" action="#">
-                        <div class="form-group">
-                            <label for="new_subscriber_email">Email</label>
-                            <input type="email" id="new_subscriber_email" required class="form-control"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="new_subscriber_name">Name</label>
-                            <input type="text" id="new_subscriber_name" required class="form-control"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="new_subscriber_rsslist">Subscriptions</label>
-                            <select class="form-control" id="new_subscriber_rsslist" size="5"></select>
-                            <div class="form-group">
-                                <label for="new_subscriber_addrss" class="control-label">Add new subscription
-                                    (RSS):</label>
-                                <input type="url" class="form-control" id="new_subscriber_addrss"/>
-                                <div class="btn-group-xs" role="group">
-                                    <button type="button" class="btn btn-primary" id="btn_new_subscriber_addrss">+
-                                    </button>
-                                    <button type="button" class="btn btn-primary" id="btn_new_subscriber_deleterss">
-                                        -
-                                    </button>
-                                </div>
+                <div class="row" style="padding-top: 5rem; padding-bottom: 15rem">
+                    <form id="users_form" action="" method="post">
+                        <div class="text-left" id="subscribers_view" style="padding-left: 2rem; padding-right: 2rem">
+                            <h3 class="sub-header">Users</h3>
+                            <nav class="navbar navbar-light bg-light">
+                                <button id="lock_btn" class="navbar-brand" type="submit">
+                                    <img src="img/icons/if_pause-circle_2561308.svg" width="30" height="30"
+                                         class="d-inline-block align-top" alt="Lock">
+                                </button>
+                                <button id="unlock_btn" class="navbar-brand" type="submit">
+                                    <img src="img/icons/if_play-circle_2561292.svg" width="30" height="30"
+                                         class="d-inline-block align-top" alt="Unlock">
+                                </button>
+                                <button id="remove_btn" class="navbar-brand" type="submit">
+                                    <img src="img/icons/if_trash_2561481.svg" width="30" height="30"
+                                         class="d-inline-block align-top" alt="Remove">
+                                </button>
+                            </nav>
+                            <div id="alerts_panel"></div>
+                            <div id="all_users">
+                                <table class="table table-hover">
+                                    <tbody>
+                                    <tr>
+                                        <th><input type="checkbox" class="form-check-input" id="select_all_checkbox">
+                                        </th>
+                                        <th>#</th>
+                                        <th>Username</th>
+                                        <th>Contact email</th>
+                                        <th>Created</th>
+                                        <th>Modified</th>
+                                        <th>Last logged in</th>
+                                        <th>Status</th>
+                                        <th>Roles</th>
+                                    </tr>
+                                    <tr class="active">
+                                        <td><input type="checkbox" class="form-check-input" id="euro"></td>
+                                        <td>1</td>
+                                        <td>euro</td>
+                                        <td>eurohlam@gmail.com</td>
+                                        <td>2018-09-16T06:47:48.085</td>
+                                        <td>2018-09-16T06:48:30.503</td>
+                                        <td>undefined</td>
+                                        <td>active</td>
+                                        <td>ROLE_USER</td>
+                                    </tr>
+                                    <tr class="active">
+                                        <td><input type="checkbox" class="form-check-input" id="tester"></td>
+                                        <td>2</td>
+                                        <td>tester</td>
+                                        <td>tester@gmail.com</td>
+                                        <td>2018-09-16T07:10:07.837</td>
+                                        <td>2018-09-16T09:40:48.181</td>
+                                        <td>2018-09-16T07:15:39.978</td>
+                                        <td>active</td>
+                                        <td>ROLE_USER</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
                             </div>
                         </div>
-                        <div class="form-group">
-                            <input type="submit" value="Create" class="btn btn-primary"/>
-                        </div>
                     </form>
-                </section>
+                </div>
             </div>
         </main>
+
     </div>
     <!-- Footer -->
     <footer class="row footer copyright py-4 text-center text-white">
@@ -394,7 +272,6 @@
         </a>
     </div>
 </div>
-
 
 
 <!-- Plugin JavaScript -->
