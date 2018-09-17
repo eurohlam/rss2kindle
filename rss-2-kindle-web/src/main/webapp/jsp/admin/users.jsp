@@ -113,7 +113,19 @@
             showAlert('success', message);
             reloadUsersTable();
 
-        }); //lock_btn.submit
+        }); //users_form.submit
+
+        $("#select_all_checkbox").change(function (e) {
+            if ($("#select_all_checkbox").is(':checked')) {
+                $("input[type='checkbox']").each(function (index) {
+                    $(this).prop('checked', true); //check all
+                });
+            } else {
+                $("input[type='checkbox']").each(function (index) {
+                    $(this).prop('checked', false); //uncheck all
+                });
+            }
+        }); //select_all_checkbox.change
 
     }); //end of $(document).ready(function ())
 
