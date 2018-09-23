@@ -48,18 +48,26 @@
                     '<tr>' +
                     '<th><input type="checkbox" class="form-check-input" id="select_all_checkbox"/></th>' +
                     '<th>#</th>' +
-                    '<th>Username</th>' +
-                    '<th>Contact email</th>' +
-                    '<th>Created</th>' +
-                    '<th>Modified</th>' +
-                    '<th>Last logged in</th>' +
-                    '<th>Status</th>' +
-                    '<th>Roles</th>';
+                    '<th>username</th>' +
+                    '<th>contact email</th>' +
+                    '<th>created</th>' +
+                    '<th>modified</th>' +
+                    '<th>last logged in</th>' +
+                    '<th>status</th>' +
+                    '<th>roles</th>';
 
                 $.each(data, function (i, item) {
-                    var tr = (item.status === 'locked') ? '<tr class="danger">' : '<tr class="active">';
+                    var tr;
+                    if (item.status === 'locked') {
+                        tr = '<tr class="table-danger">'
+                            + '<td><input type="checkbox" class="form-check-input" id="' + item.username + '"/></td><td>';
+                    } else if (item.username === adminUsername) {
+                        tr = '<tr class="table-active"><td></td><td>';
+                    } else {
+                        tr = '<tr class="table-light">'
+                        + '<td><input type="checkbox" class="form-check-input" id="' + item.username + '"/></td><td>';
+                    }
                     table = table + tr
-                        + '<td><input type="checkbox" class="form-check-input" id="' + item.username + '"/></td><td>'
                         + (i + 1) + '</td><td>'
                         + item.username + '</td><td>'
                         + item.email + '</td><td>'
@@ -72,6 +80,22 @@
                 });
                 table = table + '</table>';
                 $('#all_users').html(table);
+
+                $("#select_all_checkbox").change(function (e) {
+                    console.log("Checkbox reaction!!");
+                    if ($("#select_all_checkbox").is(':checked')) {
+                        console.log("All checked");
+                        $("input[type='checkbox']").each(function (index) {
+                            $(this).prop('checked', true); //check all
+                        });
+                    } else {
+                        console.log("All unchecked");
+                        $("input[type='checkbox']").each(function (index) {
+                            $(this).prop('checked', false); //uncheck all
+                        });
+                    }
+                }); //select_all_checkbox.change
+
             })
         } //reloadUsersTable
 
@@ -100,32 +124,21 @@
                     url: rootURL + checkedUser + operation,
                     type: method,
                     dataType: 'json',
-                    headers: csrf_headers,
-                    success: function (data) {
-                    }
+                    headers: csrf_headers
                 })
+                    .done(function () {
+                        showAlert('success', message);
+                        reloadUsersTable();
+                        return true;
+                    })
                     .fail(function () {
                         showAlert('error', 'Failed updating user ' + checkedUser);
                         return false;
                     })
             }); //each
 
-            showAlert('success', message);
-            reloadUsersTable();
-
         }); //users_form.submit
 
-        $("#select_all_checkbox").change(function (e) {
-            if ($("#select_all_checkbox").is(':checked')) {
-                $("input[type='checkbox']").each(function (index) {
-                    $(this).prop('checked', true); //check all
-                });
-            } else {
-                $("input[type='checkbox']").each(function (index) {
-                    $(this).prop('checked', false); //uncheck all
-                });
-            }
-        }); //select_all_checkbox.change
 
     }); //end of $(document).ready(function ())
 
