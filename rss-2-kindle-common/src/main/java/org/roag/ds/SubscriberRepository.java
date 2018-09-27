@@ -11,25 +11,23 @@ import java.util.Map;
  */
 public interface SubscriberRepository
 {
-    public UserRepository getUserRepository() throws Exception;
+    UserRepository getUserRepository() throws Exception;
 
-    public Subscriber getSubscriber(String username, String email) throws Exception;
+    Subscriber getSubscriber(String username, String email) throws Exception;
 
-    public String getSubscriberAsJSON(String username, String email) throws Exception;
+    OperationResult updateSubscriber(String username, Subscriber subscriber) throws Exception;
 
-    public OperationResult updateSubscriber(String username, Subscriber subscriber) throws Exception;
+    OperationResult suspendSubscriber(String username, String email) throws Exception;
 
-    public OperationResult suspendSubscriber(String username, String email) throws Exception;
+    OperationResult resumeSubscriber(String username, String email) throws Exception;
 
-    public OperationResult resumeSubscriber(String username, String email) throws Exception;
+    OperationResult addSubscriber(String username, Subscriber subscriber) throws Exception;
 
-    public OperationResult addSubscriber(String username, Subscriber subscriber) throws Exception;
+    OperationResult removeSubscriber(String username, String email) throws Exception;
 
-    public OperationResult removeSubscriber(String username, String email) throws Exception;
+    OperationResult removeSubscriber(String username, Subscriber subscriber) throws Exception;
 
-    public OperationResult removeSubscriber(String username, Subscriber subscriber) throws Exception;
+    List<Subscriber> findAllSubscribersByUser(String username) throws Exception;
 
-    public List<Subscriber> findAllSubscribersByUser(String username) throws Exception;
-
-    public List<Subscriber> findAllSubscribersByUser(String username, Map condition) throws Exception;
+    List<Subscriber> findAllSubscribersByUser(String username, Map condition) throws Exception;
 }

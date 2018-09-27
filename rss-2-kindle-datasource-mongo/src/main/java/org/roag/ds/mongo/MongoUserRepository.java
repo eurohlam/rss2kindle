@@ -82,7 +82,7 @@ public class MongoUserRepository implements UserRepository {
     public OperationResult removeUser(String username) throws Exception {
         logger.debug("Remove user {}", username);
         OperationResult r = mongoHelper.removeUser(username, producerTemplate);
-        logger.info("Removeed user {} with the result {}", username, r.toString().replaceFirst(MONGO_WRITE_RESULT, ""));
+        logger.info("Removed user {} with the result {}", username, r.toString().replaceFirst(MONGO_WRITE_RESULT, ""));
         return r;
     }
 

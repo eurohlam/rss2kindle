@@ -4,7 +4,7 @@ import com.mongodb.*;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mongodb.MongoDbOperation;
 import org.roag.ds.OperationResult;
-import org.roag.service.SubscriberFactory;
+import org.roag.service.ModelFactory;
 import org.roag.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public class MongoHelper {
 
     private String defaulMongoCollection;
 
-    private SubscriberFactory subscriberFactory;
+    private ModelFactory modelFactory;
 
     private MongoHelper() {
     }
@@ -41,7 +41,7 @@ public class MongoHelper {
         this.MONGO_SPRING_BEAN = mongoBean;
         this.defaultMongoDatabase = mongoDatabase;
         this.defaulMongoCollection = mongoCollection;
-        this.subscriberFactory = new SubscriberFactory();
+        this.modelFactory = new ModelFactory();
     }
 
     public String getDefaultMongoDatabase() {
@@ -111,7 +111,7 @@ public class MongoHelper {
         List<User> users = new ArrayList<>(result.size());
         for (DBObject object: result) {
             object.removeField(MONGO_FIELD_ID);
-            User user = subscriberFactory.convertJson2Pojo(User.class, subscriberFactory.convertPojo2Json(object));
+            User user = modelFactory.json2Pojo(User.class, modelFactory.pojo2Json(object));
             users.add(user);
         }
         return users;
@@ -125,7 +125,7 @@ public class MongoHelper {
             throw new IllegalArgumentException("User " + username + " has not been found");
 
         result.removeField(MONGO_FIELD_ID);
-        User user = subscriberFactory.convertJson2Pojo(User.class, subscriberFactory.convertPojo2Json(result));
+        User user = modelFactory.json2Pojo(User.class, modelFactory.pojo2Json(result));
         BasicDBList subscribers = (BasicDBList) result.get("subscribers");
         logger.info("GET: User: {} with status {} \n {} {}", user.getUsername(), user.getStatus(), subscribers.getClass(), subscribers);
         return user;
@@ -142,7 +142,7 @@ public class MongoHelper {
 
         Object result = producerTemplate.requestBody(
                 getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.insert),
-                subscriberFactory.convertPojo2Json(user));
+                modelFactory.pojo2Json(user));
 
         logger.info("INSERT: New user: {} has been inserted into Mongo with the result: {}", user.getUsername(), result);
         logger.debug("INSERT: result: {}", result);
@@ -158,7 +158,7 @@ public class MongoHelper {
             throw new IllegalArgumentException("Update is impossible. User " + user.getUsername() + " does not exist");
 
         DBObject filterField = new BasicDBObject(MONGO_FIELD_USERNAME, user.getUsername());
-        DBObject obj = new BasicDBObject("$set", BasicDBObjectBuilder.start(subscriberFactory.convertJson2Pojo(Map.class, subscriberFactory.convertPojo2Json(user))).get());
+        DBObject obj = new BasicDBObject("$set", BasicDBObjectBuilder.start(modelFactory.json2Pojo(Map.class, modelFactory.pojo2Json(user))).get());
         Object result = producerTemplate.requestBody(
                 getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.update),
                 new Object[]{filterField, obj});//TODO: process UpdateResult

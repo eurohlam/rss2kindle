@@ -6,7 +6,7 @@ import org.roag.ds.UserRepository;
 import org.roag.model.Rss;
 import org.roag.model.RssStatus;
 import org.roag.model.Subscriber;
-import org.roag.service.SubscriberFactory;
+import org.roag.service.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +37,14 @@ public class ProfileManager {
     @Autowired
     private SubscriberRepository subscriberRepository;
 
-    private SubscriberFactory subscriberFactory = new SubscriberFactory();
+    private ModelFactory modelFactory = new ModelFactory();
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserDetails(@PathParam("username") String username) {
         logger.debug("Fetch user details for user {}", username);
         try {
-            String subscribers = subscriberFactory.convertPojo2Json(userRepository.getUser(username));
+            String subscribers = modelFactory.pojo2Json(userRepository.getUser(username));
             return Response.ok(subscribers, MediaType.APPLICATION_JSON_TYPE).build();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -58,7 +58,7 @@ public class ProfileManager {
     public Response getAllSubscribers(@PathParam("username") String username) {
         logger.debug("Fetch all subscribers for user {}", username);
         try {
-            String subscribers = subscriberFactory.convertPojo2Json(subscriberRepository.findAllSubscribersByUser(username));
+            String subscribers = modelFactory.pojo2Json(subscriberRepository.findAllSubscribersByUser(username));
             return Response.ok(subscribers, MediaType.APPLICATION_JSON_TYPE).build();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -72,7 +72,7 @@ public class ProfileManager {
     public Response getSubscriber(@PathParam("username") String username, @PathParam("email") String id) {
         logger.debug("Fetch subscriber {} for user {}", id, username);
         try {
-            String subscriber = subscriberRepository.getSubscriberAsJSON(username, id);
+            String subscriber = modelFactory.pojo2Json(subscriberRepository.getSubscriber(username, id));
             return Response.ok(subscriber, MediaType.APPLICATION_JSON_TYPE).build();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -88,7 +88,7 @@ public class ProfileManager {
         try {
             OperationResult result = subscriberRepository.suspendSubscriber(username, id);
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception e) {
@@ -105,7 +105,7 @@ public class ProfileManager {
         try {
             OperationResult result = subscriberRepository.resumeSubscriber(username, id);
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception e) {
@@ -124,9 +124,9 @@ public class ProfileManager {
                                   @FormParam("rss") String rss) {
         logger.info("Add new subscriber {} for user {}", email, username);
         try {
-            OperationResult result = subscriberRepository.addSubscriber(username, subscriberFactory.newSubscriber(email, name, rss));
+            OperationResult result = subscriberRepository.addSubscriber(username, modelFactory.newSubscriber(email, name, rss));
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.CONFLICT).build();
         } catch (Exception e) {
@@ -143,10 +143,10 @@ public class ProfileManager {
                                   String message) {
         logger.info("Requested to add a new subscriber for user {} with data {}", username, message);
         try {
-            Subscriber subscriber = subscriberFactory.convertJson2Pojo(Subscriber.class, message);
+            Subscriber subscriber = modelFactory.json2Pojo(Subscriber.class, message);
             OperationResult result = subscriberRepository.addSubscriber(username, subscriber);
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.CONFLICT).build();
         } catch (IllegalArgumentException ie) {
@@ -169,9 +169,9 @@ public class ProfileManager {
                                      @FormParam("rss") String rss) {
         logger.warn("Update existing subscriber {} for user {}", email, username);
         try {
-            OperationResult result = subscriberRepository.updateSubscriber(username, subscriberFactory.newSubscriber(email, name, rss));
+            OperationResult result = subscriberRepository.updateSubscriber(username, modelFactory.newSubscriber(email, name, rss));
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.CONFLICT).build();
         } catch (Exception e) {
@@ -187,10 +187,10 @@ public class ProfileManager {
     public Response updateSubscriber(@PathParam("username") String username, String message) {
         logger.warn("Requested to update existing subscriber for user {} with data {}", username, message);
         try {
-            Subscriber subscriber = subscriberFactory.convertJson2Pojo(Subscriber.class, message);
+            Subscriber subscriber = modelFactory.json2Pojo(Subscriber.class, message);
             OperationResult result = subscriberRepository.updateSubscriber(username, subscriber);
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.CONFLICT).build();
         } catch (Exception e) {
@@ -207,7 +207,7 @@ public class ProfileManager {
         try {
             OperationResult result = subscriberRepository.removeSubscriber(username, id);
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception e) {
@@ -223,7 +223,7 @@ public class ProfileManager {
         logger.debug("Fetch all subscriptions for subscriber {} by user {}", id, username);
         try {
             Subscriber subscriber = subscriberRepository.getSubscriber(username, id);
-            String result = subscriberFactory.convertPojo2Json(subscriber.getRsslist());
+            String result = modelFactory.pojo2Json(subscriber.getRsslist());
             return Response.ok(result, MediaType.APPLICATION_JSON_TYPE).build();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -251,7 +251,7 @@ public class ProfileManager {
             subscriber.getRsslist().add(_rss);
             OperationResult result = subscriberRepository.updateSubscriber(username, subscriber);
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.CONFLICT).build();
         } catch (Exception e) {
@@ -280,7 +280,7 @@ public class ProfileManager {
 
             OperationResult result = subscriberRepository.updateSubscriber(username, subscriber);
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.CONFLICT).build();
         } catch (Exception e) {

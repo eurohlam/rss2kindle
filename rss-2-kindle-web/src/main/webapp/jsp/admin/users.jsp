@@ -82,14 +82,11 @@
                 $('#all_users').html(table);
 
                 $("#select_all_checkbox").change(function (e) {
-                    console.log("Checkbox reaction!!");
                     if ($("#select_all_checkbox").is(':checked')) {
-                        console.log("All checked");
                         $("input[type='checkbox']").each(function (index) {
                             $(this).prop('checked', true); //check all
                         });
                     } else {
-                        console.log("All unchecked");
                         $("input[type='checkbox']").each(function (index) {
                             $(this).prop('checked', false); //uncheck all
                         });

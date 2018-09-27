@@ -10,11 +10,15 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by eurohlam on 09.11.16.
  */
-public class SubscriberFactory {
+public class ModelFactory {
     //default timeout is 24 hours
     public static final long DEFAULT_TIMEOUT = 24;
 
-    private Gson gson = new Gson();
+    private Gson gson;
+
+    public ModelFactory() {
+        gson = new Gson();
+    }
 
     public User newUser(String username, String email, String password) {
         Set<Roles> roles = new HashSet<>(1);
@@ -70,12 +74,12 @@ public class SubscriberFactory {
 
     }
 
-    public <T> T convertJson2Pojo(Class<T> _class, String source_object) {
+    public <T> T json2Pojo(Class<T> _class, String source_object) {
         T subscr = gson.fromJson(source_object, _class);
         return subscr;
     }
 
-    public String convertPojo2Json(Object pojo) {
+    public String pojo2Json(Object pojo) {
         return gson.toJson(pojo);
     }
 

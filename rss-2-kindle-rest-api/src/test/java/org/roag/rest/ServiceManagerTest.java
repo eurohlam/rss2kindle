@@ -2,14 +2,9 @@ package org.roag.rest;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTestNg;
-import org.roag.model.Subscriber;
-import org.roag.model.User;
-import org.roag.service.SubscriberFactory;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 

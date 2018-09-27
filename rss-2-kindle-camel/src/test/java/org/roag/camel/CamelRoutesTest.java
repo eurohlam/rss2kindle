@@ -1,17 +1,15 @@
 package org.roag.camel;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.testng.CamelSpringTestSupport;
 import org.roag.ds.SubscriberRepository;
 import org.roag.ds.UserRepository;
 import org.roag.model.Subscriber;
 import org.roag.model.User;
-import org.roag.service.SubscriberFactory;
+import org.roag.service.ModelFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.Test;
@@ -25,7 +23,7 @@ public class CamelRoutesTest extends CamelSpringTestSupport {
     private User testUser;
     private Subscriber testSubscriber;
     private Rss2XmlHandler builder;
-    private SubscriberFactory subscriberFactory = new SubscriberFactory();
+    private ModelFactory modelFactory = new ModelFactory();
 
     @PropertyInject("storage.path.rss")
     private String storagePathRss;
@@ -71,7 +69,7 @@ public class CamelRoutesTest extends CamelSpringTestSupport {
     public void runPollingTest() throws Exception {
         userRepository.addUser(testUser);
         subscriberRepository.addSubscriber(testUser.getUsername(), testSubscriber);
-        subscriberRepository.addSubscriber(testUser.getUsername(), subscriberFactory.newSubscriber("test2@test.com", "test2", "file:src/test/resources/testrss.xml"));
+        subscriberRepository.addSubscriber(testUser.getUsername(), modelFactory.newSubscriber("test2@test.com", "test2", "file:src/test/resources/testrss.xml"));
         builder.runRssPollingForAllUsers();
         //wait for polling before stopping of context
         Thread.sleep(25000);
