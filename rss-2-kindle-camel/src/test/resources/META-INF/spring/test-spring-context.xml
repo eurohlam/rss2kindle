@@ -16,7 +16,7 @@
         <property name="location" value="classpath:/test-context.properties"/>
     </bean>
 
-    <bean id="subscriberFactory" class="org.roag.service.SubscriberFactory"/>
+    <bean id="subscriberFactory" class="org.roag.service.ModelFactory"/>
 
     <bean id="testUser" factory-bean="subscriberFactory" factory-method="newUser">
         <constructor-arg index="0" value="${test.user.username}"/>

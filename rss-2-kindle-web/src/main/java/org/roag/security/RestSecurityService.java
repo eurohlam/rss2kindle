@@ -1,23 +1,19 @@
 package org.roag.security;
 
 import org.roag.model.User;
-import org.roag.service.SubscriberFactory;
+import org.roag.service.ModelFactory;
 import org.roag.web.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.core.Response;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Created by eurohlam on 25/12/17.
@@ -27,9 +23,7 @@ public class RestSecurityService implements SecurityService {
 
     private final Logger logger = LoggerFactory.getLogger(RestSecurityService.class);
 
-    private final SimpleDateFormat dateFormat =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-    private SubscriberFactory subscriberFactory = new SubscriberFactory();
+    private ModelFactory modelFactory = new ModelFactory();
 
     @Autowired
     private RestClient restClient;
@@ -45,10 +39,10 @@ public class RestSecurityService implements SecurityService {
     public UserDetails findUser(String username) throws UsernameNotFoundException {
         Response response = restClient.getUser(username);
         if (response.getStatus() == 200) {
-            User user = subscriberFactory.convertJson2Pojo(User.class, response.readEntity(String.class));
+            User user = modelFactory.json2Pojo(User.class, response.readEntity(String.class));
             logger.debug("User {} exists with roles {}", user.getUsername(), user.getRoles());
-            user.setLastLogin(dateFormat.format(new Date()));
-            restClient.updateUser(subscriberFactory.convertPojo2Json(user));
+            user.setLastLogin(LocalDateTime.now().toString());
+            restClient.updateUser(modelFactory.pojo2Json(user));
             UserDetails ud = new SpringUserDetailsImpl(user);
             return ud;
         } else
@@ -62,9 +56,9 @@ public class RestSecurityService implements SecurityService {
             if (username == null || username.length() == 0)
                 throw new AuthenticationServiceException("User can't be created due to username is null or empty");
 
-            User user = subscriberFactory.newUser(username, email, passwordEncoder != null ? passwordEncoder.encode(password) : password);
+            User user = modelFactory.newUser(username, email, passwordEncoder != null ? passwordEncoder.encode(password) : password);
             logger.info("Sending request to create a new user {} with email {} to REST service", username, email);
-            Response response = restClient.addUser(subscriberFactory.convertPojo2Json(user));
+            Response response = restClient.addUser(modelFactory.pojo2Json(user));
             logger.info("Response from REST service {} ", response);
             if (response.getStatus() == 200) {
                 String registrationSubject = "Confirmation of registration in service RSS-2-KINDLE ";

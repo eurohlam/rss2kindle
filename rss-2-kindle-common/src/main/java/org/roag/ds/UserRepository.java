@@ -13,23 +13,23 @@ import java.util.Map;
 public interface UserRepository
 {
 
-    public User getUser(String username) throws Exception;
+    User getUser(String username) throws Exception;
 
-    public OperationResult addUser(User user) throws Exception;
+    OperationResult addUser(User user) throws Exception;
 
-    public OperationResult updateUser(User user) throws Exception;
+    OperationResult updateUser(User user) throws Exception;
 
-    public OperationResult removeUser(String username) throws Exception;
+    OperationResult removeUser(String username) throws Exception;
 
-    public OperationResult lockUser(String username) throws Exception;
+    OperationResult lockUser(String username) throws Exception;
 
-    public OperationResult unlockUser(String username) throws Exception;
+    OperationResult unlockUser(String username) throws Exception;
 
-    public List<User> findAll() throws Exception;
+    List<User> findAll() throws Exception;
 
-    public List<User> findAll(Map<String, String> conditions) throws Exception;
+    List<User> findAll(Map<String, String> conditions) throws Exception;
 
-    public OperationResult assignRole(String username, Roles role) throws Exception;
+    OperationResult assignRole(String username, Roles role) throws Exception;
 
-    public OperationResult dismissRole(String username, Roles role) throws Exception;
+    OperationResult dismissRole(String username, Roles role) throws Exception;
 }

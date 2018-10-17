@@ -1,14 +1,13 @@
 package org.roag.ds.mongo;
 
 import com.mongodb.DBObject;
-import com.mongodb.WriteResult;
 import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.mongodb.MongoDbOperation;
 import org.apache.camel.testng.CamelSpringTestSupport;
 import org.roag.ds.OperationResult;
-import org.roag.service.SubscriberFactory;
+import org.roag.service.ModelFactory;
 import org.roag.model.*;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.*;
@@ -35,7 +34,7 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
     private MongoUserRepository userRepository;
     private MongoSubscriberRepository subscriberRepository;
 
-    private SubscriberFactory subscriberFactory = new SubscriberFactory();
+    private ModelFactory modelFactory = new ModelFactory();
 
     private final String TEST_EMAIL="test@gmail.com";
     private final String TEST_USERNAME="testUser";
@@ -83,7 +82,7 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
     @Test(groups = { "Mongo repository CRUD" }, dependsOnGroups = { "Mongo Cleansing", "Connectivity Check" })
     public void mongoUserCRUDTest() throws Exception
     {
-        User user = subscriberFactory.newUser(TEST_USERNAME, TEST_EMAIL, "123");
+        User user = modelFactory.newUser(TEST_USERNAME, TEST_EMAIL, "123");
         //create user
         OperationResult result= userRepository.addUser(user);
         assertEquals(result, OperationResult.SUCCESS, "Could not create a user");
@@ -108,12 +107,12 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
     @Test(groups = { "Mongo repository CRUD" }, dependsOnGroups = { "Mongo Cleansing", "Connectivity Check" })
     public void mongoSubscriberCRUDTest() throws Exception
     {
-        User user = subscriberFactory.newUser(TEST_USERNAME, TEST_EMAIL, "123");
+        User user = modelFactory.newUser(TEST_USERNAME, TEST_EMAIL, "123");
         //create user
         OperationResult result= userRepository.addUser(user);
         assertEquals(result, OperationResult.SUCCESS);
 
-        Subscriber subscriber = subscriberFactory.newSubscriber(TEST_EMAIL, "test", "test.org/feed");
+        Subscriber subscriber = modelFactory.newSubscriber(TEST_EMAIL, "test", "test.org/feed");
         //create subscriber
         result= subscriberRepository.addSubscriber(TEST_USERNAME, subscriber);
         assertEquals(result, OperationResult.SUCCESS);
@@ -152,8 +151,8 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
     @Test(groups = { "Mongo Integration" }, dependsOnGroups = { "Connectivity Check" })
     public void mongoHelperAddUserTest() throws Exception
     {
-        User user = subscriberFactory.newUser(TEST_USERNAME, TEST_EMAIL, "123");
-        Subscriber s = subscriberFactory.newSubscriber(TEST_EMAIL, "test", "test.org/feed");
+        User user = modelFactory.newUser(TEST_USERNAME, TEST_EMAIL, "123");
+        Subscriber s = modelFactory.newSubscriber(TEST_EMAIL, "test", "test.org/feed");
         user.getSubscribers().add(s);
         OperationResult r= mh.addUser(user, template);
 
@@ -164,7 +163,7 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
     public void mongoHelperUpdateUserTest() throws Exception
     {
         User user = mh.getUser(TEST_USERNAME, template);
-        Subscriber s = subscriberFactory.newSubscriber(TEST_EMAIL, "updated_test", "updated_test.org/feed");
+        Subscriber s = modelFactory.newSubscriber(TEST_EMAIL, "updated_test", "updated_test.org/feed");
         user.getSubscribers().add(s);
         OperationResult r= mh.updateUser(user, template);
 

@@ -1,6 +1,5 @@
 package org.roag.ds.mongo;
 
-import com.mongodb.WriteResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.roag.ds.OperationResult;
@@ -9,13 +8,10 @@ import org.roag.ds.UserRepository;
 import org.roag.model.Subscriber;
 import org.roag.model.SubscriberStatus;
 import org.roag.model.User;
-import org.roag.model.UserStatus;
-import org.roag.service.SubscriberFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +26,6 @@ public class MongoSubscriberRepository implements SubscriberRepository {
     private UserRepository userRepository;
     private ProducerTemplate producerTemplate;
     private MongoHelper mongoHelper;
-    private SubscriberFactory subscriberFactory;
 
     public MongoSubscriberRepository(MongoUserRepository userRepository) {
         this(userRepository, userRepository.getMongoHelper(), userRepository.getCamelContext());
@@ -38,7 +33,6 @@ public class MongoSubscriberRepository implements SubscriberRepository {
 
     public MongoSubscriberRepository(UserRepository userRepository, MongoHelper mongoHelper, CamelContext context) {
         this.userRepository = userRepository;
-        this.subscriberFactory = new SubscriberFactory();
         this.mongoHelper = mongoHelper;
         assert context != null;
         this.producerTemplate = context.createProducerTemplate();
@@ -118,11 +112,6 @@ public class MongoSubscriberRepository implements SubscriberRepository {
                 return s;
 
         return null;
-    }
-
-    @Override
-    public String getSubscriberAsJSON(String username, String email) throws Exception {
-        return subscriberFactory.convertPojo2Json(getSubscriber(username, email));
     }
 
     @Override

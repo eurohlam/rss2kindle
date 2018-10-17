@@ -3,7 +3,7 @@ package org.roag.rest;
 import org.roag.ds.OperationResult;
 import org.roag.ds.UserRepository;
 import org.roag.model.User;
-import org.roag.service.SubscriberFactory;
+import org.roag.service.ModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +27,11 @@ public class UserManager {
     @Autowired
     private UserRepository userRepository;
 
-    private SubscriberFactory subscriberFactory;
+    private ModelFactory modelFactory;
 
     public UserManager() {
         super();
-        this.subscriberFactory = new SubscriberFactory();
+        this.modelFactory = new ModelFactory();
     }
 
     @GET
@@ -39,7 +39,7 @@ public class UserManager {
     public Response getAllUsers() {
         logger.debug("Fetch all users from repository");
         try {
-            String users = subscriberFactory.convertPojo2Json(userRepository.findAll());
+            String users = modelFactory.pojo2Json(userRepository.findAll());
             return Response.ok(users, MediaType.APPLICATION_JSON_TYPE).build();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -53,7 +53,7 @@ public class UserManager {
     public Response getUser(@PathParam("username") String id) {
         logger.debug("Fetch user {} from repository", id);
         try {
-            String user = subscriberFactory.convertPojo2Json(userRepository.getUser(id));
+            String user = modelFactory.pojo2Json(userRepository.getUser(id));
             return Response.ok(user, MediaType.APPLICATION_JSON_TYPE).build();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -69,7 +69,7 @@ public class UserManager {
         try {
             OperationResult result = userRepository.lockUser(id);
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception e) {
@@ -86,7 +86,7 @@ public class UserManager {
         try {
             OperationResult result = userRepository.unlockUser(id);
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception e) {
@@ -103,10 +103,10 @@ public class UserManager {
                             @FormParam("password") String password) {
         logger.info("Add new user {}", username);
         try {
-            OperationResult result = userRepository.addUser(subscriberFactory.newUser(username, email, password));
+            OperationResult result = userRepository.addUser(modelFactory.newUser(username, email, password));
             logger.info(result.toString());
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.CONFLICT).build();
         } catch (Exception e) {
@@ -122,11 +122,11 @@ public class UserManager {
     public Response addUser(String message) {
         logger.info("Requested to add new user from data {}", message);
         try {
-            User user = subscriberFactory.convertJson2Pojo(User.class, message);
+            User user = modelFactory.json2Pojo(User.class, message);
             OperationResult result = userRepository.addUser(user);
             logger.info(result.toString());
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.CONFLICT).build();
         } catch (Exception e) {
@@ -147,7 +147,7 @@ public class UserManager {
             user.setPassword(password);
             OperationResult result = userRepository.updateUser(user);
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.CONFLICT).build();
         } catch (Exception e) {
@@ -163,10 +163,10 @@ public class UserManager {
     public Response updateUser(String message) {
         logger.warn("Requested to update existing user with data {}", message);
         try {
-            User user = subscriberFactory.convertJson2Pojo(User.class, message);
+            User user = modelFactory.json2Pojo(User.class, message);
             OperationResult result = userRepository.updateUser(user);
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.CONFLICT).build();
         } catch (Exception e) {
@@ -183,7 +183,7 @@ public class UserManager {
         try {
             OperationResult result = userRepository.removeUser(id);
             if (result == OperationResult.SUCCESS)
-                return Response.ok(result.toJSON(), MediaType.APPLICATION_JSON_TYPE).build();
+                return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
                 return Response.status(Response.Status.NOT_FOUND).build();
         } catch (Exception e) {

@@ -3,7 +3,7 @@ package org.roag.ds;
 import org.roag.ds.impl.MemorySubscriberRepository;
 import org.roag.ds.impl.MemoryUserRepository;
 import org.roag.model.*;
-import org.roag.service.SubscriberFactory;
+import org.roag.service.ModelFactory;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -21,7 +21,7 @@ public class RepositoryTest {
 
     private UserRepository userRepository;
     private SubscriberRepository subscriberRepository;
-    private SubscriberFactory factory;
+    private ModelFactory factory;
     private static String TEST_USER = "test_user";
     private static String TEST_EMAIL = "test@test.com";
     private static String TEST_NAME = "test";
@@ -30,7 +30,7 @@ public class RepositoryTest {
     public RepositoryTest() {
         userRepository = MemoryUserRepository.getInstance();
         subscriberRepository = MemorySubscriberRepository.getInstance(userRepository);
-        factory = new SubscriberFactory();
+        factory = new ModelFactory();
     }
 
     @Test(groups = {"Functionality Check"})
@@ -74,17 +74,17 @@ public class RepositoryTest {
         Subscriber subscriber = factory.newSubscriber(TEST_EMAIL, TEST_NAME, TEST_RSS);
         assertNotNull(subscriber.getRsslist().get(0).getRss());
 
-        String r = factory.convertPojo2Json(subscriber);
+        String r = factory.pojo2Json(subscriber);
         assertTrue(r.startsWith("{"));
 
-        Subscriber ns = factory.convertJson2Pojo(Subscriber.class, r);
+        Subscriber ns = factory.json2Pojo(Subscriber.class, r);
         assertEquals(ns.getEmail(), subscriber.getEmail());
 
         user.getSubscribers().add(ns);
         user.setLastLogin("01-01-2018");
-        String u = factory.convertPojo2Json(user);
+        String u = factory.pojo2Json(user);
         assertTrue(u.startsWith("{"));
-        User u1 = factory.convertJson2Pojo(User.class, u);
+        User u1 = factory.json2Pojo(User.class, u);
         u1.setLastLogin("02-02-2018");
         assertEquals(u1.getPreviousLogin(), "01-01-2018", "Incorrect parsing of lastLogin");
     }
@@ -125,7 +125,7 @@ public class RepositoryTest {
         Map<String, String> conditions = new HashMap<>();
         conditions.put("status", UserStatus.LOCKED.toString());
         conditions.put("roles", "ROLE_USER");
-        userRepository.findAll(conditions).stream().forEach(user -> assertTrue(UserStatus.fromValue(user.getStatus()) == UserStatus.LOCKED));
+        userRepository.findAll(conditions).forEach(user -> assertTrue(UserStatus.fromValue(user.getStatus()) == UserStatus.LOCKED));
     }
 
 

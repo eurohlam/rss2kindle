@@ -3,7 +3,7 @@ package org.roag.rest;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTestNg;
 import org.roag.model.User;
-import org.roag.service.SubscriberFactory;
+import org.roag.service.ModelFactory;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.client.Entity;
@@ -56,7 +56,7 @@ public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest
         String new_user="formUser";
         String new_email = "html@mail.com";
         String new_password="htmlforever";
-        SubscriberFactory factory=new SubscriberFactory();
+        ModelFactory factory=new ModelFactory();
 
         //create from html form
         Form form_new = new Form();
@@ -70,7 +70,7 @@ public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest
         response = target(PATH + new_user).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals(200, response.getStatus());
         String entity=response.readEntity(String.class);
-        User user=factory.convertJson2Pojo(User.class,entity);
+        User user=factory.json2Pojo(User.class,entity);
         assertEquals("Reading new User failed", new_user, user.getUsername());
 
         //update
@@ -85,7 +85,7 @@ public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest
         response = target(PATH + new_user).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals(200, response.getStatus());
         entity=response.readEntity(String.class);
-        user=factory.convertJson2Pojo(User.class, entity);
+        user=factory.json2Pojo(User.class, entity);
         assertEquals("Reading updated User failed", new_password, user.getPassword());
 
         //delete
@@ -100,31 +100,31 @@ public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest
         String new_user="jsonUser";
         String new_email = "json@mail.com";
         String new_password="jsonforever";
-        SubscriberFactory factory=new SubscriberFactory();
+        ModelFactory factory=new ModelFactory();
 
         //create from json
         User u=factory.newUser(new_user, new_email, "12345");
-        Response response = target(PATH + "new").request().post(Entity.json(factory.convertPojo2Json(u)), Response.class);
+        Response response = target(PATH + "new").request().post(Entity.json(factory.pojo2Json(u)), Response.class);
         assertEquals("Creating new User failed", 200, response.getStatus());
 
         //read
         response = target(PATH + new_user).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals(200, response.getStatus());
         String entity=response.readEntity(String.class);
-        User user=factory.convertJson2Pojo(User.class,entity);
+        User user=factory.json2Pojo(User.class,entity);
         assertEquals("Reading new User failed", new_user, user.getUsername());
 
         //update
         user.setPassword(new_password);
         user.getSubscribers().add(factory.newSubscriber("json@json.org", "json", "http://json.org"));
-        response = target(PATH + "update").request().put(Entity.json(factory.convertPojo2Json(user)), Response.class);
+        response = target(PATH + "update").request().put(Entity.json(factory.pojo2Json(user)), Response.class);
         assertEquals(200, response.getStatus());
 
         //read
         response = target(PATH + new_user).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals(200, response.getStatus());
         entity=response.readEntity(String.class);
-        user=factory.convertJson2Pojo(User.class, entity);
+        user=factory.json2Pojo(User.class, entity);
         assertEquals("Reading updated User failed", new_password, user.getPassword());
 
         //delete

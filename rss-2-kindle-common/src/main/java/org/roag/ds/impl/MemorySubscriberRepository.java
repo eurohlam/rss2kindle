@@ -6,7 +6,7 @@ import org.roag.ds.UserRepository;
 import org.roag.model.Subscriber;
 import org.roag.model.SubscriberStatus;
 import org.roag.model.User;
-import org.roag.service.SubscriberFactory;
+import org.roag.service.ModelFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -20,11 +20,11 @@ public class MemorySubscriberRepository implements SubscriberRepository {
     private static SubscriberRepository repository;
 
     private UserRepository userRepository;
-    private final SubscriberFactory factory;
+    private final ModelFactory factory;
 
     private MemorySubscriberRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.factory = new SubscriberFactory();
+        this.factory = new ModelFactory();
     }
 
     public static SubscriberRepository getInstance(UserRepository userRepository) {
@@ -56,11 +56,6 @@ public class MemorySubscriberRepository implements SubscriberRepository {
 
         Optional<Subscriber> subscriber= user.getSubscribers().stream().filter(s -> s.getEmail().equals(email)).findFirst();
         return subscriber.isPresent() ? subscriber.get() : null;
-    }
-
-    @Override
-    public String getSubscriberAsJSON(String username, String email) throws Exception {
-        return factory.convertPojo2Json(getSubscriber(username, email));
     }
 
     @Override

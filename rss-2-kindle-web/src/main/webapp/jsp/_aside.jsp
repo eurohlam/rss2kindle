@@ -5,6 +5,13 @@ Created by eurohlam on 12.05.18
 
 <aside id="sidebar-wrapper">
     <ul class="nav flex-column sidebar-nav text-uppercase">
+        <%
+            if (Roles.ROLE_ADMIN.toString().equals(role)) {
+        %>
+                <li class="nav-item"><a class="nav-link" href="admin/users">Users</a></li>
+        <%
+            }
+        %>
         <li class="nav-item"><a class="nav-link" href="profile">My Profile</a></li>
         <li class="nav-item"><a class="nav-link" href="subscribers">Subscribers</a></li>
         <li class="nav-item"><a class="nav-link" href="service">Services</a></li>

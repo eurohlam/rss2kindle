@@ -15,7 +15,7 @@ import javax.ws.rs.core.Response;
  */
 @RestController
 @RequestMapping("rest")
-@Secured({"ROLE_USER", "ROLE_ADMIN"})
+//@Secured({"ROLE_USER", "ROLE_ADMIN"})
 public class SpringRestController {
     @Autowired
     private RestClient client;
@@ -55,6 +55,28 @@ public class SpringRestController {
     @RequestMapping(value = "/service/{username}", method = RequestMethod.GET)
     public String runPolling(@PathVariable("username") String username) {
         return isAccessAllowed(username) ? client.runPolling(username).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
+    }
+
+    //TODO: security
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = "/admin/users", method = RequestMethod.GET)
+    public String getAllUsers() {
+        return client.getAllUsers().readEntity(String.class);
+    }
+
+    @RequestMapping(value = "/admin/{username}/lock", method = RequestMethod.GET)
+    public String lockUser(@PathVariable("username") String username) {
+        return client.lockUser(username).readEntity(String.class);
+    }
+
+    @RequestMapping(value = "/admin/{username}/unlock", method = RequestMethod.GET)
+    public String unlockUser(@PathVariable("username") String username) {
+        return client.unlockUser(username).readEntity(String.class);
+    }
+
+    @RequestMapping(value = "/admin/{username}/remove", method = RequestMethod.DELETE)
+    public String removeUser(@PathVariable("username") String username) {
+        return client.removeUser(username).readEntity(String.class);
     }
 
     private boolean isAccessAllowed(String username) {

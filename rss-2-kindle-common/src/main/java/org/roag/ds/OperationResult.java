@@ -24,7 +24,7 @@ public enum OperationResult {
         map.put("status", status);
     }
 
-    public String toJSON() {
+    public String toJson() {
         return gson.toJson(map);
     }
 

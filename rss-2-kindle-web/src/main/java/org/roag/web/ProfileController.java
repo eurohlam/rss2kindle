@@ -21,11 +21,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+/**
+ * Created by eurohlam on 19/02/2018.
+ */
 @Controller
-public class MainController {
+public class ProfileController extends AbstractController {
 
-    private static final Logger logger = LoggerFactory.getLogger(MainController.class);
+    private final Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
     @Autowired
     private SecurityService securityService;
@@ -39,12 +41,6 @@ public class MainController {
     public String servicePage(ModelMap model) {
         return "service";
     }
-
-    @RequestMapping(value = "/admin", method = RequestMethod.GET)
-    public String adminPage(ModelMap model) {
-        return "admin/adminPage";
-    }
-
 
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
     public String profilePage(ModelMap model) {
@@ -70,19 +66,6 @@ public class MainController {
         return "redirect:login?logout";
     }
 
-    @ModelAttribute("username")
-    public String getPrincipal() {
-        String userName = null;
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal instanceof UserDetails) {
-            userName = ((UserDetails) principal).getUsername();
-        } else {
-            userName = principal.toString();
-        }
-        return userName;
-    }
-
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public String registerUser(@ModelAttribute("newUserForm") NewUserForm user, BindingResult result, ModelMap model) {
         NewUserFormValidator validator = new NewUserFormValidator(securityService);
@@ -90,8 +73,7 @@ public class MainController {
 
         if (result.hasErrors()) {
             logger.error("Registration of a new user {} with email {} failed due to validation errors:", user.getUsername(), user.getEmail());
-            for (ObjectError er : result.getAllErrors())
-                logger.error(er.toString());
+            result.getAllErrors().forEach(error -> logger.error(error.toString()));
             return "register";
         }
 

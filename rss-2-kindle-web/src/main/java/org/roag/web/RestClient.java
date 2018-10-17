@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
 @Scope("prototype")
 public class RestClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(RestClient.class);
+    private final Logger logger = LoggerFactory.getLogger(RestClient.class);
 
     private static final String PROFILE_PATH = "profile/";
     private static final String USERS_PATH = "users/";
@@ -76,22 +76,22 @@ public class RestClient {
     }
 
     public Response resumeSubscriber(String username, String subscriberId) {
-        logger.debug("Trying to resume user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        logger.debug("Trying to resume subscriber {} of user {} via REST service {}:{}{}", subscriberId, username, restHost, restPort, restPath);
         return sendRequest(PROFILE_PATH + username + "/" + subscriberId + "/resume", METHOD.GET, null);
     }
 
     public Response suspendSubscriber(String username, String subscriberId) {
-        logger.debug("Trying to suspend user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        logger.debug("Trying to suspend subscriber {} of user {} via REST service {}:{}{}", subscriberId, username, restHost, restPort, restPath);
         return sendRequest(PROFILE_PATH + username + "/" + subscriberId + "/suspend", METHOD.GET, null);
     }
 
     public Response removeSubscriber(String username, String subscriberId) {
-        logger.debug("Trying to remove user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        logger.debug("Trying to remove subscriber {} of user {} via REST service {}:{}{}", subscriberId, username, restHost, restPort, restPath);
         return sendRequest(PROFILE_PATH + username + "/" + subscriberId + "/remove", METHOD.DELETE, null);
     }
 
     public Response updateSubscriber(String username, String json) {
-        logger.debug("Trying to update user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        logger.debug("Trying to update subscriber of user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
         return sendRequest(PROFILE_PATH + username + "/update", METHOD.PUT, json);
     }
 
@@ -123,6 +123,21 @@ public class RestClient {
     public Response removeUser(String username) {
         logger.debug("Trying to remove user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
         return sendRequest(USERS_PATH + username + "/remove", METHOD.DELETE, null);
+    }
+
+    public Response lockUser(String username) {
+        logger.debug("Trying to lock user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        return sendRequest(USERS_PATH + username + "/lock", METHOD.GET, null);
+    }
+
+    public Response unlockUser(String username) {
+        logger.debug("Trying to unlock user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
+        return sendRequest(USERS_PATH + username + "/unlock", METHOD.GET, null);
+    }
+
+    public Response getAllUsers() {
+        logger.debug("Trying to get all users via REST service {}:{}{}", restHost, restPort, restPath);
+        return sendRequest(USERS_PATH, METHOD.GET, null);
     }
 
     public Response sendEmailToUser(String username, String subject, String message) {

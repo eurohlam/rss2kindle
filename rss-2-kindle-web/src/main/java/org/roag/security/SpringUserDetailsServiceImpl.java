@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  */
 public class SpringUserDetailsServiceImpl implements UserDetailsService {
 
-    private static final Logger logger = LoggerFactory.getLogger(SpringUserDetailsServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(SpringUserDetailsServiceImpl.class);
 
     @Autowired
     private SecurityService securityService;

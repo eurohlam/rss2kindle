@@ -25,8 +25,7 @@ public class SpringUserDetailsImpl implements UserDetails{
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> set=new HashSet<GrantedAuthority>(1);
-        for (Roles role:user.getRoles())
-            set.add(new SimpleGrantedAuthority(role.toString()));
+        user.getRoles().forEach(role -> set.add(new SimpleGrantedAuthority(role.toString())));
         return set;
     }
 
