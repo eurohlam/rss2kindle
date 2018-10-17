@@ -5,9 +5,12 @@ Created by eurohlam on 12.05.18
 
 <aside id="sidebar-wrapper">
     <ul class="nav flex-column sidebar-nav text-uppercase">
+        <%--admin items--%>
         <li class="nav-item"><a class="nav-link" href="users">Users</a></li>
-        <li class="nav-item"><a class="nav-link" href="configuration">System configuration</a></li>
-        <li class="nav-item"><a class="nav-link" href="services">Services</a></li>
+        <%--general items--%>
+        <li class="nav-item"><a class="nav-link" href="../profile">My Profile</a></li>
+        <li class="nav-item"><a class="nav-link" href="../subscribers">Subscribers</a></li>
+        <li class="nav-item"><a class="nav-link" href="../service">Services</a></li>
     </ul>
 </aside>
 
