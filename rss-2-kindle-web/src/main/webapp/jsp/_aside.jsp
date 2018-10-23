@@ -1,4 +1,4 @@
-<%--
+<%@ page import="org.roag.model.Roles" %><%--
 Created by eurohlam on 12.05.18
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -6,7 +6,7 @@ Created by eurohlam on 12.05.18
 <aside id="sidebar-wrapper">
     <ul class="nav flex-column sidebar-nav text-uppercase">
         <%
-            if (Roles.ROLE_ADMIN.toString().equals(role)) {
+            if (roles.contains(Roles.ROLE_ADMIN.toString())) {
         %>
                 <li class="nav-item"><a class="nav-link" href="admin/users">Users</a></li>
         <%
