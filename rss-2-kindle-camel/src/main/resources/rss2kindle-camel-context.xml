@@ -12,6 +12,7 @@
         <property name="deadLetterUri" value="seda:errors"/>
     </bean>
 
+
     <camel:sslContextParameters id="sslContext" camelContextId="mainCamelContext">
         <camel:keyManagers>
             <camel:keyStore resource="{{keystore.file}}" password="{{keystore.password}}"/>
@@ -24,6 +25,7 @@
             <camel:secureSocketProtocol>TLSv1.2</camel:secureSocketProtocol>
         </camel:secureSocketProtocols>
     </camel:sslContextParameters>
+
 
     <camel:camelContext id="mainCamelContext" streamCache="true" errorHandlerRef="defErrorHandler">
         <!-- let Camel use those @Component scanned route builders -->

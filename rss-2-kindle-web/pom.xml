@@ -14,7 +14,7 @@
     <name>rss-2-kindle web</name>
 
     <properties>
-        <spring-security.version>4.2.7.RELEASE</spring-security.version>
+        <spring-security.version>5.0.7.RELEASE</spring-security.version>
     </properties>
 
     <dependencyManagement>
@@ -38,13 +38,6 @@
             <artifactId>rss-2-kindle-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-<!--
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>rss-2-kindle-datasource-mongo</artifactId>
-            <version>${project.version}</version>
-        </dependency>
--->
 
         <!-- Spring security minimal dependency-->
         <dependency>
