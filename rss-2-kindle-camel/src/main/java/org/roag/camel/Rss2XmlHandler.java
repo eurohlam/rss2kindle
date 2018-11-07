@@ -30,7 +30,6 @@ import java.util.concurrent.*;
  * Created by eurohlam on 03.10.16.
  */
 @Component
-@Scope("prototype")
 @SuppressWarnings("unused")
 public class Rss2XmlHandler {
 
@@ -38,7 +37,6 @@ public class Rss2XmlHandler {
 
     private CamelContext camelContext;
     private SubscriberRepository subscriberRepository;
-    private ConsumerTemplate rssConsumer;
     private ExecutorService taskExecutor;
     private ExecutorService resultExecutor;
 
@@ -65,7 +63,6 @@ public class Rss2XmlHandler {
                           @Qualifier("mainCamelContext") CamelContext camelContext) {
         this.subscriberRepository = subscriberRepository;
         this.camelContext = camelContext;
-        this.rssConsumer = camelContext.createConsumerTemplate();
         this.taskExecutor = Executors.newCachedThreadPool();//newFixedThreadPool(10);
         this.resultExecutor = Executors.newCachedThreadPool(); //newFixedThreadPool(10);
     }
@@ -119,13 +116,13 @@ public class Rss2XmlHandler {
      * @throws Exception
      */
     public void runRssPollingForSubscriber(String username, Subscriber subscriber) throws Exception {
-        logger.debug("Start polling: user = {}; subscriber = {}; subscriber.name = {}", username, subscriber.getEmail(), subscriber.getName());
+        logger.debug("Initiated polling for: username = {}; subscriber = {}; subscriber.name = {}", username, subscriber.getEmail(), subscriber.getName());
         Map<Rss, Future<RssPollingTask.PollingTaskResult>> taskMap = new HashMap<>(subscriber.getRsslist().size());
         //run polling rss asynchronously
         for (int i = 0; i < subscriber.getRsslist().size(); i++) {
             Rss rss = subscriber.getRsslist().get(i);
             if (RssStatus.DEAD != RssStatus.fromValue(rss.getStatus())) {
-                logger.info("Polling RSS {}: user={}; subscriber = {}", rss.getRss(), username, subscriber.getEmail());
+                logger.info("Got task for username={}; subscriber = {}, rss = {}", username, subscriber.getEmail(), rss.getRss());
                 rss.setLastPollingDate(LocalDateTime.now().toString());
                 try {
                     Future<RssPollingTask.PollingTaskResult> result = taskExecutor.submit(
@@ -189,12 +186,13 @@ public class Rss2XmlHandler {
         @Override
         public PollingTaskResult call() throws Exception {
             PollingTaskResult result = new PollingTaskResult(rssURI);
-            logger.debug("Started polling {}", rssURI);
+            logger.debug("Started polling rss: {} into file: {}", rssURI, path);
             SyndFeed feed = null;
             try {
+                ConsumerTemplate rssConsumer= camelContext.createConsumerTemplate();
                 feed = rssConsumer.receiveBody(rssURI, 60000, SyndFeedImpl.class);
             } catch (RuntimeException e) {
-                logger.error("Polling RSS {} failed due to error: {}, {}", rssURI, e.getMessage(), e);
+                logger.error("Polling rss {} failed due to error: {}, {}", rssURI, e.getMessage(), e);
                 throw new ConnectException("Polling RSS " + rssURI + " failed due to error: " + e.getMessage());
             }
 
@@ -282,12 +280,12 @@ public class Rss2XmlHandler {
                 try {
                     RssPollingTask.PollingTaskResult taskResult = entry.getValue().get(60, TimeUnit.SECONDS);
                     if (taskResult.getStatus() == TaskStatus.COMPLETED) {
-                        logger.info("RSS {} has been polled successfully to {}; user = {};", rss.getRss(), taskResult.getFileName(), username);
+                        logger.info("RSS has been polled successfully. Username = {}; rss = {}, file = {}", username, rss.getRss(), taskResult.getFileName());
                         rss.setStatus(RssStatus.ACTIVE.toString());
                         rss.setRetryCount((short) 0);
                         rss.setErrorMessage("");
                     } else {
-                        logger.error("RSS {} has not been polled due to undefined error.  username = {};", taskResult.getRss(), username);
+                        logger.error("RSS has not been polled due to undefined error. Username = {}; rss = {}", username, taskResult.getRss());
                         throw new Exception("RSS " + taskResult.getRss() + " has not been polled");
                     }
                 } catch (Exception e) {
