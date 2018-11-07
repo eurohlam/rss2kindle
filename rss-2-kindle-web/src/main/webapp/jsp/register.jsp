@@ -56,7 +56,7 @@
 
 <header class="masthead bg-primary text-white text-center">
     <div class="container">
-        <form:form class="form-signin" action="register" commandName="newUserForm" method="post" autocomplete="off">
+        <form:form class="form-signin" action="register" modelAttribute="newUserForm" method="post" autocomplete="off">
             <h2 class="form-signin-heading">Please sign up</h2>
             <form:label path="username" class="sr-only">Username</form:label>
             <form:input type="text" id="username" path="username" class="form-control" placeholder="Username" />
