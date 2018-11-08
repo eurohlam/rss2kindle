@@ -48,8 +48,8 @@ public class SpringRestController {
     }
 
     @RequestMapping(value = "/profile/{username}/new", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON)
-    public Response newSubscriber(@PathVariable("username") String username, @RequestBody String message) {
-        return isAccessAllowed(username) ? client.addSubscriber(username, message) : Response.status(Response.Status.UNAUTHORIZED).build();//TODO: error handling does not work properly
+    public String newSubscriber(@PathVariable("username") String username, @RequestBody String message) {
+        return isAccessAllowed(username) ? client.addSubscriber(username, message).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
     }
 
     @RequestMapping(value = "/service/{username}", method = RequestMethod.GET)
@@ -57,7 +57,6 @@ public class SpringRestController {
         return isAccessAllowed(username) ? client.runPolling(username).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
     }
 
-    //TODO: security
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/admin/users", method = RequestMethod.GET)
     public String getAllUsers() {
