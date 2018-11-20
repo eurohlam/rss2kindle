@@ -86,7 +86,7 @@
         <SSLHostConfig  protocols="TLSv1.1,TLSv1.2">
             <Certificate certificateKeystoreFile="conf/tomcat-ssl-keystore.jks"
                          certificateKeystorePassword="changeit"
-                         certificateKeyAlias="tomcat"
+                         certificateKeyAlias="rss2kindle"
                          type="RSA" />
         </SSLHostConfig>
     </Connector>

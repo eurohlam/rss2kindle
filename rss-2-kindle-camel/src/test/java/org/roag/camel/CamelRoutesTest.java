@@ -98,7 +98,7 @@ public class CamelRoutesTest extends CamelSpringTestSupport {
                         marshal().rss().to("mock:result");
                 from("direct:http")
                         .setHeader(Exchange.HTTP_METHOD, constant(org.apache.camel.component.http4.HttpMethods.GET))
-                        .to("http4://google.com")
+                        .to("http4://google.com?httpClientConfigurer=httpConfigurer")
                         .to("file://test/data/output.xml");
             }
         };
@@ -106,7 +106,6 @@ public class CamelRoutesTest extends CamelSpringTestSupport {
 
     @Test
     public void testListOfEntriesIsSplitIntoPieces() throws Exception {
-
         template.sendBody("direct:http", null);
 /*
         MockEndpoint mock = getMockEndpoint("mock:result");
