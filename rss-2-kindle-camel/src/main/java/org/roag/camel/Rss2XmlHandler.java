@@ -2,6 +2,8 @@ package org.roag.camel;
 
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndFeedImpl;
+import com.sun.syndication.io.SyndFeedInput;
+import com.sun.syndication.io.XmlReader;
 import org.apache.camel.*;
 import org.apache.camel.dataformat.rss.RssConverter;
 import org.roag.ds.SubscriberRepository;
@@ -14,10 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ConnectException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -162,7 +161,7 @@ public class Rss2XmlHandler {
 
         RssPollingTask(Rss rss, String path) {
             this.rss = rss;
-            this.rssURI = getCamelRssUri(rss.getRss());
+            this.rssURI = getCamelHttp4Uri(rss.getRss());
             this.path = path;
             this.fileName = rssFileNameFormat.format(LocalDateTime.now());
         }
@@ -183,6 +182,12 @@ public class Rss2XmlHandler {
             return rssUri;
         }
 
+        private String getCamelHttp4Uri(String rss) {
+            String rssUri = "http4://" + rss.replaceAll("https?://", "") + "?httpClientConfigurer=httpConfigurer";
+            logger.debug("Got URI for polling {}", rssUri);
+            return rssUri;
+        }
+
         @Override
         public PollingTaskResult call() throws Exception {
             PollingTaskResult result = new PollingTaskResult(rssURI);
@@ -190,7 +195,10 @@ public class Rss2XmlHandler {
             SyndFeed feed = null;
             try {
                 ConsumerTemplate rssConsumer= camelContext.createConsumerTemplate();
-                feed = rssConsumer.receiveBody(rssURI, 60000, SyndFeedImpl.class);
+                //feed = rssConsumer.receiveBody(rssURI, 60000, SyndFeedImpl.class); //TODO: check if it works for http4
+                InputStream in = rssConsumer.receiveBody(rssURI, 60000, InputStream.class);
+                SyndFeedInput feedInput = new SyndFeedInput();
+                feed = feedInput.build(new XmlReader(in));
             } catch (RuntimeException e) {
                 logger.error("Polling rss {} failed due to error: {}, {}", rssURI, e.getMessage(), e);
                 throw new ConnectException("Polling RSS " + rssURI + " failed due to error: " + e.getMessage());
