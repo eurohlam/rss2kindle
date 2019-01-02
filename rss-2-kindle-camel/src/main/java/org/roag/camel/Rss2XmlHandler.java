@@ -1,7 +1,7 @@
 package org.roag.camel;
 
+import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.feed.synd.SyndFeedImpl;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 import org.apache.camel.*;
@@ -13,16 +13,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.net.ConnectException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -62,17 +63,8 @@ public class Rss2XmlHandler {
                           @Qualifier("mainCamelContext") CamelContext camelContext) {
         this.subscriberRepository = subscriberRepository;
         this.camelContext = camelContext;
-        this.taskExecutor = Executors.newCachedThreadPool();//newFixedThreadPool(10);
-        this.resultExecutor = Executors.newCachedThreadPool(); //newFixedThreadPool(10);
-    }
-
-    public void runCustomRssPolling(String email, String rss) throws Exception {
-        logger.info("Anonymous polling for email {} from rss {}", email, rss);
-        throw new IllegalArgumentException("Not implemented yet"); //TODO:
-//        Future<RssPollingTask.PollingTaskResult> result = taskExecutor.submit(new RssPollingTask(rssConsumer, getCamelRssUri(rss),
-//                getPathForRss("guest", email, rss), getRssFileNameFormat().format(new Date())));
-//        logger.info("Anonymous polling for email {} from rss {} is completed with result {}", email, rss, result.get().getStatus());
-
+        this.taskExecutor = Executors.newCachedThreadPool();
+        this.resultExecutor = Executors.newCachedThreadPool();
     }
 
     public void runRssPollingForAllUsers() throws Exception {
@@ -87,9 +79,8 @@ public class Rss2XmlHandler {
     /**
      * @param username - unique name of user
      * @param subscriberList - list of subscribers that belong to current user
-     * @throws Exception
      */
-    public void runRssPollingForList(String username, List<Subscriber> subscriberList) throws Exception {
+    public void runRssPollingForList(String username, List<Subscriber> subscriberList) {
         for (Subscriber subscriber : subscriberList) {
             if (SubscriberStatus.fromValue(subscriber.getStatus()) == SubscriberStatus.ACTIVE) {
                 runRssPollingForSubscriber(username, subscriber);
@@ -112,9 +103,8 @@ public class Rss2XmlHandler {
     /**
      * @param username - unique name of user
      * @param subscriber - subscriber that belongs to current user
-     * @throws Exception
      */
-    public void runRssPollingForSubscriber(String username, Subscriber subscriber) throws Exception {
+    public void runRssPollingForSubscriber(String username, Subscriber subscriber) {
         logger.debug("Initiated polling for: username = {}; subscriber = {}; subscriber.name = {}", username, subscriber.getEmail(), subscriber.getName());
         Map<Rss, Future<RssPollingTask.PollingTaskResult>> taskMap = new HashMap<>(subscriber.getRsslist().size());
         //run polling rss asynchronously
@@ -152,7 +142,6 @@ public class Rss2XmlHandler {
 
     class RssPollingTask implements Callable<RssPollingTask.PollingTaskResult> {
 
-        private final DateTimeFormatter rssLastUpdateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:MM:ss");
         private final DateTimeFormatter rssFileNameFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         private Rss rss;
         private final String rssURI;
@@ -166,22 +155,6 @@ public class Rss2XmlHandler {
             this.fileName = rssFileNameFormat.format(LocalDateTime.now());
         }
 
-        private String getCamelRssUri(String rss) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
-            LocalDateTime dateTime = LocalDateTime.now();
-            ChronoUnit chronoUnit = ChronoUnit.valueOf(lastUpdateTimeunit);
-            String lastUpdate = rssLastUpdateFormat.format(dateTime.minus(lastUpdateCount, chronoUnit));
-
-            String rssUri = "rss:" + rss + "?feedHeader=" + feedHeaders
-                    + "&consumer.bridgeErrorHandler=true"
-                    + "&splitEntries=" + splitEntries
-                    + "&consumer.delay=" + consumerDelay
-                    + "&lastUpdate=" + lastUpdate;
-            logger.debug("Got URI for polling {}", rssUri);
-            return rssUri;
-        }
-
         private String getCamelHttp4Uri(String rss) {
             String rssUri = "http4://" + rss.replaceAll("https?://", "") + "?httpClientConfigurer=httpConfigurer";
             logger.debug("Got URI for polling {}", rssUri);
@@ -189,25 +162,26 @@ public class Rss2XmlHandler {
         }
 
         @Override
-        public PollingTaskResult call() throws Exception {
+        public PollingTaskResult call() throws PollingException, FeedDataException {
             PollingTaskResult result = new PollingTaskResult(rssURI);
             logger.debug("Started polling rss: {} into file: {}", rssURI, path);
             SyndFeed feed = null;
             try {
                 ConsumerTemplate rssConsumer= camelContext.createConsumerTemplate();
-                //feed = rssConsumer.receiveBody(rssURI, 60000, SyndFeedImpl.class); //TODO: check if it works for http4
                 InputStream in = rssConsumer.receiveBody(rssURI, 60000, InputStream.class);
                 SyndFeedInput feedInput = new SyndFeedInput();
-                feed = feedInput.build(new XmlReader(in));
-            } catch (RuntimeException e) {
+                SyndFeed fullFeed = feedInput.build(new XmlReader(in));
+                feed = filterEntriesByDate(fullFeed);
+            } catch (Exception e) {
                 logger.error("Polling rss {} failed due to error: {}, {}", rssURI, e.getMessage(), e);
-                throw new ConnectException("Polling RSS " + rssURI + " failed due to error: " + e.getMessage());
+                throw new PollingException("Polling RSS " + rssURI + " failed due to error: " + e.getMessage(), e);
             }
 
-            if (feed == null) {
-                logger.error("Timeout error during the polling {}", rssURI);
-                throw new TimeoutException("Timeout error during the polling " + rssURI);
+            if (feed.getEntries().isEmpty()) {
+                logger.error("There are no updates for feed {}", rssURI);
+                throw new FeedDataException("There are no updates for feed " + rssURI);
             }
+
             logger.debug("Finished polling {}.\nTitle: {}.\nDescription: {}", rssURI, feed.getTitle(), feed.getDescription());
 
             File folder = new File(path);
@@ -215,22 +189,27 @@ public class Rss2XmlHandler {
                 folder.mkdirs();
             if (folder.exists() && folder.isDirectory()) {
                 String file = folder.getPath() + "/" + fileName;
-                OutputStream out = null;
-                try {
-                    out = new FileOutputStream(file);
+                try (OutputStream out = new FileOutputStream(file)) {
                     out.write(RssConverter.feedToXml(feed).getBytes());
-                } catch (IOException e) {
+                } catch (Exception e) {
                     logger.error(e.getMessage(), e);
-                    throw e;
-                } finally {
-                    if (out != null)
-                        out.close();
+                    throw new PollingException(e.getMessage(), e);
                 }
                 logger.debug("Feed {} marshaled into file {}", rssURI, file);
                 result.setFileName(file);
                 result.setStatus(TaskStatus.COMPLETED);
             }
             return result;
+        }
+
+        private SyndFeed filterEntriesByDate(SyndFeed feed) {
+            LocalDate lastUpdateDate = LocalDate.now().minus(lastUpdateCount, ChronoUnit.valueOf(lastUpdateTimeunit));
+            List<SyndEntry> entries = (List)feed.getEntries()
+                    .stream()
+                    .filter(entry -> ((SyndEntry)entry).getPublishedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isAfter(lastUpdateDate))
+                    .collect(Collectors.toList());
+            feed.setEntries(entries);
+            return feed;
         }
 
         class PollingTaskResult {
@@ -294,17 +273,24 @@ public class Rss2XmlHandler {
                         rss.setErrorMessage("");
                     } else {
                         logger.error("RSS has not been polled due to undefined error. Username = {}; rss = {}", username, taskResult.getRss());
-                        throw new Exception("RSS " + taskResult.getRss() + " has not been polled");
+                        throw new PollingException("RSS " + taskResult.getRss() + " has not been polled due to undefined error");
                     }
                 } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
+                    if (e.getMessage().contains("FeedDataException")) {
+                        logger.warn(e.getMessage());
+                        rss.setErrorMessage(e.getMessage());
+                    } else {
+                        logger.error("Error type {}", e.getClass().getCanonicalName());
+                        logger.error(e.getMessage(), e);
 
-                    rss.setErrorMessage(e.getMessage());
-                    rss.setRetryCount((short) (rss.getRetryCount() + 1));
-                    if (rss.getRetryCount() > 4)
-                        rss.setStatus(RssStatus.DEAD.toString());
-                    else
-                        rss.setStatus(RssStatus.OFFLINE.toString());
+                        rss.setErrorMessage(e.getMessage());
+                        rss.setRetryCount((short) (rss.getRetryCount() + 1));
+                        if (rss.getRetryCount() > 4) {
+                            rss.setStatus(RssStatus.DEAD.toString());
+                        } else {
+                            rss.setStatus(RssStatus.OFFLINE.toString());
+                        }
+                    }
                 }
             }
             try {
