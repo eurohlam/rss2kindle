@@ -48,10 +48,22 @@
                 '</tr></thead><tbody>';
 
             $.each(data.rsslist, function (i, item) {
+                var tr;
+                if (item.status === 'offline')
+                    tr = '<tr class="table-danger"><td>';
+                else
+                    tr = '<tr class="table-light"><td>';
 
+                rssTable += tr + (i + 1) + '</td><td>'
+                    + item.rss + '</td><td>'
+                    + item.status + '</td><td>'
+                    + item.lastPollingDate + '</td><td>'
+                    + item.errorMessage + '</td><td>'
+                    + item.retryCount + '</td></tr>'
 
             });
             rssTable += '</tbody></table>';
+            $("#details").html(rssTable);
         })
     });
 
@@ -62,6 +74,13 @@
     <%@include file="_header.jsp" %>
 
     <div id="wrapper" class="row">
+        <%@include file="_aside.jsp"%>
+
+        <main id="page-content-wrapper">
+            <div class="row" id="details">
+
+            </div>
+        </main>
     </div>
 
 

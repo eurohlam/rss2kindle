@@ -27,6 +27,11 @@ public class SpringRestController {
         return isAccessAllowed(username) ? client.getUserData(username).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
     }
 
+    @RequestMapping(value = "/profile/{username}/{subscriber:\\w+@\\w+\\.[a-zA-Z]{2,}}", method = RequestMethod.GET)
+    public String getSubscriber(@PathVariable("username") String username, @PathVariable("subscriber") String subscriber) {
+        return isAccessAllowed(username) ? client.getSubscriber(username, subscriber).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
+    }
+
     @RequestMapping(value = "/profile/{username}/{subscriber:\\w+@\\w+\\.[a-zA-Z]{2,}}/suspend", method = RequestMethod.GET)
     public String suspendSubscriber(@PathVariable("username") String username, @PathVariable("subscriber") String subscriber) {
         return isAccessAllowed(username) ? client.suspendSubscriber(username, subscriber).readEntity(String.class) : ACCESS_DENIED_MESSAGE;

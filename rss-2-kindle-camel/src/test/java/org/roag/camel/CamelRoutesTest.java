@@ -98,7 +98,7 @@ public class CamelRoutesTest extends CamelSpringTestSupport {
                         marshal().rss().to("mock:result");
                 from("direct:http")
                         .setHeader(Exchange.HTTP_METHOD, constant(org.apache.camel.component.http4.HttpMethods.GET))
-                        .to("http4://google.com?httpClientConfigurer=httpConfigurer")
+                        .to("http4://google.com?httpClientConfigurer=httpConfigurer&proxyAuthHost=localhost&proxyAuthPort=3128")
                         .to("file://test/data/output.xml");
             }
         };
