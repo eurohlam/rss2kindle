@@ -49,8 +49,10 @@
 
             $.each(data.rsslist, function (i, item) {
                 var tr;
-                if (item.status === 'offline')
+                if (item.status === 'dead')
                     tr = '<tr class="table-danger"><td>';
+                else if (item.status === 'offline')
+                    tr = '<tr class="table-warning"><td>';
                 else
                     tr = '<tr class="table-light"><td>';
 
@@ -77,8 +79,13 @@
         <%@include file="_aside.jsp"%>
 
         <main id="page-content-wrapper">
-            <div class="row" id="details">
-
+            <div class="container-fluid">
+                <h1 class="page-header">${subscriber}</h1>
+                <section class="container-fluid">
+                    <div id="alerts_panel" class="row"></div>
+                    <div class="row" id="details">
+                    </div>
+                </section>
             </div>
         </main>
     </div>
