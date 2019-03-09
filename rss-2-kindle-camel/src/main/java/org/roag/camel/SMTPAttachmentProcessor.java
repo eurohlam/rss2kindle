@@ -18,8 +18,7 @@ public class SMTPAttachmentProcessor implements org.apache.camel.Processor
     private final Logger logger = LoggerFactory.getLogger(SMTPAttachmentProcessor.class);
 
     @Override
-    public void process(Exchange exchange) throws Exception
-    {
+    public void process(Exchange exchange) throws Exception {
         String attachment = exchange.getIn().getHeader("attachment").toString();
         String feed = exchange.getIn().getHeader("mobiFileName").toString();
         logger.debug("SMTP is trying to send attachment {} with name {}", attachment, feed);

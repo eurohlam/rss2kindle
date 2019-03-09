@@ -34,7 +34,6 @@ public class MongoSubscriberRepository implements SubscriberRepository {
     public MongoSubscriberRepository(UserRepository userRepository, MongoHelper mongoHelper, CamelContext context) {
         this.userRepository = userRepository;
         this.mongoHelper = mongoHelper;
-        assert context != null;
         this.producerTemplate = context.createProducerTemplate();
     }
 
@@ -51,10 +50,11 @@ public class MongoSubscriberRepository implements SubscriberRepository {
     public OperationResult addSubscriber(String username, Subscriber subscriber) throws Exception {
         logger.debug("Trying to add new subscriber {} for user {}", subscriber.getEmail(), username);
         User user = getUser(username);
-        for (Subscriber s : user.getSubscribers())
-            if (s.getEmail().equals(subscriber.getEmail()))
+        for (Subscriber s : user.getSubscribers()) {
+            if (s.getEmail().equals(subscriber.getEmail())) {
                 throw new IllegalArgumentException("Subscriber with email " + subscriber.getEmail() + " can't be added due to it already exists for user " + username);
-
+            }
+        }
         user.getSubscribers().add(subscriber);
         OperationResult r = mongoHelper.updateUser(user, producerTemplate);
         logger.info("Added subscriber {} for user {} with the result {}", subscriber.getEmail(), username, r);
@@ -79,7 +79,6 @@ public class MongoSubscriberRepository implements SubscriberRepository {
                 return r;
             }
         }
-//        WriteResult r = mongoHelper.removeSubscriber(subscriber.getEmail(), producerTemplate);
         return OperationResult.NOT_EXIST;
     }
 
@@ -88,8 +87,9 @@ public class MongoSubscriberRepository implements SubscriberRepository {
         logger.debug("Fetch all subscribers for user {} from Mongo", username);
 
         User user = getUser(username);
-        if (user == null)
+        if (user == null) {
             throw new IllegalArgumentException("User " + username + " does not exist");
+        }
 
         return user.getSubscribers();
     }
@@ -104,14 +104,16 @@ public class MongoSubscriberRepository implements SubscriberRepository {
         logger.debug("Fetch subscriber {} from Mongo", email);
 
         User user = getUser(username);
-        if (user == null)
+        if (user == null) {
             throw new IllegalArgumentException("User " + username + " does not exist");
+        }
 
-        for (Subscriber s : user.getSubscribers())
-            if (s.getEmail().equals(email))
-                return s;
-
-        return null;
+        return user
+                .getSubscribers()
+                .stream()
+                .filter(s -> email.equals(s.getEmail()))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

@@ -14,9 +14,9 @@ public enum OperationResult {
     NOT_EXIST("not_exist"),
     DUPLICATED("duplicated");
 
-    private String status;
-    private Map<String, String> map;
-    private Gson gson = new Gson();
+    private final String status;
+    private final Map<String, String> map;
+    private final Gson gson = new Gson();
 
     OperationResult(String status) {
         this.status = status;
