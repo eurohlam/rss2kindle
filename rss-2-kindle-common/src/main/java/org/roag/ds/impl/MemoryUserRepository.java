@@ -31,8 +31,9 @@ public class MemoryUserRepository implements UserRepository {
         ReentrantReadWriteLock.WriteLock lock = new ReentrantReadWriteLock().writeLock();
         lock.lock();
         try {
-            if (repository == null)
+            if (repository == null) {
                 repository = new MemoryUserRepository();
+            }
             return repository;
         } finally {
             lock.unlock();
@@ -48,14 +49,17 @@ public class MemoryUserRepository implements UserRepository {
     public List<User> findAll(Map<String, String> condition) throws Exception {
         List<User> filteredUsers = findAll();
         for (Map.Entry entry: condition.entrySet()) {
-            if ("email".equals(entry.getKey()))
+            if ("email".equals(entry.getKey())) {
                 filteredUsers = filteredUsers.stream().filter(user -> user.getEmail().equals(entry.getValue())).collect(Collectors.toList());
-            if ("status".equals(entry.getKey()))
+            }
+            if ("status".equals(entry.getKey())) {
                 filteredUsers = filteredUsers.stream().filter(user -> user.getStatus().equals(entry.getValue())).collect(Collectors.toList());
-            if ("roles".equals(entry.getKey()))
+            }
+            if ("roles".equals(entry.getKey())) {
                 filteredUsers = filteredUsers.stream().
                         filter(user -> user.getRoles().stream().anyMatch(roles -> roles.name().equals(entry.getValue()))).
                         collect(Collectors.toList());
+            }
         }
 
         return filteredUsers;
@@ -63,8 +67,9 @@ public class MemoryUserRepository implements UserRepository {
 
     @Override
     public OperationResult addUser(User user) throws Exception {
-        if (users.containsKey(user.getUsername()))
+        if (users.containsKey(user.getUsername())) {
             throw new IllegalArgumentException("User " + user.getUsername() + " already exists");
+        }
         users.put(user.getUsername(), user);
         return OperationResult.SUCCESS;
     }
@@ -103,8 +108,9 @@ public class MemoryUserRepository implements UserRepository {
     @Override
     public OperationResult assignRole(String username, Roles role) throws Exception {
         User user = getUser(username);
-        if (user.getRoles().stream().anyMatch(r -> r == role))
+        if (user.getRoles().stream().anyMatch(r -> r == role)) {
             return OperationResult.DUPLICATED;
+        }
         user.getRoles().add(role);
         return updateUser(user);
     }
@@ -112,11 +118,12 @@ public class MemoryUserRepository implements UserRepository {
     @Override
     public OperationResult dismissRole(String username, Roles role) throws Exception {
         User user = getUser(username);
-        for (Roles r : user.getRoles())
+        for (Roles r : user.getRoles()) {
             if (r == role) {
                 user.getRoles().remove(r);
                 return updateUser(user);
             }
+        }
         return OperationResult.NOT_EXIST;
     }
 

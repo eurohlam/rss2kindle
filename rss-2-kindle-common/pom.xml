@@ -12,8 +12,6 @@
   <artifactId>rss-2-kindle-common</artifactId>
   <packaging>jar</packaging>
 
-  <name>rss-2-kindle common</name>
-
   <dependencies>
     <dependency>
       <groupId>com.google.code.gson</groupId>

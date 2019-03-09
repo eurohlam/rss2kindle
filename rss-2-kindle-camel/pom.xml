@@ -12,8 +12,6 @@
     <artifactId>rss-2-kindle-camel</artifactId>
     <packaging>jar</packaging>
 
-    <name>rss-2-kindle camel processor</name>
-
     <dependencies>
         <!--internal dependencies -->
         <dependency>
@@ -103,7 +101,6 @@
 
     <build>
         <defaultGoal>install</defaultGoal>
-        <!--<finalName>rss2kindle</finalName>-->
 
         <plugins>
             <plugin>

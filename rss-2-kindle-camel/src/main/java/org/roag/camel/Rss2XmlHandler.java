@@ -185,8 +185,9 @@ public class Rss2XmlHandler {
             logger.debug("Finished polling {}.\nTitle: {}.\nDescription: {}", rssURI, feed.getTitle(), feed.getDescription());
 
             File folder = new File(path);
-            if (!folder.exists())
-                folder.mkdirs();
+            if (!folder.exists() && !folder.mkdirs())
+                throw new PollingException("System error: can not create local folder for data files");
+
             if (folder.exists() && folder.isDirectory()) {
                 String file = folder.getPath() + "/" + fileName;
                 try (OutputStream out = new FileOutputStream(file)) {

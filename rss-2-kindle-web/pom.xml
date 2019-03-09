@@ -11,8 +11,6 @@
     <artifactId>rss-2-kindle-web</artifactId>
     <packaging>war</packaging>
 
-    <name>rss-2-kindle web</name>
-
     <properties>
         <spring-security.version>5.0.7.RELEASE</spring-security.version>
     </properties>
@@ -101,9 +99,5 @@
 
 
     </dependencies>
-
-    <build>
-        <finalName>r2kweb</finalName>
-    </build>
 
 </project>

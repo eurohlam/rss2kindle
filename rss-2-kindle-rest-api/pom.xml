@@ -12,8 +12,6 @@
   <artifactId>rss-2-kindle-rest-api</artifactId>
   <packaging>war</packaging>
 
-  <name>rss-2-kindle rest api</name>
-
   <dependencies>
     <!-- internal dependencies -->
     <dependency>
@@ -101,10 +99,6 @@
     </dependency>
 
   </dependencies>
-
-  <build>
-    <finalName>rss2kindle</finalName>
-  </build>
 
   <profiles>
     <!-- copy spring&camel context from rss-2-kidnle-camel module into WEB-INFO/classes -->

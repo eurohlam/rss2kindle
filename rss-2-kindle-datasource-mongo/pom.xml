@@ -12,8 +12,6 @@
     <artifactId>rss-2-kindle-datasource-mongo</artifactId>
     <packaging>jar</packaging>
 
-    <name>rss-2-kindle datasource mongo</name>
-
     <build>
         <plugins>
             <plugin>

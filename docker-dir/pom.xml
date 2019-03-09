@@ -18,12 +18,14 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>rss-2-kindle-rest-api</artifactId>
             <version>${project.version}</version>
+            <type>war</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>rss-2-kindle-web</artifactId>
             <version>${project.version}</version>
+            <type>war</type>
             <scope>provided</scope>
         </dependency>
     </dependencies>

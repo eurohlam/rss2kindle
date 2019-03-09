@@ -27,7 +27,7 @@ The follwoing properties has to be configured according to certain environment:
 ## How to build
 To build this project use
 
-    mvn clean install -Dmaven.test.skip=true
+    mvn clean install -Dmaven.skip.test.exec
 
 
 ## How to deploy
@@ -41,8 +41,13 @@ There are three containers that have to be run:
 * Tomcat 9.0. Dockerfile is located into docker-dir/tomcat. https://hub.docker.com/_/tomcat/
 * MailHog 1.0. Dockerfile is located into docker-dir/mailhog. https://hub.docker.com/r/mailhog/mailhog/
 
-To run whole environment using docker:
+You can run whole environment using one maven command:
 
+    mvn clean install docker-compose:up
+    
+
+You also can build and deploy step by step:     
+    
 * build the project:
         
         mvn clean install
