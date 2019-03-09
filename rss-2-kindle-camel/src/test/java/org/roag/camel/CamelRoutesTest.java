@@ -10,19 +10,26 @@ import org.roag.ds.UserRepository;
 import org.roag.model.Subscriber;
 import org.roag.model.User;
 import org.roag.service.ModelFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.Test;
+
+import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by eurohlam on 12.12.16.
  */
 public class CamelRoutesTest extends CamelSpringTestSupport {
+
+    private final Logger logger = LoggerFactory.getLogger(CamelRoutesTest.class);
+
     private UserRepository userRepository;
     private SubscriberRepository subscriberRepository;
     private User testUser;
     private Subscriber testSubscriber;
-    private Rss2XmlHandler builder;
     private ModelFactory modelFactory = new ModelFactory();
 
     @PropertyInject("storage.path.rss")
@@ -42,7 +49,6 @@ public class CamelRoutesTest extends CamelSpringTestSupport {
         subscriberRepository = (SubscriberRepository) context.getBean("subscriberRepository");
         testUser = (User) context.getBean("testUser");
         testSubscriber = (Subscriber) context.getBean("testSubscriber");
-        builder = context.getBean(Rss2XmlHandler.class);
         return context;
     }
 
@@ -69,10 +75,17 @@ public class CamelRoutesTest extends CamelSpringTestSupport {
     public void runPollingTest() throws Exception {
         userRepository.addUser(testUser);
         subscriberRepository.addSubscriber(testUser.getUsername(), testSubscriber);
-        subscriberRepository.addSubscriber(testUser.getUsername(), modelFactory.newSubscriber("test2@test.com", "test2", "file:src/test/resources/testrss.xml"));
-        builder.runRssPollingForAllUsers();
+        subscriberRepository.addSubscriber(testUser.getUsername(), modelFactory.newSubscriber("test2@test.com", "test2", "file:src/test/resources/testrss2.xml"));
+        subscriberRepository.addSubscriber(testUser.getUsername(), modelFactory.newSubscriber("test3@test.com", "test3",
+                new String[] {"file:src/test/resources/testrss.xml", "file:src/test/resources/testrss2.xml"}, LocalDateTime.now(), 24, TimeUnit.HOURS));
+        userRepository.addUser(modelFactory.newUser("newUser", "newuser@test.com", "newUser"));
+        subscriberRepository.addSubscriber("newUser", modelFactory.newSubscriber("test4@test.com", "test4", "file:src/test/resources/testrss2.xml"));
+
+        logger.info("User state before polling: {}", modelFactory.pojo2Json(userRepository.getUser(testUser.getUsername())));
+        template.sendBody("direct:bean", null);
         //wait for polling before stopping of context
-        Thread.sleep(25000);
+//        Thread.sleep(60000);
+        logger.info("User state after polling: {}",  modelFactory.pojo2Json(userRepository.getUser(testUser.getUsername())));
     }
 
 
@@ -80,11 +93,12 @@ public class CamelRoutesTest extends CamelSpringTestSupport {
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                from("direct:bean").to("bean:rss2XmlHandler?method=runRssPollingForAllUsers");
                 from("direct:rss").from("rss:file:src/test/resources/testrss.xml?splitEntries=" + splitEntries + "&sortEntries=true&consumer.delay=" + consumerDelay + "&feedHeader=" + feedHeader).
                         marshal().rss().to("mock:result");
                 from("direct:http")
                         .setHeader(Exchange.HTTP_METHOD, constant(org.apache.camel.component.http4.HttpMethods.GET))
-                        .to("http4://tools254.datacom.co.nz?proxyAuthHost=dnzwgpx2&proxyAuthPort=80&proxyAuthDomain=RomanA&proxyAuthPassword=Hlam12345")
+                        .to("http4://google.com?httpClientConfigurer=httpConfigurer&proxyAuthHost=localhost&proxyAuthPort=3128")
                         .to("file://test/data/output.xml");
             }
         };
@@ -92,7 +106,6 @@ public class CamelRoutesTest extends CamelSpringTestSupport {
 
     @Test
     public void testListOfEntriesIsSplitIntoPieces() throws Exception {
-
         template.sendBody("direct:http", null);
 /*
         MockEndpoint mock = getMockEndpoint("mock:result");

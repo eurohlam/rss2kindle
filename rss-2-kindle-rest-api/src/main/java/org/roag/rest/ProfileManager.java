@@ -69,10 +69,10 @@ public class ProfileManager {
     @GET
     @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSubscriber(@PathParam("username") String username, @PathParam("email") String id) {
-        logger.debug("Fetch subscriber {} for user {}", id, username);
+    public Response getSubscriber(@PathParam("username") String username, @PathParam("email") String subscriberId) {
+        logger.debug("Fetch subscriber {} for user {}", subscriberId, username);
         try {
-            String subscriber = modelFactory.pojo2Json(subscriberRepository.getSubscriber(username, id));
+            String subscriber = modelFactory.pojo2Json(subscriberRepository.getSubscriber(username, subscriberId));
             return Response.ok(subscriber, MediaType.APPLICATION_JSON_TYPE).build();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -83,10 +83,10 @@ public class ProfileManager {
     @GET
     @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/suspend")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response suspendSubscriber(@PathParam("username") String username, @PathParam("email") String id) {
-        logger.warn("Suspend subscriber {} for user {}", id, username);
+    public Response suspendSubscriber(@PathParam("username") String username, @PathParam("email") String subscriberId) {
+        logger.warn("Suspend subscriber {} for user {}", subscriberId, username);
         try {
-            OperationResult result = subscriberRepository.suspendSubscriber(username, id);
+            OperationResult result = subscriberRepository.suspendSubscriber(username, subscriberId);
             if (result == OperationResult.SUCCESS)
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
@@ -100,10 +100,10 @@ public class ProfileManager {
     @GET
     @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/resume")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response resumeSubscriber(@PathParam("username") String username, @PathParam("email") String id) {
-        logger.warn("Resume subscriber {} for user {}", id, username);
+    public Response resumeSubscriber(@PathParam("username") String username, @PathParam("email") String subscriberId) {
+        logger.warn("Resume subscriber {} for user {}", subscriberId, username);
         try {
-            OperationResult result = subscriberRepository.resumeSubscriber(username, id);
+            OperationResult result = subscriberRepository.resumeSubscriber(username, subscriberId);
             if (result == OperationResult.SUCCESS)
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
@@ -202,10 +202,10 @@ public class ProfileManager {
     @DELETE
     @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/remove")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response removeSubscriber(@PathParam("username") String username, @PathParam("email") String id) {
-        logger.warn("Remove subscriber {} for user {}", id, username);
+    public Response removeSubscriber(@PathParam("username") String username, @PathParam("email") String subscriberId) {
+        logger.warn("Remove subscriber {} for user {}", subscriberId, username);
         try {
-            OperationResult result = subscriberRepository.removeSubscriber(username, id);
+            OperationResult result = subscriberRepository.removeSubscriber(username, subscriberId);
             if (result == OperationResult.SUCCESS)
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             else
@@ -219,10 +219,10 @@ public class ProfileManager {
     @GET
     @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/subscriptions")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllSubscriptions(@PathParam("username") String username, @PathParam("email") String id) {
-        logger.debug("Fetch all subscriptions for subscriber {} by user {}", id, username);
+    public Response getAllSubscriptions(@PathParam("username") String username, @PathParam("email") String subscriberId) {
+        logger.debug("Fetch all subscriptions for subscriber {} by user {}", subscriberId, username);
         try {
-            Subscriber subscriber = subscriberRepository.getSubscriber(username, id);
+            Subscriber subscriber = subscriberRepository.getSubscriber(username, subscriberId);
             String result = modelFactory.pojo2Json(subscriber.getRsslist());
             return Response.ok(result, MediaType.APPLICATION_JSON_TYPE).build();
         } catch (Exception e) {
@@ -236,11 +236,11 @@ public class ProfileManager {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSubscription(@PathParam("username") String username,
-                                    @PathParam("email") String id,
+                                    @PathParam("email") String subscriberId,
                                     @FormParam("rss") String rss) {
-        logger.info("Add new subscription {} for subscriber {} by user {}", rss, id, username);
+        logger.info("Add new subscription {} for subscriber {} by user {}", rss, subscriberId, username);
         try {
-            Subscriber subscriber = subscriberRepository.getSubscriber(username, id);
+            Subscriber subscriber = subscriberRepository.getSubscriber(username, subscriberId);
             for (Rss r : subscriber.getRsslist())
                 if (r.getRss().equals(rss))
                     return Response.status(Response.Status.CONFLICT).build();
@@ -265,11 +265,11 @@ public class ProfileManager {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeSubscription(@PathParam("username") String username,
-                                       @PathParam("email") String id,
+                                       @PathParam("email") String subscriberId,
                                        @FormParam("rss") String rss) {
-        logger.warn("Remove subscription {} for subscriber {} by user {}", rss, id, username);
+        logger.warn("Remove subscription {} for subscriber {} by user {}", rss, subscriberId, username);
         try {
-            Subscriber subscriber = subscriberRepository.getSubscriber(username, id);
+            Subscriber subscriber = subscriberRepository.getSubscriber(username, subscriberId);
             List<Rss> rssList = subscriber.getRsslist();
             for (int i = 0; i < rssList.size(); i++) {
                 Rss _rss = rssList.get(i);

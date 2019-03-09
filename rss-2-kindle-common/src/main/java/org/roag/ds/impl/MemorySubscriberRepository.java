@@ -9,7 +9,9 @@ import org.roag.model.User;
 import org.roag.service.ModelFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -19,7 +21,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class MemorySubscriberRepository implements SubscriberRepository {
     private static SubscriberRepository repository;
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     private final ModelFactory factory;
 
     private MemorySubscriberRepository(UserRepository userRepository) {
@@ -31,8 +33,9 @@ public class MemorySubscriberRepository implements SubscriberRepository {
         ReentrantReadWriteLock.WriteLock lock = new ReentrantReadWriteLock().writeLock();
         lock.lock();
         try {
-            if (repository == null)
+            if (repository == null) {
                 repository = new MemorySubscriberRepository(userRepository);
+            }
             return repository;
         } finally {
             lock.unlock();
@@ -51,8 +54,9 @@ public class MemorySubscriberRepository implements SubscriberRepository {
     @Override
     public Subscriber getSubscriber(String username, String email) throws Exception {
         User user = getUser(username);
-        if (user == null)
+        if (user == null) {
             throw new IllegalArgumentException("User " + username + " does not exist");
+        }
 
         Optional<Subscriber> subscriber= user.getSubscribers().stream().filter(s -> s.getEmail().equals(email)).findFirst();
         return subscriber.isPresent() ? subscriber.get() : null;
@@ -60,8 +64,9 @@ public class MemorySubscriberRepository implements SubscriberRepository {
 
     @Override
     public OperationResult updateSubscriber(String username, Subscriber subscriber) throws Exception {
-        if (username == null || subscriber == null)
+        if (username == null || subscriber == null) {
             return OperationResult.FAILURE;
+        }
 
         User user = getUser(username);
         for (Subscriber s: user.getSubscribers()) {
@@ -97,11 +102,13 @@ public class MemorySubscriberRepository implements SubscriberRepository {
 
     @Override
     public OperationResult addSubscriber(String username, Subscriber subscriber) throws Exception {
-        if (getUser(username) == null)
+        if (getUser(username) == null) {
             throw new IllegalArgumentException("User " + username + " does not exist");
+        }
 
-        if (getSubscriber(username, subscriber.getEmail()) != null)
+        if (getSubscriber(username, subscriber.getEmail()) != null) {
             throw new IllegalArgumentException("Subscriber " + subscriber.getEmail() + " for user " + username + " already exists");
+        }
 
         getUser(username).getSubscribers().add(subscriber);
 
@@ -114,8 +121,9 @@ public class MemorySubscriberRepository implements SubscriberRepository {
 
         for (int i = 0; i < user.getSubscribers().size(); i++) {
             Subscriber oldSubscriber = user.getSubscribers().get(i);
-            if (oldSubscriber.getEmail().equals(email))
+            if (oldSubscriber.getEmail().equals(email)) {
                 return user.getSubscribers().remove(i) != null ? OperationResult.SUCCESS : OperationResult.FAILURE;
+            }
         }
         return OperationResult.NOT_EXIST;
     }

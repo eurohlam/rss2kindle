@@ -75,6 +75,11 @@ public class RestClient {
         return sendRequest(PROFILE_PATH + username, METHOD.GET, null);
     }
 
+    public Response getSubscriber(String username, String subscriberId) {
+        logger.debug("Trying to get data for subscriber {} of user {} via REST service {}:{}{}", subscriberId, username, restHost, restPort, restPath);
+        return sendRequest(PROFILE_PATH + username + "/" + subscriberId, METHOD.GET, null);
+    }
+
     public Response resumeSubscriber(String username, String subscriberId) {
         logger.debug("Trying to resume subscriber {} of user {} via REST service {}:{}{}", subscriberId, username, restHost, restPort, restPath);
         return sendRequest(PROFILE_PATH + username + "/" + subscriberId + "/resume", METHOD.GET, null);

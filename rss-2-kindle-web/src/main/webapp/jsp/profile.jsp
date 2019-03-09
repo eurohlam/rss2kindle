@@ -69,7 +69,7 @@
 
                 subscribersTable += tr + (i + 1) + '</td><td>'
                     + item.name + '</td><td>'
-                    + item.email + '</td><td>'
+                    + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td><td>'
                     + item.status + '</td><td>';
 
                 var rss = item.rsslist;
@@ -171,7 +171,6 @@
 </div>
 
 <!-- Bootstrap core JavaScript -->
-<%--<script src="../vendor/jquery/jquery.min.js"></script>--%>
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 <!-- Plugin JavaScript -->

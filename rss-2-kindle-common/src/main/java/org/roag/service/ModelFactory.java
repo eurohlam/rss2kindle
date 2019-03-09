@@ -6,6 +6,7 @@ import org.roag.model.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 /**
  * Created by eurohlam on 09.11.16.
@@ -72,6 +73,18 @@ public class ModelFactory {
         s.setSettings(settings);
         return s;
 
+    }
+
+    public User newUser(Consumer<User> consumer) {
+        User user=new User();
+        consumer.accept(user);
+        return user;
+    }
+
+    public Subscriber newSubscriber(Consumer<Subscriber> consumer) {
+        Subscriber subscriber=new Subscriber();
+        consumer.accept(subscriber);
+        return subscriber;
     }
 
     public <T> T json2Pojo(Class<T> _class, String source_object) {

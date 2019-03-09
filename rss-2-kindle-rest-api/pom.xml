@@ -6,13 +6,11 @@
   <parent>
     <groupId>org.roag</groupId>
     <artifactId>rss-2-kindle</artifactId>
-    <version>2.1-SNAPSHOT</version>
+    <version>3.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>rss-2-kindle-rest-api</artifactId>
   <packaging>war</packaging>
-
-  <name>rss-2-kindle rest api</name>
 
   <dependencies>
     <!-- internal dependencies -->
@@ -63,6 +61,10 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+          </exclusion>
         </exclusions>
     </dependency>
     <!--dependency>
@@ -97,10 +99,6 @@
     </dependency>
 
   </dependencies>
-
-  <build>
-    <finalName>rss2kindle</finalName>
-  </build>
 
   <profiles>
     <!-- copy spring&camel context from rss-2-kidnle-camel module into WEB-INFO/classes -->

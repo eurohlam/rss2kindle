@@ -9,10 +9,10 @@
 >
 
     <channel>
-        <title>Eurohlam&#039;s Blog</title>
+        <title>Someone&#039;s Blog</title>
         <atom:link href="http://eurohlam.ru/feed/" rel="self" type="application/rss+xml" />
         <link>http://eurohlam.ru</link>
-        <description>Something postmodern: life, coding, karate and rock&#039;n&#039;roll</description>
+        <description>Something wrong with java</description>
         <lastBuildDate>Sun, 18 Jun 2017 09:29:46 +0000</lastBuildDate>
         <language>ru-RU</language>
         <sy:updatePeriod>hourly</sy:updatePeriod>

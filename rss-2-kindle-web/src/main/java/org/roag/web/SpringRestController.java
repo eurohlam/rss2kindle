@@ -27,6 +27,11 @@ public class SpringRestController {
         return isAccessAllowed(username) ? client.getUserData(username).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
     }
 
+    @RequestMapping(value = "/profile/{username}/{subscriber:\\w+@\\w+\\.[a-zA-Z]{2,}}", method = RequestMethod.GET)
+    public String getSubscriber(@PathVariable("username") String username, @PathVariable("subscriber") String subscriber) {
+        return isAccessAllowed(username) ? client.getSubscriber(username, subscriber).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
+    }
+
     @RequestMapping(value = "/profile/{username}/{subscriber:\\w+@\\w+\\.[a-zA-Z]{2,}}/suspend", method = RequestMethod.GET)
     public String suspendSubscriber(@PathVariable("username") String username, @PathVariable("subscriber") String subscriber) {
         return isAccessAllowed(username) ? client.suspendSubscriber(username, subscriber).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
@@ -48,8 +53,8 @@ public class SpringRestController {
     }
 
     @RequestMapping(value = "/profile/{username}/new", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON)
-    public Response newSubscriber(@PathVariable("username") String username, @RequestBody String message) {
-        return isAccessAllowed(username) ? client.addSubscriber(username, message) : Response.status(Response.Status.UNAUTHORIZED).build();//TODO: error handling does not work properly
+    public String newSubscriber(@PathVariable("username") String username, @RequestBody String message) {
+        return isAccessAllowed(username) ? client.addSubscriber(username, message).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
     }
 
     @RequestMapping(value = "/service/{username}", method = RequestMethod.GET)
@@ -57,7 +62,6 @@ public class SpringRestController {
         return isAccessAllowed(username) ? client.runPolling(username).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
     }
 
-    //TODO: security
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/admin/users", method = RequestMethod.GET)
     public String getAllUsers() {
