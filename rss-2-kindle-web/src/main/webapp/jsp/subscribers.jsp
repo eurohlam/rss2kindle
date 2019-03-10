@@ -65,8 +65,8 @@
                         tr = '<tr class="table-light"><td>';
 
                     table += tr + (i + 1) + '</td><td>'
-                        + item.name + '</td><td>'
-                        + item.email + '</td><td>'
+                        + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><td>'
+                        + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td><td>'
                         + item.status + '</td><td>'
                         + '<div class="btn-group" role="group">'
                         + '<button id="btn_update" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">Update</button>';

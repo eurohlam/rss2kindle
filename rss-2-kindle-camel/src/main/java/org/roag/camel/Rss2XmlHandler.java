@@ -143,7 +143,7 @@ public class Rss2XmlHandler {
     class RssPollingTask implements Callable<RssPollingTask.PollingTaskResult> {
 
         private final DateTimeFormatter rssFileNameFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        private Rss rss;
+        private final Rss rss;
         private final String rssURI;
         private final String path;
         private final String fileName;
@@ -173,13 +173,13 @@ public class Rss2XmlHandler {
                 SyndFeed fullFeed = feedInput.build(new XmlReader(in));
                 feed = filterEntriesByDate(fullFeed);
             } catch (Exception e) {
-                logger.error("Polling rss {} failed due to error: {}, {}", rssURI, e.getMessage(), e);
-                throw new PollingException("Polling RSS " + rssURI + " failed due to error: " + e.getMessage(), e);
+                logger.error("Polling rss {} failed due to error: {}, {}", rss.getRss(), e.getMessage(), e);
+                throw new PollingException("Polling RSS " + rss.getRss() + " failed due to error: " + e.getMessage(), e);
             }
 
             if (feed.getEntries().isEmpty()) {
-                logger.error("There are no updates for feed {}", rssURI);
-                throw new FeedDataException("There are no updates for feed " + rssURI);
+                logger.error("There are no updates for feed {}", rss.getRss());
+                throw new FeedDataException("There are no updates for feed " + rss.getRss());
             }
 
             logger.debug("Finished polling {}.\nTitle: {}.\nDescription: {}", rssURI, feed.getTitle(), feed.getDescription());
@@ -196,7 +196,7 @@ public class Rss2XmlHandler {
                     logger.error(e.getMessage(), e);
                     throw new PollingException(e.getMessage(), e);
                 }
-                logger.debug("Feed {} marshaled into file {}", rssURI, file);
+                logger.debug("Feed {} marshaled into file {}", rss.getRss(), file);
                 result.setFileName(file);
                 result.setStatus(TaskStatus.COMPLETED);
             }

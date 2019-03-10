@@ -68,7 +68,7 @@
                     tr = '<tr class="table-light"><td>';
 
                 subscribersTable += tr + (i + 1) + '</td><td>'
-                    + item.name + '</td><td>'
+                    + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><td>'
                     + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td><td>'
                     + item.status + '</td><td>';
 
