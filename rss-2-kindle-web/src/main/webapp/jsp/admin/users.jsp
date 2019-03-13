@@ -168,7 +168,7 @@
                 <div class="row" style="padding-top: 5rem; padding-bottom: 15rem">
                     <form id="users_form" action="" method="post">
                         <div class="text-left" id="subscribers_view" style="padding-left: 2rem; padding-right: 2rem">
-                            <h3 class="sub-header">Users</h3>
+                            <h3>User management</h3>
                             <nav class="navbar navbar-light bg-light">
                                 <button id="lock_btn" class="navbar-brand" type="submit">
                                     <img src="../../img/icons/if_pause-circle_2561308.svg" width="30" height="30"

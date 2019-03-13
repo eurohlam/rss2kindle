@@ -65,7 +65,7 @@
 
         <main id="page-content-wrapper" style="padding-bottom: 10rem; padding-left: 2rem;">
             <div class="container-fluid">
-                <h1 class="page-header">Polling subscriptions</h1>
+                <h1>Polling subscriptions</h1>
                 <section class="container-fluid">
                     <div id="alerts_panel" class="row"></div>
                     <div class="alert alert-info row" role="alert">

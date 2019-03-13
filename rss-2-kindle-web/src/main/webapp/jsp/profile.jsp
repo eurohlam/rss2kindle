@@ -137,7 +137,8 @@
 
         <main id="page-content-wrapper">
             <div class="container-fluid">
-                <h1 class="page-header">${username} dashboard</h1>
+                <h5>Dashboard for user:</h5>
+                <h1>${username}</h1>
                 <div class="row text-center" style="padding-top: 3rem; padding-bottom: 3rem">
                     <div class="col-md-4 col-lg-4" style="background-color: #c7ddef">
                         <div id="dashboard_user_status"></div>

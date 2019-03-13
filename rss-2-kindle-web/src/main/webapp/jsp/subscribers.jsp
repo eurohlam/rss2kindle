@@ -80,7 +80,7 @@
 
                 });
                 table += '</tbody></table>';
-                $('#edit').html(table);
+                $('#edit_subscriber').html(table);
             });
         }
 
@@ -448,7 +448,7 @@
                 <div class="tab-content" id="operationsTabContent">
                     <div id="alerts_panel"></div>
                     <div class="tab-pane fade active"  id="new" role="tabpanel" aria-labelledby="new-tab">
-                        <h2 class="sub-header">Add new subscriber</h2>
+                        <h2>Add new subscriber</h2>
                         <form method="get" id="new_subscriber_form" action="#page-top">
                             <div class="form-group">
                                 <label for="new_subscriber_email">Email</label>
@@ -482,7 +482,8 @@
                         </form>
                     </div>
                     <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
-                        <h2 class="sub-header">Edit subscriber</h2>
+                        <h2>Edit subscribers</h2>
+                        <div id="edit_subscriber"></div>
                     </div>
                 </div>
             </div>

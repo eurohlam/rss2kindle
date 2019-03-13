@@ -80,12 +80,31 @@
 
         <main id="page-content-wrapper">
             <div class="container-fluid">
-                <h1 class="page-header">${subscriber}</h1>
-                <section class="container-fluid">
-                    <div id="alerts_panel" class="row"></div>
-                    <div class="row" id="details">
+                <h5>Details for subscription:</h5>
+                <h1>${subscriber}</h1>
+                <hr class="star-dark"/>
+                <div class="container-fluid">
+                    <div class="btn-toolbar bg-light" role="toolbar" aria-label="">
+                        <div class="btn-group mr-2" role="group" aria-label="">
+                            <button id="lock_btn" class="navbar-brand" type="submit">
+                                <img src="../img/icons/if_pause-circle_2561308.svg" width="30" height="30"
+                                     class="d-inline-block align-top" alt="Lock">
+                            </button>
+                            <button id="unlock_btn" class="navbar-brand" type="submit">
+                                <img src="../img/icons/if_play-circle_2561292.svg" width="30" height="30"
+                                     class="d-inline-block align-top" alt="Unlock">
+                            </button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button id="remove_btn" class="navbar-brand" type="submit">
+                                <img src="../img/icons/if_trash_2561481.svg" width="30" height="30"
+                                     class="d-inline-block align-top" alt="Remove">
+                            </button>
+                        </div>
                     </div>
-                </section>
+                    <div id="alerts_panel" class="row"></div>
+                    <div id="details" class="row" ></div>
+                </div>
             </div>
         </main>
     </div>
