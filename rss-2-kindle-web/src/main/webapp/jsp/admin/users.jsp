@@ -65,7 +65,7 @@
                         tr = '<tr class="table-active"><td></td><td>';
                     } else {
                         tr = '<tr class="table-light">'
-                        + '<td><input type="checkbox" class="form-check-input" id="' + item.username + '"/></td><td>';
+                            + '<td><input type="checkbox" class="form-check-input" id="' + item.username + '"/></td><td>';
                     }
                     table = table + tr
                         + (i + 1) + '</td><td>'
@@ -165,11 +165,15 @@
 
         <main id="page-content-wrapper">
             <div class="container-fluid">
-                <div class="row" style="padding-top: 5rem; padding-bottom: 15rem">
+                <div class="text-center">
+                    <h5>Administrative mode:</h5>
+                    <h1>User management</h1>
+                    <hr class="star-dark"/>
+                </div>
+                <div class="container-fluid">
                     <form id="users_form" action="" method="post">
-                        <div class="text-left" id="subscribers_view" style="padding-left: 2rem; padding-right: 2rem">
-                            <h3>User management</h3>
-                            <nav class="navbar navbar-light bg-light">
+                        <div class="btn-toolbar bg-light" role="toolbar">
+                            <div class="btn-group" role="group">
                                 <button id="lock_btn" class="navbar-brand" type="submit">
                                     <img src="../../img/icons/if_pause-circle_2561308.svg" width="30" height="30"
                                          class="d-inline-block align-top" alt="Lock">
@@ -178,14 +182,16 @@
                                     <img src="../../img/icons/if_play-circle_2561292.svg" width="30" height="30"
                                          class="d-inline-block align-top" alt="Unlock">
                                 </button>
+                            </div>
+                            <div class="btn-group" role="group">
                                 <button id="remove_btn" class="navbar-brand" type="submit">
                                     <img src="../../img/icons/if_trash_2561481.svg" width="30" height="30"
                                          class="d-inline-block align-top" alt="Remove">
                                 </button>
-                            </nav>
-                            <div id="alerts_panel"></div>
-                            <div id="all_users"></div>
+                            </div>
                         </div>
+                        <div id="alerts_panel"></div>
+                        <div id="all_users"></div>
                     </form>
                 </div>
             </div>

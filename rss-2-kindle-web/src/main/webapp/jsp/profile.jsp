@@ -137,9 +137,12 @@
 
         <main id="page-content-wrapper">
             <div class="container-fluid">
-                <h5>Dashboard for user:</h5>
-                <h1>${username}</h1>
-                <div class="row text-center" style="padding-top: 3rem; padding-bottom: 3rem">
+                <div class="text-center">
+                    <h5>Profile overview for:</h5>
+                    <h1>${username}</h1>
+                    <hr class="star-dark"/>
+                </div>
+                <div class="row text-center">
                     <div class="col-md-4 col-lg-4" style="background-color: #c7ddef">
                         <div id="dashboard_user_status"></div>
                         <h4>User info</h4>
@@ -156,7 +159,7 @@
                         <div class="text-muted" id="dashboard_subscriptions_info"></div>
                     </div>
                 </div>
-                <div class="row" style="padding-top: 5rem; padding-bottom: 15rem">
+                <div class="row" style="padding-top: 5rem">
                     <div class="col-xl-6 text-left" id="subscribers_view" style="padding-left: 2rem; padding-right: 2rem">
                         <h3 class="sub-header">Subscribers</h3>
                     </div>

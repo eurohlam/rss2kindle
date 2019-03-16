@@ -21,7 +21,7 @@
           type="text/css">
 
     <!-- Theme CSS -->
-    <link href="../css/freelancer.min.css" rel="stylesheet">
+    <link href="../css/freelancer.css" rel="stylesheet">
 
     <!-- Custom css -->
     <link href="../css/simple-sidebar.css" rel="stylesheet">
@@ -63,10 +63,14 @@
 
         <%@include file="_aside.jsp" %>
 
-        <main id="page-content-wrapper" style="padding-bottom: 10rem; padding-left: 2rem;">
+        <main id="page-content-wrapper">
             <div class="container-fluid">
-                <h1>Polling subscriptions</h1>
-                <section class="container-fluid">
+                <div class="text-center">
+                    <h5>Available services:</h5>
+                    <h1>Polling subscriptions</h1>
+                    <hr class="star-dark"/>
+                </div>
+                <div class="container-fluid">
                     <div id="alerts_panel" class="row"></div>
                     <div class="alert alert-info row" role="alert">
                         All subscriptions are scheduled for polling every day at 02:00 am.
@@ -78,7 +82,7 @@
                             Poll my subscriptions immediately
                         </button>
                     </div>
-                </section>
+                </div>
             </div>
         </main>
     </div>
