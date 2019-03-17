@@ -18,7 +18,8 @@
     <!-- Custom Fonts -->
     <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
+          type="text/css">
 
     <!-- Theme CSS -->
     <link href="../css/freelancer.css" rel="stylesheet">
@@ -76,16 +77,39 @@
     <%@include file="_header.jsp" %>
 
     <div id="wrapper" class="row">
-        <%@include file="_aside.jsp"%>
+        <%@include file="_aside.jsp" %>
 
         <main id="page-content-wrapper">
             <div class="container-fluid">
-                <h1 class="page-header">${subscriber}</h1>
-                <section class="container-fluid">
-                    <div id="alerts_panel" class="row"></div>
-                    <div class="row" id="details">
-                    </div>
-                </section>
+                <div class="text-center">
+                    <h5>Details of subscriptions for subscriber:</h5>
+                    <h1>${subscriber}</h1>
+                    <hr class="star-dark"/>
+                </div>
+                <div class="container-fluid">
+                    <form id="subscribers_form" action="" method="post">
+                        <div class="btn-toolbar bg-light" role="toolbar" aria-label="">
+                            <div class="btn-group mr-2" role="group" aria-label="">
+                                <button id="lock_btn" class="navbar-brand" type="submit">
+                                    <img src="../img/icons/if_pause-circle_2561308.svg" width="30" height="30"
+                                         class="d-inline-block align-top" alt="Lock">
+                                </button>
+                                <button id="unlock_btn" class="navbar-brand" type="submit">
+                                    <img src="../img/icons/if_play-circle_2561292.svg" width="30" height="30"
+                                         class="d-inline-block align-top" alt="Unlock">
+                                </button>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <button id="remove_btn" class="navbar-brand" type="submit">
+                                    <img src="../img/icons/if_trash_2561481.svg" width="30" height="30"
+                                         class="d-inline-block align-top" alt="Remove">
+                                </button>
+                            </div>
+                        </div>
+                        <div id="alerts_panel" class="row"></div>
+                        <div id="details" class="row"></div>
+                    </form>
+                </div>
             </div>
         </main>
     </div>

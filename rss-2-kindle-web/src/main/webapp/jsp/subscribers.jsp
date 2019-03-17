@@ -65,8 +65,8 @@
                         tr = '<tr class="table-light"><td>';
 
                     table += tr + (i + 1) + '</td><td>'
-                        + item.name + '</td><td>'
-                        + item.email + '</td><td>'
+                        + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><td>'
+                        + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td><td>'
                         + item.status + '</td><td>'
                         + '<div class="btn-group" role="group">'
                         + '<button id="btn_update" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">Update</button>';
@@ -80,7 +80,7 @@
 
                 });
                 table += '</tbody></table>';
-                $('#edit').html(table);
+                $('#edit_subscriber').html(table);
             });
         }
 
@@ -434,6 +434,10 @@
         <%@include file="_aside.jsp"%>
 
         <main id="page-content-wrapper">
+            <div class="text-center">
+                <h1>Subscribers management</h1>
+                <hr class="star-dark"/>
+            </div>
             <ul class="nav nav-tabs" id="operationsTab" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="profile"
@@ -444,11 +448,11 @@
                        aria-controls="home" aria-selected="true">New subscriber</a>
                 </li>
             </ul>
-            <div class="row" style="padding-top: 3rem; padding-bottom: 15rem; padding-left: 2rem">
+            <div class="row" style="padding-top: 3rem; padding-left: 2rem">
                 <div class="tab-content" id="operationsTabContent">
                     <div id="alerts_panel"></div>
                     <div class="tab-pane fade active"  id="new" role="tabpanel" aria-labelledby="new-tab">
-                        <h2 class="sub-header">Add new subscriber</h2>
+                        <h2>Add new subscriber</h2>
                         <form method="get" id="new_subscriber_form" action="#page-top">
                             <div class="form-group">
                                 <label for="new_subscriber_email">Email</label>
@@ -462,15 +466,11 @@
                                 <label for="new_subscriber_rsslist">Subscriptions</label>
                                 <select class="form-control" id="new_subscriber_rsslist" size="5"></select>
                                 <div class="form-group">
-                                    <label for="new_subscriber_addrss" class="control-label">Add new subscription
-                                        (RSS):</label>
+                                    <label for="new_subscriber_addrss" class="control-label">Add new subscription (RSS):</label>
                                     <input type="url" class="form-control" id="new_subscriber_addrss"/>
                                     <div class="btn-group-xs" role="group">
-                                        <button type="button" class="btn btn-primary" id="btn_new_subscriber_addrss">+
-                                        </button>
-                                        <button type="button" class="btn btn-primary" id="btn_new_subscriber_deleterss">
-                                            -
-                                        </button>
+                                        <button type="button" class="btn btn-primary" id="btn_new_subscriber_addrss">+</button>
+                                        <button type="button" class="btn btn-primary" id="btn_new_subscriber_deleterss">-</button>
                                     </div>
                                 </div>
                             </div>
@@ -482,7 +482,8 @@
                         </form>
                     </div>
                     <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
-                        <h2 class="sub-header">Edit subscriber</h2>
+                        <h2>Edit subscribers</h2>
+                        <div id="edit_subscriber"></div>
                     </div>
                 </div>
             </div>
@@ -499,8 +500,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="updateModalLabel">Update subscriber and subscriptions</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <form method="get" action="#" id="update_subscriber_form">
                 <div class="modal-body">
@@ -518,14 +520,11 @@
                         <label for="update_subscriber_rsslist" class="control-label">Subscriptions:</label>
                         <select class="form-control" id="update_subscriber_rsslist" size="7"></select>
                         <div class="form-group">
-                            <label for="update_subscriber_addrss" class="control-label">Add new subscription
-                                (RSS):</label>
+                            <label for="update_subscriber_addrss" class="control-label">Add new subscription (RSS):</label>
                             <input type="url" class="form-control" id="update_subscriber_addrss"/>
                             <div class="btn-group-xs" role="group">
-                                <button type="button" class="btn btn-primary" id="btn_update_subscriber_addrss">+
-                                </button>
-                                <button type="button" class="btn btn-primary" id="btn_update_subscriber_deleterss">-
-                                </button>
+                                <button type="button" class="btn btn-primary" id="btn_update_subscriber_addrss">+</button>
+                                <button type="button" class="btn btn-primary" id="btn_update_subscriber_deleterss">-</button>
                             </div>
                         </div>
                     </div>
@@ -545,8 +544,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="suspendModalLabel">Suspend subscriber</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <form method="get" id="suspend_subscriber_form" action="#">
                 <div class="modal-body">
@@ -569,8 +569,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="resumeModalLabel">Suspend subscriber</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <form method="get" id="resume_subscriber_form" action="#">
                 <div class="modal-body">
@@ -593,8 +594,9 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="removeModalLabel">Remove subscriber</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <form method="get" id="remove_subscriber_form" action="#">
                 <div class="modal-body">

@@ -38,7 +38,10 @@
 #page-content-wrapper {
   width: 100%;
   position: absolute;
-  padding: 40px;
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-top: 40px;
+  padding-bottom: 15rem;
   top: 100px;
 }
 
@@ -90,7 +93,10 @@
     width: 200px;
   }
   #page-content-wrapper {
-    padding: 30px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 30px;
+    padding-bottom: 15rem;
     position: relative;
   }
   #wrapper.toggled #page-content-wrapper {

@@ -10,8 +10,7 @@ import java.util.Set;
  * Created by eurohlam on 28/09/2017.
  */
 @SuppressWarnings("unused")
-public class User
-{
+public class User {
 
     @SerializedName("_id")
     private String id;
@@ -60,35 +59,30 @@ public class User
         this.password = password;
     }
 
-    public String getEmail()
-    {
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email)
-    {
+    public void setEmail(String email) {
         this.email = email;
     }
 
-    public String getDateModified()
-    {
+    public String getDateModified() {
         return dateModified;
     }
 
-    public void setDateModified(String dateModified)
-    {
+    public void setDateModified(String dateModified) {
         this.dateModified = dateModified;
     }
 
-    public String getLastLogin()
-    {
+    public String getLastLogin() {
         return lastLogin;
     }
 
-    public void setLastLogin(String lastLogin)
-    {
-        if (this.lastLogin != null)
+    public void setLastLogin(String lastLogin) {
+        if (this.lastLogin != null) {
             this.previousLogin = this.lastLogin;
+        }
         this.lastLogin = lastLogin;
     }
 
@@ -116,23 +110,19 @@ public class User
         this.subscribers = subscribers;
     }
 
-    public Set<Roles> getRoles()
-    {
+    public Set<Roles> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Roles> roles)
-    {
+    public void setRoles(Set<Roles> roles) {
         this.roles = roles;
     }
 
-    public String getPreviousLogin()
-    {
+    public String getPreviousLogin() {
         return previousLogin;
     }
 
-    public void setPreviousLogin(String previousLogin)
-    {
+    public void setPreviousLogin(String previousLogin) {
         this.previousLogin = previousLogin;
     }
 }

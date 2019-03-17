@@ -88,10 +88,18 @@ public class RepositoryTest {
         u1.setLastLogin("02-02-2018");
         assertEquals(u1.getPreviousLogin(), "01-01-2018", "Incorrect parsing of lastLogin");
 
-        User newUser=factory.newUser(nu -> {nu.setEmail("newuser@test.test"); nu.setUsername("newUser"); nu.setPassword("test");});
+        User newUser = factory.newUser(nu -> {
+            nu.setEmail("newuser@test.test");
+            nu.setUsername("newUser");
+            nu.setPassword("test");
+        });
         assertEquals(newUser.getUsername(), "newUser", "Incorrect user created via lambda");
         assertEquals(newUser.getPassword(), "test", "Incorrect user created via lambda");
-        Subscriber subscr = factory.newSubscriber(sub -> {sub.setEmail("sub@sub.com"); sub.setName("sub"); sub.setStatus(SubscriberStatus.ACTIVE.toString());});
+        Subscriber subscr = factory.newSubscriber(sub -> {
+            sub.setEmail("sub@sub.com");
+            sub.setName("sub");
+            sub.setStatus(SubscriberStatus.ACTIVE.toString());
+        });
         assertEquals(subscr.getName(), "sub", "Incorrect subscriber created via lambda");
         assertEquals(subscr.getEmail(), "sub@sub.com", "Incorrect subscriber created via lambda");
     }

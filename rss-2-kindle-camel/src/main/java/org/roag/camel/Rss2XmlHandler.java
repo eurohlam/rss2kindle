@@ -77,7 +77,7 @@ public class Rss2XmlHandler {
     }
 
     /**
-     * @param username - unique name of user
+     * @param username       - unique name of user
      * @param subscriberList - list of subscribers that belong to current user
      */
     public void runRssPollingForList(String username, List<Subscriber> subscriberList) {
@@ -93,7 +93,7 @@ public class Rss2XmlHandler {
 
     /**
      * @param username - unique name of user
-     * @param email - email of subscriber that belongs to current user
+     * @param email    - email of subscriber that belongs to current user
      * @throws Exception
      */
     public void runRssPollingForSubscriber(String username, String email) throws Exception {
@@ -101,7 +101,7 @@ public class Rss2XmlHandler {
     }
 
     /**
-     * @param username - unique name of user
+     * @param username   - unique name of user
      * @param subscriber - subscriber that belongs to current user
      */
     public void runRssPollingForSubscriber(String username, Subscriber subscriber) {
@@ -143,7 +143,7 @@ public class Rss2XmlHandler {
     class RssPollingTask implements Callable<RssPollingTask.PollingTaskResult> {
 
         private final DateTimeFormatter rssFileNameFormat = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        private Rss rss;
+        private final Rss rss;
         private final String rssURI;
         private final String path;
         private final String fileName;
@@ -167,19 +167,19 @@ public class Rss2XmlHandler {
             logger.debug("Started polling rss: {} into file: {}", rssURI, path);
             SyndFeed feed = null;
             try {
-                ConsumerTemplate rssConsumer= camelContext.createConsumerTemplate();
+                ConsumerTemplate rssConsumer = camelContext.createConsumerTemplate();
                 InputStream in = rssConsumer.receiveBody(rssURI, 60000, InputStream.class);
                 SyndFeedInput feedInput = new SyndFeedInput();
                 SyndFeed fullFeed = feedInput.build(new XmlReader(in));
                 feed = filterEntriesByDate(fullFeed);
             } catch (Exception e) {
-                logger.error("Polling rss {} failed due to error: {}, {}", rssURI, e.getMessage(), e);
-                throw new PollingException("Polling RSS " + rssURI + " failed due to error: " + e.getMessage(), e);
+                logger.error("Polling rss {} failed due to error: {}, {}", rss.getRss(), e.getMessage(), e);
+                throw new PollingException("Polling RSS " + rss.getRss() + " failed due to error: " + e.getMessage(), e);
             }
 
             if (feed.getEntries().isEmpty()) {
-                logger.error("There are no updates for feed {}", rssURI);
-                throw new FeedDataException("There are no updates for feed " + rssURI);
+                logger.error("There are no updates for feed {}", rss.getRss());
+                throw new FeedDataException("There are no updates for feed " + rss.getRss());
             }
 
             logger.debug("Finished polling {}.\nTitle: {}.\nDescription: {}", rssURI, feed.getTitle(), feed.getDescription());
@@ -196,7 +196,7 @@ public class Rss2XmlHandler {
                     logger.error(e.getMessage(), e);
                     throw new PollingException(e.getMessage(), e);
                 }
-                logger.debug("Feed {} marshaled into file {}", rssURI, file);
+                logger.debug("Feed {} marshaled into file {}", rss.getRss(), file);
                 result.setFileName(file);
                 result.setStatus(TaskStatus.COMPLETED);
             }
@@ -205,9 +205,9 @@ public class Rss2XmlHandler {
 
         private SyndFeed filterEntriesByDate(SyndFeed feed) {
             LocalDate lastUpdateDate = LocalDate.now().minus(lastUpdateCount, ChronoUnit.valueOf(lastUpdateTimeunit));
-            List<SyndEntry> entries = (List)feed.getEntries()
+            List<SyndEntry> entries = (List) feed.getEntries()
                     .stream()
-                    .filter(entry -> ((SyndEntry)entry).getPublishedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isAfter(lastUpdateDate))
+                    .filter(entry -> ((SyndEntry) entry).getPublishedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().isAfter(lastUpdateDate))
                     .collect(Collectors.toList());
             feed.setEntries(entries);
             return feed;

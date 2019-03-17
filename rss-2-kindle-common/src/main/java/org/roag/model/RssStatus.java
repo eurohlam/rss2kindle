@@ -9,8 +9,9 @@ public enum RssStatus
     OFFLINE("offline"),
     DEAD("dead");
 
-    private String value;
-    private RssStatus(String value)
+    private final String value;
+
+    RssStatus(String value)
     {
         this.value = value;
     }
@@ -24,10 +25,10 @@ public enum RssStatus
 
     public static RssStatus fromValue(String value)
     {
-        for (RssStatus s: RssStatus.values())
-        {
-            if (s.toString().equals(value))
+        for (RssStatus s: RssStatus.values()) {
+            if (s.toString().equals(value)) {
                 return s;
+            }
         }
         throw new IllegalArgumentException("Illegal value of argument: " + value);
     }

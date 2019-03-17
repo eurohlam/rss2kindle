@@ -47,11 +47,13 @@ public class ModelFactory {
     }
 
     public Subscriber newSubscriber(String email, String name, String[] rssList, LocalDateTime startDate, long timeout, TimeUnit timeUnit) {
-        if (email == null || email.length() == 0)
+        if (email == null || email.length() == 0) {
             throw new IllegalArgumentException("Email of new subscriber can not be empty");
+        }
 
-        if (rssList == null || rssList.length == 0)
+        if (rssList == null || rssList.length == 0) {
             throw new IllegalArgumentException("New subscriber has to have at least one rss");
+        }
 
         Subscriber s = new Subscriber();
         s.setEmail(email);
@@ -61,10 +63,10 @@ public class ModelFactory {
 
         List<Rss> list = new ArrayList<>(rssList.length);
         for (String rss : rssList) {
-            Rss rss_list = new Rss();
-            rss_list.setRss(rss);
-            rss_list.setStatus(RssStatus.ACTIVE.toString());
-            list.add(rss_list);
+            Rss newRssList = new Rss();
+            newRssList.setRss(rss);
+            newRssList.setStatus(RssStatus.ACTIVE.toString());
+            list.add(newRssList);
         }
         s.setRsslist(list);
         Settings settings = new Settings();
@@ -87,9 +89,8 @@ public class ModelFactory {
         return subscriber;
     }
 
-    public <T> T json2Pojo(Class<T> _class, String source_object) {
-        T subscr = gson.fromJson(source_object, _class);
-        return subscr;
+    public <T> T json2Pojo(Class<T> outputClass, String sourceObject) {
+        return gson.fromJson(sourceObject, outputClass);
     }
 
     public String pojo2Json(Object pojo) {

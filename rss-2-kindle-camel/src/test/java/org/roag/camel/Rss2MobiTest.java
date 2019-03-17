@@ -20,8 +20,7 @@ import java.io.FileOutputStream;
 /**
  * Created by eurohlam on 13/07/2017.
  */
-public class Rss2MobiTest extends CamelSpringTestSupport
-{
+public class Rss2MobiTest extends CamelSpringTestSupport {
 
 
     private static final String rss_file = "src/test/resources/testrss.xml";
@@ -37,78 +36,70 @@ public class Rss2MobiTest extends CamelSpringTestSupport
 
 
     @Override
-    protected AbstractApplicationContext createApplicationContext()
-    {
-        ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext("META-INF/spring/test-spring-context.xml");
+    protected AbstractApplicationContext createApplicationContext() {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("META-INF/spring/test-spring-context.xml");
         return context;
     }
 
     @Override
-    public boolean isCreateCamelContextPerClass()
-    {
+    public boolean isCreateCamelContextPerClass() {
         return true;
     }
 
     @Override
-    public boolean isUseAdviceWith()
-    {
+    public boolean isUseAdviceWith() {
         return false;
     }
 
-    public void startCamelContext() throws Exception
-    {
+    public void startCamelContext() throws Exception {
         context.start();
     }
 
 
-    public void stopCamelContext() throws Exception
-    {
+    public void stopCamelContext() throws Exception {
         context.stop();
     }
 
     @BeforeMethod
     @Override
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         File file = new File("test/data");
-        if(!FileSystemUtils.deleteRecursively(file)) {
-            System.out.println("Problem occurs when deleting the directory : test/data" );
+        if (!FileSystemUtils.deleteRecursively(file)) {
+            System.out.println("Problem occurs when deleting the directory : test/data");
         }
         super.setUp();
     }
 
 
-
     @Test(groups = {"transformation"})
-    public void rss2htmlTransformationTest()
-    {
+    public void rss2htmlTransformationTest() {
         try {
-            File dir=new File(pathMobi);
+            File dir = new File(pathMobi);
             if (!dir.exists())
                 dir.mkdirs();
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer(new StreamSource(new FileInputStream(text_xslt)));
-            transformer.transform(new StreamSource(rss_file), new StreamResult(new FileOutputStream(pathMobi+ output_file+".htm")));
-            Assert.assertTrue("Transformation for text file does not work", new File(pathMobi+ output_file+".htm").exists());
+            transformer.transform(new StreamSource(rss_file), new StreamResult(new FileOutputStream(pathMobi + output_file + ".htm")));
+            Assert.assertTrue("Transformation for text file does not work", new File(pathMobi + output_file + ".htm").exists());
 
             transformer = factory.newTransformer(new StreamSource(new FileInputStream(toc_xslt)));
             transformer.setParameter("output_file", "test_output");
-            transformer.transform(new StreamSource(rss_file), new StreamResult(new FileOutputStream(pathMobi+output_file+"_toc.htm")));
-            Assert.assertTrue("Transformation for toc file does not work", new File(pathMobi+output_file+"_toc.htm").exists());
+            transformer.transform(new StreamSource(rss_file), new StreamResult(new FileOutputStream(pathMobi + output_file + "_toc.htm")));
+            Assert.assertTrue("Transformation for toc file does not work", new File(pathMobi + output_file + "_toc.htm").exists());
 
             transformer = factory.newTransformer(new StreamSource(new FileInputStream(ncx_xslt)));
             transformer.setParameter("output_file", "test_output");
-            transformer.transform(new StreamSource(rss_file), new StreamResult(new FileOutputStream(pathMobi+output_file+".ncx")));
-            Assert.assertTrue("Transformation for ncx file does not work", new File(pathMobi+output_file+".ncx").exists());
+            transformer.transform(new StreamSource(rss_file), new StreamResult(new FileOutputStream(pathMobi + output_file + ".ncx")));
+            Assert.assertTrue("Transformation for ncx file does not work", new File(pathMobi + output_file + ".ncx").exists());
 
             transformer = factory.newTransformer(new StreamSource(new FileInputStream(opf_xslt)));
             transformer.setParameter("output_file", "test_output");
-            transformer.transform(new StreamSource(rss_file), new StreamResult(new FileOutputStream(pathMobi+output_file+".opf")));
-            Assert.assertTrue("Transformation for opf file does not work", new File(pathMobi+output_file+".opf").exists());
+            transformer.transform(new StreamSource(rss_file), new StreamResult(new FileOutputStream(pathMobi + output_file + ".opf")));
+            Assert.assertTrue("Transformation for opf file does not work", new File(pathMobi + output_file + ".opf").exists());
 
-            template.sendBodyAndHeader("seda:kindlegen", null, "CamelFileName", output_file+".opf");
+            template.sendBodyAndHeader("seda:kindlegen", null, "CamelFileName", output_file + ".opf");
             Thread.sleep(10000);
-            Assert.assertTrue("Transformation for mobi file does not work", new File(pathMobi+output_file+".mobi").exists());
+            Assert.assertTrue("Transformation for mobi file does not work", new File(pathMobi + output_file + ".mobi").exists());
 
         } catch (Exception e) {
             e.printStackTrace();
