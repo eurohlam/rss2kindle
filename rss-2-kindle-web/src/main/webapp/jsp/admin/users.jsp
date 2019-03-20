@@ -136,6 +136,9 @@
 
         }); //users_form.submit
 
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
 
     }); //end of $(document).ready(function ())
 
@@ -174,17 +177,17 @@
                     <form id="users_form" action="" method="post">
                         <div class="btn-toolbar bg-light" role="toolbar">
                             <div class="btn-group" role="group">
-                                <button id="lock_btn" class="navbar-brand" type="submit">
-                                    <img src="../../img/icons/if_pause-circle_2561308.svg" width="30" height="30"
-                                         class="d-inline-block align-top" alt="Lock">
-                                </button>
-                                <button id="unlock_btn" class="navbar-brand" type="submit">
+                                <button id="unlock_btn" class="navbar-brand btn-outline-primary" type="submit" data-toggle="tooltip" data-placement="top" title="Unlock users">
                                     <img src="../../img/icons/if_play-circle_2561292.svg" width="30" height="30"
                                          class="d-inline-block align-top" alt="Unlock">
                                 </button>
+                                <button id="lock_btn" class="navbar-brand btn-outline-warning" type="submit" data-toggle="tooltip" data-placement="top" title="Lock users">
+                                    <img src="../../img/icons/if_pause-circle_2561308.svg" width="30" height="30"
+                                         class="d-inline-block align-top" alt="Lock">
+                                </button>
                             </div>
                             <div class="btn-group" role="group">
-                                <button id="remove_btn" class="navbar-brand" type="submit">
+                                <button id="remove_btn" class="navbar-brand btn-outline-danger" type="submit" data-toggle="tooltip" data-placement="top" title="Remove users">
                                     <img src="../../img/icons/if_trash_2561481.svg" width="30" height="30"
                                          class="d-inline-block align-top" alt="Remove">
                                 </button>

@@ -69,14 +69,14 @@
                         + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td><td>'
                         + item.status + '</td><td>'
                         + '<div class="btn-group" role="group">'
-                        + '<button id="btn_update" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">Update</button>';
+                        + '<button id="btn_update" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">Update</button>';
 
                     if (item.status === 'suspended')
-                        table += '<button id="btn_resume" type="button" class="btn btn-warning" data-toggle="modal" data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">Resume</button>'
+                        table += '<button id="btn_resume" type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">Resume</button>'
                     else
-                        table += '<button id="btn_suspend" type="button" class="btn btn-warning" data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">Suspend</button>';
+                        table += '<button id="btn_suspend" type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">Suspend</button>';
 
-                    table += '<button id="btn_remove" type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">Remove</button></div></td></tr>';
+                    table += '<button id="btn_remove" type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">Remove</button></div></td></tr>';
 
                 });
                 table += '</tbody></table>';
