@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -31,7 +30,6 @@ public class AdminRestClient implements RestClient {
     private String restPort;
     private String restPath;
 
-    private Client client;
     private WebTarget target;
 
 
@@ -40,8 +38,7 @@ public class AdminRestClient implements RestClient {
         this.restPath = restPath;
         this.restPort = restPort;
         this.restHost = restHost;
-        client = ClientBuilder.newClient();
-        target = client.target(restHost + ":" + restPort + restPath);
+        target = ClientBuilder.newClient().target(restHost + ":" + restPort + restPath + "/" + USERS_PATH);
     }
 
     private Response sendRequest(String path, RequestMethod method, String json) {
@@ -58,36 +55,36 @@ public class AdminRestClient implements RestClient {
 
     public Response addUser(String json) {
         logger.debug("Trying to add new user via REST service {}:{}{}", restHost, restPort, restPath);
-        return sendRequest(USERS_PATH + "new", POST, json);
+        return sendRequest("new", POST, json);
     }
 
     public Response getUser(String username) {
         logger.debug("Trying to get user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendRequest(USERS_PATH + username, GET, null);
+        return sendRequest(username, GET, null);
     }
 
     public Response updateUser(String json) {
         logger.debug("Trying to update user via REST service {}:{}{}", restHost, restPort, restPath);
-        return sendRequest(USERS_PATH + "update", PUT, json);
+        return sendRequest("update", PUT, json);
     }
 
     public Response removeUser(String username) {
         logger.debug("Trying to remove user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendRequest(USERS_PATH + username + "/remove", DELETE, null);
+        return sendRequest(username + "/remove", DELETE, null);
     }
 
     public Response lockUser(String username) {
         logger.debug("Trying to lock user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendRequest(USERS_PATH + username + "/lock", GET, null);
+        return sendRequest(username + "/lock", GET, null);
     }
 
     public Response unlockUser(String username) {
         logger.debug("Trying to unlock user {} via REST service {}:{}{}", username, restHost, restPort, restPath);
-        return sendRequest(USERS_PATH + username + "/unlock", GET, null);
+        return sendRequest(username + "/unlock", GET, null);
     }
 
     public Response getAllUsers() {
         logger.debug("Trying to get all users via REST service {}:{}{}", restHost, restPort, restPath);
-        return sendRequest(USERS_PATH, GET, null);
+        return sendRequest("", GET, null);
     }
 }

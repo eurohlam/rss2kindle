@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -31,7 +30,6 @@ public class ProfileRestClient implements RestClient {
     private String restPort;
     private String restPath;
 
-    private Client client;
     private WebTarget target;
 
 
@@ -40,8 +38,7 @@ public class ProfileRestClient implements RestClient {
         this.restPath = restPath;
         this.restPort = restPort;
         this.restHost = restHost;
-        client = ClientBuilder.newClient();
-        target = client.target(restHost + ":" + restPort + restPath);
+        target = ClientBuilder.newClient().target(restHost + ":" + restPort + restPath);
     }
 
     private Response sendRequest(String path, RequestMethod method, String json) {

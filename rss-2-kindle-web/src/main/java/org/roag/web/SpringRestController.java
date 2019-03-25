@@ -16,7 +16,6 @@ import javax.ws.rs.core.MediaType;
  */
 @RestController
 @RequestMapping("rest")
-//@Secured({"ROLE_USER", "ROLE_ADMIN"})
 public class SpringRestController {
 
     @Autowired
