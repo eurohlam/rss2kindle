@@ -82,7 +82,45 @@
                 table += '</tbody></table>';
                 $('#edit_subscriber').html(table);
             });
-        }
+        } //end of reloadSubscribersTable
+
+        function runGetJson(url, successMessage, errorMessage) {
+            $.getJSON(url, function (data) {
+            })
+                .done(function () {
+                    showAlert('success', successMessage);
+                    return true;
+                })
+                .fail(function () {
+                    showAlert('error', errorMessage);
+                    return false;
+                })
+                .always(function () {
+                    reloadSubscribersTable();
+                });
+        } // end of runGetJson
+
+        function runAjax(url, type, json, successMessage, errorMessage) {
+            $.ajax({
+                url: url,
+                contentType: 'application/json',
+                type: type,
+                data: json,
+                dataType: 'json',
+                headers: csrf_headers
+            })
+                .done(function () {
+                    showAlert('success', successMessage);
+                    return true;
+                })
+                .fail(function () {
+                    showAlert('error', errorMessage);
+                    return false;
+                })
+                .always(function () {
+                    reloadSubscribersTable();
+                });
+        } //end  of runAjax
 
         //activate the first tab by default
         //TODO: change active tab in depends on input parameter
@@ -202,26 +240,14 @@
             });
             updateJson = updateJson.substr(0, updateJson.length - 1) + ']}';
 
-            $.ajax({
-                url: rootURL + username + '/update',
-                contentType: 'application/json',
-                type: 'PUT',
-                data: updateJson,
-                dataType: 'json',
-                headers: csrf_headers
-            })
-                .done(function (data) {
-                    showAlert('success', 'Subscriber <strong>' + name + '</strong> has been updated successfully');
-                    return true;
-                })
-                .fail(function () {
-                    showAlert('error', 'Subscriber <strong>' + name + '</strong> update fail');
-                    return false;
-                })
-                .always(function () {
-                    $('#updateModal').modal('hide');
-                    reloadSubscribersTable();
-                });
+            runAjax(rootURL + username + '/update',
+                'PUT',
+                updateJson,
+                'Subscriber <strong>' + name + '</strong> has been updated successfully',
+                'Subscriber <strong>' + name + '</strong> update fail'
+            );
+            $('#updateModal').modal('hide');
+
         });
 
         //suspend subscriber on submit
@@ -229,20 +255,11 @@
             var email = $('#suspend_subscriber_email').val();
             var name = $('#suspend_subscriber_name').val();
             e.preventDefault();
-            $.getJSON(rootURL + username + '/' + email + '/suspend', function (data) {
-            })
-                .done(function () {
-                    showAlert('success', 'Subscriber <strong>' + name + '</strong> has been suspended');
-                    return true;
-                })
-                .fail(function () {
-                    showAlert('error', 'Subscriber <strong>' + name + '</strong> suspending fail');
-                    return false;
-                })
-                .always(function () {
-                    $('#suspendModal').modal('hide');
-                    reloadSubscribersTable();
-                });
+            runGetJson(rootURL + username + '/' + email + '/suspend',
+                'Subscriber <strong>' + name + '</strong> has been suspended',
+                'Subscriber <strong>' + name + '</strong> suspending fail'
+            );
+            $('#suspendModal').modal('hide');
         });
 
         //resume subscriber on submit
@@ -250,21 +267,11 @@
             var email = $('#resume_subscriber_email').val();
             var name = $('#resume_subscriber_name').val();
             e.preventDefault();
-            $.getJSON(rootURL + username + '/' + email + '/resume', function (data) {
-            })
-                .done(function () {
-                    showAlert('success', 'Subscriber <strong>' + name + '</strong> has been resumed');
-                    return true;
-                })
-                .fail(function () {
-                    showAlert('error', 'Subscriber <strong>' + name + '</strong> resuming fail');
-                    return false;
-                })
-                .always(function () {
-                    $('#resumeModal').modal('hide');
-                    reloadSubscribersTable();
-                });
-
+            runGetJson(rootURL + username + '/' + email + '/resume',
+                'Subscriber <strong>' + name + '</strong> has been resumed',
+                'Subscriber <strong>' + name + '</strong> resuming fail'
+            );
+            $('#resumeModal').modal('hide');
         });
 
         //add new subscriber on submit
@@ -324,25 +331,12 @@
             });
             updateJson = updateJson.substr(0, updateJson.length - 1) + ']}';
 
-            $.ajax({
-                url: rootURL + username + '/new',
-                contentType: 'application/json',
-                type: 'PUT',
-                data: updateJson,
-                dataType: 'json',
-                headers: csrf_headers
-            })
-                .done(function () {
-                    showAlert('success', 'New subscriber <strong>' + name + '</strong> has been added successfully');
-                    return true;
-                })
-                .fail(function () {
-                    showAlert('error', 'New subscriber <strong>' + name + '</strong> creation fail');
-                    return false;
-                })
-                .always(function () {
-                    reloadSubscribersTable();
-                });
+            runAjax(rootURL + username + '/new',
+                'PUT',
+                updateJson,
+                'New subscriber <strong>' + name + '</strong> has been added successfully',
+                'New subscriber <strong>' + name + '</strong> creation fail'
+            );
         });
 
         $('#btn_new_subscriber_addrss').click(function (event) {
@@ -373,33 +367,19 @@
             var email = $('#remove_subscriber_email').val();
             var name = $('#remove_subscriber_name').val();
             e.preventDefault();
-            $.ajax({
-                url: rootURL + username + '/' + email + '/remove',
-                type: 'DELETE',
-                dataType: 'json',
-                headers: csrf_headers,
-                success: function (data) {
-                }
-            })
-                .done(function () {
-                    showAlert('success', 'Subscriber <strong>' + name + '</strong> has been removed');
-                    return true;
-                })
-                .fail(function () {
-                    showAlert('error', 'Subscriber <strong>' + name + '</strong> removing fail');
-                    return false;
-                })
-                .always(function () {
-                    $('#removeModal').modal('hide');
-                    reloadSubscribersTable();
-                });
+            runAjax(rootURL + username + '/' + email + '/remove',
+                'DELETE',
+                '',
+                'Subscriber <strong>' + name + '</strong> has been removed',
+                'Subscriber <strong>' + name + '</strong> removing fail'
+            );
+            $('#removeModal').modal('hide');
         });
 
         //Show ajax error messages
         $(document).ajaxError(function (event, request, settings, thrownError) {
             showAlert('error', 'Ajax error: code:' + request.status + ": " + request.responseText + " calling url: " + settings.url + " method: " + settings.type + " " + thrownError);
         });
-
 
     });//end of $(document).ready(function ())
 
