@@ -18,7 +18,7 @@
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../vendor/font-awesome/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
 
@@ -43,6 +43,12 @@
     csrf_headers[csrf_header] = csrf_token;
 
     $(document).ready(function () {
+
+        //enable bootstrap tooltip
+        //TODO: we can't use data-toggle here because of modal windows, but somehow data-tooltip does not work
+        $(function () {
+            $('[data-tooltip="tooltip"]').tooltip()
+        });
 
         reloadSubscribersTable();
 
@@ -69,14 +75,23 @@
                         + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td><td>'
                         + item.status + '</td><td>'
                         + '<div class="btn-group" role="group">'
-                        + '<button id="btn_update" type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">Update</button>';
+                        + '<button id="btn_update" type="button" class="btn btn-outline-primary" data-tooltip="tooltip" data-placement="top" title="Edit subscriber" ' +
+                            'data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">' +
+                            '<i class="far fa-edit fa-lg"></i></button>';
 
-                    if (item.status === 'suspended')
-                        table += '<button id="btn_resume" type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">Resume</button>'
-                    else
-                        table += '<button id="btn_suspend" type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">Suspend</button>';
+                    if (item.status === 'suspended') {
+                        table += '<button id="btn_resume" type="button" class="btn btn-outline-warning" data-tooltip="tooltip" data-placement="top" title="Suspend subscriber" ' +
+                            'data-toggle="modal"  data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
+                            '<i class="far fa-play-circle fa-lg"></i></button>';
+                    } else {
+                        table += '<button id="btn_suspend" type="button" class="btn btn-outline-warning" data-tooltip="tooltip" data-placement="top" title="Resume subscriber" ' +
+                                    'data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
+                                    '<i class="far fa-pause-circle fa-lg"></i></button>';
+                    }
 
-                    table += '<button id="btn_remove" type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">Remove</button></div></td></tr>';
+                    table += '<button id="btn_remove" type="button" class="btn btn-outline-danger" data-tooltip="tooltip" data-placement="top" title="Remove subscriber" ' +
+                                'data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
+                                '<i class="far fa-trash-alt fa-lg"></i></button></div></td></tr>';
 
                 });
                 table += '</tbody></table>';

@@ -16,10 +16,9 @@
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../vendor/font-awesome/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
-          type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
 
     <!-- Theme CSS -->
     <link href="../css/freelancer.css" rel="stylesheet">
@@ -36,6 +35,11 @@
     var userData;
 
     $(document).ready(function () {
+
+        //enable bootstrap tooltip
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
 
         reloadRssTable();
 
@@ -121,10 +125,6 @@
 
         }); //subscribers_form.submit
 
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        });
-
     }); //end of $(document).ready(function ())
 
 </script>
@@ -148,18 +148,15 @@
                         <div class="btn-toolbar bg-light" role="toolbar" aria-label="">
                             <div class="btn-group mr-2" role="group" aria-label="">
                                 <button id="unlock_btn" class="navbar-brand btn-outline-primary" type="submit" data-toggle="tooltip" data-placement="top" title="Activate subscriptions">
-                                    <img src="../img/icons/if_play-circle_2561292.svg" width="30" height="30"
-                                         class="d-inline-block align-top" alt="Unlock">
+                                    <i class="far fa-play-circle fa-2x"></i>
                                 </button>
                                 <button id="lock_btn" class="navbar-brand btn-outline-warning" type="submit" data-toggle="tooltip" data-placement="top" title="Deactivate subscriptions">
-                                    <img src="../img/icons/if_pause-circle_2561308.svg" width="30" height="30"
-                                         class="d-inline-block align-top" alt="Lock">
+                                    <i class="far fa-pause-circle fa-2x"></i>
                                 </button>
                             </div>
                             <div class="btn-group" role="group">
                                 <button id="remove_btn" class="navbar-brand btn-outline-danger" type="submit" data-toggle="tooltip" data-placement="top" title="Remove subscriptions">
-                                    <img src="../img/icons/if_trash_2561481.svg" width="30" height="30"
-                                         class="d-inline-block align-top" alt="Remove">
+                                    <i class="far fa-trash-alt fa-2x"></i>
                                 </button>
                             </div>
                         </div>
@@ -177,6 +174,7 @@
 
 <!-- Bootstrap core JavaScript -->
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="../vendor/font-awesome/js/all.min.js"></script>
 
 <!-- Plugin JavaScript -->
 <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>

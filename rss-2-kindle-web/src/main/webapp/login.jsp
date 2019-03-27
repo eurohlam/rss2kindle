@@ -8,10 +8,9 @@
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
     <!-- Custom fonts for this template -->
-    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="vendor/font-awesome/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
-          type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
 
     <!-- Bootstrap -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -99,7 +98,7 @@
                 <ul class="list-inline mb-0">
                     <li class="list-inline-item">
                         <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
-                            <i class="fa fa-fw fa-facebook"></i>
+                            <i class="fab fa-fw fa-facebook-f"></i>
                         </a>
                     </li>
 <%--
@@ -111,12 +110,12 @@
 --%>
                     <li class="list-inline-item">
                         <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
-                            <i class="fa fa-fw fa-twitter"></i>
+                            <i class="fab fa-fw fa-twitter"></i>
                         </a>
                     </li>
                     <li class="list-inline-item">
                         <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
-                            <i class="fa fa-fw fa-linkedin"></i>
+                            <i class="fab fa-fw fa-linkedin-in"></i>
                         </a>
                     </li>
 <%--

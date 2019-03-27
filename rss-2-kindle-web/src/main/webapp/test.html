@@ -8,10 +8,11 @@
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom fonts for this template -->
-    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="vendor/font-awesome/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
           type="text/css">
+    <!--<script data-search-pseudo-elements defer src="vendor/font-awesome/js/all.min.js" data-auto-replace-svg="nest"></script>-->
 
     <!-- Plugin CSS -->
     <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet" type="text/css">
@@ -212,20 +213,30 @@
                 <form id="users_form" action="" method="post">
                     <div class="text-left" id="subscribers_view" style="padding-left: 2rem; padding-right: 2rem">
                         <h3 class="sub-header">Users</h3>
-                        <nav class="navbar navbar-light bg-light">
-                            <button id="lock_btn" class="navbar-brand" type="submit">
+                        <hr class="star-dark mb-5"/>
+                        <div class="btn-toolbar bg-light" role="toolbar">
+                            <button id="lock_btn" class="navbar-brand btn-outline-primary" type="submit">
+                                <i class="far fa-pause-circle fa-2x"></i>
+<!--
                                 <img src="img/icons/if_pause-circle_2561308.svg" width="24" height="24"
                                      class="d-inline-block align-top" alt="Lock">
+-->
                             </button>
-                            <button id="unlock_btn" class="navbar-brand" type="submit">
+                            <button id="unlock_btn" class="navbar-brand btn-outline-warning" type="submit">
+                                <i class="far fa-play-circle fa-2x"></i>
+<!--
                                 <img src="img/icons/if_play-circle_2561292.svg" width="24" height="24"
                                      class="d-inline-block align-top" alt="Unlock">
+-->
                             </button>
-                            <button id="remove_btn" class="navbar-brand" type="submit">
+                            <button id="remove_btn" class="navbar-brand btn-outline-danger" type="submit">
+                                <i class="far fa-trash-alt fa-2x"></i>
+<!--
                                 <img src="img/icons/if_trash_2561481.svg" width="24" height="24"
                                      class="d-inline-block align-top" alt="Remove">
+-->
                             </button>
-                        </nav>
+                        </div>
                     </div>
                     <div id="alerts_panel" ></div>
                     <div id="all_users">

@@ -13,7 +13,7 @@
     <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../../vendor/font-awesome/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
           type="text/css">
@@ -39,6 +39,11 @@
     csrf_headers[csrf_header] = csrf_token;
 
     $(document).ready(function () {
+
+        //enable bootstrap tooltip
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
 
         reloadUsersTable();
 
@@ -178,24 +183,21 @@
                         <div class="btn-toolbar bg-light" role="toolbar">
                             <div class="btn-group" role="group">
                                 <button id="unlock_btn" class="navbar-brand btn-outline-primary" type="submit" data-toggle="tooltip" data-placement="top" title="Unlock users">
-                                    <img src="../../img/icons/if_play-circle_2561292.svg" width="30" height="30"
-                                         class="d-inline-block align-top" alt="Unlock">
+                                    <i class="fas fa-user-cog fa-2x"></i>
                                 </button>
                                 <button id="lock_btn" class="navbar-brand btn-outline-warning" type="submit" data-toggle="tooltip" data-placement="top" title="Lock users">
-                                    <img src="../../img/icons/if_pause-circle_2561308.svg" width="30" height="30"
-                                         class="d-inline-block align-top" alt="Lock">
+                                    <i class="fas fa-user-lock fa-2x"></i>
                                 </button>
                             </div>
                             <div class="btn-group" role="group">
                                 <button id="remove_btn" class="navbar-brand btn-outline-danger" type="submit" data-toggle="tooltip" data-placement="top" title="Remove users">
-                                    <img src="../../img/icons/if_trash_2561481.svg" width="30" height="30"
-                                         class="d-inline-block align-top" alt="Remove">
+                                    <i class="fas fa-user-slash fa-2x"></i>
                                 </button>
                             </div>
                         </div>
                         <div id="alerts_panel"></div>
                         <div id="all_users"></div>
-                    </form>
+                    </form>w
                 </div>
             </div>
         </main>

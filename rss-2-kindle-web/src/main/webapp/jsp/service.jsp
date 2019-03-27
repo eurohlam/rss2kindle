@@ -15,7 +15,7 @@
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../vendor/font-awesome/css/fontawesome.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
           type="text/css">
@@ -93,6 +93,7 @@
 
 <!-- Bootstrap core JavaScript -->
 <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="../vendor/font-awesome/js/all.min.js"></script>
 
 <!-- Plugin JavaScript -->
 <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
