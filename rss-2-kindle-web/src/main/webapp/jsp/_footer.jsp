@@ -8,7 +8,7 @@
 <!-- Footer -->
 <footer class="row footer <c:out value="${param.stickyFooter}"/> copyright py-4 text-center text-white">
     <div class="container">
-        <small>Copyright &copy; <a href="https://roundkick.studio">Roundkick Studio</a> 2018</small>
+        <small>Copyright &copy; <a href="https://roundkick.studio">Roundkick Studio</a> 2019</small>
     </div>
 </footer>
 
@@ -18,3 +18,10 @@
         <i class="fa fa-chevron-up"></i>
     </a>
 </div>
+
+<!-- Plugin JavaScript -->
+<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+<!-- Custom scripts for this theme -->
+<script src="../js/freelancer.min.js"></script>

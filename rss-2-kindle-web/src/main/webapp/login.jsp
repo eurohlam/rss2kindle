@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>RSS-2-Kindle Service</title>
+    <title>RSS-2-KINDLE</title>
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
     <!-- Custom fonts for this template -->
@@ -138,7 +138,7 @@
 
 <div class="copyright py-4 text-center text-white">
     <div class="container">
-        <small>Copyright &copy; <a href="https://roundkick.studio">Roundkick Studio</a> 2018</small>
+        <small>Copyright &copy; <a href="https://roundkick.studio">Roundkick Studio</a> 2019</small>
     </div>
 </div>
 

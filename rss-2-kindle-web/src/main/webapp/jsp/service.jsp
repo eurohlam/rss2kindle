@@ -71,12 +71,6 @@
     <jsp:include page="_footer.jsp"/>
 </div>
 
-<!-- Plugin JavaScript -->
-<%--<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
-<script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
-
-<!-- Custom scripts for this template -->
-<script src="../js/freelancer.min.js"></script>--%>
 
 </body>
 </html>

@@ -71,7 +71,7 @@
                     rssNumber++;
 
                     rssTable += tr + rssNumber + '</td><td>'
-                        + '<a href="' + rss[j].rss + '">' + rss[j].rss + '</a></td><td>'
+                        + '<a href="' + rss[j].rss + '" target="_blank">' + rss[j].rss + '</a></td><td>'
                         + rss[j].status + '</td><td>'
                         + item.email + '</td></tr>';
                 }
@@ -154,13 +154,6 @@
 
     <jsp:include page="_footer.jsp"/>
 </div>
-
-<!-- Plugin JavaScript -->
-<%--<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
-<script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
-
-<!-- Custom scripts for this template -->
-<script src="../js/freelancer.min.js"></script>--%>
 
 </body>
 </html>

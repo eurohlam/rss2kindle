@@ -4,7 +4,7 @@
 
 <html lang="en">
 <head>
-    <title>RSS-2-KINDLE Users Management</title>
+    <title>RSS-2-KINDLE</title>
 
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
     <security:csrfMetaTags/>
@@ -207,7 +207,6 @@
 </div>
 
 <!-- Bootstrap core JavaScript -->
-<%--<script src="../vendor/jquery/jquery.min.js"></script>--%>
 <script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 <!-- Plugin JavaScript -->

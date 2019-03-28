@@ -53,7 +53,7 @@
                     tr += '<td><input type="checkbox" class="form-check-input" id="' + item.rss + '"/></td><td>';
 
                     rssTable += tr + (i + 1) + '</td><td>'
-                        + item.rss + '</td><td>'
+                        + '<a href="' + item.rss + '" target="_blank">' + item.rss + '</a></td><td>'
                         + item.status + '</td><td>'
                         + item.lastPollingDate + '</td><td>'
                         + item.errorMessage + '</td><td>'
@@ -71,11 +71,11 @@
             var operation;
             var method;
             var message;
-            if (srcButtonId == 'lock_btn') {
+            if (srcButtonId == 'deactivate_btn') {
                 operation = '/lock';
                 message = 'Users locked successfully';
                 method = 'GET';
-            } else if (srcButtonId == 'unlock_btn') {
+            } else if (srcButtonId == 'activate_btn') {
                 operation = '/unlock';
                 message = 'Users unlocked successfully';
                 method = 'GET';
@@ -127,10 +127,10 @@
                     <form id="subscribers_form" action="" method="post">
                         <div class="btn-toolbar bg-light" role="toolbar" aria-label="">
                             <div class="btn-group mr-2" role="group" aria-label="">
-                                <button id="unlock_btn" class="navbar-brand btn-outline-primary" type="submit" data-toggle="tooltip" data-placement="top" title="Activate subscriptions">
+                                <button id="activate_btn" class="navbar-brand btn-outline-primary" type="submit" data-toggle="tooltip" data-placement="top" title="Activate subscriptions">
                                     <i class="far fa-play-circle fa-2x"></i>
                                 </button>
-                                <button id="lock_btn" class="navbar-brand btn-outline-warning" type="submit" data-toggle="tooltip" data-placement="top" title="Deactivate subscriptions">
+                                <button id="deactivate_btn" class="navbar-brand btn-outline-warning" type="submit" data-toggle="tooltip" data-placement="top" title="Deactivate subscriptions">
                                     <i class="far fa-pause-circle fa-2x"></i>
                                 </button>
                             </div>
@@ -152,12 +152,6 @@
     <jsp:include page="_footer.jsp"/>
 </div>
 
-<!-- Plugin JavaScript -->
-<%--<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
-<script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
-
-<!-- Custom scripts for this template -->
-<script src="../js/freelancer.min.js"></script>--%>
 
 </body>
 </html>

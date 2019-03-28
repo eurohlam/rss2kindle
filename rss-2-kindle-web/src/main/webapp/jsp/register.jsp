@@ -118,7 +118,7 @@
 
 <div class="copyright py-4 text-center text-white">
     <div class="container">
-        <small>Copyright &copy; <a href="https://roundkick.studio">Roundkick Studio</a> 2018</small>
+        <small>Copyright &copy; <a href="https://roundkick.studio">Roundkick Studio</a> 2019</small>
     </div>
 </div>
 

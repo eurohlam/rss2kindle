@@ -26,7 +26,7 @@
         //enable bootstrap tooltip
         //TODO: we can't use data-toggle here because of modal windows, but somehow data-tooltip does not work
         $(function () {
-            $('[data-tooltip="tooltip"]').tooltip()
+            $('[data-toggle="tooltip"]').tooltip()
         });
 
         reloadSubscribersTable();
@@ -44,33 +44,38 @@
 
                 $.each(data.subscribers, function (i, item) {
                     var tr;
-                    if (item.status === 'suspended')
-                        tr = '<tr class="table-danger"><td>';
-                    else
-                        tr = '<tr class="table-light"><td>';
-
-                    table += tr + (i + 1) + '</td><td>'
-                        + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><td>'
-                        + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td><td>'
-                        + item.status + '</td><td>'
-                        + '<div class="btn-group" role="group">'
-                        + '<button id="btn_update" type="button" class="btn btn-outline-primary" data-tooltip="tooltip" data-placement="top" title="Edit subscriber" ' +
-                            'data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">' +
-                            '<i class="far fa-edit fa-lg"></i></button>';
-
                     if (item.status === 'suspended') {
-                        table += '<button id="btn_resume" type="button" class="btn btn-warning" data-tooltip="tooltip" data-placement="top" title="Suspend subscriber" ' +
-                            'data-toggle="modal"  data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
-                            '<i class="far fa-play-circle fa-lg"></i></button>';
+                        tr = '<tr class="table-danger"><td>';
                     } else {
-                        table += '<button id="btn_suspend" type="button" class="btn btn-outline-warning" data-tooltip="tooltip" data-placement="top" title="Resume subscriber" ' +
-                                    'data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
-                                    '<i class="far fa-pause-circle fa-lg"></i></button>';
+                        tr = '<tr class="table-light"><td>';
                     }
 
-                    table += '<button id="btn_remove" type="button" class="btn btn-outline-danger" data-tooltip="tooltip" data-placement="top" title="Remove subscriber" ' +
-                                'data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
-                                '<i class="far fa-trash-alt fa-lg"></i></button></div></td></tr>';
+                    table += tr + (i + 1) + '</td><td>' +
+                         '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><td>' +
+                         '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td><td>' + item.status + '</td><td>' +
+                         '<div class="btn-group" role="group">' +
+                         '<span data-toggle="modal" data-target="#updateModal" >' +
+                         '<button id="btn_update" type="button" class="btn btn-outline-primary" ' +
+                            'data-toggle="tooltip" data-placement="top" title="Edit subscriber" ' +
+                            'data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">' +
+                            '<i class="far fa-edit fa-lg"></i></button></span>';
+
+                    if (item.status === 'suspended') {
+                        table += '<span data-toggle="tooltip" data-placement="top" title="Suspend subscriber">' +
+                            '<button id="btn_resume" type="button" class="btn btn-warning" ' +
+                            'data-toggle="modal"  data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
+                            '<i class="far fa-play-circle fa-lg"></i></button></span>';
+                    } else {
+                        table += '<span data-toggle="tooltip" data-placement="top" title="Resume subscriber">' +
+                            '<button id="btn_suspend" type="button" class="btn btn-outline-warning" ' +
+                            'data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
+                            '<i class="far fa-pause-circle fa-lg"></i></button></span>';
+                    }
+
+                    table += '<span data-toggle="tooltip" data-placement="top" title="Remove subscriber">' +
+                        '<button id="btn_remove" type="button" class="btn btn-outline-danger" ' +
+                        'data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
+                        '<i class="far fa-trash-alt fa-lg"></i></button></span></div></td></tr>';
 
                 });
                 table += '</tbody></table>';
@@ -586,13 +591,6 @@
         </div>
     </div>
 </div>
-
-<!-- Plugin JavaScript -->
-<%--<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
-<script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
-
-<!-- Custom scripts for this template -->
-<script src="../js/freelancer.min.js"></script>--%>
 
 </body>
 </html>

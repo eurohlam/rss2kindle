@@ -20,7 +20,7 @@
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
 
     <!-- Theme CSS -->
-    <link href="../css/freelancer.css" rel="stylesheet">
+    <link href="../css/freelancer.min.css" rel="stylesheet">
 
     <!-- Custom sidebar css -->
     <link href="../css/simple-sidebar.css" rel="stylesheet">
@@ -31,11 +31,6 @@
     <!-- Bootstrap core JavaScript -->
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Plugin JavaScript -->
-    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
-    <%--<script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>--%>
 
-    <!-- Custom scripts for this theme -->
-    <script src="../js/freelancer.min.js"></script>
 
 
