@@ -5,6 +5,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <%@include file="_head.jsp"%>
+    <!-- Custom css for registration-->
+    <link href="../css/signin.css" rel="stylesheet">
+</head>
+
+<%--<head>
     <title>RSS-2-Kindle Service</title>
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
 
@@ -21,7 +27,7 @@
     <link href="../css/signin.css" rel="stylesheet">
     <link href="../css/freelancer.min.css" rel="stylesheet">
 
-</head>
+</head>--%>
 <body id="page-top">
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
@@ -133,8 +139,5 @@
     </a>
 </div>
 
-<!-- Bootstrap core JavaScript -->
-<script src="../vendor/jquery/jquery.min.js"></script>
-<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

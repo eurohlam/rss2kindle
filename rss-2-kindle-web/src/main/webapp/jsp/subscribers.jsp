@@ -8,30 +8,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>RSS-2-KINDLE Subscribers Management</title>
-
-    <meta name="viewport" content="width = device-width, initial-scale = 1.0">
-    <security:csrfMetaTags/>
-
-    <!-- Bootstrap -->
-    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom Fonts -->
-    <link href="../vendor/font-awesome/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
-
-    <!-- Theme CSS -->
-    <link href="../css/freelancer.css" rel="stylesheet">
-
-    <!-- Custom css -->
-    <link href="../css/simple-sidebar.css" rel="stylesheet">
-
-    <!-- JQuery -->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-
+    <%@include file="_head.jsp"%>
 </head>
+
 <body id="page-top">
 <script>
     var username = '${username}';
@@ -80,7 +59,7 @@
                             '<i class="far fa-edit fa-lg"></i></button>';
 
                     if (item.status === 'suspended') {
-                        table += '<button id="btn_resume" type="button" class="btn btn-outline-warning" data-tooltip="tooltip" data-placement="top" title="Suspend subscriber" ' +
+                        table += '<button id="btn_resume" type="button" class="btn btn-warning" data-tooltip="tooltip" data-placement="top" title="Suspend subscriber" ' +
                             'data-toggle="modal"  data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
                             '<i class="far fa-play-circle fa-lg"></i></button>';
                     } else {
@@ -608,15 +587,12 @@
     </div>
 </div>
 
-<!-- Bootstrap core JavaScript -->
-<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
 <!-- Plugin JavaScript -->
-<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+<%--<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
 <script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
 
 <!-- Custom scripts for this template -->
-<script src="../js/freelancer.min.js"></script>
+<script src="../js/freelancer.min.js"></script>--%>
 
 </body>
 </html>

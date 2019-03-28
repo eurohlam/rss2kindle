@@ -29,7 +29,7 @@
 
 </head>
 
-<body>
+<body id="page-top">
 <script>
     var adminUsername = '${username}';
     var rootURL = '../rest/admin/';
@@ -197,7 +197,7 @@
                         </div>
                         <div id="alerts_panel"></div>
                         <div id="all_users"></div>
-                    </form>w
+                    </form>
                 </div>
             </div>
         </main>

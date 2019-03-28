@@ -5,22 +5,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>RSS-2-Kindle Service</title>
-    <meta name="viewport" content="width = device-width, initial-scale = 1.0">
-
-    <!-- Custom fonts for this template -->
-    <link href="../vendor/font-awesome/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
-
-    <!-- Bootstrap -->
-    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom css -->
+    <%@include file="_head.jsp"%>
+    <!-- Custom css for registration-->
     <link href="../css/signin.css" rel="stylesheet">
-    <link href="../css/freelancer.min.css" rel="stylesheet">
-
 </head>
+
 <body id="page-top">
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
@@ -139,11 +128,6 @@
         <i class="fa fa-chevron-up"></i>
     </a>
 </div>
-
-
-<!-- Bootstrap core JavaScript -->
-<script src="../vendor/jquery/jquery.min.js"></script>
-<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
