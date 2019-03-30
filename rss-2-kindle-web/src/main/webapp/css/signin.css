@@ -35,3 +35,6 @@
 .error {
     color: #d9534f;
 }
+.form-signin-addemail{
+    display: none
+}

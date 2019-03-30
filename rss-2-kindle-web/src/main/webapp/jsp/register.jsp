@@ -11,6 +11,18 @@
 </head>
 
 <body id="page-top">
+<script>
+    $(document).ready(function () {
+        $('#newUserForm').submit(function (e) {
+            var check_email = $('#check_email').val();
+            if (check_email) {
+                e.preventDefault();
+                console.log("Oh no! you are robot. Go away to robots hell!");
+            }
+        });
+    })
+</script>
+
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
     <div class="container">
@@ -58,7 +70,8 @@
             <form:label path="confirmPassword" class="sr-only">Confirm Password</form:label>
             <form:input type="password" path="confirmPassword" class="form-control" placeholder="Confirm password" minlength="6" />
             <form:errors path="confirmPassword" cssClass="error"/>
-
+            <label for="check_email" class="form-signin-addemail">email</label>
+            <input type="email" id="check_email" class="form-signin-addemail">
             <button class="btn btn-outline-light btn-block btn-lg" type="submit">SIGN UP</button>
         </form:form>
     </div>

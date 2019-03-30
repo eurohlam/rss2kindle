@@ -11,8 +11,12 @@
 
 <body id="page-top">
 <script>
-    var rootURL = 'rest/profile/${username}/${subscriber}';
+    var rootURL = 'rest/profile/${username}';
     var userData;
+    var csrf_token = $("meta[name='_csrf']").attr("content");
+    var csrf_header = $("meta[name='_csrf_header']").attr("content");
+    var csrf_headers = {};
+    csrf_headers[csrf_header] = csrf_token;
 
     $(document).ready(function () {
 
@@ -24,7 +28,7 @@
         reloadRssTable();
 
         function reloadRssTable() {
-            $.getJSON(rootURL, function (data) {
+            $.getJSON(rootURL+ '/${subscriber}', function (data) {
                 userData = data;
 
                 var rssTable = '<table class="table table-hover"><thead>' +
@@ -69,43 +73,74 @@
             e.preventDefault();
             var srcButtonId = $(document.activeElement).attr('id');
             var operation;
-            var method;
             var message;
             if (srcButtonId == 'deactivate_btn') {
-                operation = '/lock';
-                message = 'Users locked successfully';
-                method = 'GET';
+                operation = 'deactivate';
+                message = 'Subscriptions deactivated successfully';
             } else if (srcButtonId == 'activate_btn') {
-                operation = '/unlock';
-                message = 'Users unlocked successfully';
-                method = 'GET';
+                operation = 'activate';
+                message = 'Subscriptions activated successfully';
             } else if (srcButtonId == 'remove_btn') {
-                operation = '/remove';
-                message = 'Users removed successfully';
-                method = 'DELETE';
+                operation = 'remove';
+                message = 'Subscriptions removed successfully';
             }
             $("input:checked[id!='select_all_checkbox']").each(function (index) {
                 var checkedRss = $(this).attr('id');
-                /*$.ajax({
-                    url: rootURL + checkedUser + operation,
-                    type: method,
-                    dataType: 'json',
-                    headers: csrf_headers
-                })
-                    .done(function () {
-                        showAlert('success', message);
-                        reloadUsersTable();
-                        return true;
-                    })
-                    .fail(function () {
-                        showAlert('error', 'Failed updating user ' + checkedUser);
-                        return false;
-                    })*/
+                $.each(userData.rsslist, function (i, item) {
+                    if (checkedRss === item.rss) {
+                        if (operation === 'activate') {
+                            item.status = 'active';
+                            item.errorMessage = 'Manually activated by user';
+                            item.retryCount = '0';
+                        }
+                        if (operation === 'deactivate') {
+                            item.status = 'offline';
+                            item.errorMessage = 'Manually deactivated by user';
+                        }
+                        if (operation === 'remove') {
+                            delete userData.rsslist[i]; //TODO: removing rss from list does not work properly
+                        }
+                    }
+                });
             }); //each
+
+            $.ajax({
+                url: rootURL + "/update",
+                type: 'PUT',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(userData),
+                headers: csrf_headers
+            })
+                .done(function () {
+                    showAlert('success', message);
+                    reloadRssTable();
+                    return true;
+                })
+                .fail(function () {
+                    showAlert('error', 'Update failed');
+                    return false;
+                });
 
         }); //subscribers_form.submit
 
     }); //end of $(document).ready(function ())
+
+    function showAlert(type, text) {
+        if (type == 'error') {
+            $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
+                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                + '<strong>Error! </strong>' + text + '</div>');
+        } else if (type == 'warning') {
+            $('#alerts_panel').html('<div class="alert alert-warning alert-dismissible" role="alert">'
+                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                + '<strong>Warning! </strong>' + text + '</div>');
+        } else {
+            $('#alerts_panel').html('<div class="alert alert-success alert-dismissible" role="alert">'
+                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                + '<strong>Success! </strong> ' + text + '</div>');
+        }
+    }
 
 </script>
 

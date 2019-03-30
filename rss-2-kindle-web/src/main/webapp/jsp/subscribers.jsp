@@ -23,12 +23,6 @@
 
     $(document).ready(function () {
 
-        //enable bootstrap tooltip
-        //TODO: we can't use data-toggle here because of modal windows, but somehow data-tooltip does not work
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        });
-
         reloadSubscribersTable();
 
         //show subscribers table for edit
@@ -54,28 +48,28 @@
                          '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><td>' +
                          '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td><td>' + item.status + '</td><td>' +
                          '<div class="btn-group" role="group">' +
-                         '<span data-toggle="modal" data-target="#updateModal" >' +
                          '<button id="btn_update" type="button" class="btn btn-outline-primary" ' +
-                            'data-toggle="tooltip" data-placement="top" title="Edit subscriber" ' +
+                            'data-toggle="modal" data-target="#updateModal" ' +
                             'data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">' +
-                            '<i class="far fa-edit fa-lg"></i></button></span>';
+                            '<span data-tooltip="tooltip" data-placement="top" title="Edit subscriber">' +
+                            '<i class="far fa-edit fa-lg"></i></span></button>';
 
                     if (item.status === 'suspended') {
-                        table += '<span data-toggle="tooltip" data-placement="top" title="Suspend subscriber">' +
-                            '<button id="btn_resume" type="button" class="btn btn-warning" ' +
+                        table += '<button id="btn_resume" type="button" class="btn btn-warning" ' +
                             'data-toggle="modal"  data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
-                            '<i class="far fa-play-circle fa-lg"></i></button></span>';
+                            '<span data-tooltip="tooltip" data-placement="top" title="Suspend subscriber">' +
+                            '<i class="far fa-play-circle fa-lg"></i></span></button>';
                     } else {
-                        table += '<span data-toggle="tooltip" data-placement="top" title="Resume subscriber">' +
-                            '<button id="btn_suspend" type="button" class="btn btn-outline-warning" ' +
+                        table += '<button id="btn_suspend" type="button" class="btn btn-outline-warning" ' +
                             'data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
-                            '<i class="far fa-pause-circle fa-lg"></i></button></span>';
+                            '<span data-tooltip="tooltip" data-placement="top" title="Resume subscriber">' +
+                            '<i class="far fa-pause-circle fa-lg"></i></span></button>';
                     }
 
-                    table += '<span data-toggle="tooltip" data-placement="top" title="Remove subscriber">' +
-                        '<button id="btn_remove" type="button" class="btn btn-outline-danger" ' +
+                    table += '<button id="btn_remove" type="button" class="btn btn-outline-danger" ' +
                         'data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
-                        '<i class="far fa-trash-alt fa-lg"></i></button></span></div></td></tr>';
+                        '<span data-tooltip="tooltip" data-placement="top" title="Remove subscriber">' +
+                        '<i class="far fa-trash-alt fa-lg"></i></span></button></div></td></tr>';
 
                 });
                 table += '</tbody></table>';
@@ -229,19 +223,18 @@
                 return false;
             }
 
-            var updateJson = '{' +
-                'email: "' + email + '",' +
-                'name: "' + name + '",' +
-                'status: "' + status + '",' +
-                'rsslist: [ ';
-            $('#update_subscriber_rsslist option').each(function () {
-                updateJson += '{ rss: "' + $(this).val() + '", status: "active"},';
+            var updateJson = {};
+            updateJson.email = email;
+            updateJson.name = name;
+            updateJson.status = status;
+            updateJson.rsslist = [];
+            $('#update_subscriber_rsslist option').each(function (i) {
+                updateJson.rsslist[i] = {'rss': $(this).val(), 'status': 'active'};
             });
-            updateJson = updateJson.substr(0, updateJson.length - 1) + ']}';
 
             runAjax(rootURL + username + '/update',
                 'PUT',
-                updateJson,
+                JSON.stringify(updateJson),
                 'Subscriber <strong>' + name + '</strong> has been updated successfully',
                 'Subscriber <strong>' + name + '</strong> update fail'
             );
@@ -280,7 +273,6 @@
             var _new_subscriber_rsslist = $('#new_subscriber_rsslist');
             var email = _new_subscriber_email.val();
             var name = $('#new_subscriber_name').val();
-            var status = $('#new_subscriber_status').val();
 
             //create validation popovers
             _new_subscriber_email.popover(
@@ -320,19 +312,18 @@
             _new_subscriber_rsslist.popover('hide');
 
             //prepare json
-            var updateJson = '{' +
-                'email: "' + email + '",' +
-                'name: "' + name + '",' +
-                'status: "active",' +
-                'rsslist: [ ';
-            $('#new_subscriber_rsslist option').each(function () {
-                updateJson += '{ rss: "' + $(this).val() + '", status: "active"},';
+            var updateJson = {};
+            updateJson.email = email;
+            updateJson.name = name;
+            updateJson.status = 'active';
+            updateJson.rsslist = [];
+            $('#new_subscriber_rsslist option').each(function (i) {
+                updateJson.rsslist[i] = {'rss': $(this).val(), 'status': 'active'};
             });
-            updateJson = updateJson.substr(0, updateJson.length - 1) + ']}';
 
             runAjax(rootURL + username + '/new',
                 'PUT',
-                updateJson,
+                JSON.stringify(updateJson),
                 'New subscriber <strong>' + name + '</strong> has been added successfully',
                 'New subscriber <strong>' + name + '</strong> creation fail'
             );
@@ -378,6 +369,12 @@
         //Show ajax error messages
         $(document).ajaxError(function (event, request, settings, thrownError) {
             showAlert('error', 'Ajax error: code:' + request.status + ": " + request.responseText + " calling url: " + settings.url + " method: " + settings.type + " " + thrownError);
+        });
+
+        //enable bootstrap tooltip
+        //TODO: we can't use data-toggle here because of modal windows, but somehow data-tooltip does not work
+        $(function () {
+            $('[data-tooltip="tooltip"]').tooltip();
         });
 
     });//end of $(document).ready(function ())
