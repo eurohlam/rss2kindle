@@ -27,6 +27,9 @@
     <!-- JQuery -->
     <script src="../../vendor/jquery/jquery.min.js"></script>
 
+    <!-- Custom javascript -->
+    <script src="../../js/profile.js"></script>
+
 </head>
 
 <body id="page-top">
@@ -146,22 +149,6 @@
         });
 
     }); //end of $(document).ready(function ())
-
-    function showAlert(type, text) {
-        if (type == 'error') {
-            $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Error! </strong>' + text + '</div>');
-        } else if (type == 'warning') {
-            $('#alerts_panel').html('<div class="alert alert-warning alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Warning! </strong>' + text + '</div>');
-        } else {
-            $('#alerts_panel').html('<div class="alert alert-success alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Success! </strong> ' + text + '</div>');
-        }
-    }
 
 </script>
 <div class="container-fluid">

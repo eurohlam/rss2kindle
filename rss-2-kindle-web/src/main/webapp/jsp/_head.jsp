@@ -31,6 +31,8 @@
     <!-- Bootstrap core JavaScript -->
     <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Custom javascript -->
+    <script src="../js/profile.js"></script>
 
 
 

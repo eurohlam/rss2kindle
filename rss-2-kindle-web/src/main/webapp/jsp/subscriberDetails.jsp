@@ -84,9 +84,11 @@
                 operation = 'remove';
                 message = 'Subscriptions removed successfully';
             }
+
+            var rsslist = userData.rsslist;
             $("input:checked[id!='select_all_checkbox']").each(function (index) {
                 var checkedRss = $(this).attr('id');
-                $.each(userData.rsslist, function (i, item) {
+                $.each(rsslist, function (i, item) {
                     if (checkedRss === item.rss) {
                         if (operation === 'activate') {
                             item.status = 'active';
@@ -98,49 +100,19 @@
                             item.errorMessage = 'Manually deactivated by user';
                         }
                         if (operation === 'remove') {
-                            delete userData.rsslist[i]; //TODO: removing rss from list does not work properly
+                            delete rsslist[i];
                         }
                     }
                 });
             }); //each
+            userData.rsslist = rsslist.filter(function(x) { return x !== null }); //removing null values from rsslist
 
-            $.ajax({
-                url: rootURL + "/update",
-                type: 'PUT',
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify(userData),
-                headers: csrf_headers
-            })
-                .done(function () {
-                    showAlert('success', message);
-                    reloadRssTable();
-                    return true;
-                })
-                .fail(function () {
-                    showAlert('error', 'Update failed');
-                    return false;
-                });
+            $().runAjax(rootURL + '/update', 'PUT', JSON.stringify(userData), message, 'Update failed', reloadRssTable);
 
         }); //subscribers_form.submit
 
     }); //end of $(document).ready(function ())
 
-    function showAlert(type, text) {
-        if (type == 'error') {
-            $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Error! </strong>' + text + '</div>');
-        } else if (type == 'warning') {
-            $('#alerts_panel').html('<div class="alert alert-warning alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Warning! </strong>' + text + '</div>');
-        } else {
-            $('#alerts_panel').html('<div class="alert alert-success alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Success! </strong> ' + text + '</div>');
-        }
-    }
 
 </script>
 

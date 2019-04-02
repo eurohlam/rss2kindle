@@ -77,43 +77,7 @@
             });
         } //end of reloadSubscribersTable
 
-        function runGetJson(url, successMessage, errorMessage) {
-            $.getJSON(url, function (data) {
-            })
-                .done(function () {
-                    showAlert('success', successMessage);
-                    return true;
-                })
-                .fail(function () {
-                    showAlert('error', errorMessage);
-                    return false;
-                })
-                .always(function () {
-                    reloadSubscribersTable();
-                });
-        } // end of runGetJson
 
-        function runAjax(url, type, json, successMessage, errorMessage) {
-            $.ajax({
-                url: url,
-                contentType: 'application/json',
-                type: type,
-                data: json,
-                dataType: 'json',
-                headers: csrf_headers
-            })
-                .done(function () {
-                    showAlert('success', successMessage);
-                    return true;
-                })
-                .fail(function () {
-                    showAlert('error', errorMessage);
-                    return false;
-                })
-                .always(function () {
-                    reloadSubscribersTable();
-                });
-        } //end  of runAjax
 
         //activate the first tab by default
         //TODO: change active tab in depends on input parameter
@@ -232,11 +196,12 @@
                 updateJson.rsslist[i] = {'rss': $(this).val(), 'status': 'active'};
             });
 
-            runAjax(rootURL + username + '/update',
+            $().runAjax(rootURL + username + '/update',
                 'PUT',
                 JSON.stringify(updateJson),
                 'Subscriber <strong>' + name + '</strong> has been updated successfully',
-                'Subscriber <strong>' + name + '</strong> update fail'
+                'Subscriber <strong>' + name + '</strong> update fail',
+                reloadSubscribersTable
             );
             $('#updateModal').modal('hide');
 
@@ -247,9 +212,10 @@
             var email = $('#suspend_subscriber_email').val();
             var name = $('#suspend_subscriber_name').val();
             e.preventDefault();
-            runGetJson(rootURL + username + '/' + email + '/suspend',
+            $().runGetJson(rootURL + username + '/' + email + '/suspend',
                 'Subscriber <strong>' + name + '</strong> has been suspended',
-                'Subscriber <strong>' + name + '</strong> suspending fail'
+                'Subscriber <strong>' + name + '</strong> suspending fail',
+                reloadSubscribersTable
             );
             $('#suspendModal').modal('hide');
         });
@@ -259,9 +225,10 @@
             var email = $('#resume_subscriber_email').val();
             var name = $('#resume_subscriber_name').val();
             e.preventDefault();
-            runGetJson(rootURL + username + '/' + email + '/resume',
+            $().runGetJson(rootURL + username + '/' + email + '/resume',
                 'Subscriber <strong>' + name + '</strong> has been resumed',
-                'Subscriber <strong>' + name + '</strong> resuming fail'
+                'Subscriber <strong>' + name + '</strong> resuming fail',
+                reloadSubscribersTable
             );
             $('#resumeModal').modal('hide');
         });
@@ -321,11 +288,12 @@
                 updateJson.rsslist[i] = {'rss': $(this).val(), 'status': 'active'};
             });
 
-            runAjax(rootURL + username + '/new',
+            $().runAjax(rootURL + username + '/new',
                 'PUT',
                 JSON.stringify(updateJson),
                 'New subscriber <strong>' + name + '</strong> has been added successfully',
-                'New subscriber <strong>' + name + '</strong> creation fail'
+                'New subscriber <strong>' + name + '</strong> creation fail',
+                reloadSubscribersTable
             );
         });
 
@@ -357,11 +325,12 @@
             var email = $('#remove_subscriber_email').val();
             var name = $('#remove_subscriber_name').val();
             e.preventDefault();
-            runAjax(rootURL + username + '/' + email + '/remove',
+            $().runAjax(rootURL + username + '/' + email + '/remove',
                 'DELETE',
                 '',
                 'Subscriber <strong>' + name + '</strong> has been removed',
-                'Subscriber <strong>' + name + '</strong> removing fail'
+                'Subscriber <strong>' + name + '</strong> removing fail',
+                reloadSubscribersTable
             );
             $('#removeModal').modal('hide');
         });
@@ -378,22 +347,6 @@
         });
 
     });//end of $(document).ready(function ())
-
-    function showAlert(type, text) {
-        if (type == 'error') {
-            $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Error! </strong>' + text + '</div>');
-        } else if (type == 'warning') {
-            $('#alerts_panel').html('<div class="alert alert-warning alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Warning! </strong>' + text + '</div>');
-        } else {
-            $('#alerts_panel').html('<div class="alert alert-success alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Success! </strong> ' + text + '</div>');
-        }
-    }
 
     function validateURL(url) {
         var regexp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;

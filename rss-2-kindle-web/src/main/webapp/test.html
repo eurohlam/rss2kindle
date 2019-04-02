@@ -26,12 +26,14 @@
     <script src="vendor/jquery/jquery.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
+    <script src="js/profile.js"></script>
+
 </head>
 
 <body>
 <script>
     var rootURL = 'http://localhost:8080/rss2kindle/rest/profile/';
-    var username = "euro";
+    var username = "test";
     var userData = {
         "_id": "8a60e197-3ad8-4581-83e5-09c17bd3ee96",
         "username": "test",
@@ -73,6 +75,32 @@
         "roles": ["ROLE_USER"]
     };
 
+    var subscriberData = {
+                "email": "test@gmail.com",
+                "name": "test",
+                "rsslist": [
+                    {
+                        "rss": "test1.org/feed",
+                        "status": "offline",
+                        "retryCount" : "3",
+                        "errorMessage" : "Something wrong"
+                    },
+                    {
+                        "rss": "test2.org/feed",
+                        "status": "active"
+                    },
+                    {
+                        "rss": "test3.org/feed",
+                        "status": "active"
+                    }
+                ],
+                "settings": {
+                    "starttime": "2017-11-13",
+                    "timeout": "24"
+                },
+                "status": "active"
+            };
+
     $(document).ready(function () {
 
 
@@ -98,7 +126,16 @@
             }
             $("input:checked[id!='select_all_checkbox']").each(function (index) {
                 var checkedUser = $(this).attr('id');
-                $.ajax({
+                var rsslist = subscriberData.rsslist;
+                $.each(rsslist, function (i, item) {
+                    console.log('i=' + i + '  ' + item.rss);
+                    if (item.rss === 'test3.org/feed') {
+                        delete rsslist[i];
+                    }
+                });
+                subscriberData.rsslist = rsslist.filter(function(x) { return x !== null });
+                //$().runAjax(rootURL + checkedUser + operation, method, null, 'Success', 'Failure');
+                /*$.ajax({
                     url: rootURL + checkedUser + operation,
                     type: method,
                     dataType: 'json',
@@ -108,10 +145,10 @@
                     .fail(function () {
                         showAlert('error', 'Failed updating user ' + checkedUser);
                         return false;
-                    })
+                    })*/
             }); //each
 
-            console.log("Event " + srcButtonId);
+            console.log(JSON.stringify(subscriberData));
             showAlert('success', message);
 
         }); //lock_btn.submit
@@ -134,22 +171,6 @@
         return userData;
     }
 
-
-    function showAlert(type, text) {
-        if (type == 'error') {
-            $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Error! </strong>' + text + '</div>');
-        } else if (type == 'warning') {
-            $('#alerts_panel').html('<div class="alert alert-warning alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Warning! </strong>' + text + '</div>');
-        } else {
-            $('#alerts_panel').html('<div class="alert alert-success alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Success! </strong> ' + text + '</div>');
-        }
-    }
 
 </script>
 
@@ -217,24 +238,12 @@
                         <div class="btn-toolbar bg-light" role="toolbar">
                             <button id="lock_btn" class="navbar-brand btn-outline-primary" type="submit">
                                 <i class="far fa-pause-circle fa-2x"></i>
-<!--
-                                <img src="img/icons/if_pause-circle_2561308.svg" width="24" height="24"
-                                     class="d-inline-block align-top" alt="Lock">
--->
                             </button>
                             <button id="unlock_btn" class="navbar-brand btn-outline-warning" type="submit">
                                 <i class="far fa-play-circle fa-2x"></i>
-<!--
-                                <img src="img/icons/if_play-circle_2561292.svg" width="24" height="24"
-                                     class="d-inline-block align-top" alt="Unlock">
--->
                             </button>
                             <button id="remove_btn" class="navbar-brand btn-outline-danger" type="submit">
                                 <i class="far fa-trash-alt fa-2x"></i>
-<!--
-                                <img src="img/icons/if_trash_2561481.svg" width="24" height="24"
-                                     class="d-inline-block align-top" alt="Remove">
--->
                             </button>
                         </div>
                     </div>
