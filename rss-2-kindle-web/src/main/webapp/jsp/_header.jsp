@@ -21,8 +21,7 @@
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item dropdown active mx-0 mx-lg-1">
                             <a class="nav-link dropdown-toggle py-3 px-0 px-lg-3 rounded js-scroll-trigger"
-                               id="navbarDropdownMenuLink" data-toggle="dropdown" href="#" role="button"
-                               aria-haspopup="true" aria-expanded="false">
+                               id="navbarDropdownMenuLink" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                                 <%=username%> <span class="caret"></span>
                             </a>
                             <div class="dropdown-menu bg-secondary" aria-labelledby="navbarDropdownMenuLink">
@@ -31,15 +30,13 @@
                             </div>
                         </li>
                         <li class="nav-item mx-0 mx-lg-1">
-                            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
-                               href="../index.html#howto">Howto</a>
+                            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="../index.html#howto">Howto</a>
                         </li>
                         <li class="nav-item mx-0 mx-lg-1">
                             <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="../index.html#about">About</a>
                         </li>
                         <li class="nav-item mx-0 mx-lg-1">
-                            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
-                               href="../index.html#contact">Contact</a>
+                            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="../index.html#contact">Contact</a>
                         </li>
                     </ul>
                 </div>

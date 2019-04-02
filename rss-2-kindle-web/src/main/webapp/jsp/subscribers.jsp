@@ -8,30 +8,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>RSS-2-KINDLE Subscribers Management</title>
-
-    <meta name="viewport" content="width = device-width, initial-scale = 1.0">
-    <security:csrfMetaTags/>
-
-    <!-- Bootstrap -->
-    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom Fonts -->
-    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
-
-    <!-- Theme CSS -->
-    <link href="../css/freelancer.css" rel="stylesheet">
-
-    <!-- Custom css -->
-    <link href="../css/simple-sidebar.css" rel="stylesheet">
-
-    <!-- JQuery -->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-
+    <%@include file="_head.jsp"%>
 </head>
+
 <body id="page-top">
 <script>
     var username = '${username}';
@@ -59,30 +38,46 @@
 
                 $.each(data.subscribers, function (i, item) {
                     var tr;
-                    if (item.status === 'suspended')
+                    if (item.status === 'suspended') {
                         tr = '<tr class="table-danger"><td>';
-                    else
+                    } else {
                         tr = '<tr class="table-light"><td>';
+                    }
 
-                    table += tr + (i + 1) + '</td><td>'
-                        + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><td>'
-                        + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td><td>'
-                        + item.status + '</td><td>'
-                        + '<div class="btn-group" role="group">'
-                        + '<button id="btn_update" type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal" data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">Update</button>';
+                    table += tr + (i + 1) + '</td><td>' +
+                         '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><td>' +
+                         '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td><td>' + item.status + '</td><td>' +
+                         '<div class="btn-group" role="group">' +
+                         '<button id="btn_update" type="button" class="btn btn-outline-primary" ' +
+                            'data-toggle="modal" data-target="#updateModal" ' +
+                            'data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">' +
+                            '<span data-tooltip="tooltip" data-placement="top" title="Edit subscriber">' +
+                            '<i class="far fa-edit fa-lg"></i></span></button>';
 
-                    if (item.status === 'suspended')
-                        table += '<button id="btn_resume" type="button" class="btn btn-warning" data-toggle="modal" data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">Resume</button>'
-                    else
-                        table += '<button id="btn_suspend" type="button" class="btn btn-warning" data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">Suspend</button>';
+                    if (item.status === 'suspended') {
+                        table += '<button id="btn_resume" type="button" class="btn btn-warning" ' +
+                            'data-toggle="modal"  data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
+                            '<span data-tooltip="tooltip" data-placement="top" title="Suspend subscriber">' +
+                            '<i class="far fa-play-circle fa-lg"></i></span></button>';
+                    } else {
+                        table += '<button id="btn_suspend" type="button" class="btn btn-outline-warning" ' +
+                            'data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
+                            '<span data-tooltip="tooltip" data-placement="top" title="Resume subscriber">' +
+                            '<i class="far fa-pause-circle fa-lg"></i></span></button>';
+                    }
 
-                    table += '<button id="btn_remove" type="button" class="btn btn-danger" data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">Remove</button></div></td></tr>';
+                    table += '<button id="btn_remove" type="button" class="btn btn-outline-danger" ' +
+                        'data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
+                        '<span data-tooltip="tooltip" data-placement="top" title="Remove subscriber">' +
+                        '<i class="far fa-trash-alt fa-lg"></i></span></button></div></td></tr>';
 
                 });
                 table += '</tbody></table>';
                 $('#edit_subscriber').html(table);
             });
-        }
+        } //end of reloadSubscribersTable
+
+
 
         //activate the first tab by default
         //TODO: change active tab in depends on input parameter
@@ -192,36 +187,24 @@
                 return false;
             }
 
-            var updateJson = '{' +
-                'email: "' + email + '",' +
-                'name: "' + name + '",' +
-                'status: "' + status + '",' +
-                'rsslist: [ ';
-            $('#update_subscriber_rsslist option').each(function () {
-                updateJson += '{ rss: "' + $(this).val() + '", status: "active"},';
+            var updateJson = {};
+            updateJson.email = email;
+            updateJson.name = name;
+            updateJson.status = status;
+            updateJson.rsslist = [];
+            $('#update_subscriber_rsslist option').each(function (i) {
+                updateJson.rsslist[i] = {'rss': $(this).val(), 'status': 'active'};
             });
-            updateJson = updateJson.substr(0, updateJson.length - 1) + ']}';
 
-            $.ajax({
-                url: rootURL + username + '/update',
-                contentType: 'application/json',
-                type: 'PUT',
-                data: updateJson,
-                dataType: 'json',
-                headers: csrf_headers
-            })
-                .done(function (data) {
-                    showAlert('success', 'Subscriber <strong>' + name + '</strong> has been updated successfully');
-                    return true;
-                })
-                .fail(function () {
-                    showAlert('error', 'Subscriber <strong>' + name + '</strong> update fail');
-                    return false;
-                })
-                .always(function () {
-                    $('#updateModal').modal('hide');
-                    reloadSubscribersTable();
-                });
+            $().runAjax(rootURL + username + '/update',
+                'PUT',
+                JSON.stringify(updateJson),
+                'Subscriber <strong>' + name + '</strong> has been updated successfully',
+                'Subscriber <strong>' + name + '</strong> update fail',
+                reloadSubscribersTable
+            );
+            $('#updateModal').modal('hide');
+
         });
 
         //suspend subscriber on submit
@@ -229,20 +212,12 @@
             var email = $('#suspend_subscriber_email').val();
             var name = $('#suspend_subscriber_name').val();
             e.preventDefault();
-            $.getJSON(rootURL + username + '/' + email + '/suspend', function (data) {
-            })
-                .done(function () {
-                    showAlert('success', 'Subscriber <strong>' + name + '</strong> has been suspended');
-                    return true;
-                })
-                .fail(function () {
-                    showAlert('error', 'Subscriber <strong>' + name + '</strong> suspending fail');
-                    return false;
-                })
-                .always(function () {
-                    $('#suspendModal').modal('hide');
-                    reloadSubscribersTable();
-                });
+            $().runGetJson(rootURL + username + '/' + email + '/suspend',
+                'Subscriber <strong>' + name + '</strong> has been suspended',
+                'Subscriber <strong>' + name + '</strong> suspending fail',
+                reloadSubscribersTable
+            );
+            $('#suspendModal').modal('hide');
         });
 
         //resume subscriber on submit
@@ -250,21 +225,12 @@
             var email = $('#resume_subscriber_email').val();
             var name = $('#resume_subscriber_name').val();
             e.preventDefault();
-            $.getJSON(rootURL + username + '/' + email + '/resume', function (data) {
-            })
-                .done(function () {
-                    showAlert('success', 'Subscriber <strong>' + name + '</strong> has been resumed');
-                    return true;
-                })
-                .fail(function () {
-                    showAlert('error', 'Subscriber <strong>' + name + '</strong> resuming fail');
-                    return false;
-                })
-                .always(function () {
-                    $('#resumeModal').modal('hide');
-                    reloadSubscribersTable();
-                });
-
+            $().runGetJson(rootURL + username + '/' + email + '/resume',
+                'Subscriber <strong>' + name + '</strong> has been resumed',
+                'Subscriber <strong>' + name + '</strong> resuming fail',
+                reloadSubscribersTable
+            );
+            $('#resumeModal').modal('hide');
         });
 
         //add new subscriber on submit
@@ -274,7 +240,6 @@
             var _new_subscriber_rsslist = $('#new_subscriber_rsslist');
             var email = _new_subscriber_email.val();
             var name = $('#new_subscriber_name').val();
-            var status = $('#new_subscriber_status').val();
 
             //create validation popovers
             _new_subscriber_email.popover(
@@ -314,35 +279,22 @@
             _new_subscriber_rsslist.popover('hide');
 
             //prepare json
-            var updateJson = '{' +
-                'email: "' + email + '",' +
-                'name: "' + name + '",' +
-                'status: "active",' +
-                'rsslist: [ ';
-            $('#new_subscriber_rsslist option').each(function () {
-                updateJson += '{ rss: "' + $(this).val() + '", status: "active"},';
+            var updateJson = {};
+            updateJson.email = email;
+            updateJson.name = name;
+            updateJson.status = 'active';
+            updateJson.rsslist = [];
+            $('#new_subscriber_rsslist option').each(function (i) {
+                updateJson.rsslist[i] = {'rss': $(this).val(), 'status': 'active'};
             });
-            updateJson = updateJson.substr(0, updateJson.length - 1) + ']}';
 
-            $.ajax({
-                url: rootURL + username + '/new',
-                contentType: 'application/json',
-                type: 'PUT',
-                data: updateJson,
-                dataType: 'json',
-                headers: csrf_headers
-            })
-                .done(function () {
-                    showAlert('success', 'New subscriber <strong>' + name + '</strong> has been added successfully');
-                    return true;
-                })
-                .fail(function () {
-                    showAlert('error', 'New subscriber <strong>' + name + '</strong> creation fail');
-                    return false;
-                })
-                .always(function () {
-                    reloadSubscribersTable();
-                });
+            $().runAjax(rootURL + username + '/new',
+                'PUT',
+                JSON.stringify(updateJson),
+                'New subscriber <strong>' + name + '</strong> has been added successfully',
+                'New subscriber <strong>' + name + '</strong> creation fail',
+                reloadSubscribersTable
+            );
         });
 
         $('#btn_new_subscriber_addrss').click(function (event) {
@@ -373,26 +325,14 @@
             var email = $('#remove_subscriber_email').val();
             var name = $('#remove_subscriber_name').val();
             e.preventDefault();
-            $.ajax({
-                url: rootURL + username + '/' + email + '/remove',
-                type: 'DELETE',
-                dataType: 'json',
-                headers: csrf_headers,
-                success: function (data) {
-                }
-            })
-                .done(function () {
-                    showAlert('success', 'Subscriber <strong>' + name + '</strong> has been removed');
-                    return true;
-                })
-                .fail(function () {
-                    showAlert('error', 'Subscriber <strong>' + name + '</strong> removing fail');
-                    return false;
-                })
-                .always(function () {
-                    $('#removeModal').modal('hide');
-                    reloadSubscribersTable();
-                });
+            $().runAjax(rootURL + username + '/' + email + '/remove',
+                'DELETE',
+                '',
+                'Subscriber <strong>' + name + '</strong> has been removed',
+                'Subscriber <strong>' + name + '</strong> removing fail',
+                reloadSubscribersTable
+            );
+            $('#removeModal').modal('hide');
         });
 
         //Show ajax error messages
@@ -400,24 +340,13 @@
             showAlert('error', 'Ajax error: code:' + request.status + ": " + request.responseText + " calling url: " + settings.url + " method: " + settings.type + " " + thrownError);
         });
 
+        //enable bootstrap tooltip
+        //TODO: we can't use data-toggle here because of modal windows, but somehow data-tooltip does not work
+        $(function () {
+            $('[data-tooltip="tooltip"]').tooltip();
+        });
 
     });//end of $(document).ready(function ())
-
-    function showAlert(type, text) {
-        if (type == 'error') {
-            $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Error! </strong>' + text + '</div>');
-        } else if (type == 'warning') {
-            $('#alerts_panel').html('<div class="alert alert-warning alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Warning! </strong>' + text + '</div>');
-        } else {
-            $('#alerts_panel').html('<div class="alert alert-success alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Success! </strong> ' + text + '</div>');
-        }
-    }
 
     function validateURL(url) {
         var regexp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
@@ -612,16 +541,6 @@
         </div>
     </div>
 </div>
-
-<!-- Bootstrap core JavaScript -->
-<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-<!-- Plugin JavaScript -->
-<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
-<script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
-
-<!-- Custom scripts for this template -->
-<script src="../js/freelancer.min.js"></script>
 
 </body>
 </html>

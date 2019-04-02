@@ -8,28 +8,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>RSS-2-KINDLE Run Services </title>
-    <meta name="viewport" content="width = device-width, initial-scale = 1.0">
-
-    <!-- Bootstrap -->
-    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom Fonts -->
-    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
-          type="text/css">
-
-    <!-- Theme CSS -->
-    <link href="../css/freelancer.css" rel="stylesheet">
-
-    <!-- Custom css -->
-    <link href="../css/simple-sidebar.css" rel="stylesheet">
-
-    <!-- JQuery -->
-    <script src="../vendor/jquery/jquery.min.js"></script>
-
+    <%@include file="_head.jsp"%>
 </head>
+
 <body id="page-top">
 <script>
     var rootURL = 'rest/service/${username}';
@@ -90,16 +71,6 @@
     <jsp:include page="_footer.jsp"/>
 </div>
 
-
-<!-- Bootstrap core JavaScript -->
-<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-<!-- Plugin JavaScript -->
-<script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
-<script src="../vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
-
-<!-- Custom scripts for this template -->
-<script src="../js/freelancer.min.js"></script>
 
 </body>
 </html>

@@ -32,9 +32,10 @@ public class NewUserFormValidator implements Validator
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPassword", "required.confirmPassword");
 
         NewUserForm user = (NewUserForm) o;
-        if (!user.getPassword().equals(user.getConfirmPassword()))
+        if (!user.getPassword().equals(user.getConfirmPassword())) {
             errors.rejectValue("confirmPassword", "match.confirmPassword");
-        else if (user.getUsername()!=null && user.getUsername().trim().length()!=0 && securityService.isUserExist(user.getUsername()))
+        } else if (user.getUsername()!=null && user.getUsername().trim().length()!=0 && securityService.isUserExist(user.getUsername())) {
             errors.rejectValue("username", "match.username");
+        }
     }
 }

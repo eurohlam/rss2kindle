@@ -1,8 +1,9 @@
 package org.roag.security;
 
 import org.roag.model.User;
+import org.roag.rest.EmailRestClient;
 import org.roag.service.ModelFactory;
-import org.roag.web.RestClient;
+import org.roag.rest.AdminRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,10 @@ public class RestSecurityService implements SecurityService {
     private ModelFactory modelFactory = new ModelFactory();
 
     @Autowired
-    private RestClient restClient;
+    private AdminRestClient adminClient;
+
+    @Autowired
+    private EmailRestClient emailClient;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -37,12 +41,12 @@ public class RestSecurityService implements SecurityService {
 
     @Override
     public UserDetails findUser(String username) throws UsernameNotFoundException {
-        Response response = restClient.getUser(username);
+        Response response = adminClient.getUser(username);
         if (response.getStatus() == 200) {
             User user = modelFactory.json2Pojo(User.class, response.readEntity(String.class));
             logger.debug("User {} exists with roles {}", user.getUsername(), user.getRoles());
             user.setLastLogin(LocalDateTime.now().toString());
-            restClient.updateUser(modelFactory.pojo2Json(user));
+            adminClient.updateUser(modelFactory.pojo2Json(user));
             UserDetails ud = new SpringUserDetailsImpl(user);
             return ud;
         } else
@@ -58,12 +62,12 @@ public class RestSecurityService implements SecurityService {
 
             User user = modelFactory.newUser(username, email, passwordEncoder != null ? passwordEncoder.encode(password) : password);
             logger.info("Sending request to create a new user {} with email {} to REST service", username, email);
-            Response response = restClient.addUser(modelFactory.pojo2Json(user));
+            Response response = adminClient.addUser(modelFactory.pojo2Json(user));
             logger.info("Response from REST service {} ", response);
             if (response.getStatus() == 200) {
                 String registrationSubject = "Confirmation of registration in service RSS-2-KINDLE ";
                 String registrationConfirmation = "Dear " + username + ",\n\nWe are happy to confirm your registration in service RSS-2-KINDLE.\n\nUsername=" + username + "\nPassword=" + password + "\n\nRoundkick Studio";
-                response = restClient.sendEmailToUser(username, registrationSubject, registrationConfirmation);
+                response = emailClient.sendEmailToUser(username, registrationSubject, registrationConfirmation);
                 logger.debug("Response from REST email service {} ", response);
                 return autologin(username, password);
             } else
@@ -93,7 +97,7 @@ public class RestSecurityService implements SecurityService {
 
     @Override
     public boolean isUserExist(String username) {
-        Response response = restClient.getUser(username);
+        Response response = adminClient.getUser(username);
         return (response.getStatus() == 200);
     }
 

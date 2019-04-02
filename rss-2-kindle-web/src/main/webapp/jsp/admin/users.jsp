@@ -4,7 +4,7 @@
 
 <html lang="en">
 <head>
-    <title>RSS-2-KINDLE Users Management</title>
+    <title>RSS-2-KINDLE</title>
 
     <meta name="viewport" content="width = device-width, initial-scale = 1.0">
     <security:csrfMetaTags/>
@@ -13,7 +13,7 @@
     <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../../vendor/font-awesome/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
           type="text/css">
@@ -27,9 +27,12 @@
     <!-- JQuery -->
     <script src="../../vendor/jquery/jquery.min.js"></script>
 
+    <!-- Custom javascript -->
+    <script src="../../js/profile.js"></script>
+
 </head>
 
-<body>
+<body id="page-top">
 <script>
     var adminUsername = '${username}';
     var rootURL = '../rest/admin/';
@@ -39,6 +42,11 @@
     csrf_headers[csrf_header] = csrf_token;
 
     $(document).ready(function () {
+
+        //enable bootstrap tooltip
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
 
         reloadUsersTable();
 
@@ -136,24 +144,11 @@
 
         }); //users_form.submit
 
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
 
     }); //end of $(document).ready(function ())
-
-    function showAlert(type, text) {
-        if (type == 'error') {
-            $('#alerts_panel').html('<div class="alert alert-danger alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Error! </strong>' + text + '</div>');
-        } else if (type == 'warning') {
-            $('#alerts_panel').html('<div class="alert alert-warning alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Warning! </strong>' + text + '</div>');
-        } else {
-            $('#alerts_panel').html('<div class="alert alert-success alert-dismissible" role="alert">'
-                + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-                + '<strong>Success! </strong> ' + text + '</div>');
-        }
-    }
 
 </script>
 <div class="container-fluid">
@@ -174,19 +169,16 @@
                     <form id="users_form" action="" method="post">
                         <div class="btn-toolbar bg-light" role="toolbar">
                             <div class="btn-group" role="group">
-                                <button id="lock_btn" class="navbar-brand" type="submit">
-                                    <img src="../../img/icons/if_pause-circle_2561308.svg" width="30" height="30"
-                                         class="d-inline-block align-top" alt="Lock">
+                                <button id="unlock_btn" class="navbar-brand btn-outline-primary" type="submit" data-toggle="tooltip" data-placement="top" title="Unlock users">
+                                    <i class="fas fa-user-cog fa-2x"></i>
                                 </button>
-                                <button id="unlock_btn" class="navbar-brand" type="submit">
-                                    <img src="../../img/icons/if_play-circle_2561292.svg" width="30" height="30"
-                                         class="d-inline-block align-top" alt="Unlock">
+                                <button id="lock_btn" class="navbar-brand btn-outline-warning" type="submit" data-toggle="tooltip" data-placement="top" title="Lock users">
+                                    <i class="fas fa-user-lock fa-2x"></i>
                                 </button>
                             </div>
                             <div class="btn-group" role="group">
-                                <button id="remove_btn" class="navbar-brand" type="submit">
-                                    <img src="../../img/icons/if_trash_2561481.svg" width="30" height="30"
-                                         class="d-inline-block align-top" alt="Remove">
+                                <button id="remove_btn" class="navbar-brand btn-outline-danger" type="submit" data-toggle="tooltip" data-placement="top" title="Remove users">
+                                    <i class="fas fa-user-slash fa-2x"></i>
                                 </button>
                             </div>
                         </div>
@@ -202,7 +194,6 @@
 </div>
 
 <!-- Bootstrap core JavaScript -->
-<%--<script src="../vendor/jquery/jquery.min.js"></script>--%>
 <script src="../../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 <!-- Plugin JavaScript -->

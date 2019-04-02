@@ -5,24 +5,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>RSS-2-Kindle Service</title>
-    <meta name="viewport" content="width = device-width, initial-scale = 1.0">
-
-    <!-- Custom fonts for this template -->
-    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
-          type="text/css">
-
-    <!-- Bootstrap -->
-    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom css -->
+    <%@include file="_head.jsp"%>
+    <!-- Custom css for registration-->
     <link href="../css/signin.css" rel="stylesheet">
-    <link href="../css/freelancer.min.css" rel="stylesheet">
-
 </head>
+
 <body id="page-top">
+<script>
+    $(document).ready(function () {
+        $('#newUserForm').submit(function (e) {
+            var check_email = $('#check_email').val();
+            if (check_email) {
+                e.preventDefault();
+                console.log("Oh no! you are robot. Go away to robots hell!");
+            }
+        });
+    })
+</script>
+
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
     <div class="container">
@@ -70,7 +70,8 @@
             <form:label path="confirmPassword" class="sr-only">Confirm Password</form:label>
             <form:input type="password" path="confirmPassword" class="form-control" placeholder="Confirm password" minlength="6" />
             <form:errors path="confirmPassword" cssClass="error"/>
-
+            <label for="check_email" class="form-signin-addemail">email</label>
+            <input type="email" id="check_email" class="form-signin-addemail">
             <button class="btn btn-outline-light btn-block btn-lg" type="submit">SIGN UP</button>
         </form:form>
     </div>
@@ -90,7 +91,7 @@
                 <ul class="list-inline mb-0">
                     <li class="list-inline-item">
                         <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
-                            <i class="fa fa-fw fa-facebook"></i>
+                            <i class="fab fa-fw fa-facebook-f"></i>
                         </a>
                     </li>
 <%--
@@ -102,12 +103,12 @@
 --%>
                     <li class="list-inline-item">
                         <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
-                            <i class="fa fa-fw fa-twitter"></i>
+                            <i class="fab fa-fw fa-twitter"></i>
                         </a>
                     </li>
                     <li class="list-inline-item">
                         <a class="btn btn-outline-light btn-social text-center rounded-circle" href="#">
-                            <i class="fa fa-fw fa-linkedin"></i>
+                            <i class="fab fa-fw fa-linkedin-in"></i>
                         </a>
                     </li>
 <%--
@@ -130,7 +131,7 @@
 
 <div class="copyright py-4 text-center text-white">
     <div class="container">
-        <small>Copyright &copy; <a href="https://roundkick.studio">Roundkick Studio</a> 2018</small>
+        <small>Copyright &copy; <a href="https://roundkick.studio">Roundkick Studio</a> 2019</small>
     </div>
 </div>
 
@@ -140,11 +141,6 @@
         <i class="fa fa-chevron-up"></i>
     </a>
 </div>
-
-
-<!-- Bootstrap core JavaScript -->
-<script src="../vendor/jquery/jquery.min.js"></script>
-<script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

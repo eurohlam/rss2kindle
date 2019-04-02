@@ -9,10 +9,10 @@
 
     <context:component-scan base-package="org.roag.security"/>
     <context:component-scan base-package="org.roag.web"/>
+    <context:component-scan base-package="org.roag.rest"/>
     <context:property-placeholder location="WEB-INF/spring/web-context.properties"/>
 
-    <bean name="passwordEncoder"
-                class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+    <bean name="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
     <bean id="userDetailsService" class="org.roag.security.SpringUserDetailsServiceImpl"/>
 

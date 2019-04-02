@@ -1,4 +1,4 @@
-<%@ page import="org.roag.web.RestClient" %>
+<%@ page import="org.roag.rest.EmailRestClient" %>
 <%@ page import="org.springframework.web.servlet.support.RequestContextUtils" %>
 <%@ page import="org.springframework.context.ApplicationContext" %>
 <%--
@@ -8,7 +8,7 @@ Created by eurohlam on 01.06.18
 
 <%
     ApplicationContext context = RequestContextUtils.findWebApplicationContext(request);
-    RestClient client = context.getBean(RestClient.class);
+    EmailRestClient client = context.getBean(EmailRestClient.class);
     for (String s: request.getParameterMap().keySet()) {
         out.println(s + ":  " + request.getParameter(s));
     }

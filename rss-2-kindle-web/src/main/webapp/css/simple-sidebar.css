@@ -113,7 +113,14 @@
   /*height: 60px;*/
 }
 
+/*Override bootstrap btn-outline-primary with custom color*/
 .btn-outline-primary {
   color: #18BC9C;
   border-color: #18BC9C;
+}
+
+.btn-outline-primary:hover{
+  color:#fff;
+  background-color:#128f76;
+  border-color:#128f76;
 }
