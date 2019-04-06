@@ -57,12 +57,12 @@
                     if (item.status === 'suspended') {
                         table += '<button id="btn_resume" type="button" class="btn btn-warning" ' +
                             'data-toggle="modal"  data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
-                            '<span data-tooltip="tooltip" data-placement="top" title="Suspend subscriber">' +
+                            '<span data-tooltip="tooltip" data-placement="top" title="Resume subscriber">' +
                             '<i class="far fa-play-circle fa-lg"></i></span></button>';
                     } else {
                         table += '<button id="btn_suspend" type="button" class="btn btn-outline-warning" ' +
                             'data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
-                            '<span data-tooltip="tooltip" data-placement="top" title="Resume subscriber">' +
+                            '<span data-tooltip="tooltip" data-placement="top" title="Suspend subscriber">' +
                             '<i class="far fa-pause-circle fa-lg"></i></span></button>';
                     }
 
