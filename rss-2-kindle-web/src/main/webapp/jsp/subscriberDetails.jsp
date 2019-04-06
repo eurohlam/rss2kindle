@@ -22,7 +22,7 @@
 
         //enable bootstrap tooltip
         $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
+            $('[data-tooltip="tooltip"]').tooltip()
         });
 
         reloadRssTable();
@@ -74,42 +74,125 @@
             var srcButtonId = $(document.activeElement).attr('id');
             var operation;
             var message;
-            if (srcButtonId == 'deactivate_btn') {
+            if (srcButtonId == 'add_btn') {
+                operation = 'add';
+                message = 'Subscriptions added successfully';
+                $('#addModal').modal('show');
+                $('#add_subscriptions_form').submit(function (e) {
+                    e.preventDefault();
+                    //validate rss list
+                    var rsslistField = $('#rss_list');
+                    rsslistField.popover('dispose');
+                    if ($('#rss_list option').length === 0) {
+                        rsslistField.popover(
+                            {
+                                content: 'At least one RSS is required',
+                                trigger: 'manual',
+                                placement: 'auto'
+                            });
+                        rsslistField.popover('show');
+
+                        return false;
+                    }
+
+                    var newRssList = userData.rsslist;
+                    $('#rss_list option').each(function (i) {
+                        newRssList.push({'rss': $(this).val(), 'status': 'active'});
+                    });
+                    userData.rsslist = newRssList;
+                    $().runAjax(rootURL + '/update',
+                        'PUT',
+                        JSON.stringify(userData),
+                        'New subscriptions have been added successfully',
+                        'Adding new subscriptions failed',
+                        reloadRssTable
+                    );
+                    $('#addModal').modal('hide');
+                    rsslistField.empty();
+                });
+            } else if (srcButtonId == 'deactivate_btn') {
                 operation = 'deactivate';
                 message = 'Subscriptions deactivated successfully';
+                $('#deactivateModal').modal('show');
+                $('#deactivate_subscriptions_form').submit(function (e) {
+                    e.preventDefault();
+                    updateSubscriptions(operation, message);
+                    $('#deactivateModal').modal('hide');
+                });
             } else if (srcButtonId == 'activate_btn') {
                 operation = 'activate';
                 message = 'Subscriptions activated successfully';
+                $('#activateModal').modal('show');
+                $('#activate_subscriptions_form').submit(function (e) {
+                    e.preventDefault();
+                    updateSubscriptions(operation, message);
+                    $('#activateModal').modal('hide');
+                });
             } else if (srcButtonId == 'remove_btn') {
                 operation = 'remove';
                 message = 'Subscriptions removed successfully';
+                $('#removeModal').modal('show');
+                $('#remove_subscriptions_form').submit(function (e) {
+                    e.preventDefault();
+                    updateSubscriptions(operation, message);
+                    $('#removeModal').modal('hide');
+                });
             }
 
-            var rsslist = userData.rsslist;
+        }); //subscribers_form.submit
+
+        function updateSubscriptions(operation, message) {
+            var updatedRssList = userData.rsslist;
             $("input:checked[id!='select_all_checkbox']").each(function (index) {
                 var checkedRss = $(this).attr('id');
-                $.each(rsslist, function (i, item) {
+                $.each(updatedRssList, function (i, item) {
                     if (checkedRss === item.rss) {
                         if (operation === 'activate') {
                             item.status = 'active';
                             item.errorMessage = 'Manually activated by user';
                             item.retryCount = '0';
-                        }
-                        if (operation === 'deactivate') {
+                        } else if (operation === 'deactivate') {
                             item.status = 'offline';
                             item.errorMessage = 'Manually deactivated by user';
-                        }
-                        if (operation === 'remove') {
-                            delete rsslist[i];
+                        } else if (operation === 'remove') {
+                            delete updatedRssList[i];
+                            //removing null value from rsslist
+                            updatedRssList = updatedRssList.filter(function (x) {
+                                return x !== null
+                            });
                         }
                     }
                 });
             }); //each
-            userData.rsslist = rsslist.filter(function(x) { return x !== null }); //removing null values from rsslist
+            userData.rsslist = updatedRssList;
 
-            $().runAjax(rootURL + '/update', 'PUT', JSON.stringify(userData), message, 'Update failed', reloadRssTable);
+            $().runAjax(rootURL + '/update', 'PUT', JSON.stringify(userData), message, 'Update of subscriptions failed', reloadRssTable);
 
-        }); //subscribers_form.submit
+        } //end of updateSubscriptions
+
+        $('#btn_addrss').click(function (event) {
+            var newRssField=$('#new_rss');
+            var rss = newRssField.val();
+            newRssField.popover(
+                {
+                    content: 'Entered text does not look like a valid URL. Please correct it and try again',
+                    trigger: 'manual',
+                    placement: 'auto'
+                });
+            newRssField.popover('hide');
+            if (validateURL(rss)) {
+                $('#rss_list').append('<option value = "' + rss + '">' + rss + '</option>');
+            }
+            else {
+                newRssField.data('bs.popover').config.content = rss + ' does not look like a valid URL. Please correct it and try again';
+                newRssField.popover('show');
+            }
+        });
+
+        $('#btn_deleterss').click(function (event) {
+            $('#rss_list option:selected').remove();
+        });
+
 
     }); //end of $(document).ready(function ())
 
@@ -133,16 +216,21 @@
                 <div class="container-fluid">
                     <form id="subscribers_form" action="" method="post">
                         <div class="btn-toolbar bg-light" role="toolbar" aria-label="">
+                            <div class="btn-group" role="group">
+                                <button id="add_btn" class="navbar-brand btn-outline-info" type="submit" data-tooltip="tooltip" data-placement="top" title="New subscription">
+                                    <i class="fas fa-plus-circle fa-2x"></i>
+                                </button>
+                            </div>
                             <div class="btn-group mr-2" role="group" aria-label="">
-                                <button id="activate_btn" class="navbar-brand btn-outline-primary" type="submit" data-toggle="tooltip" data-placement="top" title="Activate subscriptions">
+                                <button id="activate_btn" class="navbar-brand btn-outline-primary" type="submit" data-tooltip="tooltip" data-placement="top" title="Activate subscriptions">
                                     <i class="far fa-play-circle fa-2x"></i>
                                 </button>
-                                <button id="deactivate_btn" class="navbar-brand btn-outline-warning" type="submit" data-toggle="tooltip" data-placement="top" title="Deactivate subscriptions">
+                                <button id="deactivate_btn" class="navbar-brand btn-outline-warning" type="submit" data-tooltip="tooltip" data-placement="top" title="Deactivate subscriptions">
                                     <i class="far fa-pause-circle fa-2x"></i>
                                 </button>
                             </div>
                             <div class="btn-group" role="group">
-                                <button id="remove_btn" class="navbar-brand btn-outline-danger" type="submit" data-toggle="tooltip" data-placement="top" title="Remove subscriptions">
+                                <button id="remove_btn" class="navbar-brand btn-outline-danger" type="submit" data-tooltip="tooltip" data-placement="top" title="Remove subscriptions">
                                     <i class="far fa-trash-alt fa-2x"></i>
                                 </button>
                             </div>
@@ -159,6 +247,118 @@
     <jsp:include page="_footer.jsp"/>
 </div>
 
+<!--Modal windows -->
+<!-- Add modal -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="addModalLabel">Add new subscriptions</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="get" action="#" id="add_subscriptions_form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="rss_list" class="control-label">Subscriptions:</label>
+                        <select class="form-control" id="rss_list" size="7"></select>
+                        <div class="form-group">
+                            <label for="new_rss" class="control-label">Add new subscription (RSS):</label>
+                            <input type="url" class="form-control" id="new_rss"/>
+                            <div class="btn-group-xs" role="group">
+                                <button type="button" class="btn btn-primary" id="btn_addrss">+</button>
+                                <button type="button" class="btn btn-primary" id="btn_deleterss">-</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Activate modal -->
+<div class="modal fade" id="activateModal" tabindex="-1" role="dialog" aria-labelledby="activateModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="activateModalLabel">Activate subscriptions</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="get" id="activate_subscriptions_form" action="#">
+                <div class="modal-body">
+                    <div id="activate_alert_box" class="alert alert-danger" role="alert">
+                        <strong>Warning!</strong>
+                        You are going to activate some subscriptions.<br>
+                        Do you confirm?
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn_activate">Activate</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Deactivate modal -->
+<div class="modal fade" id="deactivateModal" tabindex="-1" role="dialog" aria-labelledby="deactivateModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="deactivateModalLabel">Deactivate subscriptions</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="get" id="deactivate_subscriptions_form" action="#">
+                <div class="modal-body">
+                    <div id="deactivate_alert_box" class="alert alert-danger" role="alert">
+                        <strong>Warning!</strong>
+                        You are going to deactivate some subscriptions.<br>
+                        Do you confirm?
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn_deactivate">Deactivate</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Remove modal -->
+<div class="modal fade" id="removeModal" tabindex="-1" role="dialog" aria-labelledby="removeModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="removeModalLabel">Remove subscriptions</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="get" id="remove_subscriptions_form" action="#">
+                <div class="modal-body">
+                    <div id="remove_alert_box" class="alert alert-danger" role="alert">
+                        <strong>Warning!</strong>
+                        You are going to remove some subscriptions.<br>
+                        Do you confirm?
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn_remove">Remove</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>
