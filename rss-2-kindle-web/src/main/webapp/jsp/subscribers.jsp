@@ -200,7 +200,7 @@
                 'PUT',
                 JSON.stringify(updateJson),
                 'Subscriber <strong>' + name + '</strong> has been updated successfully',
-                'Subscriber <strong>' + name + '</strong> update fail',
+                'Subscriber <strong>' + name + '</strong> updating failed',
                 reloadSubscribersTable
             );
             $('#updateModal').modal('hide');
@@ -214,7 +214,7 @@
             e.preventDefault();
             $().runGetJson(rootURL + username + '/' + email + '/suspend',
                 'Subscriber <strong>' + name + '</strong> has been suspended',
-                'Subscriber <strong>' + name + '</strong> suspending fail',
+                'Subscriber <strong>' + name + '</strong> suspending failed',
                 reloadSubscribersTable
             );
             $('#suspendModal').modal('hide');
@@ -227,7 +227,7 @@
             e.preventDefault();
             $().runGetJson(rootURL + username + '/' + email + '/resume',
                 'Subscriber <strong>' + name + '</strong> has been resumed',
-                'Subscriber <strong>' + name + '</strong> resuming fail',
+                'Subscriber <strong>' + name + '</strong> resuming failed',
                 reloadSubscribersTable
             );
             $('#resumeModal').modal('hide');
@@ -292,7 +292,7 @@
                 'PUT',
                 JSON.stringify(updateJson),
                 'New subscriber <strong>' + name + '</strong> has been added successfully',
-                'New subscriber <strong>' + name + '</strong> creation fail',
+                'New subscriber <strong>' + name + '</strong> creation failed',
                 reloadSubscribersTable
             );
         });
@@ -329,7 +329,7 @@
                 'DELETE',
                 '',
                 'Subscriber <strong>' + name + '</strong> has been removed',
-                'Subscriber <strong>' + name + '</strong> removing fail',
+                'Subscriber <strong>' + name + '</strong> removal failed',
                 reloadSubscribersTable
             );
             $('#removeModal').modal('hide');
@@ -341,17 +341,13 @@
         });
 
         //enable bootstrap tooltip
-        //TODO: we can't use data-toggle here because of modal windows, but somehow data-tooltip does not work
+        //TODO: we can't use data-toggle here because of modal windows, but data-tooltip does not work as well
+        // because buttons are generated dynamicaly
         $(function () {
             $('[data-tooltip="tooltip"]').tooltip();
         });
 
     });//end of $(document).ready(function ())
-
-    function validateURL(url) {
-        var regexp = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g;
-        return url.match(regexp);
-    }
 
 </script>
 
