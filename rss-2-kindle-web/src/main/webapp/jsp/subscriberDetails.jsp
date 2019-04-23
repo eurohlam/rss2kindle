@@ -31,7 +31,7 @@
             $.getJSON(rootURL+ '/${subscriber}', function (data) {
                 userData = data;
 
-                var rssTable = '<table class="table table-hover"><thead>' +
+                var rssTable = '<table class="table table-hover">' +
                     '<tr>' +
                     '<th><input type="checkbox" class="form-check-input" id="select_all_checkbox"/></th>' +
                     '<th>#</th>' +
@@ -40,7 +40,7 @@
                     '<th>last polling date</th>' +
                     '<th>error message</th>' +
                     '<th>retry count</th>' +
-                    '</tr></thead><tbody>';
+                    '</tr><tbody>';
 
                 $.each(data.rsslist, function (i, item) {
                     var tr;
@@ -66,6 +66,18 @@
                 });
                 rssTable += '</tbody></table>';
                 $("#details").html(rssTable);
+
+                $("#select_all_checkbox").change(function (e) {
+                    if ($("#select_all_checkbox").is(':checked')) {
+                        $("input[type='checkbox']").each(function (index) {
+                            $(this).prop('checked', true); //check all
+                        });
+                    } else {
+                        $("input[type='checkbox']").each(function (index) {
+                            $(this).prop('checked', false); //uncheck all
+                        });
+                    }
+                }); //select_all_checkbox.change
             });
         }//end of reloadRssTable
 
@@ -192,8 +204,6 @@
         $('#btn_deleterss').click(function (event) {
             $('#rss_list option:selected').remove();
         });
-
-
     }); //end of $(document).ready(function ())
 
 
