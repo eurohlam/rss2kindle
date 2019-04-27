@@ -1,0 +1,14 @@
+- name: Removing rss2kindle application from server
+  hosts: rss2kindle
+  sudo: yes
+  tasks:
+    - name: stopping docker and removing local images
+      docker_service:
+        project_src: /opt/rss2kindle
+        state: absent
+        remove_images: local
+
+    - name: removing files
+      file:
+        path: /opt/rss2kindle
+        state: absent

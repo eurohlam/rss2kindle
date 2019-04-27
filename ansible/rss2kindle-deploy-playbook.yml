@@ -1,0 +1,24 @@
+- name: Deploying rss2kindle and running it via docker
+  hosts: rss2kindle
+  sudo: yes
+  tasks:
+    - name: create root folder for deployment
+      file:
+        path: /opt/rss2kindle
+        state: directory
+        mode: '0755' 
+        owner: ubuntu
+        group: ubuntu
+
+    - name: copy and untar artifacts for deployment
+      unarchive:
+        src: ../docker-dir/target/rss2kindle-docker-bundle.tar
+        dest: /opt/rss2kindle
+        owner: ubuntu
+        group: ubuntu
+    
+    - name: running docker
+      docker_service:
+        project_src: /opt/rss2kindle
+        state: present
+        build: yes
