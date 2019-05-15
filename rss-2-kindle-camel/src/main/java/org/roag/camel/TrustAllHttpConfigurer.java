@@ -10,6 +10,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustAllStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
 
 import javax.net.ssl.HostnameVerifier;
@@ -38,7 +39,7 @@ public class TrustAllHttpConfigurer implements HttpClientConfigurer {
 
             builder.setSSLSocketFactory(sslConnectionSocketFactory);
 
-            HttpClientConnectionManager ccm = new BasicHttpClientConnectionManager(registry);
+            HttpClientConnectionManager ccm = new PoolingHttpClientConnectionManager(registry);
 
             builder.setConnectionManager(ccm);
 

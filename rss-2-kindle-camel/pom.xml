@@ -92,6 +92,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.mock-server</groupId>
+            <artifactId>mockserver-netty</artifactId>
+            <version>5.5.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
@@ -103,14 +109,6 @@
         <defaultGoal>install</defaultGoal>
 
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.20</version>
-                <configuration>
-                    <skipTests>true</skipTests>
-                </configuration>
-            </plugin>
             <!-- Allows the example to be run via 'mvn compile exec:java' -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

@@ -3,6 +3,7 @@ package org.roag.camel;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.testng.CamelSpringTestSupport;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.FileSystemUtils;
@@ -96,15 +97,23 @@ public class Rss2MobiTest extends CamelSpringTestSupport {
             transformer.setParameter("output_file", "test_output");
             transformer.transform(new StreamSource(rss_file), new StreamResult(new FileOutputStream(pathMobi + output_file + ".opf")));
             Assert.assertTrue("Transformation for opf file does not work", new File(pathMobi + output_file + ".opf").exists());
-
-            template.sendBodyAndHeader("seda:kindlegen", null, "CamelFileName", output_file + ".opf");
-            Thread.sleep(10000);
-            Assert.assertTrue("Transformation for mobi file does not work", new File(pathMobi + output_file + ".mobi").exists());
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    //Enable this test only if you want to test kindlegen. In this case kndlegen application must be in classpath
+    @Test(enabled = false, dependsOnMethods = {"rss2htmlTransformationTest"})
+    public void kindlegenTransformationTest(){
+        template.sendBodyAndHeader("seda:kindlegen", null, "CamelFileName", output_file + ".opf");
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Thread.currentThread().interrupt();
+        }
+        Assert.assertTrue("Transformation for mobi file does not work", new File(pathMobi + output_file + ".mobi").exists());
     }
 
 }
