@@ -6,7 +6,6 @@ import org.roag.ds.UserRepository;
 import org.roag.model.Subscriber;
 import org.roag.model.SubscriberStatus;
 import org.roag.model.User;
-import org.roag.service.ModelFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,11 +21,9 @@ public class MemorySubscriberRepository implements SubscriberRepository {
     private static SubscriberRepository repository;
 
     private final UserRepository userRepository;
-    private final ModelFactory factory;
 
     private MemorySubscriberRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.factory = new ModelFactory();
     }
 
     public static SubscriberRepository getInstance(UserRepository userRepository) {

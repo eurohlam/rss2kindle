@@ -2,6 +2,7 @@ package org.roag.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -10,7 +11,7 @@ import java.util.Set;
  * Created by eurohlam on 28/09/2017.
  */
 @SuppressWarnings("unused")
-public class User {
+public class User implements Serializable {
 
     @SerializedName("_id")
     private String id;

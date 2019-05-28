@@ -21,9 +21,6 @@ public class UserManager {
 
     private final Logger logger = LoggerFactory.getLogger(UserManager.class);
 
-    @Context
-    private Request request;
-
     @Autowired
     private UserRepository userRepository;
 
