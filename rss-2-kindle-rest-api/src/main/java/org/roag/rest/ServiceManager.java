@@ -1,7 +1,6 @@
 package org.roag.rest;
 
 import org.roag.camel.Rss2XmlHandler;
-import org.roag.camel.SMTPSender;
 import org.roag.ds.SubscriberRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

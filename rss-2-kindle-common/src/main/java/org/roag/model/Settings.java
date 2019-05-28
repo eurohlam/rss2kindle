@@ -4,9 +4,11 @@ package org.roag.model;
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class Settings {
+public class Settings implements Serializable {
 
     @SerializedName("starttime")
     private String mStarttime;

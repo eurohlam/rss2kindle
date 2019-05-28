@@ -1,7 +1,5 @@
 package org.roag.web;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 public class ProfileController extends AbstractController {
-
-    private final Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
     @RequestMapping(value = "/subscribers", method = RequestMethod.GET)
     public String subscribersPage(ModelMap model) {

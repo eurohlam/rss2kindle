@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
@@ -27,9 +25,6 @@ import java.util.List;
 public class ProfileManager {
 
     private final Logger logger = LoggerFactory.getLogger(ProfileManager.class);
-
-    @Context
-    private Request request;
 
     @Autowired
     private UserRepository userRepository;

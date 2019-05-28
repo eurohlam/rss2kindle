@@ -16,7 +16,6 @@ public enum OperationResult {
 
     private final String status;
     private final Map<String, String> map;
-    private final Gson gson = new Gson();
 
     OperationResult(String status) {
         this.status = status;
@@ -25,7 +24,7 @@ public enum OperationResult {
     }
 
     public String toJson() {
-        return gson.toJson(map);
+        return new Gson().toJson(map);
     }
 
     @Override

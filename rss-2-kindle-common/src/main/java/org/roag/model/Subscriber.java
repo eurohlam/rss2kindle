@@ -1,13 +1,14 @@
 
 package org.roag.model;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
 
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class Subscriber {
+public class Subscriber implements Serializable {
 
     @SerializedName("email")
     private String mEmail;

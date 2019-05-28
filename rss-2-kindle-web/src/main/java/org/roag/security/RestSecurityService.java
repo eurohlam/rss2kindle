@@ -55,28 +55,22 @@ public class RestSecurityService implements SecurityService {
 
     @Override
     public UserDetails registerUser(String username, String email, String password) throws AuthenticationServiceException {
-        try {
-            logger.debug("Sign-up a new User {}:{} with email {}", username, password, email);
-            if (username == null || username.length() == 0)
-                throw new AuthenticationServiceException("User can't be created due to username is null or empty");
+        logger.debug("Sign-up a new User {}:{} with email {}", username, password, email);
+        if (username == null || username.length() == 0)
+            throw new AuthenticationServiceException("User can't be created due to username is null or empty");
 
-            User user = modelFactory.newUser(username, email, passwordEncoder != null ? passwordEncoder.encode(password) : password);
-            logger.info("Sending request to create a new user {} with email {} to REST service", username, email);
-            Response response = adminClient.addUser(modelFactory.pojo2Json(user));
-            logger.info("Response from REST service {} ", response);
-            if (response.getStatus() == 200) {
-                String registrationSubject = "Confirmation of registration in service RSS-2-KINDLE ";
-                String registrationConfirmation = "Dear " + username + ",\n\nWe are happy to confirm your registration in service RSS-2-KINDLE.\n\nUsername=" + username + "\nPassword=" + password + "\n\nRoundkick Studio";
-                response = emailClient.sendEmailToUser(username, registrationSubject, registrationConfirmation);
-                logger.debug("Response from REST email service {} ", response);
-                return autologin(username, password);
-            } else
-                throw new UsernameNotFoundException("User " + username + " can't be created due to error " + response.readEntity(String.class));
-
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new AuthenticationServiceException(e.getMessage());
-        }
+        User user = modelFactory.newUser(username, email, passwordEncoder != null ? passwordEncoder.encode(password) : password);
+        logger.info("Sending request to create a new user {} with email {} to REST service", username, email);
+        Response response = adminClient.addUser(modelFactory.pojo2Json(user));
+        logger.info("Response from REST service {} ", response);
+        if (response.getStatus() == 200) {
+            String registrationSubject = "Confirmation of registration in service RSS-2-KINDLE ";
+            String registrationConfirmation = "Dear " + username + ",\n\nWe are happy to confirm your registration in service RSS-2-KINDLE.\n\nUsername=" + username + "\nPassword=" + password + "\n\nRoundkick Studio";
+            response = emailClient.sendEmailToUser(username, registrationSubject, registrationConfirmation);
+            logger.debug("Response from REST email service {} ", response);
+            return autologin(username, password);
+        } else
+            throw new UsernameNotFoundException("User " + username + " can't be created due to error " + response.readEntity(String.class));
     }
 
     @Override

@@ -4,10 +4,11 @@ package org.roag.model;
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 @Generated("net.hexar.json2pojo")
 @SuppressWarnings("unused")
-public class Rss
-{
+public class Rss implements Serializable {
     @SerializedName("rss")
     private String mRss;
     @SerializedName("status")

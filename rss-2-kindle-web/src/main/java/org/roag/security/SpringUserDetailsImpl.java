@@ -1,6 +1,5 @@
 package org.roag.security;
 
-import org.roag.model.Roles;
 import org.roag.model.User;
 import org.roag.model.UserStatus;
 import org.springframework.security.core.GrantedAuthority;

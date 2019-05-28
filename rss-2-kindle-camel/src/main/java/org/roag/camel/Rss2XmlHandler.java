@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -191,7 +192,7 @@ public class Rss2XmlHandler {
             if (folder.exists() && folder.isDirectory()) {
                 String file = folder.getPath() + "/" + fileName;
                 try (OutputStream out = new FileOutputStream(file)) {
-                    out.write(RssConverter.feedToXml(feed).getBytes());
+                    out.write(RssConverter.feedToXml(feed).getBytes(StandardCharsets.UTF_8));
                 } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                     throw new PollingException(e.getMessage(), e);
