@@ -82,10 +82,11 @@ public class ProfileManager {
         logger.warn("Suspend subscriber {} for user {}", subscriberId, username);
         try {
             OperationResult result = subscriberRepository.suspendSubscriber(username, subscriberId);
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.NOT_FOUND).build();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -99,10 +100,11 @@ public class ProfileManager {
         logger.warn("Resume subscriber {} for user {}", subscriberId, username);
         try {
             OperationResult result = subscriberRepository.resumeSubscriber(username, subscriberId);
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.NOT_FOUND).build();
+            }
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -120,10 +122,11 @@ public class ProfileManager {
         logger.info("Add new subscriber {} for user {}", email, username);
         try {
             OperationResult result = subscriberRepository.addSubscriber(username, modelFactory.newSubscriber(email, name, rss));
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.CONFLICT).build();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -140,10 +143,11 @@ public class ProfileManager {
         try {
             Subscriber subscriber = modelFactory.json2Pojo(Subscriber.class, message);
             OperationResult result = subscriberRepository.addSubscriber(username, subscriber);
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.CONFLICT).build();
+            }
         } catch (IllegalArgumentException ie) {
             logger.error(ie.getMessage(), ie);
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -165,10 +169,11 @@ public class ProfileManager {
         logger.warn("Update existing subscriber {} for user {}", email, username);
         try {
             OperationResult result = subscriberRepository.updateSubscriber(username, modelFactory.newSubscriber(email, name, rss));
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.CONFLICT).build();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -184,10 +189,11 @@ public class ProfileManager {
         try {
             Subscriber subscriber = modelFactory.json2Pojo(Subscriber.class, message);
             OperationResult result = subscriberRepository.updateSubscriber(username, subscriber);
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.CONFLICT).build();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -201,10 +207,11 @@ public class ProfileManager {
         logger.warn("Remove subscriber {} for user {}", subscriberId, username);
         try {
             OperationResult result = subscriberRepository.removeSubscriber(username, subscriberId);
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.NOT_FOUND).build();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -236,19 +243,22 @@ public class ProfileManager {
         logger.info("Add new subscription {} for subscriber {} by user {}", rss, subscriberId, username);
         try {
             Subscriber subscriber = subscriberRepository.getSubscriber(username, subscriberId);
-            for (Rss r : subscriber.getRsslist())
-                if (r.getRss().equals(rss))
+            for (Rss r : subscriber.getRsslist()) {
+                if (r.getRss().equals(rss)) {
                     return Response.status(Response.Status.CONFLICT).build();
+                }
+            }
 
-            Rss _rss = new Rss();
-            _rss.setRss(rss);
-            _rss.setStatus(RssStatus.ACTIVE.toString());
-            subscriber.getRsslist().add(_rss);
+            Rss rssObj = new Rss();
+            rssObj.setRss(rss);
+            rssObj.setStatus(RssStatus.ACTIVE.toString());
+            subscriber.getRsslist().add(rssObj);
             OperationResult result = subscriberRepository.updateSubscriber(username, subscriber);
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.CONFLICT).build();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -267,17 +277,19 @@ public class ProfileManager {
             Subscriber subscriber = subscriberRepository.getSubscriber(username, subscriberId);
             List<Rss> rssList = subscriber.getRsslist();
             for (int i = 0; i < rssList.size(); i++) {
-                Rss _rss = rssList.get(i);
-                if (_rss.getRss().equals(rss))
+                Rss rssObj = rssList.get(i);
+                if (rssObj.getRss().equals(rss)) {
                     rssList.remove(i);
+                }
             }
             subscriber.setRsslist(rssList);
 
             OperationResult result = subscriberRepository.updateSubscriber(username, subscriber);
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.CONFLICT).build();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

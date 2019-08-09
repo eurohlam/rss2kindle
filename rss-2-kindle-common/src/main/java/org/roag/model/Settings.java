@@ -11,26 +11,24 @@ import java.io.Serializable;
 public class Settings implements Serializable {
 
     @SerializedName("starttime")
-    private String mStarttime;
+    private String startTime;
     @SerializedName("timeout")
-    private String mTimeout;
-//    @SerializedName("to")
-//    private String mTo;
+    private String timeout;
 
     public String getStarttime() {
-        return mStarttime;
+        return startTime;
     }
 
     public void setStarttime(String starttime) {
-        mStarttime = starttime;
+        this.startTime = starttime;
     }
 
     public String getTimeout() {
-        return mTimeout;
+        return timeout;
     }
 
     public void setTimeout(String timeout) {
-        mTimeout = timeout;
+        this.timeout = timeout;
     }
 
 }

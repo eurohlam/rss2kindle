@@ -34,7 +34,8 @@ public class AdminRestClient implements RestClient {
 
 
     @Autowired
-    public AdminRestClient(@Value("${rest.host}") String restHost, @Value("${rest.port}") String restPort, @Value("${rest.path}") String restPath) {
+    public AdminRestClient(@Value("${rest.host}") String restHost, @Value("${rest.port}") String restPort,
+                           @Value("${rest.path}") String restPath) {
         this.restPath = restPath;
         this.restPort = restPort;
         this.restHost = restHost;
@@ -42,13 +43,14 @@ public class AdminRestClient implements RestClient {
     }
 
     private Response sendRequest(String path, RequestMethod method, String json) {
-        Response response =sendRequest(target, path, method, json);
+        Response response = sendRequest(target, path, method, json);
 
-        if (response == null)
+        if (response == null) {
             logger.error("Response from RESt service is null. Probably, unsupported method has been called");
-        else if (response.getStatus() != 200)
+        } else if (response.getStatus() != 200) {
             logger.error("Failure during interaction with REST service. Code: {}; errorMessage: {}", response.getStatus(),
                     Response.Status.fromStatusCode(response.getStatus()).getReasonPhrase());
+        }
         return response;
     }
 

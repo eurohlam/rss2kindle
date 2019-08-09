@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class AdminController extends AbstractController {
 
     @Secured({"ROLE_ADMIN"})
-    @RequestMapping(value="users", method = RequestMethod.GET)
+    @RequestMapping(value = "users", method = RequestMethod.GET)
     public String adminPage(ModelMap model) {
         return "admin/users";
     }

@@ -20,8 +20,9 @@ public class SpringUserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         logger.debug("Trying to find User {} in repository", username);
-        if (username == null || username.length() == 0)
+        if (username == null || username.length() == 0) {
             throw new UsernameNotFoundException("User can't be found due to username is null or empty");
+        }
 
         return securityService.findUser(username);
     }

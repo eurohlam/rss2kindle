@@ -27,42 +27,58 @@ public class SpringRestController {
 
     @RequestMapping(value = "/profile/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
     public String getUserData(@PathVariable("username") String username) {
-        return isAccessAllowed(username) ? profileRestClient.getUserData(username).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
+        return isAccessAllowed(username)
+                ? profileRestClient.getUserData(username).readEntity(String.class)
+                : ACCESS_DENIED_MESSAGE;
     }
 
     @RequestMapping(value = "/profile/{username}/{subscriber:\\w+@\\w+\\.[a-zA-Z]{2,}}", method = RequestMethod.GET)
     public String getSubscriber(@PathVariable("username") String username, @PathVariable("subscriber") String subscriber) {
-        return isAccessAllowed(username) ? profileRestClient.getSubscriber(username, subscriber).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
+        return isAccessAllowed(username)
+                ? profileRestClient.getSubscriber(username, subscriber).readEntity(String.class)
+                : ACCESS_DENIED_MESSAGE;
     }
 
     @RequestMapping(value = "/profile/{username}/{subscriber:\\w+@\\w+\\.[a-zA-Z]{2,}}/suspend", method = RequestMethod.GET)
     public String suspendSubscriber(@PathVariable("username") String username, @PathVariable("subscriber") String subscriber) {
-        return isAccessAllowed(username) ? profileRestClient.suspendSubscriber(username, subscriber).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
+        return isAccessAllowed(username)
+                ? profileRestClient.suspendSubscriber(username, subscriber).readEntity(String.class)
+                : ACCESS_DENIED_MESSAGE;
     }
 
     @RequestMapping(value = "/profile/{username}/{subscriber:\\w+@\\w+\\.[a-zA-Z]{2,}}/resume", method = RequestMethod.GET)
     public String resumeSubscriber(@PathVariable("username") String username, @PathVariable("subscriber") String subscriber) {
-        return isAccessAllowed(username) ? profileRestClient.resumeSubscriber(username, subscriber).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
+        return isAccessAllowed(username)
+                ? profileRestClient.resumeSubscriber(username, subscriber).readEntity(String.class)
+                : ACCESS_DENIED_MESSAGE;
     }
 
     @RequestMapping(value = "/profile/{username}/{subscriber:\\w+@\\w+\\.[a-zA-Z]{2,}}/remove", method = RequestMethod.DELETE)
     public String removeSubscriber(@PathVariable("username") String username, @PathVariable("subscriber") String subscriber) {
-        return isAccessAllowed(username) ? profileRestClient.removeSubscriber(username, subscriber).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
+        return isAccessAllowed(username)
+                ? profileRestClient.removeSubscriber(username, subscriber).readEntity(String.class)
+                : ACCESS_DENIED_MESSAGE;
     }
 
     @RequestMapping(value = "/profile/{username}/update", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON)
     public String updateSubscriber(@PathVariable("username") String username, @RequestBody String message) {
-        return isAccessAllowed(username) ? profileRestClient.updateSubscriber(username, message).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
+        return isAccessAllowed(username)
+                ? profileRestClient.updateSubscriber(username, message).readEntity(String.class)
+                : ACCESS_DENIED_MESSAGE;
     }
 
     @RequestMapping(value = "/profile/{username}/new", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON)
     public String newSubscriber(@PathVariable("username") String username, @RequestBody String message) {
-        return isAccessAllowed(username) ? profileRestClient.addSubscriber(username, message).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
+        return isAccessAllowed(username)
+                ? profileRestClient.addSubscriber(username, message).readEntity(String.class)
+                : ACCESS_DENIED_MESSAGE;
     }
 
     @RequestMapping(value = "/service/{username}", method = RequestMethod.GET)
     public String runPolling(@PathVariable("username") String username) {
-        return isAccessAllowed(username) ? profileRestClient.runPolling(username).readEntity(String.class) : ACCESS_DENIED_MESSAGE;
+        return isAccessAllowed(username)
+                ? profileRestClient.runPolling(username).readEntity(String.class)
+                : ACCESS_DENIED_MESSAGE;
     }
 
     @Secured("ROLE_ADMIN")
@@ -90,8 +106,9 @@ public class SpringRestController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getPrincipal() instanceof UserDetails) {
             UserDetails ud = (UserDetails) auth.getPrincipal();
-            if (ud.getUsername().equals(username))
+            if (ud.getUsername().equals(username)) {
                 return true;
+            }
         }
         return false;
     }

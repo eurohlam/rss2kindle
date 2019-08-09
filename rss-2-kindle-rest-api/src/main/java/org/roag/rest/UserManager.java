@@ -65,10 +65,11 @@ public class UserManager {
         logger.warn("Lock user {}", id);
         try {
             OperationResult result = userRepository.lockUser(id);
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.NOT_FOUND).build();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -82,10 +83,11 @@ public class UserManager {
         logger.warn("Unlock user {}", id);
         try {
             OperationResult result = userRepository.unlockUser(id);
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.NOT_FOUND).build();
+            }
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -102,10 +104,11 @@ public class UserManager {
         try {
             OperationResult result = userRepository.addUser(modelFactory.newUser(username, email, password));
             logger.info(result.toString());
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.CONFLICT).build();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -122,10 +125,11 @@ public class UserManager {
             User user = modelFactory.json2Pojo(User.class, message);
             OperationResult result = userRepository.addUser(user);
             logger.info(result.toString());
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.CONFLICT).build();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -143,10 +147,11 @@ public class UserManager {
             User user = userRepository.getUser(username);
             user.setPassword(password);
             OperationResult result = userRepository.updateUser(user);
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.CONFLICT).build();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -162,10 +167,11 @@ public class UserManager {
         try {
             User user = modelFactory.json2Pojo(User.class, message);
             OperationResult result = userRepository.updateUser(user);
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.CONFLICT).build();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -179,10 +185,11 @@ public class UserManager {
         logger.warn("Remove user {}", id);
         try {
             OperationResult result = userRepository.removeUser(id);
-            if (result == OperationResult.SUCCESS)
+            if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
-            else
+            } else {
                 return Response.status(Response.Status.NOT_FOUND).build();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

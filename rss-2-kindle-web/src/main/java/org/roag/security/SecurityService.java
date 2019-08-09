@@ -7,8 +7,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 /**
  * Created by eurohlam on 25/12/17.
  */
-public interface SecurityService
-{
+public interface SecurityService {
+
     UserDetails findUser(String username) throws UsernameNotFoundException;
 
     boolean isUserExist(String username);

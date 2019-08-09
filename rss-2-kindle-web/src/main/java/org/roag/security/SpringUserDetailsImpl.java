@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * Created by eurohlam on 26/10/2017.
  */
-public class SpringUserDetailsImpl implements UserDetails{
+public class SpringUserDetailsImpl implements UserDetails {
 
     private User user;
 
@@ -23,7 +23,7 @@ public class SpringUserDetailsImpl implements UserDetails{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<GrantedAuthority> set=new HashSet<GrantedAuthority>(1);
+        Set<GrantedAuthority> set = new HashSet<GrantedAuthority>(1);
         user.getRoles().forEach(role -> set.add(new SimpleGrantedAuthority(role.toString())));
         return set;
     }
@@ -40,21 +40,21 @@ public class SpringUserDetailsImpl implements UserDetails{
 
     @Override
     public boolean isAccountNonExpired() {
-        return UserStatus.fromValue(user.getStatus())==UserStatus.ACTIVE;
+        return UserStatus.fromValue(user.getStatus()) == UserStatus.ACTIVE;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return UserStatus.fromValue(user.getStatus())==UserStatus.ACTIVE;
+        return UserStatus.fromValue(user.getStatus()) == UserStatus.ACTIVE;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserStatus.fromValue(user.getStatus())==UserStatus.ACTIVE;
+        return UserStatus.fromValue(user.getStatus()) == UserStatus.ACTIVE;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserStatus.fromValue(user.getStatus())==UserStatus.ACTIVE;
+        return UserStatus.fromValue(user.getStatus()) == UserStatus.ACTIVE;
     }
 }

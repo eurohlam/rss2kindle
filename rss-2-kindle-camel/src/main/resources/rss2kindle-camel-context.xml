@@ -136,7 +136,7 @@
                     <camel:simple>Dear ${header.name}.\n\nPlease, be aware about new updates from ${header.feed}.\n\nCheers\nEurohlam
                     </camel:simple>
                 </camel:setBody>
-                <camel:process ref="SMTPAttachmentProcessor"/>
+                <camel:process ref="SmtpAttachmentProcessor"/>
                 <camel:log message="Send file ${header.mobiFile} to ${header.email}" loggingLevel="INFO" logName="org.roag.camel.smtp"/>
                 <camel:toD uri="{{smtp.protocol}}://{{smtp.host}}:{{smtp.port}}?debugMode=false&amp;mail.smtp.auth=true&amp;mail.smtp.starttls.enable=true&amp;username={{smtp.username}}&amp;password={{smtp.password}}"/>
             </camel:filter>

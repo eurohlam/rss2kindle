@@ -15,9 +15,9 @@ import java.util.Properties;
  * Created by eurohlam on 23/05/18.
  */
 @Service
-public class SMTPSender {
+public class SmtpSender {
 
-    private final Logger logger = LoggerFactory.getLogger(SMTPSender.class);
+    private final Logger logger = LoggerFactory.getLogger(SmtpSender.class);
 
     private String protocol;
     private String host;
@@ -27,8 +27,9 @@ public class SMTPSender {
     private String password;
 
     @Autowired
-    public SMTPSender(@Value("${smtp.protocol}") String protocol, @Value("${smtp.host}") String host, @Value("${smtp.port}") String port,
-                      @Value("${smtp.from}") String from,  @Value("${smtp.username}") String username, @Value("${smtp.password}") String password) {
+    public SmtpSender(@Value("${smtp.protocol}") String protocol, @Value("${smtp.host}") String host,
+                      @Value("${smtp.port}") String port, @Value("${smtp.from}") String from,
+                      @Value("${smtp.username}") String username, @Value("${smtp.password}") String password) {
         this.protocol = protocol;
         this.host = host;
         this.port = port;
@@ -37,7 +38,9 @@ public class SMTPSender {
         this.password = password;
     }
 
-    public void send(String host, String port, String to, String subject, String from, String fromPersonal, String message) throws Exception {
+    public void send(String host, String port, String to, String subject,
+                     String from, String fromPersonal, String message) throws Exception {
+
         logger.info("Sending new email via smtp: {}; to: {}; from: {}; subject: {}; body: {}", host, to, from, subject, message);
         Properties props = new Properties();
         props.put("mail.transport.protocol", protocol);
@@ -51,25 +54,16 @@ public class SMTPSender {
         msg.setFrom(new InternetAddress(from, fromPersonal));
         msg.setRecipient(javax.mail.Message.RecipientType.TO, new InternetAddress(to));
         msg.setSubject(subject);
-        msg.setContent(message,"text/plain");
-
-
-        Transport transport = session.getTransport();
+        msg.setContent(message, "text/plain");
 
         // Send the message.
-        try
-        {
+        try (Transport transport = session.getTransport()) {
             transport.connect(host, username, password);
             transport.sendMessage(msg, msg.getAllRecipients());
             logger.info("Email has been sent successfully");
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             logger.error("The email was not sent.");
             logger.error(ex.getMessage(), ex);
-        }
-        finally
-        {
-            transport.close();
         }
     }
 
@@ -81,7 +75,7 @@ public class SMTPSender {
         send(host, port, to, subject, from, fromPersonal, message);
     }
 
-    public void send(String to, String subject, String from,  String message) throws Exception {
+    public void send(String to, String subject, String from, String message) throws Exception {
         send(host, port, to, subject, from, null, message);
     }
 }

@@ -32,7 +32,8 @@ public class ServiceManager {
         logger.info("Run RSS polling by demand: user {}, subscriber {}", username, id);
         try {
             rss2XmlHandler.runRssPollingForSubscriber(username, id);
-            return Response.ok("{ \"status\" : \"Polled all subscriptions for subscriber " + id + "\" }", MediaType.APPLICATION_JSON_TYPE).build();
+            return Response.ok("{ \"status\" : \"Polled all subscriptions for subscriber " + id + "\" }",
+                    MediaType.APPLICATION_JSON_TYPE).build();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.NOT_FOUND).build();

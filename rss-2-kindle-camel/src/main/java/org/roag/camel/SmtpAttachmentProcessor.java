@@ -11,11 +11,10 @@ import javax.activation.FileDataSource;
 /**
  * Created by eurohlam on 04.11.16.
  */
-@Component("SMTPAttachmentProcessor")
-public class SMTPAttachmentProcessor implements org.apache.camel.Processor
-{
+@Component("SmtpAttachmentProcessor")
+public class SmtpAttachmentProcessor implements org.apache.camel.Processor {
 
-    private final Logger logger = LoggerFactory.getLogger(SMTPAttachmentProcessor.class);
+    private final Logger logger = LoggerFactory.getLogger(SmtpAttachmentProcessor.class);
 
     @Override
     public void process(Exchange exchange) throws Exception {

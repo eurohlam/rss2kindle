@@ -17,33 +17,30 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by eurohlam on 05.09.17.
  */
-public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest
-{
-    private final static String PATH = "users/";
+public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest {
+
+    private static final String PATH = "users/";
 
     private String username = "test";
 
     @Override
-    protected Application configure()
-    {
+    protected Application configure() {
         return new ResourceConfig(UserManager.class);
     }
 
     @Test(groups = {"UserManager:GET"})
-    public void getAllUsersTest()
-    {
+    public void getAllUsersTest() {
         final Response response = target("users").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
 
         assertEquals(200, response.getStatus());
     }
 
     @Test(groups = {"UserManager:GET"})
-    public void getUserOperationsTest()
-    {
+    public void getUserOperationsTest() {
         Response response = target(PATH + username).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals("Getting user failed", 200, response.getStatus());
 
-        response = target(PATH + username +"/lock").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        response = target(PATH + username + "/lock").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals("Suspending user failed", 200, response.getStatus());
 
         response = target(PATH + username + "/unlock").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
@@ -51,84 +48,82 @@ public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest
     }
 
     @Test(groups = {"UserManager:CRUD"})
-    public void crudTestHtmlForm()
-    {
-        String new_user="formUser";
-        String new_email = "html@mail.com";
-        String new_password="htmlforever";
-        ModelFactory factory=new ModelFactory();
+    public void crudTestHtmlForm() {
+        final String newUser = "formUser";
+        final String newEmail = "html@mail.com";
+        final String newPassword = "htmlforever";
+        final ModelFactory factory = new ModelFactory();
 
         //create from html form
-        Form form_new = new Form();
-        form_new.param("username", new_user);
-        form_new.param("email", new_email);
-        form_new.param("password", "12345");
-        Response response = target(PATH + "new").request().post(Entity.form(form_new), Response.class);
+        Form formNew = new Form();
+        formNew.param("username", newUser);
+        formNew.param("email", newEmail);
+        formNew.param("password", "12345");
+        Response response = target(PATH + "new").request().post(Entity.form(formNew), Response.class);
         assertEquals("Creating new User failed", 200, response.getStatus());
 
         //read
-        response = target(PATH + new_user).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        response = target(PATH + newUser).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals(200, response.getStatus());
-        String entity=response.readEntity(String.class);
-        User user=factory.json2Pojo(User.class,entity);
-        assertEquals("Reading new User failed", new_user, user.getUsername());
+        String entity = response.readEntity(String.class);
+        User user = factory.json2Pojo(User.class, entity);
+        assertEquals("Reading new User failed", newUser, user.getUsername());
 
         //update
-        user.setPassword(new_password);
-        Form form_update = new Form();
-        form_update.param("username", user.getUsername());
-        form_update.param("password", user.getPassword());
-        response = target(PATH + "update").request().post(Entity.form(form_update), Response.class);
+        user.setPassword(newPassword);
+        Form formUpdate = new Form();
+        formUpdate.param("username", user.getUsername());
+        formUpdate.param("password", user.getPassword());
+        response = target(PATH + "update").request().post(Entity.form(formUpdate), Response.class);
         assertEquals(200, response.getStatus());
 
         //read
-        response = target(PATH + new_user).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        response = target(PATH + newUser).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals(200, response.getStatus());
-        entity=response.readEntity(String.class);
-        user=factory.json2Pojo(User.class, entity);
-        assertEquals("Reading updated User failed", new_password, user.getPassword());
+        entity = response.readEntity(String.class);
+        user = factory.json2Pojo(User.class, entity);
+        assertEquals("Reading updated User failed", newPassword, user.getPassword());
 
         //delete
-        response = target(PATH + new_user + "/remove").request().delete();
+        response = target(PATH + newUser + "/remove").request().delete();
         assertEquals(200, response.getStatus());
 
     }
 
     @Test(groups = {"UserManager:CRUD"})
-    public void crudTestJson()
-    {
-        String new_user="jsonUser";
-        String new_email = "json@mail.com";
-        String new_password="jsonforever";
-        ModelFactory factory=new ModelFactory();
+    public void crudTestJson() {
+        final String newUser = "jsonUser";
+        final String newEmail = "json@mail.com";
+        final String newPassword = "jsonforever";
+        final ModelFactory factory = new ModelFactory();
 
         //create from json
-        User u=factory.newUser(new_user, new_email, "12345");
+        User u = factory.newUser(newUser, newEmail, "12345");
         Response response = target(PATH + "new").request().post(Entity.json(factory.pojo2Json(u)), Response.class);
         assertEquals("Creating new User failed", 200, response.getStatus());
 
         //read
-        response = target(PATH + new_user).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        response = target(PATH + newUser).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals(200, response.getStatus());
-        String entity=response.readEntity(String.class);
-        User user=factory.json2Pojo(User.class,entity);
-        assertEquals("Reading new User failed", new_user, user.getUsername());
+        String entity = response.readEntity(String.class);
+        User user = factory.json2Pojo(User.class, entity);
+        assertEquals("Reading new User failed", newUser, user.getUsername());
 
         //update
-        user.setPassword(new_password);
+        user.setPassword(newPassword);
         user.getSubscribers().add(factory.newSubscriber("json@json.org", "json", "http://json.org"));
         response = target(PATH + "update").request().put(Entity.json(factory.pojo2Json(user)), Response.class);
         assertEquals(200, response.getStatus());
 
         //read
-        response = target(PATH + new_user).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+        response = target(PATH + newUser).request().accept(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals(200, response.getStatus());
-        entity=response.readEntity(String.class);
-        user=factory.json2Pojo(User.class, entity);
-        assertEquals("Reading updated User failed", new_password, user.getPassword());
+        entity = response.readEntity(String.class);
+        user = factory.json2Pojo(User.class, entity);
+        assertEquals("Reading updated User failed", newPassword, user.getPassword());
 
         //delete
-        response = target(PATH + new_user + "/remove").request().delete();
+        response = target(PATH + newUser + "/remove").request().delete();
         assertEquals(200, response.getStatus());
 
     }

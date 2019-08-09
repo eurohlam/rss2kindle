@@ -105,9 +105,11 @@ public class MongoUserRepository implements UserRepository {
     @Override
     public OperationResult assignRole(String username, Roles role) throws Exception {
         User user = getUser(username);
-        for (Roles r : user.getRoles())
-            if (r == role)
+        for (Roles r : user.getRoles()) {
+            if (r == role) {
                 return OperationResult.DUPLICATED;
+            }
+        }
 
         user.getRoles().add(role);
         return updateUser(user);
@@ -116,11 +118,12 @@ public class MongoUserRepository implements UserRepository {
     @Override
     public OperationResult dismissRole(String username, Roles role) throws Exception {
         User user = getUser(username);
-        for (Roles r : user.getRoles())
+        for (Roles r : user.getRoles()) {
             if (r == role) {
                 user.getRoles().remove(r);
                 return updateUser(user);
             }
+        }
         return OperationResult.NOT_EXIST;
     }
 }

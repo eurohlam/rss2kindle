@@ -4,6 +4,7 @@ package org.roag.model;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.Generated;
+
 import com.google.gson.annotations.SerializedName;
 
 @Generated("net.hexar.json2pojo")
@@ -11,65 +12,63 @@ import com.google.gson.annotations.SerializedName;
 public class Subscriber implements Serializable {
 
     @SerializedName("email")
-    private String mEmail;
+    private String email;
     @SerializedName("name")
-    private String mName;
+    private String name;
     @SerializedName("rsslist")
-    private List<Rss> mRsslist;
+    private List<Rss> rssList;
     @SerializedName("settings")
-    private Settings mSettings;
+    private Settings settings;
     @SerializedName("status")
-    private String mStatus;
+    private String status;
     @SerializedName("dateCreated")
     private String dateCreated;
 
     public String getEmail() {
-        return mEmail;
+        return email;
     }
 
     public void setEmail(String email) {
-        mEmail = email;
+        this.email = email;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
 
     public void setName(String name) {
-        mName = name;
+        this.name = name;
     }
 
     public List<Rss> getRsslist() {
-        return mRsslist;
+        return rssList;
     }
 
     public void setRsslist(List<Rss> rsslist) {
-        mRsslist = rsslist;
+        this.rssList = rsslist;
     }
 
     public Settings getSettings() {
-        return mSettings;
+        return settings;
     }
 
     public void setSettings(Settings settings) {
-        mSettings = settings;
+        this.settings = settings;
     }
 
     public String getStatus() {
-        return mStatus;
+        return status;
     }
 
     public void setStatus(String status) {
-        mStatus = status;
+        this.status = status;
     }
 
-    public String getDateCreated()
-    {
+    public String getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated(String dateCreated)
-    {
+    public void setDateCreated(String dateCreated) {
         this.dateCreated = dateCreated;
     }
 }

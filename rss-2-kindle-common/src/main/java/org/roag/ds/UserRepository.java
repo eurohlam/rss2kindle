@@ -10,8 +10,7 @@ import java.util.Map;
 /**
  * Created by eurohlam on 26/10/2017.
  */
-public interface UserRepository
-{
+public interface UserRepository {
 
     User getUser(String username) throws Exception;
 

@@ -8,8 +8,8 @@ import java.util.Map;
 /**
  * Created by eurohlam on 08.12.16.
  */
-public interface SubscriberRepository
-{
+public interface SubscriberRepository {
+
     UserRepository getUserRepository() throws Exception;
 
     Subscriber getSubscriber(String username, String email) throws Exception;

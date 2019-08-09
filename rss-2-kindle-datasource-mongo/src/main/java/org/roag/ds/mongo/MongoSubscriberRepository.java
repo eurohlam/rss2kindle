@@ -52,7 +52,8 @@ public class MongoSubscriberRepository implements SubscriberRepository {
         User user = getUser(username);
         for (Subscriber s : user.getSubscribers()) {
             if (s.getEmail().equals(subscriber.getEmail())) {
-                throw new IllegalArgumentException("Subscriber with email " + subscriber.getEmail() + " can't be added due to it already exists for user " + username);
+                throw new IllegalArgumentException("Subscriber with email " + subscriber.getEmail()
+                        + " can't be added due to it already exists for user " + username);
             }
         }
         user.getSubscribers().add(subscriber);

@@ -7,24 +7,20 @@ import org.apache.camel.spring.Main;
 /**
  * This main run once rss-2-kindle process for all active subscribers
  */
-public class MainApp
-{
+public class MainApp {
 
     /**
      * A main() so we can easily run these routing rules in our IDE
      */
-    public static void main(String... args) throws Exception
-    {
+    public static void main(String... args) throws Exception {
         Main main = new Main();
         main.addRouteBuilder(
-                new RouteBuilder()
-                {
+                new RouteBuilder() {
                     @Override
-                    public void configure() throws Exception
-                    {
-                        from("timer://runOnce?repeatCount=1&delay=5000").
-                                log(LoggingLevel.INFO, "org.roag.camel.Main", "Run RSS polling for all").
-                                bean("rss2XmlHandler", "runRssPollingForAllUsers");
+                    public void configure() throws Exception {
+                        from("timer://runOnce?repeatCount=1&delay=5000")
+                                .log(LoggingLevel.INFO, "org.roag.camel.Main", "Run RSS polling for all")
+                                .bean("rss2XmlHandler", "runRssPollingForAllUsers");
                     }
                 }
         );

@@ -2,6 +2,7 @@
 package org.roag.model;
 
 import javax.annotation.Generated;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -10,9 +11,9 @@ import java.io.Serializable;
 @SuppressWarnings("unused")
 public class Rss implements Serializable {
     @SerializedName("rss")
-    private String mRss;
+    private String rss;
     @SerializedName("status")
-    private String mStatus;
+    private String status;
     @SerializedName("lastPollingDate")
     private String lastPollingDate;
     @SerializedName("errorMessage")
@@ -21,48 +22,42 @@ public class Rss implements Serializable {
     private short retryCount = 0;
 
     public String getRss() {
-        return mRss;
+        return rss;
     }
 
     public void setRss(String rss) {
-        mRss = rss;
+        this.rss = rss;
     }
 
     public String getStatus() {
-        return mStatus;
+        return status;
     }
 
     public void setStatus(String status) {
-        mStatus = status;
+        this.status = status;
     }
 
-    public String getLastPollingDate()
-    {
+    public String getLastPollingDate() {
         return lastPollingDate;
     }
 
-    public void setLastPollingDate(String lastPollingDate)
-    {
+    public void setLastPollingDate(String lastPollingDate) {
         this.lastPollingDate = lastPollingDate;
     }
 
-    public String getErrorMessage()
-    {
+    public String getErrorMessage() {
         return errorMessage;
     }
 
-    public void setErrorMessage(String errorMessage)
-    {
+    public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
 
-    public short getRetryCount()
-    {
+    public short getRetryCount() {
         return retryCount;
     }
 
-    public void setRetryCount(short retryCount)
-    {
+    public void setRetryCount(short retryCount) {
         this.retryCount = retryCount;
     }
 }

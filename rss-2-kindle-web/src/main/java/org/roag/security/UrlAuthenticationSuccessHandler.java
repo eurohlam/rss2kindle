@@ -19,21 +19,22 @@ import java.util.Collection;
 /**
  * Created by eurohlam on 1/12/17.
  */
-public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler
-{
+public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final Logger logger = LoggerFactory.getLogger(UrlAuthenticationSuccessHandler.class);
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                        Authentication authentication) throws IOException {
 
         handle(request, response, authentication);
         clearAuthenticationAttributes(request);
     }
 
-    protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+    protected void handle(HttpServletRequest request, HttpServletResponse response,
+                          Authentication authentication) throws IOException {
 
         String targetUrl = determineTargetUrl(authentication);
 
@@ -79,6 +80,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
         this.redirectStrategy = redirectStrategy;
     }
+
     protected RedirectStrategy getRedirectStrategy() {
         return redirectStrategy;
     }

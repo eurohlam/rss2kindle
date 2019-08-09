@@ -50,15 +50,21 @@ public class MemoryUserRepository implements UserRepository {
         List<User> filteredUsers = findAll();
         for (Map.Entry entry: condition.entrySet()) {
             if ("email".equals(entry.getKey())) {
-                filteredUsers = filteredUsers.stream().filter(user -> user.getEmail().equals(entry.getValue())).collect(Collectors.toList());
+                filteredUsers = filteredUsers
+                        .stream()
+                        .filter(user -> user.getEmail().equals(entry.getValue()))
+                        .collect(Collectors.toList());
             }
             if ("status".equals(entry.getKey())) {
-                filteredUsers = filteredUsers.stream().filter(user -> user.getStatus().equals(entry.getValue())).collect(Collectors.toList());
+                filteredUsers = filteredUsers
+                        .stream()
+                        .filter(user -> user.getStatus().equals(entry.getValue()))
+                        .collect(Collectors.toList());
             }
             if ("roles".equals(entry.getKey())) {
-                filteredUsers = filteredUsers.stream().
-                        filter(user -> user.getRoles().stream().anyMatch(roles -> roles.name().equals(entry.getValue()))).
-                        collect(Collectors.toList());
+                filteredUsers = filteredUsers.stream()
+                        .filter(user -> user.getRoles().stream().anyMatch(roles -> roles.name().equals(entry.getValue())))
+                        .collect(Collectors.toList());
             }
         }
 

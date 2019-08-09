@@ -46,10 +46,12 @@ public class RepositoryTest {
 
         assertNotNull(subscriberRepository.getSubscriber(TEST_USER, TEST_EMAIL));
         assertEquals(subscriberRepository.suspendSubscriber(TEST_USER, TEST_EMAIL), OperationResult.SUCCESS);
-        assertTrue(SubscriberStatus.fromValue(subscriberRepository.getSubscriber(TEST_USER, TEST_EMAIL).getStatus()) == SubscriberStatus.SUSPENDED);
+        assertTrue(SubscriberStatus.fromValue(subscriberRepository
+                .getSubscriber(TEST_USER, TEST_EMAIL).getStatus()) == SubscriberStatus.SUSPENDED);
 
         assertEquals(subscriberRepository.resumeSubscriber(TEST_USER, TEST_EMAIL), OperationResult.SUCCESS);
-        assertTrue(SubscriberStatus.fromValue(subscriberRepository.getSubscriber(TEST_USER, TEST_EMAIL).getStatus()) == SubscriberStatus.ACTIVE);
+        assertTrue(SubscriberStatus.fromValue(subscriberRepository
+                .getSubscriber(TEST_USER, TEST_EMAIL).getStatus()) == SubscriberStatus.ACTIVE);
 
         Rss rss = new Rss();
         rss.setRss("http://newrss.com");

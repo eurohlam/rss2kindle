@@ -23,12 +23,12 @@ import java.util.List;
  * Created by eurohlam on 06.10.16.
  * Test for checking interaction with MongoDB via Camel
  */
-public class MongoRepositoryTest extends CamelSpringTestSupport
-{
-    final private static Logger logger = LoggerFactory.getLogger(MongoRepositoryTest.class);
+public class MongoRepositoryTest extends CamelSpringTestSupport {
+
+    private final Logger logger = LoggerFactory.getLogger(MongoRepositoryTest.class);
 
     @EndpointInject(uri = "mock:result")
-    protected MockEndpoint resultEndpoint;
+    private MockEndpoint resultEndpoint;
 
     private MongoHelper mh;
     private MongoUserRepository userRepository;
@@ -36,151 +36,141 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
 
     private ModelFactory modelFactory = new ModelFactory();
 
-    private final String TEST_EMAIL="test@gmail.com";
-    private final String TEST_USERNAME="testUser";
+    private static final String TEST_EMAIL = "test@gmail.com";
+    private static final String TEST_USERNAME = "testUser";
 
     /**
      * We need this override to avoid reloading of context for each test method
      *
-     * @return
+     * @return true
      */
     @Override
-    public boolean isCreateCamelContextPerClass()
-    {
+    public boolean isCreateCamelContextPerClass() {
         return true;
     }
 
 
     @Override
-    protected AbstractApplicationContext createApplicationContext()
-    {
-        ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext("META-INF/spring/mongo-test-context.xml");
+    protected AbstractApplicationContext createApplicationContext() {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("META-INF/spring/mongo-test-context.xml");
         mh = context.getBean(MongoHelper.class);
         userRepository = context.getBean(MongoUserRepository.class);
         subscriberRepository = context.getBean(MongoSubscriberRepository.class);
         return context;
     }
 
-    @Test(groups = { "Functionality Check" })
-    public void getQueryTest()
-    {
+    @Test(groups = {"Functionality Check"})
+    public void getQueryTest() {
         String q = mh.getQuery(mh.getDefaultMongoDatabase(), mh.getDefaulMongoCollection(), MongoDbOperation.findOneByQuery);
         logger.info("MongoTest: findOneByQuery - " + q);
         assertNotNull(q, "MongoHelper returns empty findOneByQuery");
         assertStringContains(q, "operation=findOneByQuery");
     }
 
-    @Test(groups = { "Connectivity Check" }, dependsOnGroups = { "Functionality Check" })
-    public void runConnectivityTest() throws Exception
-    {
+    @Test(groups = {"Connectivity Check"}, dependsOnGroups = {"Functionality Check"})
+    public void runConnectivityTest() throws Exception {
         Long result = template.requestBody("direct:count", null, Long.class);
         logger.debug("Connectivity test result: Count = {}", result);
         resultEndpoint.assertIsSatisfied();
         assertTrue(result instanceof Long, "Result is not of type Long");
     }
 
-    @Test(groups = { "Mongo repository CRUD" }, dependsOnGroups = { "Mongo Cleansing", "Connectivity Check" })
-    public void mongoUserCRUDTest() throws Exception
-    {
+    @Test(groups = {"Mongo repository CRUD"}, dependsOnGroups = {"Mongo Cleansing", "Connectivity Check"})
+    public void mongoUserCrudTest() throws Exception {
         User user = modelFactory.newUser(TEST_USERNAME, TEST_EMAIL, "123");
         //create user
-        OperationResult result= userRepository.addUser(user);
+        OperationResult result = userRepository.addUser(user);
         assertEquals(result, OperationResult.SUCCESS, "Could not create a user");
         //lock user
-        result= userRepository.lockUser(TEST_USERNAME);
+        result = userRepository.lockUser(TEST_USERNAME);
         assertEquals(result, OperationResult.SUCCESS, "Could not lock a user");
         //read locked user
-        user= userRepository.getUser(TEST_USERNAME);
+        user = userRepository.getUser(TEST_USERNAME);
         assertEquals(user.getStatus(), UserStatus.LOCKED.toString(), "User status should be LOCKED, but it is not");
         //unlock user
-        result= userRepository.unlockUser(TEST_USERNAME);
+        result = userRepository.unlockUser(TEST_USERNAME);
         assertEquals(result, OperationResult.SUCCESS, "Could not unlock a user");
         //read unlocked user
-        user= userRepository.getUser(TEST_USERNAME);
+        user = userRepository.getUser(TEST_USERNAME);
         assertEquals(user.getStatus(), UserStatus.ACTIVE.toString(), "User status should be ACTIVE, but it is not");
         //remove user
-        result= userRepository.removeUser(TEST_USERNAME);
+        result = userRepository.removeUser(TEST_USERNAME);
         assertEquals(result, OperationResult.SUCCESS, "Could not remove a user");
     }
 
 
-    @Test(groups = { "Mongo repository CRUD" }, dependsOnGroups = { "Mongo Cleansing", "Connectivity Check" })
-    public void mongoSubscriberCRUDTest() throws Exception
-    {
+    @Test(groups = {"Mongo repository CRUD"}, dependsOnGroups = {"Mongo Cleansing", "Connectivity Check"})
+    public void mongoSubscriberCrudTest() throws Exception {
         User user = modelFactory.newUser(TEST_USERNAME, TEST_EMAIL, "123");
         //create user
-        OperationResult result= userRepository.addUser(user);
+        OperationResult result = userRepository.addUser(user);
         assertEquals(result, OperationResult.SUCCESS);
 
         Subscriber subscriber = modelFactory.newSubscriber(TEST_EMAIL, "test", "test.org/feed");
         //create subscriber
-        result= subscriberRepository.addSubscriber(TEST_USERNAME, subscriber);
+        result = subscriberRepository.addSubscriber(TEST_USERNAME, subscriber);
         assertEquals(result, OperationResult.SUCCESS);
         //read subscriber
-        Subscriber newSubscriber= subscriberRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
+        Subscriber newSubscriber = subscriberRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
         assertEquals(newSubscriber.getName(), subscriber.getName());
         //read all users
-        assertTrue(userRepository.findAll().size()>0);
+        assertTrue(userRepository.findAll().size() > 0);
         //update subscriber
         newSubscriber.setName("new_test_name");
-        result= subscriberRepository.updateSubscriber(TEST_USERNAME, newSubscriber);
+        result = subscriberRepository.updateSubscriber(TEST_USERNAME, newSubscriber);
         assertEquals(result, OperationResult.SUCCESS);
         //read updated subscriber
-        newSubscriber= subscriberRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
+        newSubscriber = subscriberRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
         assertEquals(newSubscriber.getName(), "new_test_name");
         //suspend (update) subscriber
-        result= subscriberRepository.suspendSubscriber(TEST_USERNAME, newSubscriber.getEmail());
+        result = subscriberRepository.suspendSubscriber(TEST_USERNAME, newSubscriber.getEmail());
         assertEquals(result, OperationResult.SUCCESS);
         //read suspended subscriber
-        newSubscriber= subscriberRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
+        newSubscriber = subscriberRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
         assertEquals(newSubscriber.getStatus(), SubscriberStatus.SUSPENDED.toString());
         //resume (update) subscriber
-        result= subscriberRepository.resumeSubscriber(TEST_USERNAME, newSubscriber.getEmail());
+        result = subscriberRepository.resumeSubscriber(TEST_USERNAME, newSubscriber.getEmail());
         assertEquals(result, OperationResult.SUCCESS);
         //read resumed subscriber
-        newSubscriber= subscriberRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
+        newSubscriber = subscriberRepository.getSubscriber(TEST_USERNAME, TEST_EMAIL);
         assertEquals(newSubscriber.getStatus(), SubscriberStatus.ACTIVE.toString());
         //delete subscriber
         OperationResult d = subscriberRepository.removeSubscriber(TEST_USERNAME, TEST_EMAIL);
         assertEquals(d, OperationResult.SUCCESS);
         //remove user
-        result= userRepository.removeUser(TEST_USERNAME);
+        result = userRepository.removeUser(TEST_USERNAME);
         assertEquals(result, OperationResult.SUCCESS);
     }
 
-    @Test(groups = { "Mongo Integration" }, dependsOnGroups = { "Connectivity Check" })
-    public void mongoHelperAddUserTest() throws Exception
-    {
+    @Test(groups = {"Mongo Integration"}, dependsOnGroups = {"Connectivity Check"})
+    public void mongoHelperAddUserTest() throws Exception {
         User user = modelFactory.newUser(TEST_USERNAME, TEST_EMAIL, "123");
         Subscriber s = modelFactory.newSubscriber(TEST_EMAIL, "test", "test.org/feed");
         user.getSubscribers().add(s);
-        OperationResult r= mh.addUser(user, template);
+        OperationResult r = mh.addUser(user, template);
 
         assertTrue(r == OperationResult.SUCCESS);
     }
 
-    @Test(groups = { "Mongo Integration" },  dependsOnMethods = { "mongoHelperAddUserTest" })
-    public void mongoHelperUpdateUserTest() throws Exception
-    {
+    @Test(groups = {"Mongo Integration"}, dependsOnMethods = {"mongoHelperAddUserTest"})
+    public void mongoHelperUpdateUserTest() throws Exception {
         User user = mh.getUser(TEST_USERNAME, template);
         Subscriber s = modelFactory.newSubscriber(TEST_EMAIL, "updated_test", "updated_test.org/feed");
         user.getSubscribers().add(s);
-        OperationResult r= mh.updateUser(user, template);
+        OperationResult r = mh.updateUser(user, template);
 
         assertTrue(r == OperationResult.SUCCESS);
     }
 
-    @Test(groups = { "Mongo Integration" }, dependsOnMethods = { "mongoHelperAddUserTest" })
-    public void mongoHelperFindAllTest() throws Exception
-    {
+    @Test(groups = {"Mongo Integration"}, dependsOnMethods = {"mongoHelperAddUserTest"})
+    public void mongoHelperFindAllTest() throws Exception {
         HashMap<String, String> cond = new HashMap<>(1);
         cond.put("status", UserStatus.ACTIVE.toString());
         List<DBObject> result = mh.findAllByCondition(template, cond);
 
         assertTrue(result instanceof List);
 
-        for (DBObject obj : result)
-        {
+        for (DBObject obj : result) {
             logger.debug(obj.get("_id").toString());
             logger.debug(obj.get("password").toString());
             logger.debug(obj.get("username").toString());
@@ -191,9 +181,8 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
         }
     }
 
-    @Test(groups = { "Mongo Integration" }, dependsOnMethods = { "mongoHelperAddUserTest" })
-    public void mongoHelperFindOneTest() throws Exception
-    {
+    @Test(groups = {"Mongo Integration"}, dependsOnMethods = {"mongoHelperAddUserTest"})
+    public void mongoHelperFindOneTest() throws Exception {
         HashMap<String, String> cond = new HashMap<>(1);
         cond.put("username", TEST_USERNAME);
         DBObject result = mh.findOneByCondition(template, cond);
@@ -210,34 +199,29 @@ public class MongoRepositoryTest extends CamelSpringTestSupport
     }
 
 
-
-    @Test(groups = { "Mongo Cleansing" }, dependsOnGroups = { "Mongo Integration" })
-    public void mongoHelperRemoveUserTest() throws Exception
-    {
-        OperationResult r= mh.removeUser(TEST_USERNAME, template);
+    @Test(groups = {"Mongo Cleansing"}, dependsOnGroups = {"Mongo Integration"})
+    public void mongoHelperRemoveUserTest() throws Exception {
+        OperationResult r = mh.removeUser(TEST_USERNAME, template);
 
         assertTrue(r == OperationResult.SUCCESS);
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception
-    {
-        return new RouteBuilder()
-        {
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
             @Override
-            public void configure() throws Exception
-            {
-                from("direct:count").id("Test Mongo Count").
-                        to(mh.getQuery(mh.getDefaultMongoDatabase(), mh.getDefaulMongoCollection(), MongoDbOperation.count)).
-                        to("mock:result");
+            public void configure() throws Exception {
+                from("direct:count").id("Test Mongo Count")
+                        .to(mh.getQuery(mh.getDefaultMongoDatabase(), mh.getDefaulMongoCollection(), MongoDbOperation.count))
+                        .to("mock:result");
 
-                from("direct:findOneTest").id("Test Mongo findOne").
-                        to(mh.getQuery(mh.getDefaultMongoDatabase(), mh.getDefaulMongoCollection(), MongoDbOperation.findOneByQuery)).
-                        to("mock:result");
+                from("direct:findOneTest").id("Test Mongo findOne")
+                        .to(mh.getQuery(mh.getDefaultMongoDatabase(), mh.getDefaulMongoCollection(), MongoDbOperation.findOneByQuery))
+                        .to("mock:result");
 
-                from("direct:findAllTest").id("Test Mongo findAllQuery").
-                        to(mh.getQuery(mh.getDefaultMongoDatabase(), mh.getDefaulMongoCollection(), MongoDbOperation.findAll)).
-                        to("mock:result");
+                from("direct:findAllTest").id("Test Mongo findAllQuery")
+                        .to(mh.getQuery(mh.getDefaultMongoDatabase(), mh.getDefaulMongoCollection(), MongoDbOperation.findAll))
+                        .to("mock:result");
             }
         };
     }

@@ -119,7 +119,7 @@ public class CamelRoutesTest extends CamelSpringTestSupport {
         };
     }
 
-    private String getFeedContent(){
+    private String getFeedContent() {
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                 "<rss version=\"2.0\"" +
                 " xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"" +
@@ -188,15 +188,13 @@ public class CamelRoutesTest extends CamelSpringTestSupport {
                 modelFactory.newSubscriber(
                         "newtest@test.com",
                         "newtest",
-                        new String[] {"http://localhost:" + httpPort + "/1/feed", "http://localhost:" + httpPort + "/2/feed"},
+                        new String[]{"http://localhost:" + httpPort + "/1/feed", "http://localhost:" + httpPort + "/2/feed"},
                         LocalDateTime.now(),
                         24,
                         TimeUnit.HOURS));
 
         logger.info("User state before polling: {}", modelFactory.pojo2Json(userRepository.getUser(testUser.getUsername())));
         template.sendBody("direct:bean", null);
-        //wait for polling before stopping of context
-//        Thread.sleep(60000);
 
         Assert.assertEquals(testUser.getSubscribers().get(0).getRsslist().get(0).getStatus(), "active", "Status of rss is not active");
         Assert.assertEquals(newUser.getSubscribers().get(0).getRsslist().get(0).getStatus(), "active", "Status of rss is not active");

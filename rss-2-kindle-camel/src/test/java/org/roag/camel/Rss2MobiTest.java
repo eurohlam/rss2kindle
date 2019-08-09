@@ -76,8 +76,9 @@ public class Rss2MobiTest extends CamelSpringTestSupport {
     public void rss2htmlTransformationTest() {
         try {
             File dir = new File(pathMobi);
-            if (!dir.exists())
+            if (!dir.exists()) {
                 dir.mkdirs();
+            }
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer(new StreamSource(new FileInputStream(text_xslt)));
             transformer.transform(new StreamSource(rss_file), new StreamResult(new FileOutputStream(pathMobi + output_file + ".htm")));
@@ -105,7 +106,7 @@ public class Rss2MobiTest extends CamelSpringTestSupport {
 
     //Enable this test only if you want to test kindlegen. In this case kndlegen application must be in classpath
     @Test(enabled = false, dependsOnMethods = {"rss2htmlTransformationTest"})
-    public void kindlegenTransformationTest(){
+    public void kindlegenTransformationTest() {
         template.sendBodyAndHeader("seda:kindlegen", null, "CamelFileName", output_file + ".opf");
         try {
             Thread.sleep(10000);

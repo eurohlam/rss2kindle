@@ -49,15 +49,17 @@ public class RestSecurityService implements SecurityService {
             adminClient.updateUser(modelFactory.pojo2Json(user));
             UserDetails ud = new SpringUserDetailsImpl(user);
             return ud;
-        } else
+        } else {
             throw new UsernameNotFoundException("User " + username + " has not been found");
+        }
     }
 
     @Override
     public UserDetails registerUser(String username, String email, String password) throws AuthenticationServiceException {
         logger.debug("Sign-up a new User {}:{} with email {}", username, password, email);
-        if (username == null || username.length() == 0)
+        if (username == null || username.length() == 0) {
             throw new AuthenticationServiceException("User can't be created due to username is null or empty");
+        }
 
         User user = modelFactory.newUser(username, email, passwordEncoder != null ? passwordEncoder.encode(password) : password);
         logger.info("Sending request to create a new user {} with email {} to REST service", username, email);
@@ -65,19 +67,24 @@ public class RestSecurityService implements SecurityService {
         logger.info("Response from REST service {} ", response);
         if (response.getStatus() == 200) {
             String registrationSubject = "Confirmation of registration in service RSS-2-KINDLE ";
-            String registrationConfirmation = "Dear " + username + ",\n\nWe are happy to confirm your registration in service RSS-2-KINDLE.\n\nUsername=" + username + "\nPassword=" + password + "\n\nRoundkick Studio";
+            String registrationConfirmation = "Dear " + username + ",\n" +
+                    "\nWe are happy to confirm your registration in service RSS-2-KINDLE.\n" +
+                    "\nUsername=" + username + "\nPassword=" + password + "\n\nRoundkick Studio";
             response = emailClient.sendEmailToUser(username, registrationSubject, registrationConfirmation);
             logger.debug("Response from REST email service {} ", response);
             return autologin(username, password);
-        } else
-            throw new UsernameNotFoundException("User " + username + " can't be created due to error " + response.readEntity(String.class));
+        } else {
+            throw new UsernameNotFoundException("User " + username + " can't be created due to error "
+                    + response.readEntity(String.class));
+        }
     }
 
     @Override
     public UserDetails autologin(String username, String password) throws UsernameNotFoundException {
-/*
+        /*
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+            new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 
         authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
@@ -85,7 +92,7 @@ public class RestSecurityService implements SecurityService {
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             logger.debug(String.format("Auto login %s successfully!", username));
         }
-*/
+        */
         return null;
     }
 

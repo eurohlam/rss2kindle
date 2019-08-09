@@ -21,26 +21,29 @@ public class EmailRestClient implements RestClient {
 
     private WebTarget target;
 
-    public EmailRestClient(@Value("${rest.host}") String restHost, @Value("${rest.port}") String restPort, @Value("${rest.path}") String restPath) {
+    public EmailRestClient(@Value("${rest.host}") String restHost, @Value("${rest.port}") String restPort,
+                           @Value("${rest.path}") String restPath) {
         target = ClientBuilder.newClient().target(restHost + ":" + restPort + restPath + "/" + SEND_EMAIL_PATH);
     }
 
     public Response sendEmailToUser(String username, String subject, String message) {
         logger.debug("Sending email to user {} with subject {}", username, subject);
-        return target.path(username).
-                queryParam("subject", subject).
-                queryParam("message", message).
-                request().get(Response.class);
+        return target
+                .path(username)
+                .queryParam("subject", subject)
+                .queryParam("message", message)
+                .request().get(Response.class);
     }
 
     public Response sendEmailToAny(String to, String subject, String from, String fromPersonal, String message) {
         logger.debug("Sending email to {} from {} with subject {}", to, from, subject);
-        return target.
-                queryParam("to", to).
-                queryParam("from", from).
-                queryParam("fromPersonal", fromPersonal).
-                queryParam("subject", subject).
-                queryParam("message", message).
-                request().get(Response.class);
+        return target
+                .queryParam("to", to)
+                .queryParam("from", from)
+                .queryParam("fromPersonal", fromPersonal)
+                .queryParam("subject", subject)
+                .queryParam("message", message)
+                .request()
+                .get(Response.class);
     }
 }

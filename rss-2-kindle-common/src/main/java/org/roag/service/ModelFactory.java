@@ -27,7 +27,8 @@ public class ModelFactory {
         return newUser(username, email, password, LocalDateTime.now().toString(), UserStatus.ACTIVE, roles, new ArrayList<Subscriber>(3));
     }
 
-    public User newUser(String username, String email, String password, String dateCreated, UserStatus status, Set<Roles> roles, List<Subscriber> subscribers) {
+    public User newUser(String username, String email, String password, String dateCreated,
+                        UserStatus status, Set<Roles> roles, List<Subscriber> subscribers) {
         User user = new User();
         user.setId(UUID.randomUUID().toString());
         user.setUsername(username);
@@ -42,11 +43,18 @@ public class ModelFactory {
         return user;
     }
 
+    public User newUser(Consumer<User> consumer) {
+        User user = new User();
+        consumer.accept(user);
+        return user;
+    }
+
     public Subscriber newSubscriber(String email, String name, String rss) {
         return newSubscriber(email, name, new String[]{rss}, LocalDateTime.now(), DEFAULT_TIMEOUT, TimeUnit.HOURS);//TODO: starttime
     }
 
-    public Subscriber newSubscriber(String email, String name, String[] rssList, LocalDateTime startDate, long timeout, TimeUnit timeUnit) {
+    public Subscriber newSubscriber(String email, String name, String[] rssList,
+                                    LocalDateTime startDate, long timeout, TimeUnit timeUnit) {
         if (email == null || email.length() == 0) {
             throw new IllegalArgumentException("Email of new subscriber can not be empty");
         }
@@ -77,14 +85,8 @@ public class ModelFactory {
 
     }
 
-    public User newUser(Consumer<User> consumer) {
-        User user=new User();
-        consumer.accept(user);
-        return user;
-    }
-
     public Subscriber newSubscriber(Consumer<Subscriber> consumer) {
-        Subscriber subscriber=new Subscriber();
+        Subscriber subscriber = new Subscriber();
         consumer.accept(subscriber);
         return subscriber;
     }

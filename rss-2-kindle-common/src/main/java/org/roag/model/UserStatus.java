@@ -10,20 +10,17 @@ public enum UserStatus {
 
     private final String value;
 
-    UserStatus(String value)
-    {
+    UserStatus(String value) {
         this.value = value;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return value;
     }
 
-    public static UserStatus fromValue(String value)
-    {
-        for (UserStatus s: UserStatus.values()) {
+    public static UserStatus fromValue(String value) {
+        for (UserStatus s : UserStatus.values()) {
             if (s.toString().equals(value)) {
                 return s;
             }

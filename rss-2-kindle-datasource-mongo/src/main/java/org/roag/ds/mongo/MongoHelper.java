@@ -22,7 +22,7 @@ public class MongoHelper {
     private static final String MONGO_FIELD_USERNAME = "username";
     private static final String MONGO_FIELD_ID = "_id";
 
-    private String MONGO_SPRING_BEAN;
+    private String mongoSpringBean;
 
     private String defaultMongoDatabase;
 
@@ -38,7 +38,7 @@ public class MongoHelper {
     }
 
     public MongoHelper(String mongoBean, String mongoDatabase, String mongoCollection) {
-        this.MONGO_SPRING_BEAN = mongoBean;
+        this.mongoSpringBean = mongoBean;
         this.defaultMongoDatabase = mongoDatabase;
         this.defaulMongoCollection = mongoCollection;
         this.modelFactory = new ModelFactory();
@@ -56,7 +56,8 @@ public class MongoHelper {
         return findOneByCondition(defaultMongoDatabase, defaulMongoCollection, producerTemplate, conditions);
     }
 
-    DBObject findOneByCondition(String database, String collection, ProducerTemplate producerTemplate, Map<String, String> conditions) throws Exception {
+    DBObject findOneByCondition(String database, String collection, ProducerTemplate producerTemplate,
+                                Map<String, String> conditions) throws Exception {
         List<DBObject> r = findByCondition(database, collection, MongoDbOperation.findOneByQuery, producerTemplate, conditions);
         return r == null || r.isEmpty() ? null : r.get(0);
     }
@@ -66,7 +67,8 @@ public class MongoHelper {
         return findAllByCondition(defaultMongoDatabase, defaulMongoCollection, producerTemplate, conditions);
     }
 
-    List<DBObject> findAllByCondition(String database, String collection, ProducerTemplate producerTemplate, Map<String, String> conditions) throws Exception {
+    List<DBObject> findAllByCondition(String database, String collection, ProducerTemplate producerTemplate,
+                                      Map<String, String> conditions) throws Exception {
         return findByCondition(database, collection, MongoDbOperation.findAll, producerTemplate, conditions);
     }
 
@@ -90,16 +92,18 @@ public class MongoHelper {
 
         if (logger.isDebugEnabled()) {
             logger.debug("findByCondition {} returned the following results:", operation);
-            for (DBObject obj : list) {
-                for (String key : obj.keySet())
-                    logger.debug("key = {}  value = {}", key, obj.get(key));
-            }
+            list.forEach(
+                    obj -> obj.keySet().forEach(
+                            key -> logger.debug("key = {}  value = {}", key, obj.get(key))
+                    )
+            );
         }
         return list;
     }
 
     String getQuery(String mongoDatabase, String collection, MongoDbOperation operation) {
-        return "mongodb:" + MONGO_SPRING_BEAN + "?database=" + mongoDatabase + "&collection=" + collection + "&operation=" + operation.toString();
+        return "mongodb:" + mongoSpringBean + "?database=" + mongoDatabase
+                + "&collection=" + collection + "&operation=" + operation.toString();
     }
 
     public List<User> getAllUsers(ProducerTemplate producerTemplate) throws Exception {
@@ -109,7 +113,7 @@ public class MongoHelper {
     public List<User> getUsers(ProducerTemplate producerTemplate, Map<String, String> condition) throws Exception {
         List<DBObject> result = findAllByCondition(producerTemplate, condition);
         List<User> users = new ArrayList<>(result.size());
-        for (DBObject object: result) {
+        for (DBObject object : result) {
             object.removeField(MONGO_FIELD_ID);
             User user = modelFactory.json2Pojo(User.class, modelFactory.pojo2Json(object));
             users.add(user);
@@ -121,8 +125,9 @@ public class MongoHelper {
         Map<String, String> cond = new HashMap<>(2);
         cond.put(MONGO_FIELD_USERNAME, username);
         DBObject result = findOneByCondition(producerTemplate, cond);
-        if (result == null)
+        if (result == null) {
             throw new IllegalArgumentException("User " + username + " has not been found");
+        }
 
         result.removeField(MONGO_FIELD_ID);
         User user = modelFactory.json2Pojo(User.class, modelFactory.pojo2Json(result));
@@ -137,8 +142,9 @@ public class MongoHelper {
         Map<String, String> cond = new HashMap<>(1);
         cond.put(MONGO_FIELD_USERNAME, user.getUsername());
         DBObject r = findOneByCondition(producerTemplate, cond);
-        if (r != null)
+        if (r != null) {
             throw new IllegalArgumentException("Creation is impossible. User " + user.getUsername() + " already exists");
+        }
 
         Object result = producerTemplate.requestBody(
                 getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.insert),
@@ -154,11 +160,13 @@ public class MongoHelper {
         Map<String, String> cond = new HashMap<>(1);
         cond.put(MONGO_FIELD_USERNAME, user.getUsername());
         DBObject r = findOneByCondition(producerTemplate, cond);
-        if (r == null)
+        if (r == null) {
             throw new IllegalArgumentException("Update is impossible. User " + user.getUsername() + " does not exist");
+        }
 
         DBObject filterField = new BasicDBObject(MONGO_FIELD_USERNAME, user.getUsername());
-        DBObject obj = new BasicDBObject("$set", BasicDBObjectBuilder.start(modelFactory.json2Pojo(Map.class, modelFactory.pojo2Json(user))).get());
+        DBObject obj = new BasicDBObject("$set",
+                BasicDBObjectBuilder.start(modelFactory.json2Pojo(Map.class, modelFactory.pojo2Json(user))).get());
         Object result = producerTemplate.requestBody(
                 getQuery(getDefaultMongoDatabase(), getDefaulMongoCollection(), MongoDbOperation.update),
                 new Object[]{filterField, obj});//TODO: process UpdateResult

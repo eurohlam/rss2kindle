@@ -32,10 +32,7 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(@RequestParam(value = "error", required = false) String error) {
-        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated())
-            return "profile";
-        else
-            return "login";
+        return SecurityContextHolder.getContext().getAuthentication().isAuthenticated() ? "profile" : "login";
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
@@ -54,7 +51,8 @@ public class LoginController {
         validator.validate(user, result);
 
         if (result.hasErrors()) {
-            logger.error("Registration of a new user {} with email {} failed due to validation errors:", user.getUsername(), user.getEmail());
+            logger.error("Registration of a new user {} with email {} failed due to validation errors:",
+                    user.getUsername(), user.getEmail());
             result.getAllErrors().forEach(error -> logger.error(error.toString()));
             return "register";
         }
