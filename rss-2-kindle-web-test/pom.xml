@@ -18,11 +18,15 @@
         <javafaker.version>0.17.2</javafaker.version>
 
         <selenide.baseUrl>http://localhost:8080/r2kweb</selenide.baseUrl>
-        <selenide.headless>false</selenide.headless>
+        <selenide.headless>true</selenide.headless>
         <selenide.screenshots>true</selenide.screenshots>
-        <selenide.holdBrowserOpen>true</selenide.holdBrowserOpen>
+        <selenide.holdBrowserOpen>false</selenide.holdBrowserOpen>
         <selenide.proxyEnabled>false</selenide.proxyEnabled>
         <selenide.browser>chrome</selenide.browser>
+
+        <r2k.username>testuser</r2k.username>
+        <r2k.password>testuser</r2k.password>
+        <r2k.email>test@test.com</r2k.email>
     </properties>
 
     <dependencies>
@@ -51,7 +55,6 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.jupiter.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -60,6 +63,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <skipTests>true</skipTests>
                     <testFailureIgnore>false</testFailureIgnore>
                     <systemPropertyVariables>
                         <junit.jupiter.extensions.autodetection.enabled>true</junit.jupiter.extensions.autodetection.enabled>
@@ -75,6 +79,9 @@
                         <selenide.screenshots>${selenide.screenshots}</selenide.screenshots>
                         <selenide.proxyEnabled>${selenide.proxyEnabled}</selenide.proxyEnabled>
                         <selenide.browserSize>1920x1080</selenide.browserSize>
+                        <r2k.username>${r2k.username}</r2k.username>
+                        <r2k.password>${r2k.password}</r2k.password>
+                        <r2k.email>${r2k.email}</r2k.email>
                     </systemPropertyVariables>
                 </configuration>
                 <dependencies>
@@ -98,6 +105,16 @@
                 <selenide.holdBrowserOpen>false</selenide.holdBrowserOpen>
                 <selenide.proxyEnabled>false</selenide.proxyEnabled>
                 <selenide.browser>chrome</selenide.browser>
+                <r2k.username>testuser</r2k.username>
+                <r2k.password>testuser</r2k.password>
+                <r2k.email>test@test.com</r2k.email>
+            </properties>
+        </profile>
+        <profile>
+            <id>enable-head</id>
+            <properties>
+                <selenide.headless>false</selenide.headless>
+                <selenide.holdBrowserOpen>true</selenide.holdBrowserOpen>
             </properties>
         </profile>
     </profiles>

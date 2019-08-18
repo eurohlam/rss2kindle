@@ -1,10 +1,9 @@
 package org.roag.pages;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+import org.roag.config.Credentials;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.page;
@@ -17,10 +16,6 @@ public class LoginPage extends AbstractPage {
     private SelenideElement username = $("input#username");
     private SelenideElement password = $("input#password");
     private SelenideElement signInBtn = $("button.btn");
-
-    public LoginPage() {
-        Selenide.open(Configuration.baseUrl + getPath());
-    }
 
 
     @Override
@@ -38,5 +33,9 @@ public class LoginPage extends AbstractPage {
         this.password.setValue(password);
         this.signInBtn.click();
         return page(ProfilePage.class);
+    }
+
+    public ProfilePage loginWith(Credentials credentials) {
+        return loginWith(credentials.username(), credentials.password());
     }
 }

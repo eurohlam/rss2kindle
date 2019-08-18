@@ -4,6 +4,7 @@ package org.roag.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+import org.roag.config.Credentials;
 
 import static com.codeborne.selenide.Selenide.$;
 
@@ -30,7 +31,7 @@ public class SignUpPage implements Page {
     }
 
     @Step("Sign Up with: username={username} and email={email}")
-    public SignUpPage signUpWith(String username, String email, String password) {
+    public SignUpPage signUpWith(String username, String password, String email) {
         this.username.shouldBe(Condition.visible);
         this.email.shouldBe(Condition.visible);
         this.password.shouldBe(Condition.visible);
@@ -42,5 +43,9 @@ public class SignUpPage implements Page {
         this.confirmPassword.setValue(password);
         this.signUpBtn.click();
         return this;
+    }
+
+    public SignUpPage signUpWith(Credentials credentials) {
+        return signUpWith(credentials.username(), credentials.password(), credentials.email());
     }
 }
