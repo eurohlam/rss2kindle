@@ -1,30 +1,38 @@
 package org.roag.pages;
 
-import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.Condition;
 import io.qameta.allure.Step;
+import org.roag.pages.modules.ContactForm;
+
+import java.util.function.Consumer;
 
 import static com.codeborne.selenide.Selenide.$;
 
 public class LandingPage extends AbstractPage {
 
-    private SelenideElement name = $("input#name");
-    private SelenideElement email = $("input#email");
-    private SelenideElement phone = $("input#phone");
-    private SelenideElement message = $("textarea#message");
-    private SelenideElement sendBtn = $("button#sendMessageButton");
+    private ContactForm contactForm = new ContactForm($("form#contactForm"));
 
     @Override
     public String getPath() {
         return "";
     }
 
-    @Step("Send message from name: {name} email: {email}")
+    @Step("Send a message with name: {name} and email: {email}")
     public LandingPage sendMessage(String name, String email, String phone, String message) {
-        this.name.setValue(name);
-        this.email.setValue(email);
-        this.phone.setValue(phone);
-        this.message.setValue(message);
-        this.sendBtn.click();
+        return sendMessage(
+                form -> form
+                        .setName(name)
+                        .setEmail(email)
+                        .setPhone(phone)
+                        .setMessage(message)
+                        .clickSend()
+        );
+    }
+
+    @Step("Send a message via Contact form")
+    public LandingPage sendMessage(Consumer<ContactForm> consumer) {
+        this.contactForm.selenideElement().shouldBe(Condition.visible);
+        consumer.accept(contactForm);
         return this;
     }
 }

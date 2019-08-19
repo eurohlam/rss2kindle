@@ -5,6 +5,7 @@ import org.roag.config.Config;
 import org.roag.pages.LoginPage;
 import org.roag.pages.PageUtils;
 import org.roag.pages.ProfilePage;
+import org.roag.pages.SignUpPage;
 
 import static org.roag.pages.PageUtils.at;
 import static org.roag.pages.PageUtils.to;
@@ -12,7 +13,12 @@ import static org.roag.pages.PageUtils.to;
 /**
  * Created by eurohlam on 18/08/19.
  */
-public class LifecycleTestExtension implements BeforeEachCallback, AfterEachCallback {
+public class LifecycleTestExtension implements BeforeAllCallback, BeforeEachCallback, AfterEachCallback {
+
+    @Override
+    public void beforeAll(ExtensionContext extensionContext) throws Exception {
+        to(SignUpPage.class).signUpWith(Config.credentials());
+    }
 
     @Override
     public void beforeEach(ExtensionContext extensionContext) throws Exception {
