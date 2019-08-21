@@ -14,7 +14,7 @@
     <properties>
         <selenide.version>5.2.0</selenide.version>
         <allure.version>2.10.0</allure.version>
-        <junit.jupiter.version>5.4.0</junit.jupiter.version>
+        <junit.jupiter.version>5.5.1</junit.jupiter.version>
         <javafaker.version>0.17.2</javafaker.version>
 
         <selenide.baseUrl>http://localhost:8080/r2kweb</selenide.baseUrl>
@@ -55,6 +55,11 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.jupiter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <version>1.5.1</version>
         </dependency>
     </dependencies>
 
@@ -105,6 +110,20 @@
                 <selenide.holdBrowserOpen>false</selenide.holdBrowserOpen>
                 <selenide.proxyEnabled>false</selenide.proxyEnabled>
                 <selenide.browser>chrome</selenide.browser>
+                <r2k.username>testuser</r2k.username>
+                <r2k.password>testuser</r2k.password>
+                <r2k.email>test@test.com</r2k.email>
+            </properties>
+        </profile>
+        <profile>
+            <id>vagrant-env</id>
+            <properties>
+                <selenide.baseUrl>http://10.100.100.200:8080/r2kweb</selenide.baseUrl>
+                <selenide.headless>true</selenide.headless>
+                <selenide.screenshots>true</selenide.screenshots>
+                <selenide.holdBrowserOpen>false</selenide.holdBrowserOpen>
+                <selenide.proxyEnabled>false</selenide.proxyEnabled>
+                <selenide.browser>firefox</selenide.browser>
                 <r2k.username>testuser</r2k.username>
                 <r2k.password>testuser</r2k.password>
                 <r2k.email>test@test.com</r2k.email>

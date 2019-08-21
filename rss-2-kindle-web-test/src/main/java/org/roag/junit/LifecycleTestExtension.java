@@ -17,6 +17,7 @@ public class LifecycleTestExtension implements BeforeAllCallback, BeforeEachCall
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
+        //we ignore error message here that such user already exists
         to(SignUpPage.class).signUpWith(Config.credentials());
     }
 

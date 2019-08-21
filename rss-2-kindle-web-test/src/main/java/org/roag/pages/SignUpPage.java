@@ -32,20 +32,51 @@ public class SignUpPage implements Page {
 
     @Step("Sign Up with: username={username} and email={email}")
     public SignUpPage signUpWith(String username, String password, String email) {
-        this.username.shouldBe(Condition.visible);
-        this.email.shouldBe(Condition.visible);
-        this.password.shouldBe(Condition.visible);
-        this.confirmPassword.shouldBe(Condition.visible);
-
-        this.username.setValue(username);
-        this.email.setValue(email);
-        this.password.setValue(password);
-        this.confirmPassword.setValue(password);
-        this.signUpBtn.click();
+        setUsername(username);
+        setEmail(email);
+        setPassword(password);
+        setConfirmPassword(password);
+        clickSignUp();
         return this;
     }
 
+    @Step("Sign Up with credentials {credentials}")
     public SignUpPage signUpWith(Credentials credentials) {
         return signUpWith(credentials.username(), credentials.password(), credentials.email());
+    }
+
+    @Step("Set username for Singing Up {username}")
+    public SignUpPage setUsername(String username) {
+        this.username.shouldBe(Condition.visible);
+        this.username.setValue(username);
+        return this;
+    }
+
+    @Step("Set email for Singing Up {email}")
+    public SignUpPage setEmail(String email) {
+        this.email.shouldBe(Condition.visible);
+        this.email.setValue(email);
+        return this;
+    }
+
+    @Step("Set password for Singing Up {password}")
+    public SignUpPage setPassword(String password) {
+        this.password.shouldBe(Condition.visible);
+        this.password.setValue(password);
+        return this;
+    }
+
+    @Step("Confirm password for Singing Up {confirmPassword}")
+    public SignUpPage setConfirmPassword(String confirmPassword) {
+        this.confirmPassword.shouldBe(Condition.visible);
+        this.confirmPassword.setValue(confirmPassword);
+        return this;
+    }
+
+    @Step("Click Sign Up button")
+    public SignUpPage clickSignUp() {
+        this.signUpBtn.shouldBe(Condition.visible);
+        this.signUpBtn.click();
+        return this;
     }
 }
