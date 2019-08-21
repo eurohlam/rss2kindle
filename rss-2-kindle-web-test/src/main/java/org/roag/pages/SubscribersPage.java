@@ -3,6 +3,7 @@ package org.roag.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+import org.roag.pages.modules.EditSubscribersForm;
 import org.roag.pages.modules.NewSubscriberForm;
 
 import java.util.function.Consumer;
@@ -14,9 +15,11 @@ import static com.codeborne.selenide.Selenide.$;
  */
 public class SubscribersPage extends AbstractPage {
 
-    private NewSubscriberForm newSubscriberForm = new NewSubscriberForm($("form#new_subscriber_form"));
-    private SelenideElement newSubscriberLink=$("a#new-tab");
-    private SelenideElement editSubscriberLink=$("a#edit-tab");
+    private SelenideElement newSubscriberLink = $("a#new-tab");
+    private SelenideElement editSubscriberLink = $("a#edit-tab");
+
+    private NewSubscriberForm newSubscriberForm = new NewSubscriberForm($("div#new"));
+    private EditSubscribersForm editSubscribersForm = new EditSubscribersForm($("div#edit"));
 
     @Override
     public String getPath() {
@@ -28,6 +31,13 @@ public class SubscribersPage extends AbstractPage {
         newSubscriberLink.click();
         newSubscriberForm.selenideElement().shouldBe(Condition.visible);
         consumer.accept(newSubscriberForm);
+        return this;
+    }
+
+    public SubscribersPage editSubscriber(Consumer<EditSubscribersForm> consumer) {
+        editSubscriberLink.click();
+        editSubscribersForm.selenideElement().shouldBe(Condition.visible);
+        consumer.accept(editSubscribersForm);
         return this;
     }
 

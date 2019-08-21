@@ -29,5 +29,10 @@ public abstract class AbstractNavigationBar extends AbstractPageModule {
         super(selector);
     }
 
+    @Override
+    public boolean isDisplayed() {
+        return selenideElement().isDisplayed();
+    }
+
     public abstract void navigateTo(MenuItem item);
 }

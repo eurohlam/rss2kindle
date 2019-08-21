@@ -1,5 +1,6 @@
 package org.roag.web;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.roag.junit.LifecycleTestExtension;
@@ -17,7 +18,7 @@ public class SubscribersTest {
         at(ProfilePage.class)
                 .sidebar()
                 .navigateTo(AbstractNavigationBar.MenuItem.SUBSCRIBERS);
-        at(SubscribersPage.class)
+        SubscribersPage page = at(SubscribersPage.class)
                 .addNewSubscriber(s -> s
                                 .setName("kindle")
                                 .setEmail("test@kindle.com")
@@ -25,5 +26,6 @@ public class SubscribersTest {
                                 .addRss("http://johnwick.alive/feed")
                                 .clickSubmit()
                 );
+        Assertions.assertTrue(page.alertPanel().getText().contains("Success!"));
     }
 }

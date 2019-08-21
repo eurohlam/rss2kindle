@@ -27,6 +27,11 @@ public class ContactForm extends AbstractPageModule {
         super(selector);
     }
 
+    @Override
+    public boolean isDisplayed() {
+        return selenideElement().isDisplayed();
+    }
+
     @Step("Set contact name {name}")
     public ContactForm setName(String name) {
         this.name.shouldBe(Condition.visible);

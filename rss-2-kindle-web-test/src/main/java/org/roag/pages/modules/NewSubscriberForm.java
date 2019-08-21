@@ -24,6 +24,11 @@ public class NewSubscriberForm extends AbstractPageModule {
         super(selector);
     }
 
+    @Override
+    public boolean isDisplayed() {
+        return selenideElement().isDisplayed();
+    }
+
     @Step("Set subscriber's email {email}")
     public NewSubscriberForm setEmail(String email) {
         subscriberEmail.shouldBe(Condition.visible);
@@ -46,6 +51,14 @@ public class NewSubscriberForm extends AbstractPageModule {
         return this;
     }
 
+    @Step("Add subscriber's RSS {rss}")
+    public NewSubscriberForm deleteRss(String rss) {
+        //TODO: implement deletion
+        deleteRssBtn.click();
+        return this;
+    }
+
+    @Step("Click submit")
     public NewSubscriberForm clickSubmit() {
         submitBtn.shouldBe(Condition.visible);
         submitBtn.shouldBe(Condition.enabled);
