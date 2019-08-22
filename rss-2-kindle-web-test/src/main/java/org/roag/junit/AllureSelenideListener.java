@@ -14,6 +14,7 @@ public class AllureSelenideListener implements TestExecutionListener {
                     new AllureSelenide()
                             .screenshots(true)
                             .savePageSource(true));
+            System.out.println("Allure listener has been started");
         }
     }
 }

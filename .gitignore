@@ -6,6 +6,7 @@ target
 *data
 misc
 *allure-results
+.allure
 docker-dir/tomcat/resources/*.war
 .DS_Store
 kindle/kindlegen.exe

@@ -19,19 +19,19 @@ abstract class AbstractPage implements Page {
 
     @Step("Get menu bar")
     public MenuBar menubar() {
-        menuBar.selenideElement().shouldBe(Condition.visible);
+        menuBar.shouldBe(Condition.visible);
         return menuBar;
     }
 
     @Step("Get side bar")
     public SideBar sidebar() {
-        sideBar.selenideElement().shouldBe(Condition.visible);
+        sideBar.shouldBe(Condition.visible);
         return sideBar;
     }
 
     @Step("Get alert panel")
     public AlertPanel alertPanel() {
-        alertPanel.selenideElement().shouldBe(Condition.visible);
+        alertPanel.shouldBe(Condition.visible);
         return alertPanel;
     }
 }

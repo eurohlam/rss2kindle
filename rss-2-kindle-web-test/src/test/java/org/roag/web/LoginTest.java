@@ -7,7 +7,9 @@ import org.roag.config.Config;
 import org.roag.pages.LoginPage;
 import org.roag.pages.ProfilePage;
 import org.roag.pages.SignUpPage;
+import org.roag.pages.modules.NavigationItem;
 
+import static org.roag.pages.PageUtils.at;
 import static org.roag.pages.PageUtils.to;
 
 /**
@@ -18,10 +20,12 @@ public class LoginTest {
     @Test
     @DisplayName("Login Test")
     void loginTest() {
-        to(SignUpPage.class).signUpWith(Config.credentials());
+        to(SignUpPage.class)
+                .signUpWith(Config.credentials())
+                .menubar()
+                .navigateTo(NavigationItem.SIGN_IN);
 
-        System.out.println("Trying to login");
-        ProfilePage profilePage = to(LoginPage.class).loginWith(Config.credentials());
+        ProfilePage profilePage = at(LoginPage.class).loginWith(Config.credentials());
         Assertions.assertTrue(profilePage.isDisplayed());
     }
 }

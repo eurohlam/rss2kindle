@@ -9,17 +9,6 @@ import java.util.function.Supplier;
  */
 public abstract class AbstractNavigationBar extends AbstractPageModule {
 
-    public enum MenuItem {
-        SIGN_IN,
-        SIGN_UP,
-        HOWTO,
-        ABOUT,
-        CONTACT,
-        PROFILE,
-        SUBSCRIBERS,
-        SERVICES,
-        LOGOUT
-    }
 
     AbstractNavigationBar(SelenideElement selector) {
         super(selector);
@@ -34,5 +23,5 @@ public abstract class AbstractNavigationBar extends AbstractPageModule {
         return selenideElement().isDisplayed();
     }
 
-    public abstract void navigateTo(MenuItem item);
+    public abstract void navigateTo(NavigationItem item);
 }

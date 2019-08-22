@@ -2,6 +2,7 @@ package org.roag.pages.modules;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
 
 import java.util.function.Supplier;
 
@@ -23,7 +24,8 @@ public class SideBar extends AbstractNavigationBar {
     }
 
     @Override
-    public void navigateTo(MenuItem item) {
+    @Step("Navigate to {item}")
+    public void navigateTo(NavigationItem item) {
         switch (item) {
             case PROFILE:
                 profileLink.shouldBe(Condition.visible);

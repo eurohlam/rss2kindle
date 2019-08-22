@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 /**
  * Created by eurohlam on 19/08/2019.
  */
-public abstract class AbstractPageModule {
+public abstract class AbstractPageModule implements PageModule {
 
     private final Supplier<SelenideElement> selector;
 
@@ -19,14 +19,8 @@ public abstract class AbstractPageModule {
         this.selector = selector;
     }
 
-    public abstract boolean isDisplayed();
-
+    @Override
     public Supplier<SelenideElement> selector() {
         return this.selector;
     }
-
-    public SelenideElement selenideElement() {
-        return this.selector.get();
-    }
-
 }

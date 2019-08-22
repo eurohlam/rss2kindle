@@ -11,7 +11,7 @@ import static com.codeborne.selenide.Selenide.$;
 /**
  * Created by eurohlam on 17/08/19.
  */
-public class SignUpPage implements Page {
+public class SignUpPage extends AbstractPage {
 
 
     private SelenideElement username = $("input#username");

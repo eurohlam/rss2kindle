@@ -29,14 +29,14 @@ public class SubscribersPage extends AbstractPage {
     @Step("Add new subscriber")
     public SubscribersPage addNewSubscriber(Consumer<NewSubscriberForm> consumer) {
         newSubscriberLink.click();
-        newSubscriberForm.selenideElement().shouldBe(Condition.visible);
+        newSubscriberForm.shouldBe(Condition.visible);
         consumer.accept(newSubscriberForm);
         return this;
     }
 
     public SubscribersPage editSubscriber(Consumer<EditSubscribersForm> consumer) {
         editSubscriberLink.click();
-        editSubscribersForm.selenideElement().shouldBe(Condition.visible);
+        editSubscribersForm.shouldBe(Condition.visible);
         consumer.accept(editSubscribersForm);
         return this;
     }

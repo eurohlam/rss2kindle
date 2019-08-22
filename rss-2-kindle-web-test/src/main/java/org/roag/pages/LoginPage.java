@@ -20,7 +20,7 @@ public class LoginPage extends AbstractPage {
 
     @Override
     public String getPath() {
-        return "/view/login.jsp";
+        return "/login.jsp";
     }
 
 

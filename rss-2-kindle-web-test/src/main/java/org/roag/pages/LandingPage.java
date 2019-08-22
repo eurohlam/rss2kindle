@@ -31,7 +31,7 @@ public class LandingPage extends AbstractPage {
 
     @Step("Send a message via Contact form")
     public LandingPage sendMessage(Consumer<ContactForm> consumer) {
-        this.contactForm.selenideElement().shouldBe(Condition.visible);
+        this.contactForm.shouldBe(Condition.visible);
         consumer.accept(contactForm);
         return this;
     }

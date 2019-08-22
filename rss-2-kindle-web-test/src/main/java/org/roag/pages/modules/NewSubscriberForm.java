@@ -43,7 +43,7 @@ public class NewSubscriberForm extends AbstractPageModule {
         return this;
     }
 
-    @Step("Add subscriber's RSS {rss}")
+    @Step("Add subscription {rss}")
     public NewSubscriberForm addRss(String rss) {
         subscriberRssList.shouldBe(Condition.visible);
         newRss.setValue(rss);
@@ -51,7 +51,7 @@ public class NewSubscriberForm extends AbstractPageModule {
         return this;
     }
 
-    @Step("Add subscriber's RSS {rss}")
+    @Step("Delete subscription {rss}")
     public NewSubscriberForm deleteRss(String rss) {
         //TODO: implement deletion
         deleteRssBtn.click();

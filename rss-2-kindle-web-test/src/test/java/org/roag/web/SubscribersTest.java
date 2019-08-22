@@ -7,6 +7,7 @@ import org.roag.junit.LifecycleTestExtension;
 import org.roag.pages.ProfilePage;
 import org.roag.pages.SubscribersPage;
 import org.roag.pages.modules.AbstractNavigationBar;
+import org.roag.pages.modules.NavigationItem;
 
 import static org.roag.pages.PageUtils.at;
 
@@ -17,11 +18,11 @@ public class SubscribersTest {
     void addSubscriberTest() {
         at(ProfilePage.class)
                 .sidebar()
-                .navigateTo(AbstractNavigationBar.MenuItem.SUBSCRIBERS);
+                .navigateTo(NavigationItem.SUBSCRIBERS);
         SubscribersPage page = at(SubscribersPage.class)
                 .addNewSubscriber(s -> s
-                                .setName("kindle")
-                                .setEmail("test@kindle.com")
+                                .setName("kindle1")
+                                .setEmail("test1@kindle.com")
                                 .addRss("http://test.org/feed")
                                 .addRss("http://johnwick.alive/feed")
                                 .clickSubmit()
