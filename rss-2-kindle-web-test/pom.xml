@@ -12,6 +12,8 @@
     <artifactId>rss-2-kindle-web-test</artifactId>
 
     <properties>
+        <maven.test.skip>true</maven.test.skip>
+
         <selenide.version>5.2.0</selenide.version>
         <allure.version>2.10.0</allure.version>
         <aspectj.version>1.8.10</aspectj.version>
@@ -69,7 +71,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <skipTests>false</skipTests>
+                    <skipTests>${maven.test.skip}</skipTests>
                     <testFailureIgnore>false</testFailureIgnore>
                     <!-- Required for Allure -->
                     <argLine>
@@ -123,6 +125,7 @@
         <profile>
             <id>docker-env</id>
             <properties>
+                <maven.test.skip>false</maven.test.skip>
                 <selenide.baseUrl>http://localhost:8080/r2kweb</selenide.baseUrl>
                 <selenide.headless>true</selenide.headless>
                 <selenide.screenshots>true</selenide.screenshots>
@@ -137,6 +140,7 @@
         <profile>
             <id>vagrant-env</id>
             <properties>
+                <maven.test.skip>false</maven.test.skip>
                 <selenide.baseUrl>http://10.100.100.200:8080/r2kweb</selenide.baseUrl>
                 <selenide.headless>true</selenide.headless>
                 <selenide.screenshots>true</selenide.screenshots>

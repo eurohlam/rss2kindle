@@ -28,6 +28,11 @@ public final class PageUtils {
         Selenide.close();
     }
 
+    @Step("Clear browser cache")
+    public static void clearBrowserCache() {
+        Selenide.clearBrowserCookies();
+        Selenide.clearBrowserLocalStorage();
+    }
 
     @Step("Navigate To {pageName}")
     private static <T extends Page> T navigateToPage(String pageName, Class<T> pageClass) {

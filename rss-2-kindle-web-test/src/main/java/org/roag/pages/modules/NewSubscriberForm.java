@@ -14,7 +14,7 @@ public class NewSubscriberForm extends AbstractPageModule {
     private SelenideElement newRss = selenideElement().$("input#new_subscriber_addrss");
     private SelenideElement addRssBtn = selenideElement().$("button#btn_new_subscriber_addrss");
     private SelenideElement deleteRssBtn = selenideElement().$("button#btn_new_subscriber_deleterss");
-    private SelenideElement submitBtn = selenideElement().$("input[type='submit']"); //TODO: why it is input instead of button?
+    private SelenideElement submitBtn = selenideElement().$("button[type='submit']"); //TODO: why it is input instead of button?
 
     public NewSubscriberForm(SelenideElement selector) {
         super(selector);

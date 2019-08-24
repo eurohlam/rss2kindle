@@ -3,17 +3,15 @@ package org.roag.junit;
 import org.junit.jupiter.api.extension.*;
 import org.roag.config.Config;
 import org.roag.pages.LoginPage;
-import org.roag.pages.PageUtils;
 import org.roag.pages.ProfilePage;
 import org.roag.pages.SignUpPage;
 
-import static org.roag.pages.PageUtils.at;
-import static org.roag.pages.PageUtils.to;
+import static org.roag.pages.PageUtils.*;
 
 /**
  * Created by eurohlam on 18/08/19.
  */
-public class LifecycleTestExtension implements BeforeAllCallback, BeforeEachCallback, AfterEachCallback {
+public class LifecycleTestExtension implements BeforeAllCallback, BeforeEachCallback, AfterEachCallback, AfterAllCallback {
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
@@ -29,6 +27,11 @@ public class LifecycleTestExtension implements BeforeAllCallback, BeforeEachCall
 
     @Override
     public void afterEach(ExtensionContext extensionContext) throws Exception {
-        PageUtils.closeWebDriver();
+        clearBrowserCache();
+    }
+
+    @Override
+    public void afterAll(ExtensionContext extensionContext) throws Exception {
+        closeWebDriver();
     }
 }

@@ -402,7 +402,7 @@
                             <div class="form-group">
                                 <%--<label for="starttime">Start date</label>--%>
                                 <%--<p><input type="date" id="starttime" class="form-control"/></p>--%>
-                                <input type="submit" value="Create" class="btn btn-primary"/>
+                                <button type="submit" class="btn btn-primary">Create</button>
                             </div>
                         </form>
                     </div>
