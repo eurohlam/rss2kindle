@@ -18,7 +18,6 @@
         <allure.version>2.10.0</allure.version>
         <aspectj.version>1.8.10</aspectj.version>
         <junit.jupiter.version>5.5.1</junit.jupiter.version>
-        <javafaker.version>0.17.2</javafaker.version>
 
         <selenide.baseUrl>http://localhost:8080/r2kweb</selenide.baseUrl>
         <selenide.headless>true</selenide.headless>

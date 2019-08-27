@@ -24,6 +24,7 @@
         <junit.version>4.11</junit.version>
         <mockito.version>2.1.0-RC.1</mockito.version>
         <testng.version>6.9.8</testng.version>
+        <javafaker.version>0.17.2</javafaker.version>
         <!-- Maven plugins versions -->
         <resources.plugin.version>3.0.2</resources.plugin.version>
         <compiler.plugin.version>3.6.1</compiler.plugin.version>
@@ -105,6 +106,11 @@
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+            <version>${javafaker.version}</version>
         </dependency>
     </dependencies>
 

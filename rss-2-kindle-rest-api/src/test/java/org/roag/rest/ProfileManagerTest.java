@@ -1,5 +1,6 @@
 package org.roag.rest;
 
+import com.github.javafaker.Faker;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTestNg;
 import org.roag.model.Rss;
@@ -51,9 +52,10 @@ public class ProfileManagerTest extends JerseyTestNg.ContainerPerClassTest {
 
     @Test(groups = {"Subscribers:CRUD"})
     public void crudSubscriberTestHtmlForm() {
-        final String newEmail = "test2@mail.com";
-        final String newName = "test_name";
-        final String newRss = "http://test.com/rss";
+        final Faker faker = new Faker();
+        final String newEmail = faker.internet().emailAddress();
+        final String newName = faker.funnyName().name();
+        final String newRss = "http://" + faker.internet().url();
         final ModelFactory factory = new ModelFactory();
 
         //create
@@ -95,9 +97,10 @@ public class ProfileManagerTest extends JerseyTestNg.ContainerPerClassTest {
 
     @Test(groups = {"Subscribers:CRUD"})
     public void crudSubscriberTestJson() {
-        String newEmail = "test2@mail.com";
-        String newName = "test_name";
-        String newRss = "http://test.com/rss";
+        final Faker faker = new Faker();
+        final String newEmail = faker.internet().emailAddress();
+        final String newName = faker.funnyName().name();
+        final String newRss = "http://" + faker.internet().url();
         ModelFactory factory = new ModelFactory();
 
         //create

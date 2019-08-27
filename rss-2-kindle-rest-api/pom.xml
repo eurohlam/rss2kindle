@@ -97,7 +97,12 @@
       <version>2.26-b09</version>
       <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <groupId>com.github.javafaker</groupId>
+      <artifactId>javafaker</artifactId>
+      <version>${javafaker.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <profiles>
