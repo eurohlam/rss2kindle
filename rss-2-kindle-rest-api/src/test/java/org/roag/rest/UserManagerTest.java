@@ -60,7 +60,7 @@ public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest {
         Form formNew = new Form();
         formNew.param("username", newUser);
         formNew.param("email", newEmail);
-        formNew.param("password", "12345");
+        formNew.param("password", faker.internet().password(6,8));
         Response response = target(PATH + "new").request().post(Entity.form(formNew), Response.class);
         assertEquals("Creating new User failed", 200, response.getStatus());
 

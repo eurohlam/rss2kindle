@@ -107,7 +107,11 @@ public class UserManager {
                             @FormParam("password") String password) {
         logger.info("Add new user {}", username);
         try {
-            OperationResult result = userRepository.addUser(modelFactory.newUser(username, email, password));
+            User user = modelFactory.newUser(username, email, password);
+            if (!isValid(user)) {
+                return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), validationErrors.toString()).build();
+            }
+            OperationResult result = userRepository.addUser(user);
             logger.info(result.toString());
             if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
@@ -153,6 +157,9 @@ public class UserManager {
         logger.warn("Update existing user {}", username);
         try {
             User user = userRepository.getUser(username);
+            if (!isValid(user)) {
+                return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), validationErrors.toString()).build();
+            }
             user.setPassword(password);
             OperationResult result = userRepository.updateUser(user);
             if (result == OperationResult.SUCCESS) {
@@ -174,6 +181,9 @@ public class UserManager {
         logger.warn("Requested to update existing user with data {}", message);
         try {
             User user = modelFactory.json2Pojo(User.class, message);
+            if (!isValid(user)) {
+                return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), validationErrors.toString()).build();
+            }
             OperationResult result = userRepository.updateUser(user);
             if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
