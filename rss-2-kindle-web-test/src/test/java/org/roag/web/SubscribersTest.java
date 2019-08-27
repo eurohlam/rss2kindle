@@ -1,6 +1,7 @@
 package org.roag.web;
 
 import com.codeborne.selenide.Condition;
+import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +16,8 @@ import static org.roag.pages.PageUtils.at;
 @ExtendWith(LifecycleTestExtension.class)
 public class SubscribersTest {
 
+    private Faker faker = new Faker();
+
     @Test
     void addSubscriberTest() {
         at(ProfilePage.class)
@@ -22,10 +25,10 @@ public class SubscribersTest {
                 .navigateTo(NavigationItem.SUBSCRIBERS);
         SubscribersPage page = at(SubscribersPage.class)
                 .addNewSubscriber(s -> s
-                        .setName("kindle1")
-                        .setEmail("test1@kindle.com")
-                        .addRss("http://test.org/feed")
-                        .addRss("http://johnwick.alive/feed")
+                        .setName(faker.name().username())
+                        .setEmail(faker.internet().emailAddress())
+                        .addRss("http://" + faker.internet().url())
+                        .addRss("https://" + faker.internet().url())
                         .clickSubmit()
                 );
         Assertions.assertTrue(page.alertPanel().getText().contains("Success!"));
@@ -33,19 +36,20 @@ public class SubscribersTest {
 
     @Test
     void editSubscriberTest() {
+        String subscriber = faker.name().username();
         at(ProfilePage.class)
                 .sidebar()
                 .navigateTo(NavigationItem.SUBSCRIBERS);
         SubscribersPage page = at(SubscribersPage.class)
                 .addNewSubscriber(s -> s
-                        .setName("suspendUser")
-                        .setEmail("suspend@test.com")
-                        .addRss("http://suspend.com/feed")
+                        .setName(subscriber)
+                        .setEmail(faker.internet().emailAddress())
+                        .addRss("https://" + faker.internet().url())
                         .clickSubmit())
                 .editSubscriber(s -> s
-                        .suspendSubscriber("suspendUser")
-                        .resumeSubscriber("suspendUser")
-                        .removeSubscriber("suspendUser"));
+                        .suspendSubscriber(subscriber)
+                        .resumeSubscriber(subscriber)
+                        .removeSubscriber(subscriber));
         Assertions.assertTrue(page.alertPanel().getText().contains("Success!"));
     }
 }

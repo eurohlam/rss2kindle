@@ -62,7 +62,7 @@ public class ProfileManager {
     }
 
     @GET
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}")
+    @Path("/{email: [\\w\\.]+@[\\w\\.]+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSubscriber(@PathParam("username") String username, @PathParam("email") String subscriberId) {
         logger.debug("Fetch subscriber {} for user {}", subscriberId, username);
@@ -76,7 +76,7 @@ public class ProfileManager {
     }
 
     @GET
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/suspend")
+    @Path("/{email: [\\w\\.]+@[\\w\\.]+}/suspend")
     @Produces(MediaType.APPLICATION_JSON)
     public Response suspendSubscriber(@PathParam("username") String username, @PathParam("email") String subscriberId) {
         logger.warn("Suspend subscriber {} for user {}", subscriberId, username);
@@ -94,7 +94,7 @@ public class ProfileManager {
     }
 
     @GET
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/resume")
+    @Path("/{email: [\\w\\.]+@[\\w\\.]+}/resume")
     @Produces(MediaType.APPLICATION_JSON)
     public Response resumeSubscriber(@PathParam("username") String username, @PathParam("email") String subscriberId) {
         logger.warn("Resume subscriber {} for user {}", subscriberId, username);
@@ -201,7 +201,7 @@ public class ProfileManager {
     }
 
     @DELETE
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/remove")
+    @Path("/{email: [\\w\\.]+@[\\w\\.]+}/remove")
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeSubscriber(@PathParam("username") String username, @PathParam("email") String subscriberId) {
         logger.warn("Remove subscriber {} for user {}", subscriberId, username);
@@ -219,7 +219,7 @@ public class ProfileManager {
     }
 
     @GET
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/subscriptions")
+    @Path("/{email: [\\w\\.]+@[\\w\\.]+}/subscriptions")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllSubscriptions(@PathParam("username") String username, @PathParam("email") String subscriberId) {
         logger.debug("Fetch all subscriptions for subscriber {} by user {}", subscriberId, username);
@@ -234,7 +234,7 @@ public class ProfileManager {
     }
 
     @POST
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/subscribe")
+    @Path("/{email: [\\w\\.]+@[\\w\\.]+}/subscribe")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSubscription(@PathParam("username") String username,
@@ -266,7 +266,7 @@ public class ProfileManager {
     }
 
     @POST
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/unsubscribe")
+    @Path("/{email: [\\w\\.]+@[\\w\\.]+}/unsubscribe")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeSubscription(@PathParam("username") String username,
