@@ -23,7 +23,7 @@ import java.util.List;
  * Created by eurohlam on 30.08.17.
  */
 @Service
-@Path("profile/{username: [a-zA-Z][a-zA-Z_0-9]*}")
+@Path("profile/{username: [a-zA-Z_.0-9]*}")
 public class ProfileManager {
 
     private final Logger logger = LoggerFactory.getLogger(ProfileManager.class);
