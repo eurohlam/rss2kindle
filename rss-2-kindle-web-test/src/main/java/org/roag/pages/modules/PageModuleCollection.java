@@ -71,7 +71,7 @@ public class PageModuleCollection<T extends PageModule> implements Collection<T>
 
     @Override
     public boolean contains(Object o) {
-        return false;
+        return (o instanceof PageModule) && selector.get().contains(((PageModule) o).selenideElement());
     }
 
     @Override

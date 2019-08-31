@@ -52,4 +52,21 @@ public class SubscribersTest {
                         .removeSubscriber(subscriber));
         Assertions.assertTrue(page.alertPanel().getText().contains("Success!"));
     }
+
+
+    @Test
+    void updateSubscriberTest() {
+        String subscriber = faker.name().username();
+        at(ProfilePage.class)
+                .sidebar()
+                .navigateTo(NavigationItem.SUBSCRIBERS);
+        SubscribersPage page = at(SubscribersPage.class)
+                .addNewSubscriber(s -> s
+                        .setName(subscriber)
+                        .setEmail(faker.internet().emailAddress())
+                        .addRss("https://" + faker.internet().url())
+                        .clickSubmit())
+                .editSubscriber(s -> s
+                        .openUpdateSubscriberForm(subscriber));
+    }
 }

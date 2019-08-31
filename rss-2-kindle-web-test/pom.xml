@@ -14,8 +14,8 @@
     <properties>
         <maven.test.skip>true</maven.test.skip>
 
-        <selenide.version>5.2.0</selenide.version>
-        <allure.version>2.10.0</allure.version>
+        <selenide.version>5.2.8</selenide.version>
+        <allure.version>2.12.1</allure.version>
         <aspectj.version>1.8.10</aspectj.version>
         <junit.jupiter.version>5.5.1</junit.jupiter.version>
 

@@ -34,6 +34,7 @@ public class SubscribersPage extends AbstractPage {
         return this;
     }
 
+    @Step("Edit subscriber")
     public SubscribersPage editSubscriber(Consumer<EditSubscribersForm> consumer) {
         editSubscriberLink.click();
         editSubscribersForm.shouldBe(Condition.visible);
