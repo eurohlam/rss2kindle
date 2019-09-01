@@ -53,7 +53,8 @@ public class SubscriberRecord extends AbstractPageModule {
         removeBtn.click();
     }
 
-    public void openSubscriberDetails(String name) {
+    @Step("Open subscriber details")
+    public void openSubscriberDetails() {
         selenideElement().$x("./td[2]/a").click();
     }
 

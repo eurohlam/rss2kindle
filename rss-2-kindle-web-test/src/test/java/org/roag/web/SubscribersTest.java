@@ -1,14 +1,13 @@
 package org.roag.web;
 
-import com.codeborne.selenide.Condition;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.roag.junit.LifecycleTestExtension;
 import org.roag.pages.ProfilePage;
 import org.roag.pages.SubscribersPage;
-import org.roag.pages.modules.AbstractNavigationBar;
 import org.roag.pages.modules.NavigationItem;
 
 import static org.roag.pages.PageUtils.at;
@@ -19,6 +18,7 @@ public class SubscribersTest {
     private Faker faker = new Faker();
 
     @Test
+    @DisplayName("Testing creation of new subscriber")
     void addSubscriberTest() {
         at(ProfilePage.class)
                 .sidebar()
@@ -35,7 +35,8 @@ public class SubscribersTest {
     }
 
     @Test
-    void editSubscriberTest() {
+    @DisplayName("Testing operations with subscriber: suspend, resume and remove")
+    void subscriberOperationsTest() {
         String subscriber = faker.name().username();
         at(ProfilePage.class)
                 .sidebar()
@@ -55,6 +56,7 @@ public class SubscribersTest {
 
 
     @Test
+    @DisplayName("Testing updating subscriber via modal form")
     void updateSubscriberTest() {
         String subscriber = faker.name().username();
         at(ProfilePage.class)
@@ -67,6 +69,16 @@ public class SubscribersTest {
                         .addRss("https://" + faker.internet().url())
                         .clickSubmit())
                 .editSubscriber(s -> s
-                        .openUpdateSubscriberForm(subscriber));
+                        .updateSubscriber(subscriber, f -> f
+                                .setName(faker.funnyName().name())
+                                .addRss("http://" + faker.internet().url())
+                                .addRss("http://" + faker.internet().url())
+                                .addRss("https://" + faker.internet().url())
+                                .addRss("https://" + faker.internet().url())
+                                .addRss("http://" + faker.internet().url())
+                                .addRss("http://" + faker.internet().url())
+                                .addRss("https://" + faker.internet().url())
+                                .addRss("http://" + faker.internet().url())
+                                .submit()));
     }
 }

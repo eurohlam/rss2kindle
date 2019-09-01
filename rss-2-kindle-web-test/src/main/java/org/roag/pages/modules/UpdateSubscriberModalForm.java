@@ -36,8 +36,9 @@ public class UpdateSubscriberModalForm extends ModalForm {
         return this;
     }
 
-    public UpdateSubscriberModalForm deleteRss(String rss) {
-        rssList.selectOptionByValue(rss);
+    @Step("Delete RSS {url}")
+    public UpdateSubscriberModalForm deleteRss(String url) {
+        rssList.selectOptionByValue(url);
         deleteRssBtn.click();
         return this;
     }

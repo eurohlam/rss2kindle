@@ -1,6 +1,7 @@
 package org.roag.web;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.roag.config.Config;
@@ -19,6 +20,7 @@ public class LoginTest {
 
     @Test
     @DisplayName("Login Test")
+    @Disabled
     void loginTest() {
         to(SignUpPage.class)
                 .signUpWith(Config.credentials())

@@ -9,7 +9,8 @@ import java.util.function.Supplier;
 public class ModalForm extends AbstractPageModule {
 
     private SelenideElement submitBtn = selenideElement().$("button[type='submit']");
-    private SelenideElement cancelBtn = selenideElement().$("button[type='button']");
+    private SelenideElement cancelBtn = selenideElement().$("button[type='button'].btn-default");
+    private SelenideElement closeBtn = selenideElement().$("button.close");
 
     public ModalForm(SelenideElement selector) {
         super(selector);
@@ -25,7 +26,7 @@ public class ModalForm extends AbstractPageModule {
     }
 
     @Step("Click submit")
-    void submit() {
+    public void submit() {
         submitBtn.shouldBe(Condition.visible, Condition.enabled);
         submitBtn.click();
         if (submitBtn.isDisplayed()) {
@@ -34,11 +35,20 @@ public class ModalForm extends AbstractPageModule {
     }
 
     @Step("Click cancel")
-    void cancel() {
+    public void cancel() {
         cancelBtn.shouldBe(Condition.visible, Condition.enabled);
         cancelBtn.click();
         if (cancelBtn.isDisplayed()) {
             cancelBtn.click();
+        }
+    }
+
+    @Step("Click close")
+    public void close() {
+        closeBtn.shouldBe(Condition.visible, Condition.enabled);
+        closeBtn.click();
+        if (closeBtn.isDisplayed()) {
+            closeBtn.click();
         }
     }
 }

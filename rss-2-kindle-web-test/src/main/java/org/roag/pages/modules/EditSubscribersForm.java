@@ -3,6 +3,8 @@ package org.roag.pages.modules;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
+
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static com.codeborne.selenide.Selenide.$;
@@ -13,10 +15,10 @@ public class EditSubscribersForm extends AbstractPageModule {
     private PageModuleCollection<SubscriberRecord> subscriberList = new PageModuleCollection<>(
             selenideElement().$$x("//table/tbody/tr"), SubscriberRecord::new);
 
-    private ModalForm suspendModalForm = new ModalForm($("form#suspend_subscriber_form"));
-    private ModalForm resumeModalForm = new ModalForm($("form#resume_subscriber_form"));
-    private ModalForm removeModalForm = new ModalForm($("form#remove_subscriber_form"));
-    private UpdateSubscriberModalForm updateModalForm = new UpdateSubscriberModalForm($("form#update_subscriber_form"));
+    private ModalForm suspendModalForm = new ModalForm($("div#suspendModal"));
+    private ModalForm resumeModalForm = new ModalForm($("div#resumeModal"));
+    private ModalForm removeModalForm = new ModalForm($("div#removeModal"));
+    private UpdateSubscriberModalForm updateModalForm = new UpdateSubscriberModalForm($("div#updateModal"));
 
     public EditSubscribersForm(final SelenideElement selector) {
         super(selector);
@@ -64,10 +66,16 @@ public class EditSubscribersForm extends AbstractPageModule {
     }
 
     @Step("Update subscriber {subscriber}")
-    public UpdateSubscriberModalForm openUpdateSubscriberForm(String subscriber) {
+    public EditSubscribersForm updateSubscriber(String subscriber, Consumer<UpdateSubscriberModalForm> consumer) {
         subscriberList.findBy(Condition.text(subscriber)).clickUpdate();
         updateModalForm.shouldBe(Condition.visible);
         updateModalForm.shouldHave(Condition.text(subscriber));
-        return updateModalForm;
+        consumer.accept(updateModalForm);
+        return this;
+    }
+
+    @Step("Navigate to details page for subscriber {subscriber}")
+    public void subscriberDetails(String subscriber) {
+        subscriberList.findBy(Condition.text(subscriber)).openSubscriberDetails();
     }
 }
