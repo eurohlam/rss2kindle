@@ -61,4 +61,9 @@ public class SubscriptionRecord extends AbstractPageModule {
     public String getRetryCount() {
         return selenideElement().$x("./td[7]").getText();
     }
+
+    @Override
+    public String toString() {
+        return getRss() + " | " + getStatus();
+    }
 }

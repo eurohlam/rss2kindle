@@ -53,8 +53,8 @@ public class SubscriberRecord extends AbstractPageModule {
         removeBtn.click();
     }
 
-    @Step("Open subscriber details")
-    public void openSubscriberDetails() {
+    @Step("Navigate to subscriber details page")
+    public void navigateToSubscriberDetails() {
         selenideElement().$x("./td[2]/a").click();
     }
 
@@ -76,5 +76,10 @@ public class SubscriberRecord extends AbstractPageModule {
     @Step("Get number of subscriptions")
     public String getNumberOfSubscriptions() {
         return selenideElement().$x("./td[5]").getText();
+    }
+
+    @Override
+    public String toString() {
+        return getName() + " | " + getEmail() + " | " + getStatus();
     }
 }

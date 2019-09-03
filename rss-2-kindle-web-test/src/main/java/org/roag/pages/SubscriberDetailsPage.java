@@ -3,8 +3,10 @@ package org.roag.pages;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import org.roag.pages.modules.PageModuleCollection;
-import org.roag.pages.modules.SubscriptionRecord;
+import org.roag.pages.modules.*;
+
+import java.util.Arrays;
+import java.util.function.Supplier;
 
 import static com.codeborne.selenide.Selenide.*;
 
@@ -15,9 +17,14 @@ public class SubscriberDetailsPage extends AbstractPage {
     private SelenideElement deactivateBtn = $("button#deactivate_btn");
     private SelenideElement removeBtn = $("button#remove_btn");
 
+    private ModalForm activateModalForm = new ModalForm($("div#activateModal"));
+    private ModalForm deactivateModalForm = new ModalForm($("div#deactivateModal"));
+    private ModalForm removeModalForm = new ModalForm($("div#removeModal"));
+    private NewSubscriptionsForm newSubscriptionsForm = new NewSubscriptionsForm($("div#addModal"));
+
 
     private PageModuleCollection<SubscriptionRecord> subscriptionList = new PageModuleCollection<>(
-            $$x("//div[id='details']/table/tbody/tr"), SubscriptionRecord::new);
+            $$x("//div[@id='details']/table/tbody/tr"), SubscriptionRecord::new);
 
     @Override
     public String getPath() {
@@ -30,82 +37,130 @@ public class SubscriberDetailsPage extends AbstractPage {
     }
 
     @Step("Add new subscription {url}")
-    public SubscriberDetailsPage addSubscriptions(String url) {
-        //TODO: add subscription
+    public SubscriberDetailsPage addSubscriptions(String... url) {
         addBtn.click();
+        newSubscriptionsForm.shouldBe(Condition.visible);
+        Arrays.stream(url).forEach(newSubscriptionsForm::addRss);
+        newSubscriptionsForm.clickSubmit();
+        return this;
+    }
+
+    @Step("Activate subscription {subscriptionRecord}")
+    public SubscriberDetailsPage activateSubscription(SubscriptionRecord subscriptionRecord) {
+        subscriptionRecord.check();
+        activateBtn.click();
+        activateModalForm.shouldBe(Condition.visible);
+        activateModalForm.submit();
         return this;
     }
 
     @Step("Activate subscription {url}")
-    public SubscriberDetailsPage activateSubscription(String url) {
-        subscriptionList.findBy(Condition.text(url)).check();
-        activateBtn.click();
-        //TODO: modal form
-        return this;
+    public SubscriberDetailsPage activateSubscriptionByUrl(String url) {
+        return activateSubscription(subscriptionList.findBy(Condition.text(url)));
     }
 
     @Step("Activate first subscription")
     public SubscriberDetailsPage activateFirst() {
-        subscriptionList.first().check();
-        activateBtn.click();
-        //TODO: modal form
-        return this;
+        return activateSubscription(subscriptionList.first());
     }
 
     @Step("Activate last subscription")
     public SubscriberDetailsPage activateLast() {
-        subscriptionList.last().check();
-        activateBtn.click();
-        //TODO: modal form
+        return activateSubscription(subscriptionList.last());
+    }
+
+    @Step("Deactivate subscription {subscriptionRecord}")
+    public SubscriberDetailsPage deactivateSubscription(SubscriptionRecord subscriptionRecord) {
+        subscriptionRecord.check();
+        deactivateBtn.click();
+        deactivateModalForm.shouldBe(Condition.visible);
+        deactivateModalForm.submit();
         return this;
     }
 
-    @Step("Deactivate subscription {url}")
-    public SubscriberDetailsPage deactivateSubscription(String url) {
-        subscriptionList.findBy(Condition.text(url)).check();
-        deactivateBtn.click();
-        //TODO: modal form
-        return this;
+    @Step("Deactivate subscription with URL: {url}")
+    public SubscriberDetailsPage deactivateSubscriptionByUrl(String url) {
+        return deactivateSubscription(subscriptionList.findBy(Condition.text(url)));
     }
 
     @Step("Deactivate first subscription")
     public SubscriberDetailsPage deactivateFirst() {
-        subscriptionList.first().check();
-        deactivateBtn.click();
-        //TODO: modal form
-        return this;
+        return deactivateSubscription(subscriptionList.first());
     }
 
     @Step("Deactivate last subscription")
     public SubscriberDetailsPage deactivateLast() {
-        subscriptionList.last().check();
-        deactivateBtn.click();
-        //TODO: modal form
-        return this;
+        return deactivateSubscription(subscriptionList.last());
     }
 
     @Step("Remove subscription {url}")
-    public SubscriberDetailsPage removeSubscription(String url) {
-        subscriptionList.findBy(Condition.text(url)).check();
+    public SubscriberDetailsPage removeSubscription(SubscriptionRecord subscriptionRecord) {
+        subscriptionRecord.check();
         removeBtn.click();
-        //TODO: modal form
+        removeModalForm.shouldBe(Condition.visible);
+        removeModalForm.submit();
         return this;
+    }
+
+    @Step("Remove subscription with URL: {url}")
+    public SubscriberDetailsPage removeSubscriptionByUrl(String url) {
+        return removeSubscription(subscriptionList.findBy(Condition.text(url)));
     }
 
     @Step("Remove first subscription")
     public SubscriberDetailsPage removeFirst() {
-        subscriptionList.first().check();
-        removeBtn.click();
-        //TODO: modal form
-        return this;
+        return removeSubscription(subscriptionList.first());
     }
 
     @Step("Remove last subscription")
     public SubscriberDetailsPage removeLast() {
-        subscriptionList.last().check();
-        removeBtn.click();
-        //TODO: modal form
-        return this;
+        return  removeSubscription(subscriptionList.last());
     }
 
+
+    private class NewSubscriptionsForm extends AbstractPageModule {
+
+        private SelenideElement rssList = selenideElement().$("select#rss_list");
+        private SelenideElement newRss = selenideElement().$("input#new_rss");
+        private SelenideElement addRssBtn = selenideElement().$("button#btn_addrss");
+        private SelenideElement deleteRssBtn = selenideElement().$("button#btn_deleterss");
+        private SelenideElement submitBtn = selenideElement().$("button[type='submit']");
+
+        public NewSubscriptionsForm(SelenideElement selector) {
+            super(selector);
+        }
+
+        public NewSubscriptionsForm(Supplier<SelenideElement> selector) {
+            super(selector);
+        }
+
+        @Override
+        public boolean isDisplayed() {
+            return selenideElement().isDisplayed();
+        }
+
+        @Step("Add subscription {rss}")
+        public NewSubscriptionsForm addRss(String rss) {
+            rssList.shouldBe(Condition.visible);
+            newRss.setValue(rss);
+            addRssBtn.click();
+            return this;
+        }
+
+        @Step("Delete subscription {rss}")
+        public NewSubscriptionsForm deleteRss(String rss) {
+            //TODO: implement to delete RSS
+            deleteRssBtn.click();
+            return this;
+        }
+
+        @Step("Click submit")
+        public NewSubscriptionsForm clickSubmit() {
+            submitBtn.shouldBe(Condition.visible);
+            submitBtn.shouldBe(Condition.enabled);
+            submitBtn.click();
+            return this;
+        }
+
+    }
 }

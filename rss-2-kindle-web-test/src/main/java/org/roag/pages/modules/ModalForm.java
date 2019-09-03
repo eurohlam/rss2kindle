@@ -29,8 +29,10 @@ public class ModalForm extends AbstractPageModule {
     public void submit() {
         submitBtn.shouldBe(Condition.visible, Condition.enabled);
         submitBtn.click();
-        if (submitBtn.isDisplayed()) {
-            submitBtn.click();
+        //TODO: something wrong with closing modal form after clicking
+        if (submitBtn.isDisplayed() && closeBtn.isDisplayed()) {
+            //if a modal form is still open we want just to close the modal form
+            closeBtn.click();
         }
     }
 

@@ -11,11 +11,11 @@ public abstract class AbstractPageModule implements PageModule {
 
     private final Supplier<SelenideElement> selector;
 
-    AbstractPageModule(final SelenideElement selector) {
+    public AbstractPageModule(final SelenideElement selector) {
         this(() -> selector);
     }
 
-    AbstractPageModule(final Supplier<SelenideElement> selector) {
+    public AbstractPageModule(final Supplier<SelenideElement> selector) {
         this.selector = selector;
     }
 

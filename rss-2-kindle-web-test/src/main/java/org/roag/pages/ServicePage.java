@@ -15,7 +15,7 @@ public class ServicePage extends AbstractPage {
 
     @Override
     public String getPath() {
-        return "/view/services";
+        return "/view/service";
     }
 
     @Step("Click poll my subscriptions immediately")

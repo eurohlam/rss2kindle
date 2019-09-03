@@ -74,8 +74,8 @@ public class EditSubscribersForm extends AbstractPageModule {
         return this;
     }
 
-    @Step("Navigate to details page for subscriber {subscriber}")
-    public void subscriberDetails(String subscriber) {
-        subscriberList.findBy(Condition.text(subscriber)).openSubscriberDetails();
+    @Step("Navigate to details page for subscriber: {subscriber}")
+    public void navigateToSubscriberDetails(String subscriber) {
+        subscriberList.findBy(Condition.text(subscriber)).navigateToSubscriberDetails();
     }
 }

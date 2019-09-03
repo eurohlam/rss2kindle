@@ -31,16 +31,16 @@
             $.getJSON(rootURL+ '/${subscriber}', function (data) {
                 userData = data;
 
-                var rssTable = '<table class="table table-hover">' +
+                var rssTable = '<table class="table table-hover"><thead>' +
                     '<tr>' +
-                    '<th><input type="checkbox" class="form-check-input" id="select_all_checkbox"/></th>' +
+                    '<th style="vertical-align: initial"><input type="checkbox" class="form-check-input" id="select_all_checkbox"/></th>' +
                     '<th>#</th>' +
                     '<th>rss</th>' +
                     '<th>status</th>' +
                     '<th>last polling date</th>' +
                     '<th>error message</th>' +
                     '<th>retry count</th>' +
-                    '</tr><tbody>';
+                    '</tr></thead><tbody>';
 
                 $.each(data.rsslist, function (i, item) {
                     var tr;
