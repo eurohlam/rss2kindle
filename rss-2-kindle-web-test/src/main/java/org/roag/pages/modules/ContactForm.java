@@ -13,11 +13,11 @@ import static com.codeborne.selenide.Selenide.$;
  */
 public class ContactForm extends AbstractPageModule {
 
-    private SelenideElement name = $("input#name");
-    private SelenideElement email = $("input#email");
-    private SelenideElement phone = $("input#phone");
-    private SelenideElement message = $("textarea#message");
-    private SelenideElement sendBtn = $("button#sendMessageButton");
+    private SelenideElement name = selenideElement().$("input#name");
+    private SelenideElement email = selenideElement().$("input#email");
+    private SelenideElement phone = selenideElement().$("input#phone");
+    private SelenideElement message = selenideElement().$("textarea#message");
+    private SelenideElement sendBtn = selenideElement().$("button#sendMessageButton");
 
     public ContactForm(SelenideElement selector) {
         super(selector);

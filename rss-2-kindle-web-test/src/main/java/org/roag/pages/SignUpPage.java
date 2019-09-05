@@ -18,6 +18,7 @@ public class SignUpPage extends AbstractPage {
     private SelenideElement email = $("input#email");
     private SelenideElement password = $("input#password");
     private SelenideElement confirmPassword = $("input#confirmPassword");
+    private SelenideElement checkEmail = $("input#check_email");
     private SelenideElement signUpBtn = $("button.btn");
 
     @Override
@@ -70,6 +71,12 @@ public class SignUpPage extends AbstractPage {
     public SignUpPage setConfirmPassword(String confirmPassword) {
         this.confirmPassword.shouldBe(Condition.visible);
         this.confirmPassword.setValue(confirmPassword);
+        return this;
+    }
+
+    @Step("Set email into fake field for Singing Up {email}")
+    public SignUpPage setCheckEmail(String email) {
+        this.checkEmail.setValue(email);
         return this;
     }
 

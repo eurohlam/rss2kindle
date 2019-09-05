@@ -118,7 +118,7 @@ public class SubscriberDetailsPage extends AbstractPage {
     }
 
 
-    private class NewSubscriptionsForm extends AbstractPageModule {
+    private static class NewSubscriptionsForm extends AbstractPageModule {
 
         private SelenideElement rssList = selenideElement().$("select#rss_list");
         private SelenideElement newRss = selenideElement().$("input#new_rss");

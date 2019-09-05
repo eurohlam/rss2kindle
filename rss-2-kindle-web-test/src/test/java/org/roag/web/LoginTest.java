@@ -16,6 +16,7 @@ import static org.roag.pages.PageUtils.to;
 /**
  * Created by eurohlam on 17/08/19.
  */
+@DisplayName("Login Page Tests")
 public class LoginTest {
 
     @Test
