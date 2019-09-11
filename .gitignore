@@ -10,3 +10,4 @@ misc
 docker-dir/tomcat/resources/*.war
 .DS_Store
 kindle/kindlegen.exe
+kindle/kindlegen
