@@ -60,7 +60,7 @@
                     .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td>')
                     .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>')
                     .append('<td>' + item.status + '</td>')
-                    .append('<td>'+ rss.length + '</td>')
+                    .append('<td>'+ rss.length + '</td>');
                 subscribersTable.append(tr);
 
                 for (j = 0; j < rss.length; j++) {
