@@ -182,6 +182,70 @@
             }
         }); //select_all_checkbox.change
 
+        var subscribersTable = $('<table>')
+                .addClass('table table-hover')
+                .append('<thead>' +
+                    '<tr><th>#</th>' +
+                    '<th>subscriber</th>' +
+                    '<th>email</th>' +
+                    '<th>status</th>' +
+                    '<th>number of subscriptions</th>' +
+                    '</tr></thead>')
+        .append('<tbody>');
+
+        var rssTable = '<table class="table table-hover"><thead>' +
+            '<tr><th>#</th>' +
+            '<th>subscription</th>' +
+            '<th>status</th>' +
+            '<th>send to</th>' +
+            '</tr></thead><tbody>';
+        var rssNumber = 0;
+        var suspendedSubscribersnumber = 0;
+        var deadRssNumber = 0;
+        var offlineRssNumber = 0;
+
+        $.each(userData.subscribers, function (i, item) {
+            var tr = $('<tr>');
+            if (item.status === 'suspended') {
+                tr.addClass('table-danger');
+                suspendedSubscribersnumber++;
+            }
+            else {
+                tr.addClass('table-light');
+            }
+            subscribersTable.append(tr.append('<td>' + (i + 1) + '</td><td>'
+                + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><td>'
+                + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td><td>'
+                + item.status + '</td>'));
+
+            var rss = item.rsslist;
+//            subscribersTable += rss.length + '</td></tr>';
+
+            for (j = 0; j < rss.length; j++) {
+                if (rss[j].status === 'dead') {
+                    tr = '<tr class="table-danger"><td>';
+                    deadRssNumber++;
+                }
+                else if (rss[j].status === 'offline') {
+                    tr = '<tr class="table-warning"><td>';
+                    offlineRssNumber++;
+                }
+                else
+                    tr = '<tr class="table-light"><td>';
+
+                rssNumber++;
+
+                rssTable += tr + rssNumber + '</td><td>'
+                    + '<a href="' + rss[j].rss + '" target="_blank">' + rss[j].rss + '</a></td><td>'
+                    + rss[j].status + '</td><td>'
+                    + item.email + '</td></tr>';
+            }
+
+        });
+        //subscribersTable += '</tbody></table>';
+        //rssTable += '</tbody></table>';
+        $('#test').append(subscribersTable);
+
     }); // $(document).ready()
 
     function getUserData() {
@@ -323,6 +387,7 @@
                         </table>
 
                     </div>
+                    <div id="test"></div>
                 </form>
             </div>
         </main>

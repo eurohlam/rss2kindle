@@ -6,8 +6,6 @@ import io.qameta.allure.Step;
 
 import java.util.function.Supplier;
 
-import static com.codeborne.selenide.Selenide.$;
-
 /**
  * Created eurohlam on 19/08/2019.
  */

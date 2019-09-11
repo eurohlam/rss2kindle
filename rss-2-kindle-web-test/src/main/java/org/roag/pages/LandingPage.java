@@ -8,6 +8,7 @@ import org.roag.pages.modules.ContactForm;
 import java.util.function.Consumer;
 
 import static com.codeborne.selenide.Selenide.$;
+import static org.roag.pages.PageUtils.at;
 
 public class LandingPage extends AbstractPage {
 
@@ -95,6 +96,13 @@ public class LandingPage extends AbstractPage {
             psModalForm.$("a.portfolio-modal-dismiss.btn").click();
         }
         return this;
+    }
+
+    @Step("Click Sign Up button")
+    public SignUpPage clickSignUp() {
+        signUpBtn.shouldBe(Condition.visible, Condition.enabled);
+        signUpBtn.click();
+        return at(SignUpPage.class);
     }
 
 }
