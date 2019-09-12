@@ -182,69 +182,59 @@
             }
         }); //select_all_checkbox.change
 
-        var subscribersTable = $('<table>')
-                .addClass('table table-hover')
-                .append('<thead>' +
-                    '<tr><th>#</th>' +
-                    '<th>subscriber</th>' +
-                    '<th>email</th>' +
-                    '<th>status</th>' +
-                    '<th>number of subscriptions</th>' +
-                    '</tr></thead>')
-        .append('<tbody>');
-
-        var rssTable = '<table class="table table-hover"><thead>' +
-            '<tr><th>#</th>' +
-            '<th>subscription</th>' +
-            '<th>status</th>' +
-            '<th>send to</th>' +
-            '</tr></thead><tbody>';
-        var rssNumber = 0;
-        var suspendedSubscribersnumber = 0;
-        var deadRssNumber = 0;
-        var offlineRssNumber = 0;
+        var table = $('<table>')
+            .addClass('table table-hover')
+            .append( '<thead>' +
+                '<tr><th>#</th>' +
+                '<th>name</th>' +
+                '<th>email</th>' +
+                '<th>status</th>' +
+                '<th>action</th></tr></thead>')
+            .append('<tbody>');
 
         $.each(userData.subscribers, function (i, item) {
             var tr = $('<tr>');
             if (item.status === 'suspended') {
                 tr.addClass('table-danger');
-                suspendedSubscribersnumber++;
-            }
-            else {
+            } else {
                 tr.addClass('table-light');
             }
-            subscribersTable.append(tr.append('<td>' + (i + 1) + '</td><td>'
-                + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><td>'
-                + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td><td>'
-                + item.status + '</td>'));
 
-            var rss = item.rsslist;
-//            subscribersTable += rss.length + '</td></tr>';
+            tr.append('<td>' + (i + 1) + '</td>' +
+                '<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><' +
+                '<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>' +
+                '<td>' + item.status + '</td>');
 
-            for (j = 0; j < rss.length; j++) {
-                if (rss[j].status === 'dead') {
-                    tr = '<tr class="table-danger"><td>';
-                    deadRssNumber++;
-                }
-                else if (rss[j].status === 'offline') {
-                    tr = '<tr class="table-warning"><td>';
-                    offlineRssNumber++;
-                }
-                else
-                    tr = '<tr class="table-light"><td>';
+            var btnDiv = $('<div>')
+                .addClass('btn-group')
+                .attr({'role': 'group'});
+            btnDiv.append('<button id="btn_update" type="button" class="btn btn-outline-primary" ' +
+                'data-toggle="modal" data-target="#updateModal" ' +
+                'data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">' +
+                '<span data-tooltip="tooltip" data-placement="top" title="Edit subscriber">' +
+                '<i class="far fa-edit fa-lg"></i></span></button>');
 
-                rssNumber++;
-
-                rssTable += tr + rssNumber + '</td><td>'
-                    + '<a href="' + rss[j].rss + '" target="_blank">' + rss[j].rss + '</a></td><td>'
-                    + rss[j].status + '</td><td>'
-                    + item.email + '</td></tr>';
+            if (item.status === 'suspended') {
+                btnDiv.append('<button id="btn_resume" type="button" class="btn btn-warning" ' +
+                    'data-toggle="modal"  data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
+                    '<span data-tooltip="tooltip" data-placement="top" title="Resume subscriber">' +
+                    '<i class="far fa-play-circle fa-lg"></i></span></button>');
+            } else {
+                btnDiv.append('<button id="btn_suspend" type="button" class="btn btn-outline-warning" ' +
+                    'data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
+                    '<span data-tooltip="tooltip" data-placement="top" title="Suspend subscriber">' +
+                    '<i class="far fa-pause-circle fa-lg"></i></span></button>');
             }
 
+            btnDiv.append('<button id="btn_remove" type="button" class="btn btn-outline-danger" ' +
+                'data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
+                '<span data-tooltip="tooltip" data-placement="top" title="Remove subscriber">' +
+                '<i class="far fa-trash-alt fa-lg"></i></span></button>');
+
+            tr.append($('<td>').append(btnDiv));
+            table.append(tr);
         });
-        //subscribersTable += '</tbody></table>';
-        //rssTable += '</tbody></table>';
-        $('#test').append(subscribersTable);
+        $('#test').append(table);
 
     }); // $(document).ready()
 

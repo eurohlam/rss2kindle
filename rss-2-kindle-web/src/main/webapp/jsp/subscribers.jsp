@@ -52,7 +52,7 @@
                          '<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>' +
                          '<td>' + item.status + '</td>');
 
-                    var btnDiv = $('div')
+                    var btnDiv = $('<div>')
                         .addClass('btn-group')
                         .attr({'role': 'group'});
                     btnDiv.append('<button id="btn_update" type="button" class="btn btn-outline-primary" ' +
