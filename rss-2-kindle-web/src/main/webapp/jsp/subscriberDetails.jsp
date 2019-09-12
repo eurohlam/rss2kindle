@@ -6,7 +6,7 @@
 <%@include file="_include.jsp" %>
 <html lang="en">
 <head>
-    <%@include file="_head.jsp"%>
+    <%@include file="_head.jsp" %>
 </head>
 
 <body id="page-top">
@@ -28,43 +28,45 @@
         reloadRssTable();
 
         function reloadRssTable() {
-            $.getJSON(rootURL+ '/${subscriber}', function (data) {
+            $.getJSON(rootURL + '/${subscriber}', function (data) {
                 userData = data;
 
-                var rssTable = '<table class="table table-hover"><thead>' +
-                    '<tr>' +
-                    '<th style="vertical-align: initial"><input type="checkbox" class="form-check-input" id="select_all_checkbox"/></th>' +
-                    '<th>#</th>' +
-                    '<th>rss</th>' +
-                    '<th>status</th>' +
-                    '<th>last polling date</th>' +
-                    '<th>error message</th>' +
-                    '<th>retry count</th>' +
-                    '</tr></thead><tbody>';
+                var rssTable = $('<table>')
+                    .addClass('table table-hover')
+                    .append('<thead>' +
+                        '<tr>' +
+                        '<th style="vertical-align: initial"><input type="checkbox" class="form-check-input" id="select_all_checkbox"/></th>' +
+                        '<th>#</th>' +
+                        '<th>rss</th>' +
+                        '<th>status</th>' +
+                        '<th>last polling date</th>' +
+                        '<th>error message</th>' +
+                        '<th>retry count</th>' +
+                        '</tr></thead>')
+                    .append('<tbody>');
 
                 $.each(data.rsslist, function (i, item) {
-                    var tr;
+                    var tr = $('<tr>');
                     if (item.status === 'dead') {
-                        tr = '<tr class="table-danger">';
+                        tr.addClass('table-danger');
                     }
                     else if (item.status === 'offline') {
-                        tr = '<tr class="table-warning">';
+                        tr.addClass('table-warning');
                     }
                     else {
-                        tr = '<tr class="table-light">';
+                        tr.addClass('table-light');
                     }
 
-                    tr += '<td><input type="checkbox" class="form-check-input" id="' + item.rss + '"/></td><td>';
+                    tr.append('<td><input type="checkbox" class="form-check-input" id="' + item.rss + '"/></td>'
+                        + '<td>' + (i + 1) + '</td>'
+                        + '<td><a href="' + item.rss + '" target="_blank">' + item.rss + '</a></td>'
+                        + '<td>' + item.status + '</td>'
+                        + '<td>' + item.lastPollingDate + '</td>'
+                        + '<td>' + item.errorMessage + '</td>'
+                        + '<td>' + item.retryCount + '</td>');
 
-                    rssTable += tr + (i + 1) + '</td><td>'
-                        + '<a href="' + item.rss + '" target="_blank">' + item.rss + '</a></td><td>'
-                        + item.status + '</td><td>'
-                        + item.lastPollingDate + '</td><td>'
-                        + item.errorMessage + '</td><td>'
-                        + item.retryCount + '</td></tr>'
-
+                    rssTable.append(tr);
                 });
-                rssTable += '</tbody></table>';
                 $("#details").html(rssTable);
 
                 $("#select_all_checkbox").change(function (e) {
@@ -183,7 +185,7 @@
         } //end of updateSubscriptions
 
         $('#btn_addrss').click(function (event) {
-            var newRssField=$('#new_rss');
+            var newRssField = $('#new_rss');
             var rss = newRssField.val();
             newRssField.popover(
                 {
@@ -227,20 +229,24 @@
                     <form id="subscribers_form" action="" method="post">
                         <div class="btn-toolbar bg-light" role="toolbar" aria-label="">
                             <div class="btn-group" role="group">
-                                <button id="add_btn" class="navbar-brand btn-outline-info" type="submit" data-tooltip="tooltip" data-placement="top" title="New subscription">
+                                <button id="add_btn" class="navbar-brand btn-outline-info" type="submit"
+                                        data-tooltip="tooltip" data-placement="top" title="New subscription">
                                     <i class="fas fa-plus-circle fa-2x"></i>
                                 </button>
                             </div>
                             <div class="btn-group mr-2" role="group" aria-label="">
-                                <button id="activate_btn" class="navbar-brand btn-outline-primary" type="submit" data-tooltip="tooltip" data-placement="top" title="Activate subscriptions">
+                                <button id="activate_btn" class="navbar-brand btn-outline-primary" type="submit"
+                                        data-tooltip="tooltip" data-placement="top" title="Activate subscriptions">
                                     <i class="far fa-play-circle fa-2x"></i>
                                 </button>
-                                <button id="deactivate_btn" class="navbar-brand btn-outline-warning" type="submit" data-tooltip="tooltip" data-placement="top" title="Deactivate subscriptions">
+                                <button id="deactivate_btn" class="navbar-brand btn-outline-warning" type="submit"
+                                        data-tooltip="tooltip" data-placement="top" title="Deactivate subscriptions">
                                     <i class="far fa-pause-circle fa-2x"></i>
                                 </button>
                             </div>
                             <div class="btn-group" role="group">
-                                <button id="remove_btn" class="navbar-brand btn-outline-danger" type="submit" data-tooltip="tooltip" data-placement="top" title="Remove subscriptions">
+                                <button id="remove_btn" class="navbar-brand btn-outline-danger" type="submit"
+                                        data-tooltip="tooltip" data-placement="top" title="Remove subscriptions">
                                     <i class="far fa-trash-alt fa-2x"></i>
                                 </button>
                             </div>
