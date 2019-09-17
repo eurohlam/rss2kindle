@@ -15,13 +15,15 @@ import org.springframework.stereotype.Service;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by eurohlam on 30.08.17.
  */
 @Service
-@Path("profile/{username: [a-zA-Z][a-zA-Z_0-9]*}")
+@Path("profile/{username: [a-zA-Z_.0-9]*}")
 public class ProfileManager {
 
     private final Logger logger = LoggerFactory.getLogger(ProfileManager.class);
@@ -33,6 +35,8 @@ public class ProfileManager {
     private SubscriberRepository subscriberRepository;
 
     private ModelFactory modelFactory = new ModelFactory();
+
+    private List<String> validationErrors = Collections.EMPTY_LIST;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -62,7 +66,7 @@ public class ProfileManager {
     }
 
     @GET
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}")
+    @Path("/{email: [\\w\\.]+@[\\w\\.]+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSubscriber(@PathParam("username") String username, @PathParam("email") String subscriberId) {
         logger.debug("Fetch subscriber {} for user {}", subscriberId, username);
@@ -76,7 +80,7 @@ public class ProfileManager {
     }
 
     @GET
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/suspend")
+    @Path("/{email: [\\w\\.]+@[\\w\\.]+}/suspend")
     @Produces(MediaType.APPLICATION_JSON)
     public Response suspendSubscriber(@PathParam("username") String username, @PathParam("email") String subscriberId) {
         logger.warn("Suspend subscriber {} for user {}", subscriberId, username);
@@ -94,7 +98,7 @@ public class ProfileManager {
     }
 
     @GET
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/resume")
+    @Path("/{email: [\\w\\.]+@[\\w\\.]+}/resume")
     @Produces(MediaType.APPLICATION_JSON)
     public Response resumeSubscriber(@PathParam("username") String username, @PathParam("email") String subscriberId) {
         logger.warn("Resume subscriber {} for user {}", subscriberId, username);
@@ -121,7 +125,11 @@ public class ProfileManager {
                                   @FormParam("rss") String rss) {
         logger.info("Add new subscriber {} for user {}", email, username);
         try {
-            OperationResult result = subscriberRepository.addSubscriber(username, modelFactory.newSubscriber(email, name, rss));
+            Subscriber subscriber = modelFactory.newSubscriber(email, name, rss);
+            if (!isValid(subscriber)) {
+                return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), validationErrors.toString()).build();
+            }
+            OperationResult result = subscriberRepository.addSubscriber(username, subscriber);
             if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             } else {
@@ -142,6 +150,9 @@ public class ProfileManager {
         logger.info("Requested to add a new subscriber for user {} with data {}", username, message);
         try {
             Subscriber subscriber = modelFactory.json2Pojo(Subscriber.class, message);
+            if (!isValid(subscriber)) {
+                return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), validationErrors.toString()).build();
+            }
             OperationResult result = subscriberRepository.addSubscriber(username, subscriber);
             if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
@@ -168,7 +179,11 @@ public class ProfileManager {
                                      @FormParam("rss") String rss) {
         logger.warn("Update existing subscriber {} for user {}", email, username);
         try {
-            OperationResult result = subscriberRepository.updateSubscriber(username, modelFactory.newSubscriber(email, name, rss));
+            Subscriber subscriber = modelFactory.newSubscriber(email, name, rss);
+            if (!isValid(subscriber)) {
+                return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), validationErrors.toString()).build();
+            }
+            OperationResult result = subscriberRepository.updateSubscriber(username, subscriber);
             if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
             } else {
@@ -188,6 +203,9 @@ public class ProfileManager {
         logger.warn("Requested to update existing subscriber for user {} with data {}", username, message);
         try {
             Subscriber subscriber = modelFactory.json2Pojo(Subscriber.class, message);
+            if (!isValid(subscriber)) {
+                return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), validationErrors.toString()).build();
+            }
             OperationResult result = subscriberRepository.updateSubscriber(username, subscriber);
             if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
@@ -201,7 +219,7 @@ public class ProfileManager {
     }
 
     @DELETE
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/remove")
+    @Path("/{email: [\\w\\.]+@[\\w\\.]+}/remove")
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeSubscriber(@PathParam("username") String username, @PathParam("email") String subscriberId) {
         logger.warn("Remove subscriber {} for user {}", subscriberId, username);
@@ -219,7 +237,7 @@ public class ProfileManager {
     }
 
     @GET
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/subscriptions")
+    @Path("/{email: [\\w\\.]+@[\\w\\.]+}/subscriptions")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllSubscriptions(@PathParam("username") String username, @PathParam("email") String subscriberId) {
         logger.debug("Fetch all subscriptions for subscriber {} by user {}", subscriberId, username);
@@ -234,7 +252,7 @@ public class ProfileManager {
     }
 
     @POST
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/subscribe")
+    @Path("/{email: [\\w\\.]+@[\\w\\.]+}/subscribe")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addSubscription(@PathParam("username") String username,
@@ -245,7 +263,7 @@ public class ProfileManager {
             Subscriber subscriber = subscriberRepository.getSubscriber(username, subscriberId);
             for (Rss r : subscriber.getRsslist()) {
                 if (r.getRss().equals(rss)) {
-                    return Response.status(Response.Status.CONFLICT).build();
+                    return Response.status(Response.Status.CONFLICT.getStatusCode(), "Duplicated subscription").build();
                 }
             }
 
@@ -266,7 +284,7 @@ public class ProfileManager {
     }
 
     @POST
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}/unsubscribe")
+    @Path("/{email: [\\w\\.]+@[\\w\\.]+}/unsubscribe")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeSubscription(@PathParam("username") String username,
@@ -294,5 +312,43 @@ public class ProfileManager {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    private boolean isValid(Subscriber subscriber) {
+        List<String> errors = new ArrayList<>();
+        boolean isValid = true;
+        if (subscriber.getName().isEmpty()) {
+            errors.add("subscriber's name must not be empty");
+            isValid = false;
+        }
+        if (subscriber.getEmail().isEmpty()) {
+            errors.add("subscriber's email must not be empty");
+            isValid = false;
+        }
+        if (subscriber.getRsslist().size() < 1) {
+            errors.add("subscriber must have at least 1 subscription");
+            isValid = false;
+        }
+        if (!subscriber.getEmail().matches("[\\w.]+@[\\w.]+")) {
+            errors.add("email contains unexpected symbols. It must satisfy the mask [\\w.]+@[\\w.]+");
+            isValid = false;
+        }
+        for (Rss rss: subscriber.getRsslist()) {
+            if (rss.getRss().isEmpty()) {
+                errors.add("subscription must not be empty");
+                isValid = false;
+            }
+            String pattern = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)";
+            if (!rss.getRss().matches(pattern)) {
+                errors.add("incorrect URL for subscription: " + rss.getRss());
+                isValid = false;
+            }
+        }
+        if (isValid) {
+            validationErrors = Collections.EMPTY_LIST;
+        } else {
+            validationErrors = errors;
+        }
+        return isValid;
     }
 }

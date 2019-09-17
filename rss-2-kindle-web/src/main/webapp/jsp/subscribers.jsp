@@ -29,50 +29,58 @@
         function reloadSubscribersTable() {
             $.getJSON(rootURL + username, function (data) {
                 userData = data;
-                var table = '<table class="table table-hover"><thead>' +
+                var table = $('<table>')
+                    .addClass('table table-hover')
+                    .append( '<thead>' +
                     '<tr><th>#</th>' +
                     '<th>name</th>' +
                     '<th>email</th>' +
                     '<th>status</th>' +
-                    '<th>action</th></tr></thead><tbody>';
+                    '<th>action</th></tr></thead>')
+                    .append('<tbody>');
 
                 $.each(data.subscribers, function (i, item) {
-                    var tr;
+                    var tr = $('<tr>');
                     if (item.status === 'suspended') {
-                        tr = '<tr class="table-danger"><td>';
+                        tr.addClass('table-danger');
                     } else {
-                        tr = '<tr class="table-light"><td>';
+                        tr.addClass('table-light');
                     }
 
-                    table += tr + (i + 1) + '</td><td>' +
-                         '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><td>' +
-                         '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td><td>' + item.status + '</td><td>' +
-                         '<div class="btn-group" role="group">' +
-                         '<button id="btn_update" type="button" class="btn btn-outline-primary" ' +
+                    tr.append('<td>' + (i + 1) + '</td>' +
+                         '<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><' +
+                         '<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>' +
+                         '<td>' + item.status + '</td>');
+
+                    var btnDiv = $('<div>')
+                        .addClass('btn-group')
+                        .attr({'role': 'group'});
+                    btnDiv.append('<button id="btn_update" type="button" class="btn btn-outline-primary" ' +
                             'data-toggle="modal" data-target="#updateModal" ' +
                             'data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">' +
                             '<span data-tooltip="tooltip" data-placement="top" title="Edit subscriber">' +
-                            '<i class="far fa-edit fa-lg"></i></span></button>';
+                            '<i class="far fa-edit fa-lg"></i></span></button>');
 
                     if (item.status === 'suspended') {
-                        table += '<button id="btn_resume" type="button" class="btn btn-warning" ' +
+                        btnDiv.append('<button id="btn_resume" type="button" class="btn btn-warning" ' +
                             'data-toggle="modal"  data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
                             '<span data-tooltip="tooltip" data-placement="top" title="Resume subscriber">' +
-                            '<i class="far fa-play-circle fa-lg"></i></span></button>';
+                            '<i class="far fa-play-circle fa-lg"></i></span></button>');
                     } else {
-                        table += '<button id="btn_suspend" type="button" class="btn btn-outline-warning" ' +
+                        btnDiv.append('<button id="btn_suspend" type="button" class="btn btn-outline-warning" ' +
                             'data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
                             '<span data-tooltip="tooltip" data-placement="top" title="Suspend subscriber">' +
-                            '<i class="far fa-pause-circle fa-lg"></i></span></button>';
+                            '<i class="far fa-pause-circle fa-lg"></i></span></button>');
                     }
 
-                    table += '<button id="btn_remove" type="button" class="btn btn-outline-danger" ' +
+                    btnDiv.append('<button id="btn_remove" type="button" class="btn btn-outline-danger" ' +
                         'data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
                         '<span data-tooltip="tooltip" data-placement="top" title="Remove subscriber">' +
-                        '<i class="far fa-trash-alt fa-lg"></i></span></button></div></td></tr>';
+                        '<i class="far fa-trash-alt fa-lg"></i></span></button>');
 
+                    tr.append($('<td>').append(btnDiv));
+                    table.append(tr);
                 });
-                table += '</tbody></table>';
                 $('#edit_subscriber').html(table);
             });
         } //end of reloadSubscribersTable
@@ -402,7 +410,7 @@
                             <div class="form-group">
                                 <%--<label for="starttime">Start date</label>--%>
                                 <%--<p><input type="date" id="starttime" class="form-control"/></p>--%>
-                                <input type="submit" value="Create" class="btn btn-primary"/>
+                                <button type="submit" class="btn btn-primary">Create</button>
                             </div>
                         </form>
                     </div>

@@ -1,5 +1,6 @@
 package org.roag.rest;
 
+import com.github.javafaker.Faker;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTestNg;
 import org.roag.model.User;
@@ -49,16 +50,17 @@ public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest {
 
     @Test(groups = {"UserManager:CRUD"})
     public void crudTestHtmlForm() {
-        final String newUser = "formUser";
-        final String newEmail = "html@mail.com";
-        final String newPassword = "htmlforever";
+        final Faker faker = new Faker();
+        final String newEmail = faker.internet().emailAddress();
+        final String newUser = faker.name().username();
+        final String newPassword = faker.internet().password(6,8);
         final ModelFactory factory = new ModelFactory();
 
         //create from html form
         Form formNew = new Form();
         formNew.param("username", newUser);
         formNew.param("email", newEmail);
-        formNew.param("password", "12345");
+        formNew.param("password", faker.internet().password(6,8));
         Response response = target(PATH + "new").request().post(Entity.form(formNew), Response.class);
         assertEquals("Creating new User failed", 200, response.getStatus());
 
@@ -92,15 +94,16 @@ public class UserManagerTest extends JerseyTestNg.ContainerPerClassTest {
 
     @Test(groups = {"UserManager:CRUD"})
     public void crudTestJson() {
-        final String newUser = "jsonUser";
-        final String newEmail = "json@mail.com";
-        final String newPassword = "jsonforever";
+        final Faker faker = new Faker();
+        final String newEmail = faker.internet().emailAddress();
+        final String newUser = faker.name().username();
+        final String newPassword = faker.internet().password(6,8);
         final ModelFactory factory = new ModelFactory();
 
         //create from json
-        User u = factory.newUser(newUser, newEmail, "12345");
+        User u = factory.newUser(newUser, newEmail, faker.internet().password(6,8));
         Response response = target(PATH + "new").request().post(Entity.json(factory.pojo2Json(u)), Response.class);
-        assertEquals("Creating new User failed", 200, response.getStatus());
+        assertEquals("Creating new User failed: " + response.getStatusInfo().getReasonPhrase(), 200, response.getStatus());
 
         //read
         response = target(PATH + newUser).request().accept(MediaType.APPLICATION_JSON_TYPE).get();

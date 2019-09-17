@@ -26,7 +26,7 @@ public class ServiceManager {
     private SubscriberRepository subscriberRepository;
 
     @GET
-    @Path("/{email: \\w+@\\w+\\.[a-zA-Z]{2,}}")
+    @Path("/{email: [\\w\\.]+@[\\w\\.]+}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response runRssPollingForSubscriber(@PathParam("username") String username, @PathParam("email") String id) {
         logger.info("Run RSS polling by demand: user {}, subscriber {}", username, id);

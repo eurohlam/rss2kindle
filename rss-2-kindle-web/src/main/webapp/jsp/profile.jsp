@@ -8,7 +8,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%@include file="_head.jsp"%>
+    <%@include file="_head.jsp" %>
 </head>
 
 <body id="page-top">
@@ -20,65 +20,73 @@
         $.getJSON(rootURL, function (data) {
             userData = data;
 
-            var subscribersTable = '<table class="table table-hover"><thead>' +
-                '<tr><th>#</th>' +
-                '<th>subscriber</th>' +
-                '<th>email</th>' +
-                '<th>status</th>' +
-                '<th>number of subscriptions</th>' +
-                '</tr></thead><tbody>';
+            var subscribersTable = $('<table>')
+                .addClass('table table-hover')
+                .append('<thead>' +
+                    '<tr><th>#</th>' +
+                    '<th>subscriber</th>' +
+                    '<th>email</th>' +
+                    '<th>status</th>' +
+                    '<th>number of subscriptions</th>' +
+                    '</tr></thead>')
+                .append('<tbody>');
 
-            var rssTable = '<table class="table table-hover"><thead>' +
-                '<tr><th>#</th>' +
-                '<th>subscription</th>' +
-                '<th>status</th>' +
-                '<th>send to</th>' +
-                '</tr></thead><tbody>';
+            var rssTable = $('<table>').addClass('table table-hover')
+                .append('<thead>' +
+                    '<tr><th>#</th>' +
+                    '<th>subscription</th>' +
+                    '<th>status</th>' +
+                    '<th>send to</th>' +
+                    '</tr></thead>')
+                .append('<tbody>');
             var rssNumber = 0;
             var suspendedSubscribersnumber = 0;
             var deadRssNumber = 0;
             var offlineRssNumber = 0;
 
             $.each(data.subscribers, function (i, item) {
-                var tr;
+                var rss = item.rsslist;
+                var tr = $('<tr>');
+
                 if (item.status === 'suspended') {
-                    tr = '<tr class="table-danger"><td>';
+                    tr.addClass('table-danger');
                     suspendedSubscribersnumber++;
                 }
-                else
-                    tr = '<tr class="table-light"><td>';
+                else {
+                    tr.addClass('table-light');
+                }
 
-                subscribersTable += tr + (i + 1) + '</td><td>'
-                    + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><td>'
-                    + '<a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td><td>'
-                    + item.status + '</td><td>';
-
-                var rss = item.rsslist;
-                subscribersTable += rss.length + '</td></tr>';
+                tr.append('<td>' + (i +1) + '</td>')
+                    .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td>')
+                    .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>')
+                    .append('<td>' + item.status + '</td>')
+                    .append('<td>'+ rss.length + '</td>');
+                subscribersTable.append(tr);
 
                 for (j = 0; j < rss.length; j++) {
+                    var rssTr = $('<tr>');
                     if (rss[j].status === 'dead') {
-                        tr = '<tr class="table-danger"><td>';
+                        rssTr.addClass('table-danger');
                         deadRssNumber++;
                     }
                     else if (rss[j].status === 'offline') {
-                        tr = '<tr class="table-warning"><td>';
+                        rssTr.addClass('table-warning');
                         offlineRssNumber++;
                     }
-                    else
-                        tr = '<tr class="table-light"><td>';
+                    else {
+                        rssTr.addClass('table-light');
+                    }
 
                     rssNumber++;
 
-                    rssTable += tr + rssNumber + '</td><td>'
-                        + '<a href="' + rss[j].rss + '" target="_blank">' + rss[j].rss + '</a></td><td>'
-                        + rss[j].status + '</td><td>'
-                        + item.email + '</td></tr>';
+                    rssTr.append('<td>' + rssNumber + '</td>')
+                        .append('<td><a href="' + rss[j].rss + '" target="_blank">' + rss[j].rss + '</a></td>')
+                        .append('<td>' + rss[j].status + '</td>')
+                        .append('<td>' + item.email + '</td>');
+                    rssTable.append(rssTr);
                 }
 
             });
-            subscribersTable += '</tbody></table>';
-            rssTable += '</tbody></table>';
 
             $('#dashboard_user_status').append('<h5>User status: ' + data.status + '</h5>');
             $('#dashboard_user_info').append(
@@ -141,10 +149,12 @@
                     </div>
                 </div>
                 <div class="row" style="padding-top: 5rem">
-                    <div class="col-xl-6 text-left" id="subscribers_view" style="padding-left: 2rem; padding-right: 2rem">
+                    <div class="col-xl-6 text-left" id="subscribers_view"
+                         style="padding-left: 2rem; padding-right: 2rem">
                         <h3 class="sub-header">Subscribers</h3>
                     </div>
-                    <div class="col-xl-6 text-left" id="subscriptions_view" style="padding-left: 2rem; padding-right: 2rem">
+                    <div class="col-xl-6 text-left" id="subscriptions_view"
+                         style="padding-left: 2rem; padding-right: 2rem">
                         <h3 class="sub-header">Subscriptions</h3>
                     </div>
                 </div>

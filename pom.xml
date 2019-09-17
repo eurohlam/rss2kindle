@@ -24,6 +24,7 @@
         <junit.version>4.11</junit.version>
         <mockito.version>2.1.0-RC.1</mockito.version>
         <testng.version>6.9.8</testng.version>
+        <javafaker.version>0.17.2</javafaker.version>
         <!-- Maven plugins versions -->
         <resources.plugin.version>3.0.2</resources.plugin.version>
         <compiler.plugin.version>3.6.1</compiler.plugin.version>
@@ -43,6 +44,7 @@
         <module>rss-2-kindle-rest-api</module>
         <module>rss-2-kindle-web</module>
         <module>docker-dir</module>
+        <module>rss-2-kindle-web-test</module>
     </modules>
 
     <dependencies>
@@ -105,6 +107,11 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+            <version>${javafaker.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -127,6 +134,11 @@
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M3</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

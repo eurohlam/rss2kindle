@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by eurohlam on 09.11.16.
@@ -25,6 +28,8 @@ public class UserManager {
     private UserRepository userRepository;
 
     private ModelFactory modelFactory;
+
+    private List<String> validationErrors = Collections.EMPTY_LIST;
 
     public UserManager() {
         super();
@@ -45,7 +50,7 @@ public class UserManager {
     }
 
     @GET
-    @Path("/{username: [a-zA-Z][a-zA-Z_0-9]*}")
+    @Path("/{username: [a-zA-Z_.0-9]*}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUser(@PathParam("username") String id) {
         logger.debug("Fetch user {} from repository", id);
@@ -59,7 +64,7 @@ public class UserManager {
     }
 
     @GET
-    @Path("/{username: [a-zA-Z][a-zA-Z_0-9]*}/lock")
+    @Path("/{username: [a-zA-Z_.0-9]*}/lock")
     @Produces(MediaType.APPLICATION_JSON)
     public Response lockUser(@PathParam("username") String id) {
         logger.warn("Lock user {}", id);
@@ -77,7 +82,7 @@ public class UserManager {
     }
 
     @GET
-    @Path("/{username: [a-zA-Z][a-zA-Z_0-9]*}/unlock")
+    @Path("/{username: [a-zA-Z_.0-9]*}/unlock")
     @Produces(MediaType.APPLICATION_JSON)
     public Response unlockUser(@PathParam("username") String id) {
         logger.warn("Unlock user {}", id);
@@ -102,7 +107,11 @@ public class UserManager {
                             @FormParam("password") String password) {
         logger.info("Add new user {}", username);
         try {
-            OperationResult result = userRepository.addUser(modelFactory.newUser(username, email, password));
+            User user = modelFactory.newUser(username, email, password);
+            if (!isValid(user)) {
+                return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), validationErrors.toString()).build();
+            }
+            OperationResult result = userRepository.addUser(user);
             logger.info(result.toString());
             if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
@@ -123,6 +132,9 @@ public class UserManager {
         logger.info("Requested to add new user from data {}", message);
         try {
             User user = modelFactory.json2Pojo(User.class, message);
+            if (!isValid(user)) {
+                return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), validationErrors.toString()).build();
+            }
             OperationResult result = userRepository.addUser(user);
             logger.info(result.toString());
             if (result == OperationResult.SUCCESS) {
@@ -145,6 +157,9 @@ public class UserManager {
         logger.warn("Update existing user {}", username);
         try {
             User user = userRepository.getUser(username);
+            if (!isValid(user)) {
+                return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), validationErrors.toString()).build();
+            }
             user.setPassword(password);
             OperationResult result = userRepository.updateUser(user);
             if (result == OperationResult.SUCCESS) {
@@ -166,6 +181,9 @@ public class UserManager {
         logger.warn("Requested to update existing user with data {}", message);
         try {
             User user = modelFactory.json2Pojo(User.class, message);
+            if (!isValid(user)) {
+                return Response.status(Response.Status.BAD_REQUEST.getStatusCode(), validationErrors.toString()).build();
+            }
             OperationResult result = userRepository.updateUser(user);
             if (result == OperationResult.SUCCESS) {
                 return Response.ok(result.toJson(), MediaType.APPLICATION_JSON_TYPE).build();
@@ -179,7 +197,7 @@ public class UserManager {
     }
 
     @DELETE
-    @Path("/{username: [a-zA-Z][a-zA-Z_0-9]*}/remove")
+    @Path("/{username: [a-zA-Z_.0-9]*}/remove")
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeUser(@PathParam("username") String id) {
         logger.warn("Remove user {}", id);
@@ -194,6 +212,41 @@ public class UserManager {
             logger.error(e.getMessage(), e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    private boolean isValid(User user) {
+        List<String> errors = new ArrayList<>();
+        boolean isValid = true;
+        if (user.getUsername().isEmpty()) {
+            errors.add("username must not be empty");
+            isValid = false;
+        }
+        if (user.getPassword().isEmpty()) {
+            errors.add("password must not be empty");
+            isValid = false;
+        }
+        if (user.getEmail().isEmpty()) {
+            errors.add("email must not be empty");
+            isValid = false;
+        }
+        if (user.getPassword().length() < 6) {
+            errors.add("password must not be less then 6 symbols");
+            isValid = false;
+        }
+        if (!user.getUsername().matches("[a-zA-Z_.0-9]*")) {
+            errors.add("username contains unexpected symbols. It must satisfy the mask [a-zA-Z_.0-9]*");
+            isValid = false;
+        }
+        if (!user.getEmail().matches("[\\w.]+@[\\w.]+")) {
+            errors.add("email contains unexpected symbols. It must satisfy the mask [\\w.]+@[\\w.]+");
+            isValid = false;
+        }
+        if (isValid) {
+            validationErrors = Collections.EMPTY_LIST;
+        } else {
+            validationErrors = errors;
+        }
+        return isValid;
     }
 
 }
