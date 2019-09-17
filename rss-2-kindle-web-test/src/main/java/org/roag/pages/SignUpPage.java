@@ -20,6 +20,7 @@ public class SignUpPage extends AbstractPage {
     private SelenideElement confirmPassword = $("input#confirmPassword");
     private SelenideElement checkEmail = $("input#check_email");
     private SelenideElement signUpBtn = $("button.btn");
+    private SelenideElement errorMessage = $("span.error");
 
     @Override
     public String getPath() {
@@ -85,5 +86,11 @@ public class SignUpPage extends AbstractPage {
         this.signUpBtn.shouldBe(Condition.visible);
         this.signUpBtn.click();
         return this;
+    }
+
+    @Step("Get error message")
+    public String errorMessage() {
+        errorMessage.shouldBe(Condition.visible);
+        return errorMessage.getText();
     }
 }

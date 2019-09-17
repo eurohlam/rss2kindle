@@ -1,9 +1,6 @@
 package org.roag.web;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.roag.config.Config;
 import org.roag.pages.LoginPage;
 import org.roag.pages.ProfilePage;
@@ -17,6 +14,7 @@ import static org.roag.pages.PageUtils.to;
  * Created by eurohlam on 17/08/19.
  */
 @DisplayName("Login Page Tests")
+@Tag("SECURITY")
 public class LoginTest {
 
     @Test
