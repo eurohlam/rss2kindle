@@ -24,7 +24,8 @@
         <selenide.screenshots>true</selenide.screenshots>
         <selenide.holdBrowserOpen>false</selenide.holdBrowserOpen>
         <selenide.proxyEnabled>false</selenide.proxyEnabled>
-        <selenide.browser>chrome</selenide.browser>
+        <selenide.browser>firefox</selenide.browser>
+        <junit.parallelism>5</junit.parallelism>
 
         <r2k.username>testuser</r2k.username>
         <r2k.password>testuser</r2k.password>
@@ -78,7 +79,7 @@
                     </argLine>
                     <systemPropertyVariables>
                         <junit.jupiter.extensions.autodetection.enabled>true</junit.jupiter.extensions.autodetection.enabled>
-                        <junit.jupiter.execution.parallel.config.fixed.parallelism>5</junit.jupiter.execution.parallel.config.fixed.parallelism>
+                        <junit.jupiter.execution.parallel.config.fixed.parallelism>${junit.parallelism}</junit.jupiter.execution.parallel.config.fixed.parallelism>
                         <junit.jupiter.execution.parallel.config.strategy>fixed</junit.jupiter.execution.parallel.config.strategy>
                         <junit.jupiter.execution.parallel.enabled>true</junit.jupiter.execution.parallel.enabled>
                         <junit.jupiter.execution.parallel.mode.default>concurrent</junit.jupiter.execution.parallel.mode.default>
@@ -130,7 +131,8 @@
                 <selenide.screenshots>true</selenide.screenshots>
                 <selenide.holdBrowserOpen>false</selenide.holdBrowserOpen>
                 <selenide.proxyEnabled>false</selenide.proxyEnabled>
-                <selenide.browser>chrome</selenide.browser>
+                <selenide.browser>firefox</selenide.browser>
+                <junit.parallelism>2</junit.parallelism>
                 <r2k.username>testuser</r2k.username>
                 <r2k.password>testuser</r2k.password>
                 <r2k.email>test@test.com</r2k.email>
@@ -146,6 +148,7 @@
                 <selenide.holdBrowserOpen>false</selenide.holdBrowserOpen>
                 <selenide.proxyEnabled>false</selenide.proxyEnabled>
                 <selenide.browser>firefox</selenide.browser>
+                <junit.parallelism>5</junit.parallelism>
                 <r2k.username>testuser</r2k.username>
                 <r2k.password>testuser</r2k.password>
                 <r2k.email>test@test.com</r2k.email>
