@@ -1,8 +1,9 @@
-version: '2'
+version: '3.7'
 services:
   mongo:
     build: 
       context: ./mongo
+    image: rss2kindle/mongo:v1
     container_name: mongo_act
     ports:
       - "27017:27017"
@@ -13,6 +14,7 @@ services:
   mailhog:
     build:
       context: ./mailhog
+    image: rss2kindle/mailhog:v1
     container_name: mailhog_act
     ports:
       - "8025:8025"
@@ -24,6 +26,7 @@ services:
   tomcat:
     build: 
       context: ./tomcat
+    image: rss2kindle/tomcat:v1
     container_name: tomcat_act
     ports:
       - "8080:8080"

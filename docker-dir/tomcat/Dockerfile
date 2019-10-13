@@ -1,5 +1,4 @@
 FROM tomcat:9.0.7-jre8
-MAINTAINER eurohlam
 LABEL vendor="eurohlam" version="2.0" project="rss2kindle"
 
 COPY resources/bin/setenv.sh /usr/local/tomcat/bin/setenv.sh
