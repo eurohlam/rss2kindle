@@ -1,5 +1,5 @@
 FROM tomcat:9.0.27-jdk8-openjdk
-LABEL vendor="eurohlam" version="2.0" project="rss2kindle"
+LABEL vendor="eurohlam" version="3.1" project="rss2kindle"
 
 COPY resources/bin/setenv.sh /usr/local/tomcat/bin/setenv.sh
 COPY resources/conf/tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
