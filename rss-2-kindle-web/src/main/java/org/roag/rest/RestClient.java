@@ -1,13 +1,9 @@
 package org.roag.rest;
 
-import javax.net.ssl.SSLContext;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import org.glassfish.jersey.SslConfigurator;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
@@ -30,16 +26,5 @@ public interface RestClient {
         }
 
         return response;
-    }
-
-    default Client getTlsClient(String trustStoreFile, String trustStorePassword) {
-        SslConfigurator sslConfigurator = SslConfigurator
-                .newInstance()
-                .securityProtocol("TLSv1")
-                .trustStoreFile(trustStoreFile)
-                .trustStorePassword(trustStorePassword);
-        SSLContext ssl = sslConfigurator.createSSLContext();
-
-        return ClientBuilder.newBuilder().sslContext(ssl).build();
     }
 }
