@@ -8,8 +8,8 @@ COPY resources/conf/tomcat-ssl-keystore.jks /usr/local/tomcat/conf/tomcat-ssl-ke
 COPY resources/manager/META-INF/context.xml /usr/local/tomcat/webapps/manager/META-INF/context.xml
 COPY resources/host-manager/META-INF/context.xml /usr/local/tomcat/webapps/host-manager/META-INF/context.xml
 
-COPY resources/rss2kindle.war /usr/local/tomcat/webapps/rss2kindle.war
-COPY resources/r2kweb.war /usr/local/tomcat/webapps/r2kweb.war
+COPY resources/rss2kindle##*.war /usr/local/tomcat/webapps/
+COPY resources/r2kweb##*.war /usr/local/tomcat/webapps/
 
 COPY resources/kindle /usr/local/kindle
 

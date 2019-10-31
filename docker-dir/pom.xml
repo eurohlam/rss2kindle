@@ -54,7 +54,7 @@
                             <type>war</type>
                             <overWrite>true</overWrite>
                             <!--<outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>-->
-                            <destFileName>rss2kindle.war</destFileName>
+                            <destFileName>rss2kindle##${project.version}.war</destFileName>
                         </artifactItem>
                         <artifactItem>
                             <groupId>org.roag</groupId>
@@ -63,7 +63,7 @@
                             <type>war</type>
                             <overWrite>true</overWrite>
                             <!--<outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>-->
-                            <destFileName>r2kweb.war</destFileName>
+                            <destFileName>r2kweb##${project.version}.war</destFileName>
                         </artifactItem>
                     </artifactItems>
                     <outputDirectory>${basedir}/../${docker.artifact.directory}</outputDirectory>

@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
@@ -35,11 +34,16 @@ public class AdminRestClient implements RestClient {
 
     @Autowired
     public AdminRestClient(@Value("${rest.host}") String restHost, @Value("${rest.port}") String restPort,
-                           @Value("${rest.path}") String restPath) {
+                           @Value("${rest.path}") String restPath, @Value("${truststore.file}") String trustStoreFile,
+                           @Value("${truststore.password}") String trustStorePassword) {
         this.restPath = restPath;
         this.restPort = restPort;
         this.restHost = restHost;
-        target = ClientBuilder.newClient().target(restHost + ":" + restPort + restPath + "/" + USERS_PATH);
+        for (String s: System.getProperties().stringPropertyNames()) {
+            logger.error("{}: {}", s, System.getProperty(s));
+        }
+        //target = ClientBuilder.newClient().target(restHost + ":" + restPort + restPath + "/" + USERS_PATH);
+        target = getTlsClient(trustStoreFile, trustStorePassword).target(restHost + ":" + restPort + restPath + "/" + USERS_PATH);
     }
 
     private Response sendRequest(String path, RequestMethod method, String json) {
