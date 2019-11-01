@@ -23,34 +23,18 @@ services:
       rss2kindle:
         aliases:
           - mailhog
-  tomcat_rest:
+  tomcat:
     build: 
       context: ./tomcat
-      dockerfile: rest-dockerfile
-    image: rss2kindle/rest:3.1
-    container_name: rss2kindle_rest
-    ports:
-      - "7070:8080"
-      - "7443:8443"
-    networks:
-      rss2kindle:
-        aliases:
-          - restserver
-    volumes:
-      - ../logs:/usr/local/tomcat/logs:rw
-      - ../data:/usr/local/tomcat/data:rw
-  tomcat_web:
-    build:
-      context: ./tomcat
-      dockerfile: web-dockerfile
-    image: rss2kindle/web:3.1
-    container_name: rss2kindle_web
+    image: rss2kindle/tomcat:3.1
+    container_name: rss2kindle_tomcat
     ports:
       - "8080:8080"
       - "8443:8443"
     networks:
       - rss2kindle
     volumes:
-      - ../logs_web:/usr/local/tomcat/logs
+      - ../logs:/usr/local/tomcat/logs:rw
+      - ../data:/usr/local/tomcat/data:rw
 networks:
   rss2kindle:
