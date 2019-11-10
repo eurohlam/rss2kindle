@@ -3,12 +3,10 @@ package org.roag.rest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
@@ -32,14 +30,13 @@ public class AdminRestClient implements RestClient {
 
     private WebTarget target;
 
-
     @Autowired
-    public AdminRestClient(@Value("${rest.host}") String restHost, @Value("${rest.port}") String restPort,
-                           @Value("${rest.path}") String restPath) {
-        this.restPath = restPath;
-        this.restPort = restPort;
-        this.restHost = restHost;
-        target = ClientBuilder.newClient().target(restHost + ":" + restPort + restPath + "/" + USERS_PATH);
+    public AdminRestClient(@Autowired ClientHelper clientHelper) {
+        this.restPath = clientHelper.getRestPath();
+        this.restPort = clientHelper.getRestPort();
+        this.restHost = clientHelper.getRestHost();
+        target = clientHelper.getWebTarget(USERS_PATH);
+        //clientHelper.getClient().target(restHost + ":" + restPort + restPath + "/" + USERS_PATH);
     }
 
     private Response sendRequest(String path, RequestMethod method, String json) {

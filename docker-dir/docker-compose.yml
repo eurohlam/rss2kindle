@@ -3,8 +3,8 @@ services:
   mongo:
     build: 
       context: ./mongo
-    image: rss2kindle/mongo:v1
-    container_name: mongo_act
+    image: rss2kindle/mongo:3.1
+    container_name: rss2kindle_mongo
     ports:
       - "27017:27017"
     networks:
@@ -14,8 +14,8 @@ services:
   mailhog:
     build:
       context: ./mailhog
-    image: rss2kindle/mailhog:v1
-    container_name: mailhog_act
+    image: rss2kindle/mailhog:3.1
+    container_name: rss2kindle_mailhog
     ports:
       - "8025:8025"
       - "1025:1025"
@@ -26,8 +26,8 @@ services:
   tomcat:
     build: 
       context: ./tomcat
-    image: rss2kindle/tomcat:v1
-    container_name: tomcat_act
+    image: rss2kindle/tomcat:3.1
+    container_name: rss2kindle_tomcat
     ports:
       - "8080:8080"
       - "8443:8443"
@@ -36,5 +36,8 @@ services:
     volumes:
       - ../logs:/usr/local/tomcat/logs:rw
       - ../data:/usr/local/tomcat/data:rw
+    extra_hosts:
+      - "restserver:127.0.0.1"
+      - "webserver:127.0.0.1"
 networks:
   rss2kindle:

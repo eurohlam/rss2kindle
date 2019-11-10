@@ -1,0 +1,21 @@
+version: 0.2
+
+#AWS pipeline
+phases:
+  install:
+    runtime-versions:
+      java: openjdk8
+  pre_build:
+    commands:
+    - echo Nothing to do in the pre_build phase...
+  build:
+    commands:
+    - echo Build started on `date`
+    - mvn install
+  post_build:
+    commands:
+    - echo Build completed on `date`
+artifacts:
+  files:
+  - rss-2-kindle-web/target/rss-2-kindle-web-3.1-SNAPSHOT.war
+  - rss-2-kindle-rest-api/target/rss-2-kindle-rest-api-3.1-SNAPSHOT.war
