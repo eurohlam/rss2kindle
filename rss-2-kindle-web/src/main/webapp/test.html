@@ -252,7 +252,11 @@
             <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
                 <div class="container">
                     <a class="navbar-brand js-scroll-trigger" href="#">RSS-2-KINDLE</a>
-                    <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-white rounded"
+                    <button class="navbar-toggler text-uppercase bg-primary text-white rounded"
+                            id="sidebar-toggle" type="button"
+                            data-toggle="collapse" data-target="#sidebar-wrapper"
+                            aria-expanded="false" aria-controls="sidebar-wrapper">Sidebar</button>
+                    <button class="navbar-toggler text-uppercase bg-primary text-white rounded"
                             type="button" data-toggle="collapse" data-target="#navbarResponsive"
                             aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                         Menu
@@ -261,12 +265,13 @@
                     <div class="collapse navbar-collapse" id="navbarResponsive">
                         <ul class="navbar-nav ml-auto">
                             <li class="nav-item dropdown active mx-0 mx-lg-1">
-                                <a class="nav-link dropdown-toggle py-3 px-0 px-lg-3 rounded js-scroll-trigger"
+                                <a class="nav-link dropdown-toggle py-3 px-0 px-lg-3 rounded"
                                    id="navbarDropdownMenuLink" data-toggle="dropdown" href="#" role="button"
                                    aria-haspopup="true" aria-expanded="false">
                                     USER <span class="caret"></span>
                                 </a>
-                                <div class="dropdown-menu bg-secondary" aria-labelledby="navbarDropdownMenuLink">
+                                <div class="dropdown-menu bg-secondary dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#">JOPA</a>
                                     <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="javascript:{}"
                                        onclick="document.getElementById('logout').submit(); return false;">Log out</a>
                                 </div>
@@ -291,7 +296,7 @@
     </header>
 
     <div id="wrapper" class="row">
-        <aside id="sidebar-wrapper" class="navbar ">
+        <aside id="sidebar-wrapper" class="collapse">
             <ul class="nav navbar-nav flex-column sidebar-nav text-uppercase">
                 <li class="nav-item"><a class="nav-link active" href="profile">My Profile</a></li>
                 <li class="nav-item"><a class="nav-link" href="subscribers">SUBSCRIBERS</a></li>

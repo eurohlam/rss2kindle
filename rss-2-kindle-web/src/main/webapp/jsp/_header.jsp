@@ -20,7 +20,7 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item dropdown active mx-0 mx-lg-1">
-                            <a class="nav-link dropdown-toggle py-3 px-0 px-lg-3 rounded js-scroll-trigger"
+                            <a class="nav-link dropdown-toggle py-3 px-0 px-lg-3 rounded"
                                id="navbarDropdownMenuLink" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                                 <%=username%> <span class="caret"></span>
                             </a>
