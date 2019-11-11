@@ -4,7 +4,7 @@ Created by eurohlam on 12.05.18
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <aside id="sidebar-wrapper">
-    <ul class="nav flex-column sidebar-nav text-uppercase">
+    <ul class="nav flex-column sidebar-nav text-uppercase list-group">
         <%
             if (roles.contains(Roles.ROLE_ADMIN.toString())) {
         %>

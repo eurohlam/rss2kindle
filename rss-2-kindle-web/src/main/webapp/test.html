@@ -236,6 +236,13 @@
         });
         $('#test').append(table);
 
+
+        <!-- Menu Toggle Script -->
+        $("#sidebar-toggle").click(function(e) {
+            e.preventDefault();
+            console.log("toggle wrapper");
+            $("#wrapper").toggleClass("toggled");
+        });
     }); // $(document).ready()
 
     function getUserData() {
@@ -245,17 +252,20 @@
 
 </script>
 
-<div class="container-fluid">
+<div>
     <header class="row clearfix">
         <!-- Navigation -->
         <form id="logout" action="" method="post">
             <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
                 <div class="container">
                     <a class="navbar-brand js-scroll-trigger" href="#">RSS-2-KINDLE</a>
+                    <button class="btn btn-primary" id="sidebar-toggle">Sidebar</button>
+<!--
                     <button class="navbar-toggler text-uppercase bg-primary text-white rounded"
                             id="sidebar-toggle" type="button"
                             data-toggle="collapse" data-target="#sidebar-wrapper"
                             aria-expanded="false" aria-controls="sidebar-wrapper">Sidebar</button>
+-->
                     <button class="navbar-toggler text-uppercase bg-primary text-white rounded"
                             type="button" data-toggle="collapse" data-target="#navbarResponsive"
                             aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -295,9 +305,9 @@
         </form>
     </header>
 
-    <div id="wrapper" class="row">
-        <aside id="sidebar-wrapper" class="collapse">
-            <ul class="nav navbar-nav flex-column sidebar-nav text-uppercase">
+    <div id="wrapper" class="d-flex">
+        <aside id="sidebar-wrapper" class="bg-secondary border-right">
+            <ul class="nav navbar-nav flex-column sidebar-nav text-uppercase list-group">
                 <li class="nav-item"><a class="nav-link active" href="profile">My Profile</a></li>
                 <li class="nav-item"><a class="nav-link" href="subscribers">SUBSCRIBERS</a></li>
                 <li class="nav-item"><a class="nav-link" href="service">Services</a></li>
@@ -432,10 +442,10 @@
 </div>
 
 <!-- Plugin JavaScript -->
-<script src="vendor/jquery-easing/jquery.easing.js"></script>
-<script src="vendor/magnific-popup/jquery.magnific-popup.js"></script>
+<!--<script src="vendor/jquery-easing/jquery.easing.js"></script>-->
+<!--<script src="vendor/magnific-popup/jquery.magnific-popup.js"></script>-->
 
 <!-- Custom scripts for this template -->
-<script src="js/freelancer.js"></script>
+<!--<script src="js/freelancer.js"></script>-->
 </body>
 </html>
