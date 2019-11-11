@@ -212,10 +212,10 @@
 </script>
 
 
-<div class="container-fluid">
+<div>
     <%@include file="_header.jsp" %>
 
-    <div id="wrapper" class="row">
+    <div id="wrapper" class="d-flex">
         <%@include file="_aside.jsp" %>
 
         <main id="page-content-wrapper">
