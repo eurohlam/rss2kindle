@@ -2,7 +2,7 @@ FROM tomcat:9.0.27-jdk8-openjdk
 LABEL vendor="eurohlam" version="3.1" project="rss2kindle"
 
 RUN mkdir /usr/local/tomcat/restserver /usr/local/tomcat/webserver
-RUN mkdir /usr/local/tomcat/conf/Catalina/webserver
+RUN mkdir /usr/local/tomcat/conf/Catalina /usr/local/tomcat/conf/Catalina/webserver
 
 COPY resources/bin/setenv.sh /usr/local/tomcat/bin/setenv.sh
 COPY resources/conf/tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml

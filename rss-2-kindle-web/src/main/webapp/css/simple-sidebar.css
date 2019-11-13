@@ -26,6 +26,7 @@ body {
 #page-content-wrapper {
   min-width: 100%;
   padding-top: 8rem;
+  margin-bottom: 3rem;
 }
 
 #wrapper.toggled #sidebar-wrapper {
