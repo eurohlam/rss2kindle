@@ -183,7 +183,7 @@
                             </div>
                         </div>
                         <div id="alerts_panel"></div>
-                        <div id="all_users"></div>
+                        <div id="all_users" class="table-responsive-sm"></div>
                     </form>
                 </div>
             </div>

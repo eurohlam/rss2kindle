@@ -252,7 +252,7 @@
                             </div>
                         </div>
                         <div id="alerts_panel" class="row"></div>
-                        <div id="details" class="row"></div>
+                        <div id="details" class="row table-responsive-sm"></div>
                     </form>
                 </div>
             </div>

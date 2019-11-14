@@ -382,7 +382,7 @@
                 </li>
             </ul>
             <div class="row" style="padding-top: 3rem; padding-left: 2rem">
-                <div class="tab-content" id="operationsTabContent">
+                <div class="tab-content table-responsive-sm" id="operationsTabContent">
                     <div id="alerts_panel"></div>
                     <div class="tab-pane fade active"  id="new" role="tabpanel" aria-labelledby="new-tab">
                         <h2>Add new subscriber</h2>
