@@ -48,6 +48,12 @@ body {
   }
 }
 
+@media (max-width: 768px) {
+  h1 {
+    font-size: xx-large;
+  }
+}
+
 .sidebar-nav {
   font-weight: 700;
   font-family: 'Montserrat';
