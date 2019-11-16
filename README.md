@@ -1,4 +1,4 @@
-RSS-to-Kindle Transformer based on Camel
+RSS-to-Kindle Transformer
 ========================================
 
 ## Overview
@@ -71,11 +71,11 @@ You also can build and deploy step by step:
 
 * Web UI should be available by URL:
 
-        http://localhost:8080/r2kweb
+        https://localhost:8443/r2kweb
         
 * Tomcat admin console should be available by URL:
         
-        http://localhost:8080
+        https://localhost:8443/manager
         
 * MailHog Web UI should be available by URL:
         
@@ -94,7 +94,7 @@ You also can build and deploy step by step:
 
    Web UI will be available as
 
-        http://ip_address:8080/r2kweb
+        https://ip_address:8443/r2kweb
 
 
 * MailHog SMTP port is 1025
@@ -109,11 +109,6 @@ You also can build and deploy step by step:
 It will run only `rss-2-kindle-camel` application that does not have user interface,
 but can be invoked via camel configuration
 
-
-### Additional
-For more help see the Apache Camel documentation
-
-    http://camel.apache.org/
 
 ### Structure of document in mongodb
 

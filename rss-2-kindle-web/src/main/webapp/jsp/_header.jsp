@@ -44,4 +44,11 @@
         </nav>
         <security:csrfInput/>
     </form>
+    <div id="mobile-sidebar" class="btn-toolbar bg-light justify-content-center" role="toolbar">
+        <ul class="nav text-uppercase ">
+            <li class="nav-item"><a class="nav-link" href="profile">My Profile</a></li>
+            <li class="nav-item"><a class="nav-link" href="subscribers">Subscribers</a></li>
+            <li class="nav-item"><a class="nav-link" href="service">Services</a></li>
+        </ul>
+    </div>
 </header>

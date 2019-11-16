@@ -25,12 +25,26 @@ body {
 
 #page-content-wrapper {
   min-width: 100%;
-  padding-top: 8rem;
+  padding-top: 4rem;
   margin-bottom: 3rem;
 }
 
 #wrapper.toggled #sidebar-wrapper {
   margin-left: 0;
+}
+
+#mobile-sidebar {
+  padding-top: 5rem;
+  font-weight: 700;
+  font-family: 'Montserrat';
+  font-size: 80%;
+  min-width: 100%;
+}
+
+@media (min-width: 992px) {
+  #page-content-wrapper {
+    padding-top: 8rem;
+  }
 }
 
 @media (min-width: 768px) {
@@ -46,11 +60,25 @@ body {
   #wrapper.toggled #sidebar-wrapper {
     margin-left: -12rem;
   }
+
+  #mobile-sidebar {
+    visibility: collapse;
+    padding-top: 0;
+  }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 512px) {
   h1 {
     font-size: xx-large;
+  }
+}
+
+@media (max-width: 375px) {
+  h1 {
+    font-size: x-large;
+  }
+  .fa-2x {
+    font-size: 1.33em
   }
 }
 
