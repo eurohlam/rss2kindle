@@ -236,6 +236,13 @@
         });
         $('#test').append(table);
 
+
+        <!-- Menu Toggle Script -->
+        $("#sidebar-toggle").click(function(e) {
+            e.preventDefault();
+            console.log("toggle wrapper");
+            $("#wrapper").toggleClass("toggled");
+        });
     }); // $(document).ready()
 
     function getUserData() {
@@ -245,14 +252,21 @@
 
 </script>
 
-<div class="container-fluid">
+<div>
     <header class="row clearfix">
         <!-- Navigation -->
         <form id="logout" action="" method="post">
             <nav class="navbar navbar-expand-lg bg-secondary fixed-top text-uppercase" id="mainNav">
                 <div class="container">
+                    <button class="navbar-toggler text-uppercase bg-primary text-white rounded"
+                            id="sidebar-toggle" type="button"
+                            data-toggle="collapse" data-target="#sidebar-wrapper"
+                            aria-expanded="false" aria-controls="sidebar-wrapper"><i class="fa fa-bars"></i></button>
                     <a class="navbar-brand js-scroll-trigger" href="#">RSS-2-KINDLE</a>
-                    <button class="navbar-toggler navbar-toggler-right text-uppercase bg-primary text-white rounded"
+<!--
+                    <button class="btn btn-primary" id="sidebar-toggle">Sidebar</button>
+-->
+                    <button class="navbar-toggler text-uppercase bg-primary text-white rounded"
                             type="button" data-toggle="collapse" data-target="#navbarResponsive"
                             aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                         Menu
@@ -261,12 +275,13 @@
                     <div class="collapse navbar-collapse" id="navbarResponsive">
                         <ul class="navbar-nav ml-auto">
                             <li class="nav-item dropdown active mx-0 mx-lg-1">
-                                <a class="nav-link dropdown-toggle py-3 px-0 px-lg-3 rounded js-scroll-trigger"
+                                <a class="nav-link dropdown-toggle py-3 px-0 px-lg-3 rounded"
                                    id="navbarDropdownMenuLink" data-toggle="dropdown" href="#" role="button"
                                    aria-haspopup="true" aria-expanded="false">
                                     USER <span class="caret"></span>
                                 </a>
-                                <div class="dropdown-menu bg-secondary" aria-labelledby="navbarDropdownMenuLink">
+                                <div class="dropdown-menu bg-secondary dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#">JOPA</a>
                                     <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="javascript:{}"
                                        onclick="document.getElementById('logout').submit(); return false;">Log out</a>
                                 </div>
@@ -288,11 +303,19 @@
                 </div>
             </nav>
         </form>
+        <div id="mobile-sidebar" class="btn-toolbar bg-light justify-content-center" role="toolbar">
+            <ul class="nav text-uppercase ">
+                <li class="nav-item"><a class="nav-link" href="profile">My Profile</a></li>
+                <li class="nav-item"><a class="nav-link" href="subscribers">Subscribers</a></li>
+                <li class="nav-item"><a class="nav-link" href="service">Services</a></li>
+            </ul>
+        </div>
+
     </header>
 
-    <div id="wrapper" class="row">
-        <aside id="sidebar-wrapper" class="navbar ">
-            <ul class="nav navbar-nav flex-column sidebar-nav text-uppercase">
+    <div id="wrapper" class="d-flex">
+        <aside id="sidebar-wrapper" class="bg-secondary border-right">
+            <ul class="nav navbar-nav flex-column sidebar-nav text-uppercase list-group">
                 <li class="nav-item"><a class="nav-link active" href="profile">My Profile</a></li>
                 <li class="nav-item"><a class="nav-link" href="subscribers">SUBSCRIBERS</a></li>
                 <li class="nav-item"><a class="nav-link" href="service">Services</a></li>
@@ -302,10 +325,13 @@
 
         <main id="page-content-wrapper">
             <div class="container-fluid" style="padding-top: 5rem; padding-bottom: 15rem">
+                <div class="text-center">
+                    <h5>Details of subscriptions for subscriber:</h5>
+                    <h1>kindle@kindle.com</h1>
+                    <hr class="star-dark"/>
+                </div>
                 <form id="users_form" action="" method="post">
                     <div class="text-left" id="subscribers_view" style="padding-left: 2rem; padding-right: 2rem">
-                        <h3 class="sub-header">Users</h3>
-                        <hr class="star-dark mb-5"/>
                         <form id="subscribers_form" action="" method="post">
                             <div class="btn-toolbar bg-light" role="toolbar" aria-label="">
                                 <div class="btn-group" role="group">
@@ -336,7 +362,7 @@
                             <div id="details" class="row"></div>
                         </form>
                     </div>
-                    <div id="all_users">
+                    <div id="all_users" class="table-responsive-sm">
                         <table class="table table-hover">
                             <tbody>
                             <tr>
@@ -377,7 +403,7 @@
                         </table>
 
                     </div>
-                    <div id="test"></div>
+                    <div id="test" class="table-responsive-sm"></div>
                 </form>
             </div>
         </main>
@@ -427,10 +453,10 @@
 </div>
 
 <!-- Plugin JavaScript -->
-<script src="vendor/jquery-easing/jquery.easing.js"></script>
-<script src="vendor/magnific-popup/jquery.magnific-popup.js"></script>
+<!--<script src="vendor/jquery-easing/jquery.easing.js"></script>-->
+<!--<script src="vendor/magnific-popup/jquery.magnific-popup.js"></script>-->
 
 <!-- Custom scripts for this template -->
-<script src="js/freelancer.js"></script>
+<!--<script src="js/freelancer.js"></script>-->
 </body>
 </html>

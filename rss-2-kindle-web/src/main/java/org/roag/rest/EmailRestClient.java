@@ -2,10 +2,9 @@ package org.roag.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
@@ -21,9 +20,10 @@ public class EmailRestClient implements RestClient {
 
     private WebTarget target;
 
-    public EmailRestClient(@Value("${rest.host}") String restHost, @Value("${rest.port}") String restPort,
-                           @Value("${rest.path}") String restPath) {
-        target = ClientBuilder.newClient().target(restHost + ":" + restPort + restPath + "/" + SEND_EMAIL_PATH);
+    @Autowired
+    public EmailRestClient(@Autowired ClientHelper clientHelper) {
+        target = clientHelper.getWebTarget(SEND_EMAIL_PATH);
+        //clientHelper.getClient().target(restHost + ":" + restPort + restPath + "/" + SEND_EMAIL_PATH);
     }
 
     public Response sendEmailToUser(String username, String subject, String message) {

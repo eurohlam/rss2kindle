@@ -1,4 +1,4 @@
-RSS-to-Kindle Transformer based on Camel
+RSS-to-Kindle Transformer
 ========================================
 
 ## Overview
@@ -18,10 +18,10 @@ kindlegen is developed and supported by amazon.  kindlegen has to be deployed in
 ## How to configure
 The main configuration file is rss-2-kindle-camel/src/main/resources/camel-context.properties
 The follwoing properties has to be configured according to certain environment:
-* mongodb.host - in case of docker it should be mongo
-* kindlegen.path - absolute path to kindlegen.sh 
-* smtp.uri - SMTP server URI
-* storage.path.root - parent folder for saving rss and mobi files 
+* `mongodb.host` - in case of docker it should be mongo
+* `kindlegen.path` - absolute path to kindlegen.sh 
+* `smtp.uri` - SMTP server URI
+* `storage.path.root` - parent folder for saving rss and mobi files 
 
 
 ## How to build
@@ -37,9 +37,9 @@ Docker configuration was tested on versions:
 * Docker-compose 1.8.1
 
 There are three containers that have to be run: 
-* MongoDB 3.2.10. Dockerfile is located into docker-dir/mongo. https://hub.docker.com/_/mongo/ 
-* Tomcat 9.0. Dockerfile is located into docker-dir/tomcat. https://hub.docker.com/_/tomcat/
-* MailHog 1.0. Dockerfile is located into docker-dir/mailhog. https://hub.docker.com/r/mailhog/mailhog/
+* MongoDB 3.2.10. Dockerfile is located in `docker-dir/mongo`. https://hub.docker.com/_/mongo/ 
+* Tomcat 9.0. Dockerfile is located in `docker-dir/tomcat`. https://hub.docker.com/_/tomcat/
+* MailHog 1.0. Dockerfile is located in `docker-dir/mailhog`. https://hub.docker.com/r/mailhog/mailhog/
 
 You can run whole environment using one maven command:
 
@@ -71,11 +71,11 @@ You also can build and deploy step by step:
 
 * Web UI should be available by URL:
 
-        http://localhost:8080/r2kweb
+        https://localhost:8443/r2kweb
         
 * Tomcat admin console should be available by URL:
         
-        http://localhost:8080
+        https://localhost:8443/manager
         
 * MailHog Web UI should be available by URL:
         
@@ -94,7 +94,7 @@ You also can build and deploy step by step:
 
    Web UI will be available as
 
-        http://ip_address:8080/r2kweb
+        https://ip_address:8443/r2kweb
 
 
 * MailHog SMTP port is 1025
@@ -106,14 +106,9 @@ You also can build and deploy step by step:
 
         mvn exec:java
 
-It will run only rss-2-kindle-camel application that does not have user interface,
+It will run only `rss-2-kindle-camel` application that does not have user interface,
 but can be invoked via camel configuration
 
-
-### Additional
-For more help see the Apache Camel documentation
-
-    http://camel.apache.org/
 
 ### Structure of document in mongodb
 

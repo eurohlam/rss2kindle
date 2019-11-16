@@ -151,10 +151,10 @@
     }); //end of $(document).ready(function ())
 
 </script>
-<div class="container-fluid">
+<div>
     <%@include file="../_header.jsp" %>
 
-    <div id="wrapper" class="row">
+    <div id="wrapper" class="d-flex">
 
         <%@include file="_adminAside.jsp" %>
 
@@ -183,7 +183,7 @@
                             </div>
                         </div>
                         <div id="alerts_panel"></div>
-                        <div id="all_users"></div>
+                        <div id="all_users" class="table-responsive-sm"></div>
                     </form>
                 </div>
             </div>

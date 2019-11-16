@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.roag</groupId>
         <artifactId>rss-2-kindle</artifactId>
-        <version>3.1-SNAPSHOT</version>
+        <version>3.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>rss-2-kindle-docker</artifactId>
@@ -33,6 +33,20 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${basedir}/../${docker.artifact.directory}</directory>
+                            <includes>
+                                <include>*.war</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.1.0</version>
@@ -54,7 +68,7 @@
                             <type>war</type>
                             <overWrite>true</overWrite>
                             <!--<outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>-->
-                            <destFileName>rss2kindle.war</destFileName>
+                            <destFileName>rss2kindle##${project.version}.war</destFileName>
                         </artifactItem>
                         <artifactItem>
                             <groupId>org.roag</groupId>
@@ -63,7 +77,7 @@
                             <type>war</type>
                             <overWrite>true</overWrite>
                             <!--<outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>-->
-                            <destFileName>r2kweb.war</destFileName>
+                            <destFileName>r2kweb##${project.version}.war</destFileName>
                         </artifactItem>
                     </artifactItems>
                     <outputDirectory>${basedir}/../${docker.artifact.directory}</outputDirectory>

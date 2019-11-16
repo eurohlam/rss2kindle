@@ -117,10 +117,10 @@
 </script>
 
 
-<div class="container-fluid">
+<div>
     <%@include file="_header.jsp" %>
 
-    <div id="wrapper" class="row">
+    <div id="wrapper" class="d-flex">
 
         <%@include file="_aside.jsp" %>
 
@@ -149,12 +149,10 @@
                     </div>
                 </div>
                 <div class="row" style="padding-top: 5rem">
-                    <div class="col-xl-6 text-left" id="subscribers_view"
-                         style="padding-left: 2rem; padding-right: 2rem">
+                    <div class="col-xl-6 text-left table-responsive-sm" id="subscribers_view">
                         <h3 class="sub-header">Subscribers</h3>
                     </div>
-                    <div class="col-xl-6 text-left" id="subscriptions_view"
-                         style="padding-left: 2rem; padding-right: 2rem">
+                    <div class="col-xl-6 text-left table-responsive-sm" id="subscriptions_view">
                         <h3 class="sub-header">Subscriptions</h3>
                     </div>
                 </div>

@@ -3,12 +3,10 @@ package org.roag.rest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
@@ -34,12 +32,11 @@ public class ProfileRestClient implements RestClient {
 
 
     @Autowired
-    public ProfileRestClient(@Value("${rest.host}") String restHost, @Value("${rest.port}") String restPort,
-                             @Value("${rest.path}") String restPath) {
-        this.restPath = restPath;
-        this.restPort = restPort;
-        this.restHost = restHost;
-        target = ClientBuilder.newClient().target(restHost + ":" + restPort + restPath);
+    public ProfileRestClient(@Autowired ClientHelper clientHelper) {
+        this.restPath = clientHelper.getRestPath();
+        this.restPort = clientHelper.getRestPort();
+        this.restHost = clientHelper.getRestHost();
+        target = clientHelper.getWebTarget();
     }
 
     private Response sendRequest(String path, RequestMethod method, String json) {

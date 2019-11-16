@@ -32,7 +32,7 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(@RequestParam(value = "error", required = false) String error) {
-        return SecurityContextHolder.getContext().getAuthentication().isAuthenticated() ? "profile" : "login";
+        return SecurityContextHolder.getContext().getAuthentication().isAuthenticated() ? "redirect:profile" : "login";
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
