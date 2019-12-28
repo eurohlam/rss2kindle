@@ -33,6 +33,8 @@ services:
       - "8443:8443"
     networks:
       - rss2kindle
+    environment:
+      - mongodb.host=mongodb
     volumes:
       - ../logs:/usr/local/tomcat/logs:rw
       - ../data:/usr/local/tomcat/data:rw
