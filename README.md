@@ -36,9 +36,12 @@ Docker configuration was tested on versions:
 * Docker 1.12.6
 * Docker-compose 1.8.1
 
-There are three containers that have to be run: 
+There are four containers that have to be run: 
 * MongoDB 3.2.10. Dockerfile is located in `docker-dir/mongo`. https://hub.docker.com/_/mongo/ 
-* Tomcat 9.0. Dockerfile is located in `docker-dir/tomcat`. https://hub.docker.com/_/tomcat/
+* Tomcat 9.0. There are two containers with Tomcat: 
+  * the first one is for REST API application. Dockerfile is located in `docker-dir/tomcat/rss2kindle-api-dockerfile`. 
+  * the second one is for Web UI application. Dockerfile is located in `docker-dir/tomcat/rss2kindle-web-dockerfile`.
+  * Image: https://hub.docker.com/_/tomcat/
 * MailHog 1.0. Dockerfile is located in `docker-dir/mailhog`. https://hub.docker.com/r/mailhog/mailhog/
 
 You can run whole environment using one maven command:
@@ -54,8 +57,8 @@ You also can build and deploy step by step:
         
 * make sure that war files have been copied to docker folder:
         
-        docker-dir/tomcat/resources/rss2kindle.war
-        docker-dir/tomcat/resources/r2kweb.war
+        docker-dir/tomcat/resources/rss2kindle##{RELEASE_VERSION}.war
+        docker-dir/tomcat/resources/r2kweb##{RELEASE_VERSION}.war
         
 * go to docker directory
         
@@ -71,15 +74,23 @@ You also can build and deploy step by step:
 
 * Web UI should be available by URL:
 
-        https://localhost:8443/r2kweb
+        https://localhost/r2kweb
         
-* Tomcat admin console should be available by URL:
+* Tomcat admin console for Web UI should be available by URL:
         
-        https://localhost:8443/manager
+       https://localhost/manager
+        
+* REST API should be available by URL:
+       
+       https://localhost:8443/rss2kindle/rest/
+
+* Tomcat admin console for REST API should be available by URL:
+        
+       https://localhost:8443/manager
         
 * MailHog Web UI should be available by URL:
         
-        http://localhost:8025
+       http://localhost:8025
 
 
 * Alternative way to get URL is by container IP:
