@@ -13,7 +13,7 @@ import static com.codeborne.selenide.Selenide.$;
 public class EditSubscribersForm extends AbstractPageModule {
 
     private PageModuleCollection<SubscriberRecord> subscriberList = new PageModuleCollection<>(
-            selenideElement().$$x("//table/tbody/tr"), SubscriberRecord::new);
+            selenideElement().$$x(".//table/tbody/tr"), SubscriberRecord::new);
 
     private ModalForm suspendModalForm = new ModalForm($("div#suspendModal"));
     private ModalForm resumeModalForm = new ModalForm($("div#resumeModal"));

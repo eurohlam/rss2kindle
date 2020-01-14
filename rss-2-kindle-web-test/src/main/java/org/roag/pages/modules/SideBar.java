@@ -11,9 +11,9 @@ import java.util.function.Supplier;
  */
 public class SideBar extends AbstractNavigationBar {
 
-    private SelenideElement profileLink = selenideElement().$x("//a[contains(text(),'My Profile')]");
-    private SelenideElement subscribersLink = selenideElement().$x("//a[contains(text(),'Subscribers')]");
-    private SelenideElement servicesLink = selenideElement().$x("//a[contains(text(),'Services')]");
+    private SelenideElement profileLink = selenideElement().$x(".//a[contains(text(),'My Profile')]");
+    private SelenideElement subscribersLink = selenideElement().$x(".//a[contains(text(),'Subscribers')]");
+    private SelenideElement servicesLink = selenideElement().$x(".//a[contains(text(),'Services')]");
 
     public SideBar(SelenideElement selector) {
         super(selector);

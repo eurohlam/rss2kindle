@@ -11,12 +11,12 @@ import java.util.function.Supplier;
  */
 public class MenuBar extends AbstractNavigationBar {
 
-    private SelenideElement signInLink = selenideElement().$x("//a[contains(text(),'Sign In')]");
-    private SelenideElement signUpLink = selenideElement().$x("//a[contains(text(),'Sign Up')]");
-    private SelenideElement howToLink = selenideElement().$x("//a[contains(text(),'Howto')]");
-    private SelenideElement aboutLink = selenideElement().$x("//a[contains(text(),'About')]");
-    private SelenideElement contactLink = selenideElement().$x("//a[contains(text(),'Contact')]");
-    private SelenideElement logoutLink = selenideElement().$x("//a[contains(text(),'Log out')]");
+    private SelenideElement signInLink = selenideElement().$x(".//a[contains(text(),'Sign In')]");
+    private SelenideElement signUpLink = selenideElement().$x(".//a[contains(text(),'Sign Up')]");
+    private SelenideElement howToLink = selenideElement().$x(".//a[contains(text(),'Howto')]");
+    private SelenideElement aboutLink = selenideElement().$x(".//a[contains(text(),'About')]");
+    private SelenideElement contactLink = selenideElement().$x(".//a[contains(text(),'Contact')]");
+    private SelenideElement logoutLink = selenideElement().$x(".//a[contains(text(),'Log out')]");
 
     public MenuBar(SelenideElement selector) {
         super(selector);
