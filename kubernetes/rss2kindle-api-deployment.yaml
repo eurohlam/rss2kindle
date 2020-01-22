@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rss2kindle-api
+  labels:
+    app: rss2kindle-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rss2kindle-api
+  template:
+    metadata:
+      labels:
+        app: rss2kindle-api
+    spec:
+      containers:
+      - name: rss2kindle-api
+        image: rss2kindle/api:3.3
+        env:
+        - name: mongodb.host
+          value: mongodb
+        - name: mongodb.port
+          value: "27017"
+        - name: smtp.host
+          value: mailhog
+        - name: smtp.port
+          value: "1025"
+        ports:
+        - containerPort: 8443

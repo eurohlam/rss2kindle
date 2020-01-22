@@ -1,0 +1,62 @@
+version: '3.3'
+services:
+  mongo:
+    build:
+      context: ./mongo
+    image: rss2kindle/mongo:3.3
+    container_name: rss2kindle-mongo
+    ports:
+      - "27017:27017"
+    networks:
+      rss2kindle:
+        aliases:
+          - mongodb
+  mailhog:
+    build:
+      context: ./mailhog
+    image: rss2kindle/mailhog:3.3
+    container_name: rss2kindle-mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      rss2kindle:
+        aliases:
+          - mailhog
+  rss2kindle-api:
+    build:
+      context: ./tomcat
+      dockerfile: rss2kindle-api-dockerfile
+    image: rss2kindle/api:3.3
+    container_name: rss2kindle-api
+    ports:
+      - "8443:8443"
+    networks:
+      rss2kindle:
+        aliases:
+          - rss2kindle-api
+    environment:
+      - mongodb.host=mongodb
+      - smtp.host=mailhog
+      - smtp.port=1025
+    volumes:
+      - ../logs:/usr/local/tomcat/logs:rw
+      - ../data:/usr/local/tomcat/data:rw
+  rss2kindle-web:
+    build:
+      context: ./tomcat
+      dockerfile: rss2kindle-web-dockerfile
+    image: rss2kindle/web:3.3
+    container_name: rss2kindle-web
+    ports:
+      - "80:8080"
+      - "443:8443"
+    networks:
+      - rss2kindle
+    environment:
+      - rest.host=https://rss2kindle-api
+      - rest.port=8443
+    volumes:
+      - ../logs:/usr/local/tomcat/logs:rw
+networks:
+  rss2kindle:
