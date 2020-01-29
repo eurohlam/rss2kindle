@@ -82,7 +82,7 @@ You also can build and deploy step by step:
         
 * REST API should be available by URL:
        
-       https://localhost:8443/rss2kindle/rest/
+       https://localhost:8443/rss2kindle/api/v1
 
 * Tomcat admin console for REST API should be available by URL:
         

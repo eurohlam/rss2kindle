@@ -15,7 +15,7 @@
     </listener>
 
     <servlet>
-        <servlet-name>REST</servlet-name>
+        <servlet-name>api/v1</servlet-name>
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>jersey.config.server.provider.packages</param-name>
@@ -24,7 +24,7 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>REST</servlet-name>
-        <url-pattern>/rest/*</url-pattern>
+        <servlet-name>api/v1</servlet-name>
+        <url-pattern>/api/v1/*</url-pattern>
     </servlet-mapping>
 </web-app>
