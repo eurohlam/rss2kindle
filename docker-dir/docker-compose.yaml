@@ -23,6 +23,9 @@ services:
       rss2kindle:
         aliases:
           - mailhog
+    labels:
+      - "traefik.http.routers.mailhog.rule=Host(`smtp`)"
+      - "traefik.http.services.mailhog.loadbalancer.server.port=8025"
   rss2kindle-api:
     build:
       context: ./tomcat
@@ -30,7 +33,7 @@ services:
     image: rss2kindle/api:3.3
     container_name: rss2kindle-api
     ports:
-      - "8443:8443"
+      - "7443:8443"
     networks:
       rss2kindle:
         aliases:
@@ -42,6 +45,11 @@ services:
     volumes:
       - ../logs:/usr/local/tomcat/logs:rw
       - ../data:/usr/local/tomcat/data:rw
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.rss2kindle-api.rule=Host(`api`)"
+#      - "traefik.http.routers.rss2kindle-api.tls=true"
+#      - "traefik.http.services.rss2kindle-api.loadbalancer.server.port=7443"
   rss2kindle-web:
     build:
       context: ./tomcat
@@ -49,14 +57,36 @@ services:
     image: rss2kindle/web:3.3
     container_name: rss2kindle-web
     ports:
-      - "80:8080"
-      - "443:8443"
+      - "8443:8443"
     networks:
       - rss2kindle
     environment:
       - rest.host=https://rss2kindle-api
-      - rest.port=8443
+      - rest.port=7443
     volumes:
       - ../logs:/usr/local/tomcat/logs:rw
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.rss2kindle-web.rule=Host(`web`)"
+      - "traefik.http.routers.rss2kindle-web.tls=true"
+      - "traefik.http.services.rss2kindle-web.loadbalancer.sticky=true"
+      - "traefik.http.services.rss2kindle-web.loadbalancer.server.port=8443"
+  reverse-proxy:
+      # The official v2.0 Traefik docker image
+      image: traefik:v2.0
+      container_name: rss2kindle-proxy
+      # Enables the web UI and tells Traefik to listen to docker
+      command:
+        - "--api.insecure=true"
+        - "--providers.docker=true"
+        - "--providers.docker.network=rss2kindle"
+      ports:
+        # The HTTP port
+        - "80:80"
+        # The Web UI (enabled by --api.insecure=true)
+        - "8080:8080"
+      volumes:
+        # So that Traefik can listen to the Docker events
+        - /var/run/docker.sock:/var/run/docker.sock
 networks:
   rss2kindle:

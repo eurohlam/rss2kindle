@@ -17,6 +17,6 @@ public class Version {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public String getVersion() {
-        return "{application: 'rss2kindle-api', version: 'v1'}";
+        return "{\"application\": \"rss2kindle-api\", \"version\": \"v1\"}";
     }
 }
