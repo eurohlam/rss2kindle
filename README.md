@@ -36,13 +36,14 @@ Docker configuration was tested on versions:
 * Docker 1.12.6
 * Docker-compose 1.8.1
 
-There are four containers that have to be run: 
+There are 5 containers that have to be run: 
 * MongoDB 3.2.10. Dockerfile is located in `docker-dir/mongo`. https://hub.docker.com/_/mongo/ 
 * Tomcat 9.0. There are two containers with Tomcat: 
   * the first one is for REST API application. Dockerfile is located in `docker-dir/tomcat/rss2kindle-api-dockerfile`. 
   * the second one is for Web UI application. Dockerfile is located in `docker-dir/tomcat/rss2kindle-web-dockerfile`.
   * Image: https://hub.docker.com/_/tomcat/
 * MailHog 1.0. Dockerfile is located in `docker-dir/mailhog`. https://hub.docker.com/r/mailhog/mailhog/
+* Traefik 2.1.4. HTTP reverse proxy and load balancer. https://hub.docker.com/_/traefik
 
 You can run whole environment using one maven command:
 
@@ -72,41 +73,31 @@ You also can build and deploy step by step:
     
 ## How to run
 
+Traefik as a reverse proxy stands before all containers and intercepts and routes every incoming request.
+
+* Traefik dashboard
+ 
+        http://localhost:8080
+
 * Web UI should be available by URL:
 
-        https://localhost/r2kweb
+        https://web.localhost
         
 * Tomcat admin console for Web UI should be available by URL:
         
-       https://localhost/manager
+       https://web.localhost/manager
         
 * REST API should be available by URL:
        
-       https://localhost:8443/rss2kindle/api/v1
+       https://api.localhost/rss2kindle/api/v1
 
 * Tomcat admin console for REST API should be available by URL:
         
-       https://localhost:8443/manager
+       https://api.localhost/manager
         
 * MailHog Web UI should be available by URL:
         
-       http://localhost:8025
-
-
-* Alternative way to get URL is by container IP:
-
-   Get CONTAINER_ID of tomcat
- 
-        docker ps  
-
-   Get IP Address of tomcat
-
-        docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $CONTAINER_ID
-
-   Web UI will be available as
-
-        https://ip_address:8443/r2kweb
-
+       http://smtp.localhost
 
 * MailHog SMTP port is 1025
  
