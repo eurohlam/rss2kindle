@@ -1,0 +1,201 @@
+#Resource definition
+# All resources definition must be declared
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: ingressroutes.traefik.containo.us
+
+spec:
+  group: traefik.containo.us
+  version: v1alpha1
+  names:
+    kind: IngressRoute
+    plural: ingressroutes
+    singular: ingressroute
+  scope: Namespaced
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: middlewares.traefik.containo.us
+
+spec:
+  group: traefik.containo.us
+  version: v1alpha1
+  names:
+    kind: Middleware
+    plural: middlewares
+    singular: middleware
+  scope: Namespaced
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: ingressroutetcps.traefik.containo.us
+
+spec:
+  group: traefik.containo.us
+  version: v1alpha1
+  names:
+    kind: IngressRouteTCP
+    plural: ingressroutetcps
+    singular: ingressroutetcp
+  scope: Namespaced
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: tlsoptions.traefik.containo.us
+
+spec:
+  group: traefik.containo.us
+  version: v1alpha1
+  names:
+    kind: TLSOption
+    plural: tlsoptions
+    singular: tlsoption
+  scope: Namespaced
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: traefikservices.traefik.containo.us
+
+spec:
+  group: traefik.containo.us
+  version: v1alpha1
+  names:
+    kind: TraefikService
+    plural: traefikservices
+    singular: traefikservice
+  scope: Namespaced
+
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: traefik-ingress-controller
+
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - endpoints
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+    resources:
+      - ingresses/status
+    verbs:
+      - update
+  - apiGroups:
+      - traefik.containo.us
+    resources:
+      - middlewares
+      - ingressroutes
+      - traefikservices
+      - ingressroutetcps
+      - tlsoptions
+    verbs:
+      - get
+      - list
+      - watch
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: traefik-ingress-controller
+
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: traefik-ingress-controller
+subjects:
+  - kind: ServiceAccount
+    name: traefik-ingress-controller
+    namespace: default
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: traefik-ingress-controller
+
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: traefik
+  labels:
+    app: traefik
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traefik
+  template:
+    metadata:
+      labels:
+        app: traefik
+    spec:
+      serviceAccountName: traefik-ingress-controller
+      containers:
+        - name: traefik
+          image: traefik:v2.1.4
+          args:
+            - --log.filePath=/var/log/traefik.log
+            - --log.level=DEBUG
+            - --api
+            - --api.insecure
+            - --entrypoints.web.address=:80
+            - --entrypoints.websecure.address=:443
+            - --providers.kubernetescrd
+            - --serverstransport.insecureskipverify=true
+          ports:
+            - name: web
+              containerPort: 80
+            - name: admin
+              containerPort: 8080
+            - name: websecure
+              containerPort: 443
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik
+spec:
+  type: LoadBalancer
+  selector:
+    app: traefik
+  ports:
+    - protocol: TCP
+      port: 80
+      name: web
+      targetPort: 80
+    - protocol: TCP
+      port: 8080
+      name: admin
+      targetPort: 8080
+    - protocol: TCP
+      port: 443
+      name: websecure
+      targetPort: 443

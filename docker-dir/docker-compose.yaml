@@ -60,8 +60,8 @@ services:
       dockerfile: rss2kindle-web-dockerfile
     image: rss2kindle/web:3.3
     container_name: rss2kindle-web
-    ports:
-      - "8443:8443"
+#    ports:
+#      - "8443:8443"
     networks:
       - rss2kindle
     environment:
