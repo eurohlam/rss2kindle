@@ -1,0 +1,47 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: rss2kindle-traefik-ingressroute
+  namespace: default
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`smtp.localhost`)
+    kind: Rule
+    services:
+    - name: mailhog
+      kind: Service 
+      port: 8025
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: rss2kindle-traefik-ingressroute-https
+  namespace: default
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`api.localhost`)
+    kind: Rule
+    services:
+    - name: rss2kindle-api
+      kind: Service
+      port: 8443
+      scheme: https
+  - match: Host(`web.localhost`)
+    kind: Rule
+    services:
+    - name: rss2kindle-web
+      kind: Service
+      port: 443
+      scheme: https
+      sticky:
+        cookie:
+          httpOnly: true
+          secure: true
+  tls:
+    certresolver: myresolver
+
