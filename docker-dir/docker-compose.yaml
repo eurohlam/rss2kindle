@@ -5,8 +5,8 @@ services:
       context: ./mongo
     image: rss2kindle/mongo:3.3
     container_name: rss2kindle-mongo
-    ports:
-      - "27017:27017"
+#    ports:
+#      - "27017:27017"
     networks:
       rss2kindle:
         aliases:
@@ -16,21 +16,26 @@ services:
       context: ./mailhog
     image: rss2kindle/mailhog:3.3
     container_name: rss2kindle-mailhog
-    ports:
-      - "8025:8025"
-      - "1025:1025"
+#    ports:
+#      - "8025:8025"
+#      - "1025:1025"
     networks:
       rss2kindle:
         aliases:
           - mailhog
+    labels:
+      - "traefik.http.routers.mailhog.rule=Host(`smtp.localhost`)"
+      - "traefik.http.routers.mailhog.entrypoints=web"
+      - "traefik.http.routers.mailhog.service=smtp"
+      - "traefik.http.services.smtp.loadbalancer.server.port=8025"
   rss2kindle-api:
     build:
       context: ./tomcat
       dockerfile: rss2kindle-api-dockerfile
     image: rss2kindle/api:3.3
     container_name: rss2kindle-api
-    ports:
-      - "8443:8443"
+#    ports:
+#      - "8443:8443"
     networks:
       rss2kindle:
         aliases:
@@ -42,15 +47,21 @@ services:
     volumes:
       - ../logs:/usr/local/tomcat/logs:rw
       - ../data:/usr/local/tomcat/data:rw
+    labels:
+      - "traefik.http.routers.rss2kindle-api.rule=Host(`api.localhost`)"
+      - "traefik.http.routers.rss2kindle-api.tls=true"
+      - "traefik.http.routers.rss2kindle-api.entrypoints=websecure"
+      - "traefik.http.routers.rss2kindle-api.service=r2kapi"
+      - "traefik.http.services.r2kapi.loadbalancer.server.port=8443"
+      - "traefik.http.services.r2kapi.loadbalancer.server.scheme=https"
   rss2kindle-web:
     build:
       context: ./tomcat
       dockerfile: rss2kindle-web-dockerfile
     image: rss2kindle/web:3.3
     container_name: rss2kindle-web
-    ports:
-      - "80:8080"
-      - "443:8443"
+#    ports:
+#      - "8443:8443"
     networks:
       - rss2kindle
     environment:
@@ -58,5 +69,34 @@ services:
       - rest.port=8443
     volumes:
       - ../logs:/usr/local/tomcat/logs:rw
+    labels:
+      - "traefik.http.routers.rss2kindle-web.rule=Host(`web.localhost`)"
+      - "traefik.http.routers.rss2kindle-web.tls=true"
+      - "traefik.http.routers.rss2kindle-web.entrypoints=websecure"
+      - "traefik.http.routers.rss2kindle-web.service=r2kweb"
+      - "traefik.http.services.r2kweb.loadbalancer.sticky=true"
+      - "traefik.http.services.r2kweb.loadbalancer.server.port=8443"
+      - "traefik.http.services.r2kweb.loadbalancer.server.scheme=https"
+  reverse-proxy:
+      image: traefik:v2.1.4
+      container_name: rss2kindle-proxy
+      command:
+        - "--api.insecure=true"
+        - "--providers.docker=true"
+        - "--providers.docker.network=rss2kindle"
+        - "--entrypoints.web.address=:80"
+        - "--entrypoints.websecure.address=:443"
+        - "--log.filePath=/var/log/traefik.log"
+        - "--log.level=DEBUG"
+        - "--serverstransport.insecureskipverify=true"
+      ports:
+        - "80:80"
+        - "443:443"
+        - "8080:8080"
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ../logs:/var/log/
+      networks:
+        - rss2kindle
 networks:
   rss2kindle:

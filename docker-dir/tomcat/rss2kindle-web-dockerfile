@@ -1,12 +1,16 @@
 FROM tomcat:9.0.27-jdk8-openjdk
 LABEL vendor="eurohlam" version="3.3" project="rss2kindle"
 
-RUN mkdir /usr/local/tomcat/rss2kindle-web
+RUN ["apt-get", "update"]
+RUN ["apt-get", "-y", "install", "vim"]
+RUN mkdir /usr/local/tomcat/rss2kindle-web /usr/local/tomcat/rss2kindle-web/ROOT /usr/local/tomcat/rss2kindle-web/ROOT/WEB-INF
 RUN mkdir /usr/local/tomcat/conf/Catalina /usr/local/tomcat/conf/Catalina/rss2kindle-web
 
 COPY resources/bin/setenv.sh /usr/local/tomcat/bin/setenv.sh
 COPY resources/conf/tomcat-users.xml /usr/local/tomcat/conf/tomcat-users.xml
 COPY resources/conf/rss2kindle-web-server.xml /usr/local/tomcat/conf/server.xml
+COPY resources/conf/context.xml /usr/local/tomcat/conf/context.xml
+COPY resources/conf/rss2kindle-web-rewrite.config /usr/local/tomcat/rss2kindle-web/ROOT/WEB-INF/rewrite.config
 COPY resources/conf/Catalina/rss2kindle-web/manager.xml /usr/local/tomcat/conf/Catalina/rss2kindle-web/manager.xml
 COPY resources/conf/tomcat-ssl-keystore.jks /usr/local/tomcat/conf/tomcat-ssl-keystore.jks
 COPY resources/conf/rss2kindle-web-truststore.jks /usr/local/tomcat/conf/rss2kindle-web-truststore.jks
@@ -15,5 +19,4 @@ COPY resources/host-manager/META-INF/context.xml /usr/local/tomcat/webapps/host-
 
 COPY resources/r2kweb##*.war /usr/local/tomcat/rss2kindle-web/
 
-EXPOSE 8080
 EXPOSE 8443

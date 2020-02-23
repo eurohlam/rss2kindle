@@ -34,6 +34,9 @@ Navigate into `kubernetes` folder and run
     kubectl apply -f rss2kindle-api-service.yaml
     kubectl apply -f rss2kindle-web-deployment.yaml
     kubectl apply -f rss2kindle-web-service.yaml
+    kubectl apply -f traefik-controller.yaml
+    kubectl apply -f traefik-deployment.yaml
+    kubectl apply -f traefik-ingressroute.yaml
     
 Check pods and services
     
@@ -44,20 +47,21 @@ Check pods and services
 
 Web UI should be available by URL:
 
-    https://localhost/r2kweb
+    https://web.localhost
         
 Tomcat admin console for Web UI should be available by URL:
         
-    https://localhost/manager
+    https://web.localhost/manager
         
 REST API should be available by URL:
        
-    https://localhost:8443/rss2kindle/rest/
+    https://api.localhost
 
 Tomcat admin console for REST API should be available by URL:
         
-    https://localhost:8443/manager
+    https://api.localhost/manager
         
 MailHog Web UI should be available by URL:
         
-    http://localhost:8025    
+    http://smtp.localhost
+    

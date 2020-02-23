@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: rss2kindle-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /r2kweb/*
+        backend:
+          serviceName: rss2kindle-web
+          servicePort: 443
+      - path: /*
+        backend:
+          serviceName: mailhog
+          servicePort: 8025
+      - path: /rss2kindle/rest/*
+        backend:
+          serviceName: rss2kindle-api
+          servicePort: 8443

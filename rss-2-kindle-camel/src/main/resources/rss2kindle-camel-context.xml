@@ -138,7 +138,7 @@
                 </camel:setBody>
                 <camel:process ref="SmtpAttachmentProcessor"/>
                 <camel:log message="Send file ${header.mobiFile} to ${header.email}" loggingLevel="INFO" logName="org.roag.camel.smtp"/>
-                <camel:toD uri="{{smtp.protocol}}://{{smtp.host}}:{{smtp.port}}?debugMode=false&amp;mail.smtp.auth=true&amp;mail.smtp.starttls.enable=true&amp;username={{smtp.username}}&amp;password={{smtp.password}}"/>
+                <camel:toD uri="{{smtp.protocol}}://{{env:smtp.host:{{smtp.host}}}}:{{env:smtp.port:{{smtp.host}}}}?debugMode=false&amp;mail.smtp.auth=true&amp;mail.smtp.starttls.enable=true&amp;username={{smtp.username}}&amp;password={{smtp.password}}"/>
             </camel:filter>
         </camel:route>
 

@@ -4,12 +4,15 @@ metadata:
   labels:
     app: rss2kindle-web
   name: rss2kindle-web
+  annotations:
+    cloud.google.com/app-protocols: '{"https":"HTTPS"}'
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
     - name: https
       port: 443
       targetPort: 8443
+      nodePort: 30023
       protocol: TCP
   selector:
     app: rss2kindle-web

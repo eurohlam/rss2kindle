@@ -5,11 +5,12 @@ metadata:
     app: mailhog
   name: mailhog
 spec:
-  type: LoadBalancer
+  type: NodePort
   ports:
     - name: http
       port: 8025
       targetPort: 8025
+      nodePort: 30021
       protocol: TCP
     - name: smtp
       port: 1025
