@@ -88,7 +88,7 @@
 
             });
 
-            $('#dashboard_user_status').append('<h5>User status: ' + data.status + '</h5>');
+            $('#dashboard_user_status').append('User status: ' + data.status);
             $('#dashboard_user_info').append(
                 'Contact email: ' + data.email + '<br>' +
                 'Created: ' + data.dateCreated + '<br>' +
@@ -96,13 +96,13 @@
                 'Last logged in: ' + data.previousLogin + '<br>'
             );
 
-            $('#dashboard_subscribers_status').append('<h5>Number of subscribers: ' + data.subscribers.length + '</h5>');
+            $('#dashboard_subscribers_status').append('Number of subscribers: ' + data.subscribers.length);
             $('#dashboard_subscribers_info').append(
                 'Active subscribers:' + (data.subscribers.length - suspendedSubscribersnumber) + '<br>' +
                 'Suspended subscribers: ' + suspendedSubscribersnumber + '<br><br><br>'
             );
 
-            $('#dashboard_subscriptions_status').append('<h5>Number of subscriptions: ' + rssNumber + '</h5>');
+            $('#dashboard_subscriptions_status').append('Number of subscriptions: ' + rssNumber);
             $('#dashboard_subscriptions_info').append(
                 'Active subscriptions:' + (rssNumber - deadRssNumber - offlineRssNumber) + '<br>' +
                 'Dead subscriptions: ' + deadRssNumber + '<br>' +
@@ -132,28 +132,40 @@
                     <hr class="star-dark"/>
                 </div>
                 <div class="row text-center">
-                    <div class="col-md-4 col-lg-4" style="background-color: #c7ddef">
-                        <div id="dashboard_user_status"></div>
-                        <h4>User info</h4>
-                        <div class="text-muted" id="dashboard_user_info"></div>
+                    <div class="col-md-4 col-lg-4" style="padding-top: 1rem">
+                        <div class="card" style="background-color: #c7ddef">
+                            <h6 id="dashboard_user_status" class="card-header"></h6>
+                            <h4 class="card-title">User info</h4>
+                            <div class="card-text text-muted" id="dashboard_user_info"></div>
+                        </div>
                     </div>
-                    <div class="col-md-4 col-lg-4" style="background-color: #f0ad4e">
-                        <div id="dashboard_subscribers_status"></div>
-                        <h4>Subscribers</h4>
-                        <div class="text-muted" id="dashboard_subscribers_info"></div>
+                    <div class="col-md-4 col-lg-4" style="padding-top: 1rem">
+                        <div class="card" style="background-color: #f0ad4e">
+                            <h6 id="dashboard_subscribers_status" class="card-header"></h6>
+                            <h4 class="card-title">Subscribers</h4>
+                            <div class="card-text text-muted" id="dashboard_subscribers_info"></div>
+                        </div>
                     </div>
-                    <div class="col-md-4 col-lg-4" style="background-color: #c9e2b3">
-                        <div id="dashboard_subscriptions_status"></div>
-                        <h4>Subscriptions</h4>
-                        <div class="text-muted" id="dashboard_subscriptions_info"></div>
+                    <div class="col-md-4 col-lg-4" style="padding-top: 1rem">
+                        <div class="card"  style="background-color: #c9e2b3">
+                            <h6 id="dashboard_subscriptions_status" class="card-header"></h6>
+                            <h4 class="card-title">Subscriptions</h4>
+                            <div class="card-text text-muted" id="dashboard_subscriptions_info"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="row" style="padding-top: 5rem">
-                    <div class="col-xl-6 text-left table-responsive-sm" id="subscribers_view">
-                        <h3 class="sub-header">Subscribers</h3>
+                <div class="row" style="padding-top: 2rem">
+                    <div class="col-xl-6 text-left" style="padding-top: 1rem">
+                        <div class="card">
+                            <h4 class="card-header">Subscribers</h4>
+                            <div id="subscribers_view" class="table-responsive"></div>
+                        </div>
                     </div>
-                    <div class="col-xl-6 text-left table-responsive-sm" id="subscriptions_view">
-                        <h3 class="sub-header">Subscriptions</h3>
+                    <div class="col-xl-6 text-left" style="padding-top: 1rem">
+                        <div class="card">
+                            <h4 class="card-header">Subscriptions</h4>
+                            <div id="subscriptions_view" class="table-responsive"></div>
+                        </div>
                     </div>
                 </div>
             </div>

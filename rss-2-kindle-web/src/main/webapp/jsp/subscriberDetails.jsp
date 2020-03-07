@@ -92,8 +92,8 @@
                 operation = 'add';
                 message = 'Subscriptions added successfully';
                 $('#addModal').modal('show');
-                $('#add_subscriptions_form').submit(function (e) {
-                    e.preventDefault();
+                $('#add_subscriptions_form').submit(function (ev) {
+                    ev.preventDefault();
                     //validate rss list
                     var rsslistField = $('#rss_list');
                     rsslistField.popover('dispose');
@@ -128,8 +128,8 @@
                 operation = 'deactivate';
                 message = 'Subscriptions deactivated successfully';
                 $('#deactivateModal').modal('show');
-                $('#deactivate_subscriptions_form').submit(function (e) {
-                    e.preventDefault();
+                $('#deactivate_subscriptions_form').submit(function (ev) {
+                    ev.preventDefault();
                     updateSubscriptions(operation, message);
                     $('#deactivateModal').modal('hide');
                 });
@@ -137,8 +137,8 @@
                 operation = 'activate';
                 message = 'Subscriptions activated successfully';
                 $('#activateModal').modal('show');
-                $('#activate_subscriptions_form').submit(function (e) {
-                    e.preventDefault();
+                $('#activate_subscriptions_form').submit(function (ev) {
+                    ev.preventDefault();
                     updateSubscriptions(operation, message);
                     $('#activateModal').modal('hide');
                 });
@@ -146,8 +146,8 @@
                 operation = 'remove';
                 message = 'Subscriptions removed successfully';
                 $('#removeModal').modal('show');
-                $('#remove_subscriptions_form').submit(function (e) {
-                    e.preventDefault();
+                $('#remove_subscriptions_form').submit(function (ev) {
+                    ev.preventDefault();
                     updateSubscriptions(operation, message);
                     $('#removeModal').modal('hide');
                 });
@@ -230,22 +230,26 @@
                         <div class="btn-toolbar bg-light" role="toolbar" aria-label="">
                             <div class="btn-group" role="group">
                                 <button id="add_btn" class="navbar-brand btn-outline-info" type="submit"
+                                        data-toggle="modal"  data-target="#addModal"
                                         data-tooltip="tooltip" data-placement="top" title="New subscription">
                                     <i class="fas fa-plus-circle fa-2x"></i>
                                 </button>
                             </div>
                             <div class="btn-group mr-2" role="group" aria-label="">
                                 <button id="activate_btn" class="navbar-brand btn-outline-primary" type="submit"
+                                        data-toggle="modal"  data-target="#activateModal"
                                         data-tooltip="tooltip" data-placement="top" title="Activate subscriptions">
                                     <i class="far fa-play-circle fa-2x"></i>
                                 </button>
                                 <button id="deactivate_btn" class="navbar-brand btn-outline-warning" type="submit"
+                                        data-toggle="modal"  data-target="#deactivateModal"
                                         data-tooltip="tooltip" data-placement="top" title="Deactivate subscriptions">
                                     <i class="far fa-pause-circle fa-2x"></i>
                                 </button>
                             </div>
                             <div class="btn-group" role="group">
                                 <button id="remove_btn" class="navbar-brand btn-outline-danger" type="submit"
+                                        data-toggle="modal"  data-target="#removeModal"
                                         data-tooltip="tooltip" data-placement="top" title="Remove subscriptions">
                                     <i class="far fa-trash-alt fa-2x"></i>
                                 </button>
