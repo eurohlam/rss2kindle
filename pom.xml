@@ -6,7 +6,7 @@
     <groupId>org.roag</groupId>
     <artifactId>rss-2-kindle</artifactId>
     <packaging>pom</packaging>
-    <version>3.3-SNAPSHOT</version>
+    <version>3.3</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -246,7 +246,7 @@
     </build>
     <scm>
         <developerConnection>scm:git:https://eurohlam@github.com/eurohlam/rss2kindle.git</developerConnection>
-      <tag>HEAD</tag>
+      <tag>v3.3</tag>
   </scm>
 
 </project>
