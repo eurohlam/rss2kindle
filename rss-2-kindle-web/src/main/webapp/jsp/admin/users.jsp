@@ -19,7 +19,7 @@
           type="text/css">
 
     <!-- Theme CSS -->
-    <link href="../../css/freelancer.css" rel="stylesheet">
+    <link href="../../css/freelancer.min.css" rel="stylesheet">
 
     <!-- Custom css -->
     <link href="../../css/simple-sidebar.css" rel="stylesheet">
@@ -169,28 +169,43 @@
                     <form id="users_form" action="" method="post">
                         <div class="btn-toolbar bg-light" role="toolbar">
                             <div class="btn-group" role="group">
-                                <button id="unlock_btn" class="navbar-brand btn-outline-primary" type="submit" data-toggle="tooltip" data-placement="top" title="Unlock users">
+                                <button id="unlock_btn" class="navbar-brand btn-outline-primary" type="submit"
+                                        data-toggle="tooltip" data-placement="top" title="Unlock users">
                                     <i class="fas fa-user-cog fa-2x"></i>
                                 </button>
-                                <button id="lock_btn" class="navbar-brand btn-outline-warning" type="submit" data-toggle="tooltip" data-placement="top" title="Lock users">
+                                <button id="lock_btn" class="navbar-brand btn-outline-warning" type="submit"
+                                        data-toggle="tooltip" data-placement="top" title="Lock users">
                                     <i class="fas fa-user-lock fa-2x"></i>
                                 </button>
                             </div>
                             <div class="btn-group" role="group">
-                                <button id="remove_btn" class="navbar-brand btn-outline-danger" type="submit" data-toggle="tooltip" data-placement="top" title="Remove users">
+                                <button id="remove_btn" class="navbar-brand btn-outline-danger" type="submit"
+                                        data-toggle="tooltip" data-placement="top" title="Remove users">
                                     <i class="fas fa-user-slash fa-2x"></i>
                                 </button>
                             </div>
                         </div>
                         <div id="alerts_panel"></div>
-                        <div id="all_users" class="table-responsive-sm"></div>
+                        <div id="all_users" class="table-responsive"></div>
                     </form>
                 </div>
             </div>
         </main>
     </div>
 
-    <jsp:include page="../_footer.jsp"/>
+    <!-- Footer -->
+    <footer class="row footer <c:out value="${param.stickyFooter}"/> copyright py-4 text-center text-white">
+        <div class="container">
+            <small>Copyright &copy; <a href="https://roundkick.studio">Roundkick Studio</a> 2019</small>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
+    <div class="scroll-to-top d-lg-none position-fixed ">
+        <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top">
+            <i class="fa fa-chevron-up"></i>
+        </a>
+    </div>
 </div>
 
 <!-- Bootstrap core JavaScript -->
