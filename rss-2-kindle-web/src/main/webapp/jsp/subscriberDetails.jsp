@@ -86,74 +86,74 @@
         $('#subscribers_form').submit(function (e) {
             e.preventDefault();
             var srcButtonId = $(document.activeElement).attr('id');
-            var operation;
-            var message;
             if (srcButtonId == 'add_btn') {
-                operation = 'add';
-                message = 'Subscriptions added successfully';
                 $('#addModal').modal('show');
-                $('#add_subscriptions_form').submit(function (e) {
-                    e.preventDefault();
-                    //validate rss list
-                    var rsslistField = $('#rss_list');
-                    rsslistField.popover('dispose');
-                    if ($('#rss_list option').length === 0) {
-                        rsslistField.popover(
-                            {
-                                content: 'At least one RSS is required',
-                                trigger: 'manual',
-                                placement: 'auto'
-                            });
-                        rsslistField.popover('show');
-
-                        return false;
-                    }
-
-                    var newRssList = userData.rsslist;
-                    $('#rss_list option').each(function (i) {
-                        newRssList.push({'rss': $(this).val(), 'status': 'active'});
-                    });
-                    userData.rsslist = newRssList;
-                    $().runAjax(rootURL + '/update',
-                        'PUT',
-                        JSON.stringify(userData),
-                        'New subscriptions have been added successfully',
-                        'Adding new subscriptions failed',
-                        reloadRssTable
-                    );
-                    $('#addModal').modal('hide');
-                    rsslistField.empty();
-                });
             } else if (srcButtonId == 'deactivate_btn') {
-                operation = 'deactivate';
-                message = 'Subscriptions deactivated successfully';
                 $('#deactivateModal').modal('show');
-                $('#deactivate_subscriptions_form').submit(function (e) {
-                    e.preventDefault();
-                    updateSubscriptions(operation, message);
-                    $('#deactivateModal').modal('hide');
-                });
             } else if (srcButtonId == 'activate_btn') {
-                operation = 'activate';
-                message = 'Subscriptions activated successfully';
                 $('#activateModal').modal('show');
-                $('#activate_subscriptions_form').submit(function (e) {
-                    e.preventDefault();
-                    updateSubscriptions(operation, message);
-                    $('#activateModal').modal('hide');
-                });
             } else if (srcButtonId == 'remove_btn') {
-                operation = 'remove';
-                message = 'Subscriptions removed successfully';
                 $('#removeModal').modal('show');
-                $('#remove_subscriptions_form').submit(function (e) {
-                    e.preventDefault();
-                    updateSubscriptions(operation, message);
-                    $('#removeModal').modal('hide');
-                });
             }
 
         }); //subscribers_form.submit
+
+        $('#add_subscriptions_form').submit(function (ev) {
+            ev.preventDefault();
+            //validate rss list
+            var rsslistField = $('#rss_list');
+            rsslistField.popover('dispose');
+            if ($('#rss_list option').length === 0) {
+                rsslistField.popover(
+                    {
+                        content: 'At least one RSS is required',
+                        trigger: 'manual',
+                        placement: 'auto'
+                    });
+                rsslistField.popover('show');
+
+                return false;
+            }
+
+            var newRssList = userData.rsslist;
+            $('#rss_list option').each(function (i) {
+                newRssList.push({'rss': $(this).val(), 'status': 'active'});
+            });
+            userData.rsslist = newRssList;
+            $().runAjax(rootURL + '/update',
+                'PUT',
+                JSON.stringify(userData),
+                'New subscriptions have been added successfully',
+                'Adding new subscriptions failed',
+                reloadRssTable
+            );
+            $('#addModal').modal('hide');
+            rsslistField.empty();
+        });
+
+        $('#activate_subscriptions_form').submit(function (ev) {
+            ev.preventDefault();
+            var operation = 'activate';
+            var message = 'Subscriptions activated successfully';
+            updateSubscriptions(operation, message);
+            $('#activateModal').modal('hide');
+        });
+
+        $('#deactivate_subscriptions_form').submit(function (ev) {
+            ev.preventDefault();
+            var operation = 'deactivate';
+            var message = 'Subscriptions deactivated successfully';
+            updateSubscriptions(operation, message);
+            $('#deactivateModal').modal('hide');
+        });
+
+        $('#remove_subscriptions_form').submit(function (ev) {
+            ev.preventDefault();
+            var operation = 'remove';
+            var message = 'Subscriptions removed successfully';
+            updateSubscriptions(operation, message);
+            $('#removeModal').modal('hide');
+        });
 
         function updateSubscriptions(operation, message) {
             var updatedRssList = userData.rsslist;
@@ -230,29 +230,33 @@
                         <div class="btn-toolbar bg-light" role="toolbar" aria-label="">
                             <div class="btn-group" role="group">
                                 <button id="add_btn" class="navbar-brand btn-outline-info" type="submit"
+                                        data-toggle="modal"  data-target="#addModal"
                                         data-tooltip="tooltip" data-placement="top" title="New subscription">
                                     <i class="fas fa-plus-circle fa-2x"></i>
                                 </button>
                             </div>
                             <div class="btn-group mr-2" role="group" aria-label="">
                                 <button id="activate_btn" class="navbar-brand btn-outline-primary" type="submit"
+                                        data-toggle="modal"  data-target="#activateModal"
                                         data-tooltip="tooltip" data-placement="top" title="Activate subscriptions">
                                     <i class="far fa-play-circle fa-2x"></i>
                                 </button>
                                 <button id="deactivate_btn" class="navbar-brand btn-outline-warning" type="submit"
+                                        data-toggle="modal"  data-target="#deactivateModal"
                                         data-tooltip="tooltip" data-placement="top" title="Deactivate subscriptions">
                                     <i class="far fa-pause-circle fa-2x"></i>
                                 </button>
                             </div>
                             <div class="btn-group" role="group">
                                 <button id="remove_btn" class="navbar-brand btn-outline-danger" type="submit"
+                                        data-toggle="modal"  data-target="#removeModal"
                                         data-tooltip="tooltip" data-placement="top" title="Remove subscriptions">
                                     <i class="far fa-trash-alt fa-2x"></i>
                                 </button>
                             </div>
                         </div>
                         <div id="alerts_panel" class="row"></div>
-                        <div id="details" class="row table-responsive-sm"></div>
+                        <div id="details" class="row table-responsive"></div>
                     </form>
                 </div>
             </div>

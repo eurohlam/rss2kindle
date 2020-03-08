@@ -124,7 +124,7 @@
             <id>docker-env</id>
             <properties>
                 <maven.test.skip>false</maven.test.skip>
-                <selenide.baseUrl>https://localhost/r2kweb</selenide.baseUrl>
+                <selenide.baseUrl>https://web.localhost/r2kweb</selenide.baseUrl>
                 <selenide.headless>true</selenide.headless>
                 <selenide.screenshots>true</selenide.screenshots>
                 <selenide.holdBrowserOpen>false</selenide.holdBrowserOpen>

@@ -18,7 +18,7 @@ Before running tests we need to bring up environment for testing. The easiest wa
  
         docker-compose build
         docker-compose up   
-        
+                
 After that we can run automated tests
 * go to testing module directory
         
@@ -30,7 +30,15 @@ After that we can run automated tests
                         
 By default tests run in headless mode. If you want to see the browser window then use enable-head profile
 
-    mvn test -P docker-env -P enable-head                         
+    mvn test -P docker-env -P enable-head
+                             
+There might be a problem that selenium browser driver is not able to resolve URLs like `https://web.localhost`.
+If so, you just need to add following mappings into `hosts` file (for linux systems `/etc/hosts`)
+   
+    127.0.0.1   web.localhost
+    127.0.0.1   api.localhost
+    127.0.0.1   smtp.localhost
+                                 
     
  ## How to run test report
  
