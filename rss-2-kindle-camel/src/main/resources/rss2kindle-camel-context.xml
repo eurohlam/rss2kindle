@@ -98,7 +98,7 @@
                 <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('/.*$','g'),'')</camel:javaScript>
             </camel:setHeader>
             <camel:setHeader headerName="email">
-                <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('.*/(\\w+@[\\w\\.]+).*','g'),'$1')</camel:javaScript>
+                <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('.*/([\\w\\.]+@[\\w\\.]+).*','g'),'$1')</camel:javaScript>
             </camel:setHeader>
             <camel:setHeader headerName="mobiFile">
                 <camel:javaScript>'{{storage.path.mobi}}' +request.headers.get('CamelFileName').replace(new RegExp('opf','g'),'mobi')</camel:javaScript>
