@@ -140,7 +140,7 @@
             <id>vagrant-env</id>
             <properties>
                 <maven.test.skip>false</maven.test.skip>
-                <selenide.baseUrl>http://10.100.100.200:8080/r2kweb</selenide.baseUrl>
+                <selenide.baseUrl>https://10.100.100.200/r2kweb</selenide.baseUrl>
                 <selenide.headless>true</selenide.headless>
                 <selenide.screenshots>true</selenide.screenshots>
                 <selenide.holdBrowserOpen>false</selenide.holdBrowserOpen>
@@ -151,6 +151,24 @@
                 <r2k.password>testuser</r2k.password>
                 <r2k.email>test@test.com</r2k.email>
             </properties>
+        </profile>
+        <profile>
+            <id>select-tests-by-tags</id>
+            <activation>
+                <property>
+                    <name>tags</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <groups>${tags}</groups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>enable-head</id>
