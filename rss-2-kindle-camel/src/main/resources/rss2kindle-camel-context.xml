@@ -115,7 +115,7 @@
                     <camel:javaScript>request.headers.get('mobiFile').replace(new RegExp('.*/','g'),'')</camel:javaScript>
                 </camel:setHeader>
                 <camel:setHeader headerName="feed">
-                    <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('.*/\\w+@[\\w\\.]+/(.*)/.*','g'),'$1').replace(new RegExp('(https?)_', 'g'), '$1:').replace(new RegExp('_', 'g'), '/')</camel:javaScript>
+                    <camel:javaScript>request.headers.get('CamelFileName').replace(new RegExp('.*/[\\w\\.]+@[\\w\\.]+/(.*)/.*','g'),'$1').replace(new RegExp('(https?)_', 'g'), '$1:').replace(new RegExp('_', 'g'), '/')</camel:javaScript>
                 </camel:setHeader>
                 <camel:setHeader headerName="attachment">
                     <camel:simple>${header.mobiFile}</camel:simple>
