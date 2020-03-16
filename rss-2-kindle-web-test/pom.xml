@@ -140,7 +140,7 @@
             <id>vagrant-env</id>
             <properties>
                 <maven.test.skip>false</maven.test.skip>
-                <selenide.baseUrl>https://34.87.247.57/r2kweb</selenide.baseUrl>
+                <selenide.baseUrl>https://10.100.100.200/r2kweb</selenide.baseUrl>
                 <selenide.headless>true</selenide.headless>
                 <selenide.screenshots>true</selenide.screenshots>
                 <selenide.holdBrowserOpen>false</selenide.holdBrowserOpen>
