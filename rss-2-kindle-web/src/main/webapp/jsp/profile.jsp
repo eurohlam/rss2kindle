@@ -17,8 +17,14 @@
     var userData;
 
     $(document).ready(function () {
-        $.getJSON(rootURL, function (data) {
-            userData = data;
+
+        function showSubscribersTable(subscribers, maxPerPage, pageNumber) {
+            if (!maxPerPage || maxPerPage < 0) {
+                maxPerPage = 10;
+            }
+            if (!pageNumber || pageNumber < 0) {
+                pageNumber = 1;
+            }
 
             var subscribersTable = $('<table>')
                 .addClass('table table-hover')
@@ -31,6 +37,30 @@
                     '</tr></thead>')
                 .append('<tbody>');
 
+            $.each(subscribers, function (i, item) {
+                if (i >= (pageNumber - 1) * maxPerPage) {
+                    //TODO: pagination
+                }
+
+                var tr = $('<tr>');
+
+                if (item.status === 'suspended') {
+                    tr.addClass('table-danger');
+                } else {
+                    tr.addClass('table-light');
+                }
+
+                tr.append('<td>' + (i +1) + '</td>')
+                    .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td>')
+                    .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>')
+                    .append('<td>' + item.status + '</td>')
+                    .append('<td>'+ item.rsslist.length + '</td>');
+                subscribersTable.append(tr);
+            });
+            $('#subscribers_view').append(subscribersTable);
+        } //end of showSubscribersTable
+
+        function showSubscriptionsTable(subscribers, maxPerPage, pageNumber) {
             var rssTable = $('<table>').addClass('table table-hover')
                 .append('<thead>' +
                     '<tr><th>#</th>' +
@@ -39,79 +69,89 @@
                     '<th>send to</th>' +
                     '</tr></thead>')
                 .append('<tbody>');
-            var rssNumber = 0;
-            var suspendedSubscribersnumber = 0;
-            var deadRssNumber = 0;
-            var offlineRssNumber = 0;
+            var rssNumber = 1;
 
-            $.each(data.subscribers, function (i, item) {
-                var rss = item.rsslist;
-                var tr = $('<tr>');
-
-                if (item.status === 'suspended') {
-                    tr.addClass('table-danger');
-                    suspendedSubscribersnumber++;
-                }
-                else {
-                    tr.addClass('table-light');
-                }
-
-                tr.append('<td>' + (i +1) + '</td>')
-                    .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td>')
-                    .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>')
-                    .append('<td>' + item.status + '</td>')
-                    .append('<td>'+ rss.length + '</td>');
-                subscribersTable.append(tr);
-
-                for (j = 0; j < rss.length; j++) {
+            $.each(subscribers, function (i, subscriber) {
+                $.each(subscriber.rsslist, function (r, rss) {
                     var rssTr = $('<tr>');
-                    if (rss[j].status === 'dead') {
+                    if (rss.status === 'dead') {
                         rssTr.addClass('table-danger');
-                        deadRssNumber++;
-                    }
-                    else if (rss[j].status === 'offline') {
+                    } else if (rss.status === 'offline') {
                         rssTr.addClass('table-warning');
-                        offlineRssNumber++;
-                    }
-                    else {
+                    } else {
                         rssTr.addClass('table-light');
                     }
 
-                    rssNumber++;
-
                     rssTr.append('<td>' + rssNumber + '</td>')
-                        .append('<td><a href="' + rss[j].rss + '" target="_blank">' + rss[j].rss + '</a></td>')
-                        .append('<td>' + rss[j].status + '</td>')
-                        .append('<td>' + item.email + '</td>');
+                        .append('<td><a href="' + rss.rss + '" target="_blank">' + rss.rss + '</a></td>')
+                        .append('<td>' + rss.status + '</td>')
+                        .append('<td>' + subscriber.email + '</td>');
                     rssTable.append(rssTr);
-                }
 
+                    rssNumber++;
+                });
             });
+            $('#subscriptions_view').append(rssTable);
+        } // end of showSubscriptionsTable
 
-            $('#dashboard_user_status').append('User status: ' + data.status);
+        function showUserSummary(user) {
+            $('#dashboard_user_status').append('User status: ' + user.status);
             $('#dashboard_user_info').append(
-                'Contact email: ' + data.email + '<br>' +
-                'Created: ' + data.dateCreated + '<br>' +
-                'Modified: ' + data.dateModified + '<br>' +
-                'Last logged in: ' + data.previousLogin + '<br>'
+                'Contact email: ' + user.email + '<br>' +
+                'Created: ' + user.dateCreated + '<br>' +
+                'Modified: ' + user.dateModified + '<br>' +
+                'Last logged in: ' + user.previousLogin + '<br>'
             );
+        }
 
-            $('#dashboard_subscribers_status').append('Number of subscribers: ' + data.subscribers.length);
+        function showSubscribersSummary(subscribers) {
+            var activeCount = 0;
+            $.each(subscribers, function (i, subscriber) {
+                if (subscriber.status === 'active') {
+                    activeCount++;
+                }
+            });
+            $('#dashboard_subscribers_status').append('Number of subscribers: ' + subscribers.length);
             $('#dashboard_subscribers_info').append(
-                'Active subscribers:' + (data.subscribers.length - suspendedSubscribersnumber) + '<br>' +
-                'Suspended subscribers: ' + suspendedSubscribersnumber + '<br><br><br>'
+                'Active subscribers:' + activeCount + '<br>' +
+                'Suspended subscribers: ' + (subscribers.length - activeCount) + '<br><br><br>'
             );
+        }
 
+        function showSubscriptionsSummary(subscribers) {
+            var rssNumber = 0;
+            var deadRssNumber = 0;
+            var offlineRssNumber = 0;
+            $.each(subscribers, function (i, subscriber) {
+                $.each(subscriber.rsslist, function(r, rss) {
+                    if (rss.status === 'dead') {
+                        deadRssNumber++;
+                    } else if (rss.status === 'offline') {
+                        offlineRssNumber++;
+                    }
+                    rssNumber++;
+                });
+            });
             $('#dashboard_subscriptions_status').append('Number of subscriptions: ' + rssNumber);
             $('#dashboard_subscriptions_info').append(
                 'Active subscriptions:' + (rssNumber - deadRssNumber - offlineRssNumber) + '<br>' +
                 'Dead subscriptions: ' + deadRssNumber + '<br>' +
                 'Offline subscriptions: ' + offlineRssNumber + '<br><br>'
             );
+        }
 
-            $('#subscribers_view').append(subscribersTable);
-            $('#subscriptions_view').append(rssTable);
-        })
+        function showDashboard() {
+            $.getJSON(rootURL, function (data) {
+                userData = data;
+                showUserSummary(userData);
+                showSubscribersSummary(userData.subscribers);
+                showSubscriptionsSummary(userData.subscribers);
+                showSubscribersTable(userData.subscribers, 10, 1);
+                showSubscriptionsTable(userData.subscribers, 10, 1);
+            })
+        }
+
+        showDashboard();
     });
 
 </script>
@@ -159,12 +199,46 @@
                         <div class="card">
                             <h4 class="card-header">Subscribers</h4>
                             <div id="subscribers_view" class="table-responsive"></div>
+                            <nav class="card-footer" aria-label="subscribers pagination">
+                                <ul class="pagination justify-content-end">
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                     <div class="col-xl-6 text-left" style="padding-top: 1rem">
                         <div class="card">
                             <h4 class="card-header">Subscriptions</h4>
                             <div id="subscriptions_view" class="table-responsive"></div>
+                            <nav class="card-footer" aria-label="subscriptions pagination">
+                                <ul class="pagination justify-content-end">
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
