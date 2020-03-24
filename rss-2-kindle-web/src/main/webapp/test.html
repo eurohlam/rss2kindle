@@ -243,6 +243,30 @@
             console.log("toggle wrapper");
             $("#wrapper").toggleClass("toggled");
         });
+
+
+        function showPagination() {
+            var paginationBar = $('<nav class="card-footer" aria-label="subscribers-pagination">');
+            var ul= $('<ul class="pagination justify-content-end">')
+                .append(' <li class="page-item">\
+                                    <a class="page-link" href="#" aria-label="Previous">\
+                                        <span aria-hidden="true">&laquo;</span>\
+                                    </a>\
+                                </li>');
+            for (i = 1; i <= 6; i++) {
+                ul.append('<li class="page-item"><a class="page-link" href="#">' + i + '</a></li>');
+            }
+            ul.append('<li class="page-item">\
+                         <a class="page-link" href="#" aria-label="Next">\
+                             <span aria-hidden="true">&raquo;</span>\
+                         </a>\
+                      </li>');
+            paginationBar.append(ul);
+            $("#all_users").append(paginationBar);
+        }
+
+        $("#all_users").append(showPagination());
+
     }); // $(document).ready()
 
     function getUserData() {
@@ -403,23 +427,6 @@
                             </tr>
                             </tbody>
                         </table>
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination justify-content-end">
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
                     </div>
                     <div id="test" class="table-responsive-sm"></div>
                 </form>

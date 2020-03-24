@@ -31,12 +31,14 @@
                 userData = data;
                 var table = $('<table>')
                     .addClass('table table-hover')
-                    .append( '<thead>' +
-                    '<tr><th>#</th>' +
-                    '<th>name</th>' +
-                    '<th>email</th>' +
-                    '<th>status</th>' +
-                    '<th>action</th></tr></thead>')
+                    .append(
+                        '<thead>\
+                            <tr><th>#</th>\
+                            <th>name</th>\
+                            <th>email</th>\
+                            <th>status</th>\
+                            <th>action</th></tr>\
+                        </thead>')
                     .append('<tbody>');
 
                 $.each(data.subscribers, function (i, item) {
@@ -385,38 +387,42 @@
                 <div class="tab-content table-responsive-sm" id="operationsTabContent">
                     <div id="alerts_panel"></div>
                     <div class="tab-pane fade active"  id="new" role="tabpanel" aria-labelledby="new-tab">
-                        <h2>Add new subscriber</h2>
-                        <form method="get" id="new_subscriber_form" action="#page-top">
-                            <div class="form-group">
-                                <label for="new_subscriber_email">Email</label>
-                                <input type="email" id="new_subscriber_email" required class="form-control"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="new_subscriber_name">Name</label>
-                                <input type="text" id="new_subscriber_name" required class="form-control"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="new_subscriber_rsslist">Subscriptions</label>
-                                <select class="form-control" id="new_subscriber_rsslist" size="5"></select>
+                        <div class="card">
+                            <h2 class="card-header">Add new subscriber</h2>
+                            <form method="get" id="new_subscriber_form" action="#page-top">
                                 <div class="form-group">
-                                    <label for="new_subscriber_addrss" class="control-label">Add new subscription (RSS):</label>
-                                    <input type="url" class="form-control" id="new_subscriber_addrss"/>
-                                    <div class="btn-group-xs" role="group">
-                                        <button type="button" class="btn btn-primary" id="btn_new_subscriber_addrss">+</button>
-                                        <button type="button" class="btn btn-primary" id="btn_new_subscriber_deleterss">-</button>
+                                    <label for="new_subscriber_email">Email</label>
+                                    <input type="email" id="new_subscriber_email" required class="form-control"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="new_subscriber_name">Name</label>
+                                    <input type="text" id="new_subscriber_name" required class="form-control"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="new_subscriber_rsslist">Subscriptions</label>
+                                    <select class="form-control" id="new_subscriber_rsslist" size="5"></select>
+                                    <div class="form-group">
+                                        <label for="new_subscriber_addrss" class="control-label">Add new subscription (RSS):</label>
+                                        <input type="url" class="form-control" id="new_subscriber_addrss"/>
+                                        <div class="btn-group-xs" role="group">
+                                            <button type="button" class="btn btn-primary" id="btn_new_subscriber_addrss">+</button>
+                                            <button type="button" class="btn btn-primary" id="btn_new_subscriber_deleterss">-</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <%--<label for="starttime">Start date</label>--%>
-                                <%--<p><input type="date" id="starttime" class="form-control"/></p>--%>
-                                <button type="submit" class="btn btn-primary">Create</button>
-                            </div>
-                        </form>
+                                <div class="form-group">
+                                    <%--<label for="starttime">Start date</label>--%>
+                                    <%--<p><input type="date" id="starttime" class="form-control"/></p>--%>
+                                    <button type="submit" class="btn btn-primary">Create</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
-                        <h2>Edit subscribers</h2>
-                        <div id="edit_subscriber"></div>
+                        <div class="card">
+                            <h2 class="card-header">Edit subscribers</h2>
+                            <div id="edit_subscriber"></div>
+                        </div>
                     </div>
                 </div>
             </div>

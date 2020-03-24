@@ -25,74 +25,119 @@
             if (!pageNumber || pageNumber < 0) {
                 pageNumber = 1;
             }
+            var startIndex = (pageNumber - 1) * maxPerPage;
+            var endIndex = pageNumber * maxPerPage;
 
             var subscribersTable = $('<table>')
                 .addClass('table table-hover')
-                .append('<thead>' +
-                    '<tr><th>#</th>' +
-                    '<th>subscriber</th>' +
-                    '<th>email</th>' +
-                    '<th>status</th>' +
-                    '<th>number of subscriptions</th>' +
-                    '</tr></thead>')
+                .append('<thead>\
+                            <tr><th>#</th>\
+                            <th>subscriber</th>\
+                            <th>email</th>\
+                            <th>status</th>\
+                            <th>number of subscriptions</th>\
+                        </tr></thead>')
                 .append('<tbody>');
 
             $.each(subscribers, function (i, item) {
-                if (i >= (pageNumber - 1) * maxPerPage) {
-                    //TODO: pagination
+                if (i >= startIndex && i < endIndex) {
+                    var tr = $('<tr>');
+
+                    if (item.status === 'suspended') {
+                        tr.addClass('table-danger');
+                    } else {
+                        tr.addClass('table-light');
+                    }
+
+                    tr.append('<td>' + (i + 1) + '</td>')
+                        .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td>')
+                        .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>')
+                        .append('<td>' + item.status + '</td>')
+                        .append('<td>' + item.rsslist.length + '</td>');
+                    subscribersTable.append(tr);
                 }
-
-                var tr = $('<tr>');
-
-                if (item.status === 'suspended') {
-                    tr.addClass('table-danger');
-                } else {
-                    tr.addClass('table-light');
-                }
-
-                tr.append('<td>' + (i +1) + '</td>')
-                    .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td>')
-                    .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>')
-                    .append('<td>' + item.status + '</td>')
-                    .append('<td>'+ item.rsslist.length + '</td>');
-                subscribersTable.append(tr);
             });
             $('#subscribers_view').append(subscribersTable);
+
+            //add pagination bar
+            if (subscribers.length > endIndex) {
+                $('#subscribers_view').append(generatePaginationBar(subscribers, maxPerPage));
+            }
+
         } //end of showSubscribersTable
 
         function showSubscriptionsTable(subscribers, maxPerPage, pageNumber) {
+            if (!maxPerPage || maxPerPage < 0) {
+                maxPerPage = 10;
+            }
+            if (!pageNumber || pageNumber < 0) {
+                pageNumber = 1;
+            }
+            var startIndex = (pageNumber - 1) * maxPerPage;
+            var endIndex = pageNumber * maxPerPage;
+
             var rssTable = $('<table>').addClass('table table-hover')
-                .append('<thead>' +
-                    '<tr><th>#</th>' +
-                    '<th>subscription</th>' +
-                    '<th>status</th>' +
-                    '<th>send to</th>' +
-                    '</tr></thead>')
+                .append('<thead>\
+                            <tr><th>#</th>\
+                            <th>subscription</th>\
+                            <th>status</th>\
+                            <th>send to</th>\
+                         </tr></thead>')
                 .append('<tbody>');
-            var rssNumber = 1;
+            var rssNumber = 0;
+            var linkList = [];
 
             $.each(subscribers, function (i, subscriber) {
                 $.each(subscriber.rsslist, function (r, rss) {
-                    var rssTr = $('<tr>');
-                    if (rss.status === 'dead') {
-                        rssTr.addClass('table-danger');
-                    } else if (rss.status === 'offline') {
-                        rssTr.addClass('table-warning');
-                    } else {
-                        rssTr.addClass('table-light');
+                    if (rssNumber >= startIndex && rssNumber < endIndex) {
+                        var rssTr = $('<tr>');
+                        if (rss.status === 'dead') {
+                            rssTr.addClass('table-danger');
+                        } else if (rss.status === 'offline') {
+                            rssTr.addClass('table-warning');
+                        } else {
+                            rssTr.addClass('table-light');
+                        }
+
+                        rssTr.append('<td>' + (rssNumber + 1) + '</td>')
+                            .append('<td><a href="' + rss.rss + '" target="_blank">' + rss.rss + '</a></td>')
+                            .append('<td>' + rss.status + '</td>')
+                            .append('<td>' + subscriber.email + '</td>');
+                        rssTable.append(rssTr);
                     }
-
-                    rssTr.append('<td>' + rssNumber + '</td>')
-                        .append('<td><a href="' + rss.rss + '" target="_blank">' + rss.rss + '</a></td>')
-                        .append('<td>' + rss.status + '</td>')
-                        .append('<td>' + subscriber.email + '</td>');
-                    rssTable.append(rssTr);
-
                     rssNumber++;
+                    linkList.push('test'); //TODO: it is just for testing
                 });
             });
             $('#subscriptions_view').append(rssTable);
+
+            //add pagination bar
+            if (rssNumber > endIndex) {
+                $('#subscriptions_view').append(generatePaginationBar(linkList, maxPerPage));
+            }
         } // end of showSubscriptionsTable
+
+        function generatePaginationBar(linkList, maxPerPage) {
+            var numberOfPages = Math.ceil(linkList.length / maxPerPage);
+
+            var paginationBar = $('<nav class="card-footer">');
+            var ul= $('<ul class="pagination justify-content-end">')
+                .append('<li class="page-item">\
+                             <a class="page-link" href="#" aria-label="Previous">\
+                                <span aria-hidden="true">&laquo;</span>\
+                             </a>\
+                         </li>');
+            for (i = 1; i <= numberOfPages; i++) {
+                ul.append('<li class="page-item"><a class="page-link" href="#">' + i + '</a></li>');
+            }
+            ul.append('<li class="page-item">\
+                         <a class="page-link" href="#" aria-label="Next">\
+                             <span aria-hidden="true">&raquo;</span>\
+                         </a>\
+                      </li>');
+            paginationBar.append(ul);
+            return paginationBar;
+        }
 
         function showUserSummary(user) {
             $('#dashboard_user_status').append('User status: ' + user.status);
@@ -123,7 +168,7 @@
             var deadRssNumber = 0;
             var offlineRssNumber = 0;
             $.each(subscribers, function (i, subscriber) {
-                $.each(subscriber.rsslist, function(r, rss) {
+                $.each(subscriber.rsslist, function (r, rss) {
                     if (rss.status === 'dead') {
                         deadRssNumber++;
                     } else if (rss.status === 'offline') {
@@ -187,7 +232,7 @@
                         </div>
                     </div>
                     <div class="col-md-4 col-lg-4" style="padding-top: 1rem">
-                        <div class="card"  style="background-color: #c9e2b3">
+                        <div class="card" style="background-color: #c9e2b3">
                             <h6 id="dashboard_subscriptions_status" class="card-header"></h6>
                             <h4 class="card-title">Subscriptions</h4>
                             <div class="card-text text-muted" id="dashboard_subscriptions_info"></div>
@@ -199,46 +244,12 @@
                         <div class="card">
                             <h4 class="card-header">Subscribers</h4>
                             <div id="subscribers_view" class="table-responsive"></div>
-                            <nav class="card-footer" aria-label="subscribers pagination">
-                                <ul class="pagination justify-content-end">
-                                    <li class="page-item">
-                                        <a class="page-link" href="#" aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
-                                    </li>
-                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="#" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
                         </div>
                     </div>
                     <div class="col-xl-6 text-left" style="padding-top: 1rem">
                         <div class="card">
                             <h4 class="card-header">Subscriptions</h4>
                             <div id="subscriptions_view" class="table-responsive"></div>
-                            <nav class="card-footer" aria-label="subscriptions pagination">
-                                <ul class="pagination justify-content-end">
-                                    <li class="page-item">
-                                        <a class="page-link" href="#" aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
-                                    </li>
-                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                    <li class="page-item">
-                                        <a class="page-link" href="#" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
                         </div>
                     </div>
                 </div>
