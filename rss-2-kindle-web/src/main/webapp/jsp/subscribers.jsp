@@ -8,7 +8,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%@include file="_head.jsp"%>
+    <%@include file="_head.jsp" %>
 </head>
 
 <body id="page-top">
@@ -50,18 +50,18 @@
                     }
 
                     tr.append('<td>' + (i + 1) + '</td>' +
-                         '<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><' +
-                         '<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>' +
-                         '<td>' + item.status + '</td>');
+                        '<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><' +
+                        '<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>' +
+                        '<td>' + item.status + '</td>');
 
                     var btnDiv = $('<div>')
                         .addClass('btn-group')
                         .attr({'role': 'group'});
                     btnDiv.append('<button id="btn_update" type="button" class="btn btn-outline-primary" ' +
-                            'data-toggle="modal" data-target="#updateModal" ' +
-                            'data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">' +
-                            '<span data-tooltip="tooltip" data-placement="top" title="Edit subscriber">' +
-                            '<i class="far fa-edit fa-lg"></i></span></button>');
+                        'data-toggle="modal" data-target="#updateModal" ' +
+                        'data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">' +
+                        '<span data-tooltip="tooltip" data-placement="top" title="Edit subscriber">' +
+                        '<i class="far fa-edit fa-lg"></i></span></button>');
 
                     if (item.status === 'suspended') {
                         btnDiv.append('<button id="btn_resume" type="button" class="btn btn-warning" ' +
@@ -86,7 +86,6 @@
                 $('#edit_subscriber').html(table);
             });
         } //end of reloadSubscribersTable
-
 
 
         //activate the first tab by default
@@ -308,7 +307,7 @@
         });
 
         $('#btn_new_subscriber_addrss').click(function (event) {
-            var _new_subscriber_addrss=$('#new_subscriber_addrss');
+            var _new_subscriber_addrss = $('#new_subscriber_addrss');
             var rss = _new_subscriber_addrss.val();
             _new_subscriber_addrss.popover(
                 {
@@ -366,7 +365,7 @@
 
     <div id="wrapper" class="d-flex">
 
-        <%@include file="_aside.jsp"%>
+        <%@include file="_aside.jsp" %>
 
         <main id="page-content-wrapper">
             <div class="text-center">
@@ -386,33 +385,38 @@
             <div class="row" style="padding-top: 3rem; padding-left: 2rem">
                 <div class="tab-content table-responsive-sm" id="operationsTabContent">
                     <div id="alerts_panel"></div>
-                    <div class="tab-pane fade active"  id="new" role="tabpanel" aria-labelledby="new-tab">
+                    <div class="tab-pane fade active" id="new" role="tabpanel" aria-labelledby="new-tab">
                         <div class="card">
                             <h2 class="card-header">Add new subscriber</h2>
                             <form method="get" id="new_subscriber_form" action="#page-top">
-                                <div class="form-group">
-                                    <label for="new_subscriber_email">Email</label>
-                                    <input type="email" id="new_subscriber_email" required class="form-control"/>
-                                </div>
-                                <div class="form-group">
-                                    <label for="new_subscriber_name">Name</label>
-                                    <input type="text" id="new_subscriber_name" required class="form-control"/>
-                                </div>
-                                <div class="form-group">
-                                    <label for="new_subscriber_rsslist">Subscriptions</label>
-                                    <select class="form-control" id="new_subscriber_rsslist" size="5"></select>
+                                <div class="card-body">
                                     <div class="form-group">
-                                        <label for="new_subscriber_addrss" class="control-label">Add new subscription (RSS):</label>
-                                        <input type="url" class="form-control" id="new_subscriber_addrss"/>
-                                        <div class="btn-group-xs" role="group">
-                                            <button type="button" class="btn btn-primary" id="btn_new_subscriber_addrss">+</button>
-                                            <button type="button" class="btn btn-primary" id="btn_new_subscriber_deleterss">-</button>
+                                        <label for="new_subscriber_email">Email</label>
+                                        <input type="email" id="new_subscriber_email" required class="form-control"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="new_subscriber_name">Name</label>
+                                        <input type="text" id="new_subscriber_name" required class="form-control"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="new_subscriber_rsslist">Subscriptions</label>
+                                        <select class="form-control" id="new_subscriber_rsslist" size="5"></select>
+                                        <div class="form-group">
+                                            <label for="new_subscriber_addrss" class="control-label">Add new
+                                                subscription (RSS):</label>
+                                            <input type="url" class="form-control" id="new_subscriber_addrss"/>
+                                            <div class="btn-group-xs" role="group">
+                                                <button type="button" class="btn btn-primary"
+                                                        id="btn_new_subscriber_addrss">+
+                                                </button>
+                                                <button type="button" class="btn btn-primary"
+                                                        id="btn_new_subscriber_deleterss">-
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <%--<label for="starttime">Start date</label>--%>
-                                    <%--<p><input type="date" id="starttime" class="form-control"/></p>--%>
+                                <div class="card-footer">
                                     <button type="submit" class="btn btn-primary">Create</button>
                                 </div>
                             </form>
@@ -459,11 +463,14 @@
                         <label for="update_subscriber_rsslist" class="control-label">Subscriptions:</label>
                         <select class="form-control" id="update_subscriber_rsslist" size="7"></select>
                         <div class="form-group">
-                            <label for="update_subscriber_addrss" class="control-label">Add new subscription (RSS):</label>
+                            <label for="update_subscriber_addrss" class="control-label">Add new subscription
+                                (RSS):</label>
                             <input type="url" class="form-control" id="update_subscriber_addrss"/>
                             <div class="btn-group-xs" role="group">
-                                <button type="button" class="btn btn-primary" id="btn_update_subscriber_addrss">+</button>
-                                <button type="button" class="btn btn-primary" id="btn_update_subscriber_deleterss">-</button>
+                                <button type="button" class="btn btn-primary" id="btn_update_subscriber_addrss">+
+                                </button>
+                                <button type="button" class="btn btn-primary" id="btn_update_subscriber_deleterss">-
+                                </button>
                             </div>
                         </div>
                     </div>
