@@ -39,34 +39,40 @@
                         </tr></thead>')
                 .append('<tbody>');
 
-            $.each(subscribers, function (i, item) {
+            $.each(subscribers, function (i, subscriber) {
                 if (i >= startIndex && i < endIndex) {
                     var tr = $('<tr>');
 
-                    if (item.status === 'suspended') {
+                    if (subscriber.status === 'suspended') {
                         tr.addClass('table-danger');
                     } else {
                         tr.addClass('table-light');
                     }
 
                     tr.append('<td>' + (i + 1) + '</td>')
-                        .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td>')
-                        .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>')
-                        .append('<td>' + item.status + '</td>')
-                        .append('<td>' + item.rsslist.length + '</td>');
+                        .append('<td><a href="subscriberDetails?subscriber=' + subscriber.email + '">' + subscriber.name + '</a></td>')
+                        .append('<td><a href="subscriberDetails?subscriber=' + subscriber.email + '">' + subscriber.email + '</a></td>')
+                        .append('<td>' + subscriber.status + '</td>')
+                        .append('<td>' + subscriber.rsslist.length + '</td>');
                     subscribersTable.append(tr);
                 }
             });
-            $('#subscribers_view').append(subscribersTable);
+            $('#subscribers_view').html(subscribersTable);
 
             //add pagination bar
-            if (subscribers.length > endIndex) {
-                $('#subscribers_view').append(generatePaginationBar(subscribers, maxPerPage));
+            if (subscribers.length > maxPerPage) {
+                generatePaginationBar($('#subscribers_pagination'), subscribers, maxPerPage, pageNumber);
+                $('#subscribers_pagination a').click(function (event) {
+                    event.preventDefault();
+                    var button = $(event.currentTarget);
+                    var clickedPageNumber = button.data('page');
+                    showSubscribersTable(subscribers, maxPerPage, clickedPageNumber);
+                });
             }
 
         } //end of showSubscribersTable
 
-        function showSubscriptionsTable(subscribers, maxPerPage, pageNumber) {
+        function showSubscriptionsTable(subscriptions, maxPerPage, pageNumber) {
             if (!maxPerPage || maxPerPage < 0) {
                 maxPerPage = 10;
             }
@@ -84,59 +90,85 @@
                             <th>send to</th>\
                          </tr></thead>')
                 .append('<tbody>');
-            var rssNumber = 0;
-            var linkList = [];
 
-            $.each(subscribers, function (i, subscriber) {
-                $.each(subscriber.rsslist, function (r, rss) {
-                    if (rssNumber >= startIndex && rssNumber < endIndex) {
-                        var rssTr = $('<tr>');
-                        if (rss.status === 'dead') {
-                            rssTr.addClass('table-danger');
-                        } else if (rss.status === 'offline') {
-                            rssTr.addClass('table-warning');
-                        } else {
-                            rssTr.addClass('table-light');
-                        }
-
-                        rssTr.append('<td>' + (rssNumber + 1) + '</td>')
-                            .append('<td><a href="' + rss.rss + '" target="_blank">' + rss.rss + '</a></td>')
-                            .append('<td>' + rss.status + '</td>')
-                            .append('<td>' + subscriber.email + '</td>');
-                        rssTable.append(rssTr);
+            $.each(subscriptions, function (i, rss) {
+                if (i >= startIndex && i < endIndex) {
+                    var rssTr = $('<tr>');
+                    if (rss.status === 'dead') {
+                        rssTr.addClass('table-danger');
+                    } else if (rss.status === 'offline') {
+                        rssTr.addClass('table-warning');
+                    } else {
+                        rssTr.addClass('table-light');
                     }
-                    rssNumber++;
-                    linkList.push('test'); //TODO: it is just for testing
-                });
+
+                    rssTr.append('<td>' + (i + 1) + '</td>')
+                        .append('<td><a href="' + rss.rss + '" target="_blank">' + rss.rss + '</a></td>')
+                        .append('<td>' + rss.status + '</td>')
+                        .append('<td>' + rss.email + '</td>');
+                    rssTable.append(rssTr);
+                }
             });
-            $('#subscriptions_view').append(rssTable);
+            $('#subscriptions_view').html(rssTable);
 
             //add pagination bar
-            if (rssNumber > endIndex) {
-                $('#subscriptions_view').append(generatePaginationBar(linkList, maxPerPage));
+            if (subscriptions.length > maxPerPage) {
+                generatePaginationBar($('#subscription_pagination'), subscriptions, maxPerPage, pageNumber);
+                $('#subscription_pagination a').click(function (event) {
+                    event.preventDefault();
+                    var button = $(event.currentTarget);
+                    var clickedPageNumber = button.data('page');
+                    showSubscriptionsTable(subscriptions, maxPerPage, clickedPageNumber);
+                });
             }
         } // end of showSubscriptionsTable
 
-        function generatePaginationBar(linkList, maxPerPage) {
+        function generatePaginationBar(parentUl, linkList, maxPerPage, pageNumber) {
             var numberOfPages = Math.ceil(linkList.length / maxPerPage);
+            parentUl.empty();
 
-            var paginationBar = $('<nav class="card-footer">');
-            var ul= $('<ul class="pagination justify-content-end">')
-                .append('<li class="page-item">\
-                             <a class="page-link" href="#" aria-label="Previous">\
+            if (pageNumber === 1) {
+                //disable previous button
+                parentUl.append('<li class="page-item disabled">\
+                             <span class="page-link">\
+                                <span aria-hidden="true">&laquo;</span>\
+                             </span>\
+                         </li>');
+            } else {
+                parentUl.append('<li class="page-item">\
+                             <a class="page-link" href="#" data-page="' + (pageNumber - 1) + '" aria-label="Previous">\
                                 <span aria-hidden="true">&laquo;</span>\
                              </a>\
                          </li>');
-            for (i = 1; i <= numberOfPages; i++) {
-                ul.append('<li class="page-item"><a class="page-link" href="#">' + i + '</a></li>');
             }
-            ul.append('<li class="page-item">\
-                         <a class="page-link" href="#" aria-label="Next">\
-                             <span aria-hidden="true">&raquo;</span>\
-                         </a>\
-                      </li>');
-            paginationBar.append(ul);
-            return paginationBar;
+            for (i = 1; i <= numberOfPages; i++) {
+                if (pageNumber === i) {
+                    //highlight current page button
+                    parentUl.append('<li class="page-item active" aria-label="page" >\
+                                    <span class="page-link">'
+                        + i + '<span class="sr-only">(current)</span>\
+                                    </span>\
+                               </li>');
+                } else {
+                    parentUl.append('<li class="page-item">\
+                                  <a class="page-link" href="#" data-page="' + i + '">' + i + '</a>\
+                              </li>');
+                }
+            }
+            if (pageNumber === numberOfPages) {
+                //disable next button
+                parentUl.append('<li class="page-item disabled">\
+                             <span class="page-link">\
+                                 <span aria-hidden="true">&raquo;</span>\
+                             </span>\
+                          </li>');
+            } else {
+                parentUl.append('<li class="page-item">\
+                             <a class="page-link" href="#" data-page="' + (pageNumber + 1) + '" aria-label="Next">\
+                                 <span aria-hidden="true">&raquo;</span>\
+                             </a>\
+                          </li>');
+            }
         }
 
         function showUserSummary(user) {
@@ -192,7 +224,15 @@
                 showSubscribersSummary(userData.subscribers);
                 showSubscriptionsSummary(userData.subscribers);
                 showSubscribersTable(userData.subscribers, 10, 1);
-                showSubscriptionsTable(userData.subscribers, 10, 1);
+
+                var rssList = [];
+                $.each(userData.subscribers, function (i, subscriber) {
+                    $.each(subscriber.rsslist, function(r, rss) {
+                        rss.email = subscriber.email;
+                        rssList.push(rss);
+                    });
+                });
+                showSubscriptionsTable(rssList, 10, 1);
             })
         }
 
@@ -244,12 +284,18 @@
                         <div class="card">
                             <h4 class="card-header">Subscribers</h4>
                             <div id="subscribers_view" class="table-responsive"></div>
+                            <nav class="card-footer" aria-label="subscribers">
+                                <ul id="subscribers_pagination" class="pagination justify-content-end"></ul>
+                            </nav>
                         </div>
                     </div>
                     <div class="col-xl-6 text-left" style="padding-top: 1rem">
                         <div class="card">
                             <h4 class="card-header">Subscriptions</h4>
                             <div id="subscriptions_view" class="table-responsive"></div>
+                            <nav class="card-footer" aria-label="subscriptions">
+                                <ul id="subscription_pagination" class="pagination justify-content-end"></ul>
+                            </nav>
                         </div>
                     </div>
                 </div>

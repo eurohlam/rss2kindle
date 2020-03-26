@@ -33,16 +33,18 @@
 
                 var rssTable = $('<table>')
                     .addClass('table table-hover')
-                    .append('<thead>' +
-                        '<tr>' +
-                        '<th style="vertical-align: initial"><input type="checkbox" class="form-check-input" id="select_all_checkbox"/></th>' +
-                        '<th>#</th>' +
-                        '<th>rss</th>' +
-                        '<th>status</th>' +
-                        '<th>last polling date</th>' +
-                        '<th>error message</th>' +
-                        '<th>retry count</th>' +
-                        '</tr></thead>')
+                    .append(
+                        '<thead><tr>\
+                            <th style="vertical-align: initial">\
+                                <input type="checkbox" class="form-check-input" id="select_all_checkbox"/>\
+                            </th>\
+                            <th>#</th>\
+                            <th>rss</th>\
+                            <th>status</th>\
+                            <th>last polling date</th>\
+                            <th>error message</th>\
+                            <th>retry count</th>\
+                        </tr></thead>')
                     .append('<tbody>');
 
                 $.each(data.rsslist, function (i, item) {
@@ -57,13 +59,14 @@
                         tr.addClass('table-light');
                     }
 
-                    tr.append('<td><input type="checkbox" class="form-check-input" id="' + item.rss + '"/></td>'
-                        + '<td>' + (i + 1) + '</td>'
-                        + '<td><a href="' + item.rss + '" target="_blank">' + item.rss + '</a></td>'
-                        + '<td>' + item.status + '</td>'
-                        + '<td>' + item.lastPollingDate + '</td>'
-                        + '<td>' + item.errorMessage + '</td>'
-                        + '<td>' + item.retryCount + '</td>');
+                    tr.append(
+                        '<td><input type="checkbox" class="form-check-input" id="' + item.rss + '"/></td>\
+                         <td>' + (i + 1) + '</td>\
+                         <td><a href="' + item.rss + '" target="_blank">' + item.rss + '</a></td>\
+                         <td>' + item.status + '</td>\
+                         <td>' + item.lastPollingDate + '</td>\
+                         <td>' + item.errorMessage + '</td>\
+                         <td>' + item.retryCount + '</td>');
 
                     rssTable.append(tr);
                 });

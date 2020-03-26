@@ -49,36 +49,51 @@
                         tr.addClass('table-light');
                     }
 
-                    tr.append('<td>' + (i + 1) + '</td>' +
-                        '<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><' +
-                        '<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>' +
-                        '<td>' + item.status + '</td>');
+                    tr.append('<td>' + (i + 1) + '</td>\
+                            <td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td>\
+                            <td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>\
+                            <td>' + item.status + '</td>');
 
                     var btnDiv = $('<div>')
                         .addClass('btn-group')
                         .attr({'role': 'group'});
-                    btnDiv.append('<button id="btn_update" type="button" class="btn btn-outline-primary" ' +
-                        'data-toggle="modal" data-target="#updateModal" ' +
-                        'data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">' +
-                        '<span data-tooltip="tooltip" data-placement="top" title="Edit subscriber">' +
-                        '<i class="far fa-edit fa-lg"></i></span></button>');
+                    btnDiv.append(
+                        '<button id="btn_update" type="button" class="btn btn-outline-primary"\
+                                    data-toggle="modal" data-target="#updateModal"\
+                                    data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">\
+                            <span data-tooltip="tooltip" data-placement="top" title="Edit subscriber">\
+                                <i class="far fa-edit fa-lg"></i>\
+                            </span>\
+                         </button>');
 
                     if (item.status === 'suspended') {
-                        btnDiv.append('<button id="btn_resume" type="button" class="btn btn-warning" ' +
-                            'data-toggle="modal"  data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
-                            '<span data-tooltip="tooltip" data-placement="top" title="Resume subscriber">' +
-                            '<i class="far fa-play-circle fa-lg"></i></span></button>');
+                        btnDiv.append(
+                            '<button id="btn_resume" type="button" class="btn btn-warning"\
+                                        data-toggle="modal"  data-target="#resumeModal"\
+                                        data-name="' + item.name + '" data-email="' + item.email + '">\
+                                <span data-tooltip="tooltip" data-placement="top" title="Resume subscriber">\
+                                    <i class="far fa-play-circle fa-lg"></i>\
+                                </span>\
+                             </button>');
                     } else {
-                        btnDiv.append('<button id="btn_suspend" type="button" class="btn btn-outline-warning" ' +
-                            'data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
-                            '<span data-tooltip="tooltip" data-placement="top" title="Suspend subscriber">' +
-                            '<i class="far fa-pause-circle fa-lg"></i></span></button>');
+                        btnDiv.append(
+                            '<button id="btn_suspend" type="button" class="btn btn-outline-warning"\
+                                    data-toggle="modal" data-target="#suspendModal"\
+                                    data-name="' + item.name + '" data-email="' + item.email + '">\
+                                <span data-tooltip="tooltip" data-placement="top" title="Suspend subscriber">\
+                                    <i class="far fa-pause-circle fa-lg"></i>\
+                                </span>\
+                             </button>');
                     }
 
-                    btnDiv.append('<button id="btn_remove" type="button" class="btn btn-outline-danger" ' +
-                        'data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
-                        '<span data-tooltip="tooltip" data-placement="top" title="Remove subscriber">' +
-                        '<i class="far fa-trash-alt fa-lg"></i></span></button>');
+                    btnDiv.append(
+                        '<button id="btn_remove" type="button" class="btn btn-outline-danger"\
+                                data-toggle="modal" data-target="#removeModal"\
+                                data-name="' + item.name + '" data-email="' + item.email + '">\
+                            <span data-tooltip="tooltip" data-placement="top" title="Remove subscriber">\
+                                <i class="far fa-trash-alt fa-lg"></i>\
+                            </span>\
+                         </button>');
 
                     tr.append($('<td>').append(btnDiv));
                     table.append(tr);
