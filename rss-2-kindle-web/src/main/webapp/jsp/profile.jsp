@@ -61,7 +61,7 @@
 
             //add pagination bar
             if (subscribers.length > maxPerPage) {
-                generatePaginationBar($('#subscribers_pagination'), subscribers, maxPerPage, pageNumber);
+                $().generatePaginationBar($('#subscribers_pagination'), subscribers, maxPerPage, pageNumber);
                 $('#subscribers_pagination a').click(function (event) {
                     event.preventDefault();
                     var button = $(event.currentTarget);
@@ -113,7 +113,7 @@
 
             //add pagination bar
             if (subscriptions.length > maxPerPage) {
-                generatePaginationBar($('#subscription_pagination'), subscriptions, maxPerPage, pageNumber);
+                $().generatePaginationBar($('#subscription_pagination'), subscriptions, maxPerPage, pageNumber);
                 $('#subscription_pagination a').click(function (event) {
                     event.preventDefault();
                     var button = $(event.currentTarget);
@@ -122,54 +122,6 @@
                 });
             }
         } // end of showSubscriptionsTable
-
-        function generatePaginationBar(parentUl, linkList, maxPerPage, pageNumber) {
-            var numberOfPages = Math.ceil(linkList.length / maxPerPage);
-            parentUl.empty();
-
-            if (pageNumber === 1) {
-                //disable previous button
-                parentUl.append('<li class="page-item disabled">\
-                             <span class="page-link">\
-                                <span aria-hidden="true">&laquo;</span>\
-                             </span>\
-                         </li>');
-            } else {
-                parentUl.append('<li class="page-item">\
-                             <a class="page-link" href="#" data-page="' + (pageNumber - 1) + '" aria-label="Previous">\
-                                <span aria-hidden="true">&laquo;</span>\
-                             </a>\
-                         </li>');
-            }
-            for (i = 1; i <= numberOfPages; i++) {
-                if (pageNumber === i) {
-                    //highlight current page button
-                    parentUl.append('<li class="page-item active" aria-label="page" >\
-                                    <span class="page-link">'
-                        + i + '<span class="sr-only">(current)</span>\
-                                    </span>\
-                               </li>');
-                } else {
-                    parentUl.append('<li class="page-item">\
-                                  <a class="page-link" href="#" data-page="' + i + '">' + i + '</a>\
-                              </li>');
-                }
-            }
-            if (pageNumber === numberOfPages) {
-                //disable next button
-                parentUl.append('<li class="page-item disabled">\
-                             <span class="page-link">\
-                                 <span aria-hidden="true">&raquo;</span>\
-                             </span>\
-                          </li>');
-            } else {
-                parentUl.append('<li class="page-item">\
-                             <a class="page-link" href="#" data-page="' + (pageNumber + 1) + '" aria-label="Next">\
-                                 <span aria-hidden="true">&raquo;</span>\
-                             </a>\
-                          </li>');
-            }
-        }
 
         function showUserSummary(user) {
             $('#dashboard_user_status').append('User status: ' + user.status);

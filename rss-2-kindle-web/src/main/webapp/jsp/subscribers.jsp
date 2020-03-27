@@ -29,48 +29,63 @@
         function reloadSubscribersTable() {
             $.getJSON(rootURL + username, function (data) {
                 userData = data;
-                var table = $('<table>')
-                    .addClass('table table-hover')
-                    .append(
-                        '<thead>\
-                            <tr><th>#</th>\
-                            <th>name</th>\
-                            <th>email</th>\
-                            <th>status</th>\
-                            <th>action</th></tr>\
-                        </thead>')
-                    .append('<tbody>');
+                showSubscribersTable(data.subscribers, 10, 1);
+            });
+        } //end of reloadSubscribersTable
 
-                $.each(data.subscribers, function (i, item) {
+        function showSubscribersTable(subscribers, maxPerPage, pageNumber) {
+            if (!maxPerPage || maxPerPage < 0) {
+                maxPerPage = 10;
+            }
+            if (!pageNumber || pageNumber < 0) {
+                pageNumber = 1;
+            }
+            var startIndex = (pageNumber - 1) * maxPerPage;
+            var endIndex = pageNumber * maxPerPage;
+
+            var table = $('<table>')
+                .addClass('table table-hover')
+                .append(
+                    '<thead>\
+                        <tr><th>#</th>\
+                        <th>name</th>\
+                        <th>email</th>\
+                        <th>status</th>\
+                        <th>action</th></tr>\
+                    </thead>')
+                .append('<tbody>');
+
+            $.each(subscribers, function (i, subscriber) {
+                if (i >= startIndex && i < endIndex) {
                     var tr = $('<tr>');
-                    if (item.status === 'suspended') {
+                    if (subscriber.status === 'suspended') {
                         tr.addClass('table-danger');
                     } else {
                         tr.addClass('table-light');
                     }
 
                     tr.append('<td>' + (i + 1) + '</td>\
-                            <td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td>\
-                            <td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>\
-                            <td>' + item.status + '</td>');
+                            <td><a href="subscriberDetails?subscriber=' + subscriber.email + '">' + subscriber.name + '</a></td>\
+                            <td><a href="subscriberDetails?subscriber=' + subscriber.email + '">' + subscriber.email + '</a></td>\
+                            <td>' + subscriber.status + '</td>');
 
                     var btnDiv = $('<div>')
                         .addClass('btn-group')
                         .attr({'role': 'group'});
                     btnDiv.append(
                         '<button id="btn_update" type="button" class="btn btn-outline-primary"\
-                                    data-toggle="modal" data-target="#updateModal"\
-                                    data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">\
+                                data-toggle="modal" data-target="#updateModal"\
+                                data-name="' + subscriber.name + '" data-email="' + subscriber.email + '" data-status="' + subscriber.status + '">\
                             <span data-tooltip="tooltip" data-placement="top" title="Edit subscriber">\
                                 <i class="far fa-edit fa-lg"></i>\
                             </span>\
                          </button>');
 
-                    if (item.status === 'suspended') {
+                    if (subscriber.status === 'suspended') {
                         btnDiv.append(
                             '<button id="btn_resume" type="button" class="btn btn-warning"\
-                                        data-toggle="modal"  data-target="#resumeModal"\
-                                        data-name="' + item.name + '" data-email="' + item.email + '">\
+                                    data-toggle="modal"  data-target="#resumeModal"\
+                                    data-name="' + subscriber.name + '" data-email="' + subscriber.email + '">\
                                 <span data-tooltip="tooltip" data-placement="top" title="Resume subscriber">\
                                     <i class="far fa-play-circle fa-lg"></i>\
                                 </span>\
@@ -78,8 +93,8 @@
                     } else {
                         btnDiv.append(
                             '<button id="btn_suspend" type="button" class="btn btn-outline-warning"\
-                                    data-toggle="modal" data-target="#suspendModal"\
-                                    data-name="' + item.name + '" data-email="' + item.email + '">\
+                                data-toggle="modal" data-target="#suspendModal"\
+                                data-name="' + subscriber.name + '" data-email="' + subscriber.email + '">\
                                 <span data-tooltip="tooltip" data-placement="top" title="Suspend subscriber">\
                                     <i class="far fa-pause-circle fa-lg"></i>\
                                 </span>\
@@ -88,8 +103,8 @@
 
                     btnDiv.append(
                         '<button id="btn_remove" type="button" class="btn btn-outline-danger"\
-                                data-toggle="modal" data-target="#removeModal"\
-                                data-name="' + item.name + '" data-email="' + item.email + '">\
+                            data-toggle="modal" data-target="#removeModal"\
+                            data-name="' + subscriber.name + '" data-email="' + subscriber.email + '">\
                             <span data-tooltip="tooltip" data-placement="top" title="Remove subscriber">\
                                 <i class="far fa-trash-alt fa-lg"></i>\
                             </span>\
@@ -97,10 +112,21 @@
 
                     tr.append($('<td>').append(btnDiv));
                     table.append(tr);
-                });
-                $('#edit_subscriber').html(table);
+                }
             });
-        } //end of reloadSubscribersTable
+            $('#edit_subscriber').html(table);
+
+            //add pagination bar
+            if (subscribers.length > maxPerPage) {
+                $().generatePaginationBar($('#subscribers_pagination'), subscribers, maxPerPage, pageNumber);
+                $('#subscribers_pagination a').click(function (event) {
+                    event.preventDefault();
+                    var button = $(event.currentTarget);
+                    var clickedPageNumber = button.data('page');
+                    showSubscribersTable(subscribers, maxPerPage, clickedPageNumber);
+                });
+            }
+        }
 
 
         //activate the first tab by default
@@ -441,6 +467,9 @@
                         <div class="card">
                             <h2 class="card-header">Edit subscribers</h2>
                             <div id="edit_subscriber"></div>
+                            <nav class="card-footer" aria-label="subscribers">
+                                <ul id="subscribers_pagination" class="pagination justify-content-end"></ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
