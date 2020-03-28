@@ -65,8 +65,10 @@
                     }
 
                     tr.append('<td>' + (i + 1) + '</td>\
-                            <td><a href="subscriberDetails?subscriber=' + subscriber.email + '">' + subscriber.name + '</a></td>\
-                            <td><a href="subscriberDetails?subscriber=' + subscriber.email + '">' + subscriber.email + '</a></td>\
+                            <td><a href="subscriberDetails?subscriberId=' + subscriber.email
+                                        + '&subscriberName=' + subscriber.name + '">' + subscriber.name + '</a></td>\
+                            <td><a href="subscriberDetails?subscriberId=' + subscriber.email
+                                        + '&subscriberName=' + subscriber.name + '">' + subscriber.email + '</a></td>\
                             <td>' + subscriber.status + '</td>');
 
                     var btnDiv = $('<div>')
@@ -125,6 +127,8 @@
                     var clickedPageNumber = button.data('page');
                     showSubscribersTable(subscribers, maxPerPage, clickedPageNumber);
                 });
+            } else {
+                $('#subscribers_pagination').empty();
             }
         }
 

@@ -18,8 +18,11 @@ public class ProfileController extends AbstractController {
     }
 
     @RequestMapping(value = "/subscriberDetails", method = RequestMethod.GET)
-    public String subscriberDetailsPage(@RequestParam(name = "subscriber") String subscriberId, ModelMap model) {
-        model.addAttribute("subscriber", subscriberId);
+    public String subscriberDetailsPage(@RequestParam(name = "subscriberId") String subscriberId,
+                                        @RequestParam(name = "subscriberName") String subscriberName,
+                                        ModelMap model) {
+        model.addAttribute("subscriberId", subscriberId);
+        model.addAttribute("subscriberName", subscriberName);
         return "subscriberDetails";
     }
 

@@ -50,8 +50,10 @@
                     }
 
                     tr.append('<td>' + (i + 1) + '</td>')
-                        .append('<td><a href="subscriberDetails?subscriber=' + subscriber.email + '">' + subscriber.name + '</a></td>')
-                        .append('<td><a href="subscriberDetails?subscriber=' + subscriber.email + '">' + subscriber.email + '</a></td>')
+                        .append('<td><a href="subscriberDetails?subscriberId=' + subscriber.email
+                            + '&subscriberName=' + subscriber.name + '">' + subscriber.name + '</a></td>')
+                        .append('<td><a href="subscriberDetails?subscriberId=' + subscriber.email
+                            + '&subscriberName=' + subscriber.name +'">' + subscriber.email + '</a></td>')
                         .append('<td>' + subscriber.status + '</td>')
                         .append('<td>' + subscriber.rsslist.length + '</td>');
                     subscribersTable.append(tr);
@@ -189,7 +191,7 @@
         }
 
         showDashboard();
-    });
+    }); //end of $(document).ready(function ()
 
 </script>
 
