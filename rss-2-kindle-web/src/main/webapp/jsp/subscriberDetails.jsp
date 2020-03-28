@@ -28,60 +28,90 @@
         reloadRssTable();
 
         function reloadRssTable() {
-            $.getJSON(rootURL + '/${subscriber}', function (data) {
+            $.getJSON(rootURL + '/${subscriberId}', function (data) {
                 userData = data;
+                showSubscriptionsTable(data.rsslist, 10, 1);
+            });
+        }//end of reloadRssTable
 
-                var rssTable = $('<table>')
-                    .addClass('table table-hover')
-                    .append('<thead>' +
-                        '<tr>' +
-                        '<th style="vertical-align: initial"><input type="checkbox" class="form-check-input" id="select_all_checkbox"/></th>' +
-                        '<th>#</th>' +
-                        '<th>rss</th>' +
-                        '<th>status</th>' +
-                        '<th>last polling date</th>' +
-                        '<th>error message</th>' +
-                        '<th>retry count</th>' +
-                        '</tr></thead>')
-                    .append('<tbody>');
+        function showSubscriptionsTable(subscriptions, maxPerPage, pageNumber) {
+            if (!maxPerPage || maxPerPage < 0) {
+                maxPerPage = 10;
+            }
+            if (!pageNumber || pageNumber < 0) {
+                pageNumber = 1;
+            }
+            var startIndex = (pageNumber - 1) * maxPerPage;
+            var endIndex = pageNumber * maxPerPage;
 
-                $.each(data.rsslist, function (i, item) {
+            var rssTable = $('<table>')
+                .addClass('table table-hover')
+                .append(
+                    '<thead><tr>\
+                        <th style="vertical-align: initial">\
+                            <input type="checkbox" class="form-check-input" id="select_all_checkbox"/>\
+                        </th>\
+                        <th>#</th>\
+                        <th>rss</th>\
+                        <th>status</th>\
+                        <th>last polling date</th>\
+                        <th>error message</th>\
+                        <th>retry count</th>\
+                    </tr></thead>')
+                .append('<tbody>');
+
+            $.each(subscriptions, function (i, rss) {
+                if (i >= startIndex && i < endIndex) {
                     var tr = $('<tr>');
-                    if (item.status === 'dead') {
+                    if (rss.status === 'dead') {
                         tr.addClass('table-danger');
                     }
-                    else if (item.status === 'offline') {
+                    else if (rss.status === 'offline') {
                         tr.addClass('table-warning');
                     }
                     else {
                         tr.addClass('table-light');
                     }
 
-                    tr.append('<td><input type="checkbox" class="form-check-input" id="' + item.rss + '"/></td>'
-                        + '<td>' + (i + 1) + '</td>'
-                        + '<td><a href="' + item.rss + '" target="_blank">' + item.rss + '</a></td>'
-                        + '<td>' + item.status + '</td>'
-                        + '<td>' + item.lastPollingDate + '</td>'
-                        + '<td>' + item.errorMessage + '</td>'
-                        + '<td>' + item.retryCount + '</td>');
+                    tr.append(
+                        '<td><input type="checkbox" class="form-check-input" id="' + rss.rss + '"/></td>\
+                         <td>' + (i + 1) + '</td>\
+                         <td><a href="' + rss.rss + '" target="_blank">' + rss.rss + '</a></td>\
+                         <td>' + rss.status + '</td>\
+                         <td>' + rss.lastPollingDate + '</td>\
+                         <td>' + rss.errorMessage + '</td>\
+                         <td>' + rss.retryCount + '</td>');
 
                     rssTable.append(tr);
-                });
-                $("#details").html(rssTable);
-
-                $("#select_all_checkbox").change(function (e) {
-                    if ($("#select_all_checkbox").is(':checked')) {
-                        $("input[type='checkbox']").each(function (index) {
-                            $(this).prop('checked', true); //check all
-                        });
-                    } else {
-                        $("input[type='checkbox']").each(function (index) {
-                            $(this).prop('checked', false); //uncheck all
-                        });
-                    }
-                }); //select_all_checkbox.change
+                }
             });
-        }//end of reloadRssTable
+            $("#details").html(rssTable);
+
+            $("#select_all_checkbox").change(function (e) {
+                if ($("#select_all_checkbox").is(':checked')) {
+                    $("input[type='checkbox']").each(function (index) {
+                        $(this).prop('checked', true); //check all
+                    });
+                } else {
+                    $("input[type='checkbox']").each(function (index) {
+                        $(this).prop('checked', false); //uncheck all
+                    });
+                }
+            }); //select_all_checkbox.change
+
+            //add pagination bar
+            if (subscriptions.length > maxPerPage) {
+                $().generatePaginationBar($('#subscription_pagination'), subscriptions, maxPerPage, pageNumber);
+                $('#subscription_pagination a').click(function (event) {
+                    event.preventDefault();
+                    var button = $(event.currentTarget);
+                    var clickedPageNumber = button.data('page');
+                    showSubscriptionsTable(subscriptions, maxPerPage, clickedPageNumber);
+                });
+            } else {
+                $('#subscription_pagination').empty();
+            }
+        } // end of showSubscriptionsTable
 
         $('#subscribers_form').submit(function (e) {
             e.preventDefault();
@@ -208,7 +238,6 @@
         });
     }); //end of $(document).ready(function ())
 
-
 </script>
 
 
@@ -222,12 +251,13 @@
             <div class="container-fluid">
                 <div class="text-center">
                     <h5>Details of subscriptions for subscriber:</h5>
-                    <h1>${subscriber}</h1>
+                    <h1>${subscriberName}</h1>
+                    <h2>${subscriberId}</h2>
                     <hr class="star-dark"/>
                 </div>
-                <div class="container-fluid">
+                <div class="container-fluid card">
                     <form id="subscribers_form" action="" method="post">
-                        <div class="btn-toolbar bg-light" role="toolbar" aria-label="">
+                        <div class="btn-toolbar bg-light card-header" role="toolbar" aria-label="">
                             <div class="btn-group" role="group">
                                 <button id="add_btn" class="navbar-brand btn-outline-info" type="submit"
                                         data-toggle="modal"  data-target="#addModal"
@@ -255,8 +285,13 @@
                                 </button>
                             </div>
                         </div>
-                        <div id="alerts_panel" class="row"></div>
-                        <div id="details" class="row table-responsive"></div>
+                        <div class="card-body">
+                            <div id="alerts_panel" class="row"></div>
+                            <div id="details" class="row table-responsive"></div>
+                        </div>
+                        <nav class="card-footer" aria-label="subscriptions">
+                            <ul id="subscription_pagination" class="pagination justify-content-end"></ul>
+                        </nav>
                     </form>
                 </div>
             </div>

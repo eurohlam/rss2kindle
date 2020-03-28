@@ -8,7 +8,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%@include file="_head.jsp"%>
+    <%@include file="_head.jsp" %>
 </head>
 
 <body id="page-top">
@@ -29,62 +29,108 @@
         function reloadSubscribersTable() {
             $.getJSON(rootURL + username, function (data) {
                 userData = data;
-                var table = $('<table>')
-                    .addClass('table table-hover')
-                    .append( '<thead>' +
-                    '<tr><th>#</th>' +
-                    '<th>name</th>' +
-                    '<th>email</th>' +
-                    '<th>status</th>' +
-                    '<th>action</th></tr></thead>')
-                    .append('<tbody>');
+                showSubscribersTable(data.subscribers, 10, 1);
+            });
+        } //end of reloadSubscribersTable
 
-                $.each(data.subscribers, function (i, item) {
+        function showSubscribersTable(subscribers, maxPerPage, pageNumber) {
+            if (!maxPerPage || maxPerPage < 0) {
+                maxPerPage = 10;
+            }
+            if (!pageNumber || pageNumber < 0) {
+                pageNumber = 1;
+            }
+            var startIndex = (pageNumber - 1) * maxPerPage;
+            var endIndex = pageNumber * maxPerPage;
+
+            var table = $('<table>')
+                .addClass('table table-hover')
+                .append(
+                    '<thead>\
+                        <tr><th>#</th>\
+                        <th>name</th>\
+                        <th>email</th>\
+                        <th>status</th>\
+                        <th>action</th></tr>\
+                    </thead>')
+                .append('<tbody>');
+
+            $.each(subscribers, function (i, subscriber) {
+                if (i >= startIndex && i < endIndex) {
                     var tr = $('<tr>');
-                    if (item.status === 'suspended') {
+                    if (subscriber.status === 'suspended') {
                         tr.addClass('table-danger');
                     } else {
                         tr.addClass('table-light');
                     }
 
-                    tr.append('<td>' + (i + 1) + '</td>' +
-                         '<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td><' +
-                         '<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>' +
-                         '<td>' + item.status + '</td>');
+                    tr.append('<td>' + (i + 1) + '</td>\
+                            <td><a href="subscriberDetails?subscriberId=' + subscriber.email
+                                        + '&subscriberName=' + subscriber.name + '">' + subscriber.name + '</a></td>\
+                            <td><a href="subscriberDetails?subscriberId=' + subscriber.email
+                                        + '&subscriberName=' + subscriber.name + '">' + subscriber.email + '</a></td>\
+                            <td>' + subscriber.status + '</td>');
 
                     var btnDiv = $('<div>')
                         .addClass('btn-group')
                         .attr({'role': 'group'});
-                    btnDiv.append('<button id="btn_update" type="button" class="btn btn-outline-primary" ' +
-                            'data-toggle="modal" data-target="#updateModal" ' +
-                            'data-name="' + item.name + '" data-email="' + item.email + '" data-status="' + item.status + '">' +
-                            '<span data-tooltip="tooltip" data-placement="top" title="Edit subscriber">' +
-                            '<i class="far fa-edit fa-lg"></i></span></button>');
+                    btnDiv.append(
+                        '<button id="btn_update" type="button" class="btn btn-outline-primary"\
+                                data-toggle="modal" data-target="#updateModal"\
+                                data-name="' + subscriber.name + '" data-email="' + subscriber.email + '" data-status="' + subscriber.status + '">\
+                            <span data-tooltip="tooltip" data-placement="top" title="Edit subscriber">\
+                                <i class="far fa-edit fa-lg"></i>\
+                            </span>\
+                         </button>');
 
-                    if (item.status === 'suspended') {
-                        btnDiv.append('<button id="btn_resume" type="button" class="btn btn-warning" ' +
-                            'data-toggle="modal"  data-target="#resumeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
-                            '<span data-tooltip="tooltip" data-placement="top" title="Resume subscriber">' +
-                            '<i class="far fa-play-circle fa-lg"></i></span></button>');
+                    if (subscriber.status === 'suspended') {
+                        btnDiv.append(
+                            '<button id="btn_resume" type="button" class="btn btn-warning"\
+                                    data-toggle="modal"  data-target="#resumeModal"\
+                                    data-name="' + subscriber.name + '" data-email="' + subscriber.email + '">\
+                                <span data-tooltip="tooltip" data-placement="top" title="Resume subscriber">\
+                                    <i class="far fa-play-circle fa-lg"></i>\
+                                </span>\
+                             </button>');
                     } else {
-                        btnDiv.append('<button id="btn_suspend" type="button" class="btn btn-outline-warning" ' +
-                            'data-toggle="modal" data-target="#suspendModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
-                            '<span data-tooltip="tooltip" data-placement="top" title="Suspend subscriber">' +
-                            '<i class="far fa-pause-circle fa-lg"></i></span></button>');
+                        btnDiv.append(
+                            '<button id="btn_suspend" type="button" class="btn btn-outline-warning"\
+                                data-toggle="modal" data-target="#suspendModal"\
+                                data-name="' + subscriber.name + '" data-email="' + subscriber.email + '">\
+                                <span data-tooltip="tooltip" data-placement="top" title="Suspend subscriber">\
+                                    <i class="far fa-pause-circle fa-lg"></i>\
+                                </span>\
+                             </button>');
                     }
 
-                    btnDiv.append('<button id="btn_remove" type="button" class="btn btn-outline-danger" ' +
-                        'data-toggle="modal" data-target="#removeModal" data-name="' + item.name + '" data-email="' + item.email + '">' +
-                        '<span data-tooltip="tooltip" data-placement="top" title="Remove subscriber">' +
-                        '<i class="far fa-trash-alt fa-lg"></i></span></button>');
+                    btnDiv.append(
+                        '<button id="btn_remove" type="button" class="btn btn-outline-danger"\
+                            data-toggle="modal" data-target="#removeModal"\
+                            data-name="' + subscriber.name + '" data-email="' + subscriber.email + '">\
+                            <span data-tooltip="tooltip" data-placement="top" title="Remove subscriber">\
+                                <i class="far fa-trash-alt fa-lg"></i>\
+                            </span>\
+                         </button>');
 
                     tr.append($('<td>').append(btnDiv));
                     table.append(tr);
-                });
-                $('#edit_subscriber').html(table);
+                }
             });
-        } //end of reloadSubscribersTable
+            $('#edit_subscriber').html(table);
 
+            //add pagination bar
+            if (subscribers.length > maxPerPage) {
+                $().generatePaginationBar($('#subscribers_pagination'), subscribers, maxPerPage, pageNumber);
+                $('#subscribers_pagination a').click(function (event) {
+                    event.preventDefault();
+                    var button = $(event.currentTarget);
+                    var clickedPageNumber = button.data('page');
+                    showSubscribersTable(subscribers, maxPerPage, clickedPageNumber);
+                });
+            } else {
+                $('#subscribers_pagination').empty();
+            }
+        }
 
 
         //activate the first tab by default
@@ -306,7 +352,7 @@
         });
 
         $('#btn_new_subscriber_addrss').click(function (event) {
-            var _new_subscriber_addrss=$('#new_subscriber_addrss');
+            var _new_subscriber_addrss = $('#new_subscriber_addrss');
             var rss = _new_subscriber_addrss.val();
             _new_subscriber_addrss.popover(
                 {
@@ -364,7 +410,7 @@
 
     <div id="wrapper" class="d-flex">
 
-        <%@include file="_aside.jsp"%>
+        <%@include file="_aside.jsp" %>
 
         <main id="page-content-wrapper">
             <div class="text-center">
@@ -384,39 +430,51 @@
             <div class="row" style="padding-top: 3rem; padding-left: 2rem">
                 <div class="tab-content table-responsive-sm" id="operationsTabContent">
                     <div id="alerts_panel"></div>
-                    <div class="tab-pane fade active"  id="new" role="tabpanel" aria-labelledby="new-tab">
-                        <h2>Add new subscriber</h2>
-                        <form method="get" id="new_subscriber_form" action="#page-top">
-                            <div class="form-group">
-                                <label for="new_subscriber_email">Email</label>
-                                <input type="email" id="new_subscriber_email" required class="form-control"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="new_subscriber_name">Name</label>
-                                <input type="text" id="new_subscriber_name" required class="form-control"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="new_subscriber_rsslist">Subscriptions</label>
-                                <select class="form-control" id="new_subscriber_rsslist" size="5"></select>
-                                <div class="form-group">
-                                    <label for="new_subscriber_addrss" class="control-label">Add new subscription (RSS):</label>
-                                    <input type="url" class="form-control" id="new_subscriber_addrss"/>
-                                    <div class="btn-group-xs" role="group">
-                                        <button type="button" class="btn btn-primary" id="btn_new_subscriber_addrss">+</button>
-                                        <button type="button" class="btn btn-primary" id="btn_new_subscriber_deleterss">-</button>
+                    <div class="tab-pane fade active" id="new" role="tabpanel" aria-labelledby="new-tab">
+                        <div class="card">
+                            <h2 class="card-header">Add new subscriber</h2>
+                            <form method="get" id="new_subscriber_form" action="#page-top">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="new_subscriber_email">Email</label>
+                                        <input type="email" id="new_subscriber_email" required class="form-control"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="new_subscriber_name">Name</label>
+                                        <input type="text" id="new_subscriber_name" required class="form-control"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="new_subscriber_rsslist">Subscriptions</label>
+                                        <select class="form-control" id="new_subscriber_rsslist" size="5"></select>
+                                        <div class="form-group">
+                                            <label for="new_subscriber_addrss" class="control-label">Add new
+                                                subscription (RSS):</label>
+                                            <input type="url" class="form-control" id="new_subscriber_addrss"/>
+                                            <div class="btn-group-xs" role="group">
+                                                <button type="button" class="btn btn-primary"
+                                                        id="btn_new_subscriber_addrss">+
+                                                </button>
+                                                <button type="button" class="btn btn-primary"
+                                                        id="btn_new_subscriber_deleterss">-
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <%--<label for="starttime">Start date</label>--%>
-                                <%--<p><input type="date" id="starttime" class="form-control"/></p>--%>
-                                <button type="submit" class="btn btn-primary">Create</button>
-                            </div>
-                        </form>
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary">Create</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="edit" role="tabpanel" aria-labelledby="edit-tab">
-                        <h2>Edit subscribers</h2>
-                        <div id="edit_subscriber"></div>
+                        <div class="card">
+                            <h2 class="card-header">Edit subscribers</h2>
+                            <div id="edit_subscriber"></div>
+                            <nav class="card-footer" aria-label="subscribers">
+                                <ul id="subscribers_pagination" class="pagination justify-content-end"></ul>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -453,11 +511,14 @@
                         <label for="update_subscriber_rsslist" class="control-label">Subscriptions:</label>
                         <select class="form-control" id="update_subscriber_rsslist" size="7"></select>
                         <div class="form-group">
-                            <label for="update_subscriber_addrss" class="control-label">Add new subscription (RSS):</label>
+                            <label for="update_subscriber_addrss" class="control-label">Add new subscription
+                                (RSS):</label>
                             <input type="url" class="form-control" id="update_subscriber_addrss"/>
                             <div class="btn-group-xs" role="group">
-                                <button type="button" class="btn btn-primary" id="btn_update_subscriber_addrss">+</button>
-                                <button type="button" class="btn btn-primary" id="btn_update_subscriber_deleterss">-</button>
+                                <button type="button" class="btn btn-primary" id="btn_update_subscriber_addrss">+
+                                </button>
+                                <button type="button" class="btn btn-primary" id="btn_update_subscriber_deleterss">-
+                                </button>
                             </div>
                         </div>
                     </div>

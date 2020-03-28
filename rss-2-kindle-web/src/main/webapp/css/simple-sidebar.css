@@ -5,120 +5,135 @@
  * The file has been customized for project purposes
  */
 body {
-  overflow-x: hidden;
+    overflow-x: hidden;
 }
 
 #sidebar-wrapper {
-  min-height: 100%;
-  margin-left: -12rem;
-  -webkit-transition: margin .25s ease-out;
-  -moz-transition: margin .25s ease-out;
-  -o-transition: margin .25s ease-out;
-  transition: margin .25s ease-out;
-  background: #2C3E50;
+    min-height: 100%;
+    margin-left: -12rem;
+    -webkit-transition: margin .25s ease-out;
+    -moz-transition: margin .25s ease-out;
+    -o-transition: margin .25s ease-out;
+    transition: margin .25s ease-out;
+    background: #2C3E50;
 }
 
 #sidebar-wrapper .list-group {
-  width: 12rem;
-  padding-top: 8rem;
+    width: 12rem;
+    padding-top: 8rem;
 }
 
 #page-content-wrapper {
-  min-width: 100%;
-  padding-top: 4rem;
-  margin-bottom: 3rem;
+    min-width: 100%;
+    padding-top: 4rem;
+    margin-bottom: 3rem;
 }
 
 #wrapper.toggled #sidebar-wrapper {
-  margin-left: 0;
+    margin-left: 0;
 }
 
 #mobile-sidebar {
-  padding-top: 5rem;
-  font-weight: 700;
-  font-family: 'Montserrat';
-  font-size: 80%;
-  min-width: 100%;
+    padding-top: 5rem;
+    font-weight: 700;
+    font-family: 'Montserrat';
+    font-size: 80%;
+    min-width: 100%;
 }
 
 @media (min-width: 992px) {
-  #page-content-wrapper {
-    padding-top: 8rem;
-  }
+    #page-content-wrapper {
+        padding-top: 8rem;
+    }
 }
 
 @media (min-width: 768px) {
-  #sidebar-wrapper {
-    margin-left: 0;
-  }
+    #sidebar-wrapper {
+        margin-left: 0;
+    }
 
-  #page-content-wrapper {
-    min-width: 0;
-    width: 100%;
-  }
+    #page-content-wrapper {
+        min-width: 0;
+        width: 100%;
+    }
 
-  #wrapper.toggled #sidebar-wrapper {
-    margin-left: -12rem;
-  }
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: -12rem;
+    }
 
-  #mobile-sidebar {
-    visibility: collapse;
-    padding-top: 0;
-  }
+    #mobile-sidebar {
+        visibility: collapse;
+        padding-top: 0;
+    }
 }
 
 @media (max-width: 512px) {
-  h1 {
-    font-size: xx-large;
-  }
+    h1 {
+        font-size: xx-large;
+    }
 }
 
 @media (max-width: 375px) {
-  h1 {
-    font-size: x-large;
-  }
-  .fa-2x {
-    font-size: 1.33em
-  }
+    h1 {
+        font-size: x-large;
+    }
+
+    .fa-2x {
+        font-size: 1.33em
+    }
 }
 
 .sidebar-nav {
-  font-weight: 700;
-  font-family: 'Montserrat';
+    font-weight: 700;
+    font-family: 'Montserrat';
 }
 
 .sidebar-nav li {
-  text-indent: 20px;
-  line-height: 40px;
-  color: #fff;
+    text-indent: 20px;
+    line-height: 40px;
+    color: #fff;
 }
 
 .sidebar-nav li a {
-  display: block;
-  color: #fff;
+    display: block;
+    color: #fff;
 }
 
 .sidebar-nav li a:hover {
-  color: #18BC9C;
-  /*background: rgba(255, 255, 255, 0.2);*/
+    color: #18BC9C;
+    /*background: rgba(255, 255, 255, 0.2);*/
 }
 
 .sticky-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  /* Set the fixed height of the footer here */
-  /*height: 60px;*/
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    /*height: 60px;*/
 }
 
 /*Override bootstrap btn-outline-primary with custom color*/
 .btn-outline-primary {
-  color: #18BC9C;
-  border-color: #18BC9C;
+    color: #18BC9C;
+    border-color: #18BC9C;
 }
 
-.btn-outline-primary:hover{
-  color:#fff;
-  background-color:#128f76;
-  border-color:#128f76;
+.btn-outline-primary:hover {
+    color: #fff;
+    background-color: #128f76;
+    border-color: #128f76;
+}
+
+/*Override bootstrap page-link with custom color*/
+.page-link {
+    color: #18bc9c;
+}
+
+.page-link:hover {
+    color: #128f76;
+}
+
+.page-item.active .page-link {
+    background-color: #18bc9c;
+    border-color: #18bc9c;
 }

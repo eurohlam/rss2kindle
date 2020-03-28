@@ -17,102 +17,181 @@
     var userData;
 
     $(document).ready(function () {
-        $.getJSON(rootURL, function (data) {
-            userData = data;
+
+        function showSubscribersTable(subscribers, maxPerPage, pageNumber) {
+            if (!maxPerPage || maxPerPage < 0) {
+                maxPerPage = 10;
+            }
+            if (!pageNumber || pageNumber < 0) {
+                pageNumber = 1;
+            }
+            var startIndex = (pageNumber - 1) * maxPerPage;
+            var endIndex = pageNumber * maxPerPage;
 
             var subscribersTable = $('<table>')
                 .addClass('table table-hover')
-                .append('<thead>' +
-                    '<tr><th>#</th>' +
-                    '<th>subscriber</th>' +
-                    '<th>email</th>' +
-                    '<th>status</th>' +
-                    '<th>number of subscriptions</th>' +
-                    '</tr></thead>')
+                .append('<thead>\
+                            <tr><th>#</th>\
+                            <th>subscriber</th>\
+                            <th>email</th>\
+                            <th>status</th>\
+                            <th>number of subscriptions</th>\
+                        </tr></thead>')
                 .append('<tbody>');
+
+            $.each(subscribers, function (i, subscriber) {
+                if (i >= startIndex && i < endIndex) {
+                    var tr = $('<tr>');
+
+                    if (subscriber.status === 'suspended') {
+                        tr.addClass('table-danger');
+                    } else {
+                        tr.addClass('table-light');
+                    }
+
+                    tr.append('<td>' + (i + 1) + '</td>')
+                        .append('<td><a href="subscriberDetails?subscriberId=' + subscriber.email
+                            + '&subscriberName=' + subscriber.name + '">' + subscriber.name + '</a></td>')
+                        .append('<td><a href="subscriberDetails?subscriberId=' + subscriber.email
+                            + '&subscriberName=' + subscriber.name +'">' + subscriber.email + '</a></td>')
+                        .append('<td>' + subscriber.status + '</td>')
+                        .append('<td>' + subscriber.rsslist.length + '</td>');
+                    subscribersTable.append(tr);
+                }
+            });
+            $('#subscribers_view').html(subscribersTable);
+
+            //add pagination bar
+            if (subscribers.length > maxPerPage) {
+                $().generatePaginationBar($('#subscribers_pagination'), subscribers, maxPerPage, pageNumber);
+                $('#subscribers_pagination a').click(function (event) {
+                    event.preventDefault();
+                    var button = $(event.currentTarget);
+                    var clickedPageNumber = button.data('page');
+                    showSubscribersTable(subscribers, maxPerPage, clickedPageNumber);
+                });
+            }
+
+        } //end of showSubscribersTable
+
+        function showSubscriptionsTable(subscriptions, maxPerPage, pageNumber) {
+            if (!maxPerPage || maxPerPage < 0) {
+                maxPerPage = 10;
+            }
+            if (!pageNumber || pageNumber < 0) {
+                pageNumber = 1;
+            }
+            var startIndex = (pageNumber - 1) * maxPerPage;
+            var endIndex = pageNumber * maxPerPage;
 
             var rssTable = $('<table>').addClass('table table-hover')
-                .append('<thead>' +
-                    '<tr><th>#</th>' +
-                    '<th>subscription</th>' +
-                    '<th>status</th>' +
-                    '<th>send to</th>' +
-                    '</tr></thead>')
+                .append('<thead>\
+                            <tr><th>#</th>\
+                            <th>subscription</th>\
+                            <th>status</th>\
+                            <th>send to</th>\
+                         </tr></thead>')
                 .append('<tbody>');
-            var rssNumber = 0;
-            var suspendedSubscribersnumber = 0;
-            var deadRssNumber = 0;
-            var offlineRssNumber = 0;
 
-            $.each(data.subscribers, function (i, item) {
-                var rss = item.rsslist;
-                var tr = $('<tr>');
-
-                if (item.status === 'suspended') {
-                    tr.addClass('table-danger');
-                    suspendedSubscribersnumber++;
-                }
-                else {
-                    tr.addClass('table-light');
-                }
-
-                tr.append('<td>' + (i +1) + '</td>')
-                    .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.name + '</a></td>')
-                    .append('<td><a href="subscriberDetails?subscriber=' + item.email + '">' + item.email + '</a></td>')
-                    .append('<td>' + item.status + '</td>')
-                    .append('<td>'+ rss.length + '</td>');
-                subscribersTable.append(tr);
-
-                for (j = 0; j < rss.length; j++) {
+            $.each(subscriptions, function (i, rss) {
+                if (i >= startIndex && i < endIndex) {
                     var rssTr = $('<tr>');
-                    if (rss[j].status === 'dead') {
+                    if (rss.status === 'dead') {
                         rssTr.addClass('table-danger');
-                        deadRssNumber++;
-                    }
-                    else if (rss[j].status === 'offline') {
+                    } else if (rss.status === 'offline') {
                         rssTr.addClass('table-warning');
-                        offlineRssNumber++;
-                    }
-                    else {
+                    } else {
                         rssTr.addClass('table-light');
                     }
 
-                    rssNumber++;
-
-                    rssTr.append('<td>' + rssNumber + '</td>')
-                        .append('<td><a href="' + rss[j].rss + '" target="_blank">' + rss[j].rss + '</a></td>')
-                        .append('<td>' + rss[j].status + '</td>')
-                        .append('<td>' + item.email + '</td>');
+                    rssTr.append('<td>' + (i + 1) + '</td>')
+                        .append('<td><a href="' + rss.rss + '" target="_blank">' + rss.rss + '</a></td>')
+                        .append('<td>' + rss.status + '</td>')
+                        .append('<td>' + rss.email + '</td>');
                     rssTable.append(rssTr);
                 }
-
             });
+            $('#subscriptions_view').html(rssTable);
 
-            $('#dashboard_user_status').append('User status: ' + data.status);
+            //add pagination bar
+            if (subscriptions.length > maxPerPage) {
+                $().generatePaginationBar($('#subscription_pagination'), subscriptions, maxPerPage, pageNumber);
+                $('#subscription_pagination a').click(function (event) {
+                    event.preventDefault();
+                    var button = $(event.currentTarget);
+                    var clickedPageNumber = button.data('page');
+                    showSubscriptionsTable(subscriptions, maxPerPage, clickedPageNumber);
+                });
+            }
+        } // end of showSubscriptionsTable
+
+        function showUserSummary(user) {
+            $('#dashboard_user_status').append('User status: ' + user.status);
             $('#dashboard_user_info').append(
-                'Contact email: ' + data.email + '<br>' +
-                'Created: ' + data.dateCreated + '<br>' +
-                'Modified: ' + data.dateModified + '<br>' +
-                'Last logged in: ' + data.previousLogin + '<br>'
+                'Contact email: ' + user.email + '<br>' +
+                'Created: ' + user.dateCreated + '<br>' +
+                'Modified: ' + user.dateModified + '<br>' +
+                'Last logged in: ' + user.previousLogin + '<br>'
             );
+        }
 
-            $('#dashboard_subscribers_status').append('Number of subscribers: ' + data.subscribers.length);
+        function showSubscribersSummary(subscribers) {
+            var activeCount = 0;
+            $.each(subscribers, function (i, subscriber) {
+                if (subscriber.status === 'active') {
+                    activeCount++;
+                }
+            });
+            $('#dashboard_subscribers_status').append('Number of subscribers: ' + subscribers.length);
             $('#dashboard_subscribers_info').append(
-                'Active subscribers:' + (data.subscribers.length - suspendedSubscribersnumber) + '<br>' +
-                'Suspended subscribers: ' + suspendedSubscribersnumber + '<br><br><br>'
+                'Active subscribers:' + activeCount + '<br>' +
+                'Suspended subscribers: ' + (subscribers.length - activeCount) + '<br><br><br>'
             );
+        }
 
+        function showSubscriptionsSummary(subscribers) {
+            var rssNumber = 0;
+            var deadRssNumber = 0;
+            var offlineRssNumber = 0;
+            $.each(subscribers, function (i, subscriber) {
+                $.each(subscriber.rsslist, function (r, rss) {
+                    if (rss.status === 'dead') {
+                        deadRssNumber++;
+                    } else if (rss.status === 'offline') {
+                        offlineRssNumber++;
+                    }
+                    rssNumber++;
+                });
+            });
             $('#dashboard_subscriptions_status').append('Number of subscriptions: ' + rssNumber);
             $('#dashboard_subscriptions_info').append(
                 'Active subscriptions:' + (rssNumber - deadRssNumber - offlineRssNumber) + '<br>' +
                 'Dead subscriptions: ' + deadRssNumber + '<br>' +
                 'Offline subscriptions: ' + offlineRssNumber + '<br><br>'
             );
+        }
 
-            $('#subscribers_view').append(subscribersTable);
-            $('#subscriptions_view').append(rssTable);
-        })
-    });
+        function showDashboard() {
+            $.getJSON(rootURL, function (data) {
+                userData = data;
+                showUserSummary(userData);
+                showSubscribersSummary(userData.subscribers);
+                showSubscriptionsSummary(userData.subscribers);
+                showSubscribersTable(userData.subscribers, 10, 1);
+
+                var rssList = [];
+                $.each(userData.subscribers, function (i, subscriber) {
+                    $.each(subscriber.rsslist, function(r, rss) {
+                        rss.email = subscriber.email;
+                        rssList.push(rss);
+                    });
+                });
+                showSubscriptionsTable(rssList, 10, 1);
+            })
+        }
+
+        showDashboard();
+    }); //end of $(document).ready(function ()
 
 </script>
 
@@ -147,7 +226,7 @@
                         </div>
                     </div>
                     <div class="col-md-4 col-lg-4" style="padding-top: 1rem">
-                        <div class="card"  style="background-color: #c9e2b3">
+                        <div class="card" style="background-color: #c9e2b3">
                             <h6 id="dashboard_subscriptions_status" class="card-header"></h6>
                             <h4 class="card-title">Subscriptions</h4>
                             <div class="card-text text-muted" id="dashboard_subscriptions_info"></div>
@@ -159,12 +238,18 @@
                         <div class="card">
                             <h4 class="card-header">Subscribers</h4>
                             <div id="subscribers_view" class="table-responsive"></div>
+                            <nav class="card-footer" aria-label="subscribers">
+                                <ul id="subscribers_pagination" class="pagination justify-content-end"></ul>
+                            </nav>
                         </div>
                     </div>
                     <div class="col-xl-6 text-left" style="padding-top: 1rem">
                         <div class="card">
                             <h4 class="card-header">Subscriptions</h4>
                             <div id="subscriptions_view" class="table-responsive"></div>
+                            <nav class="card-footer" aria-label="subscriptions">
+                                <ul id="subscription_pagination" class="pagination justify-content-end"></ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
