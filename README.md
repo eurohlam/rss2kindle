@@ -77,7 +77,7 @@ Traefik as a reverse proxy stands before all containers and intercepts and route
 
 * Traefik dashboard
  
-        http://localhost:8080
+        http://ip_address:8080
 
 * Web UI should be available by URL:
 
