@@ -24,7 +24,7 @@ services:
         aliases:
           - mailhog
     labels:
-      - "traefik.http.routers.mailhog.rule=Host(`smtp.localhost`)"
+      - "traefik.http.routers.mailhog.rule=Host(`smtp.localhost`)||PathPrefix(`/`)"
       - "traefik.http.routers.mailhog.entrypoints=web"
       - "traefik.http.routers.mailhog.service=smtp"
       - "traefik.http.services.smtp.loadbalancer.server.port=8025"
@@ -48,7 +48,7 @@ services:
       - ../logs:/usr/local/tomcat/logs:rw
       - ../data:/usr/local/tomcat/data:rw
     labels:
-      - "traefik.http.routers.rss2kindle-api.rule=Host(`api.localhost`)"
+      - "traefik.http.routers.rss2kindle-api.rule=Host(`api.localhost`)||PathPrefix(`/rss2kindle`)"
       - "traefik.http.routers.rss2kindle-api.tls=true"
       - "traefik.http.routers.rss2kindle-api.entrypoints=websecure"
       - "traefik.http.routers.rss2kindle-api.service=r2kapi"
@@ -70,7 +70,7 @@ services:
     volumes:
       - ../logs:/usr/local/tomcat/logs:rw
     labels:
-      - "traefik.http.routers.rss2kindle-web.rule=Host(`web.localhost`)"
+      - "traefik.http.routers.rss2kindle-web.rule=Host(`web.localhost`)||PathPrefix(`/r2kweb`)"
       - "traefik.http.routers.rss2kindle-web.tls=true"
       - "traefik.http.routers.rss2kindle-web.entrypoints=websecure"
       - "traefik.http.routers.rss2kindle-web.service=r2kweb"

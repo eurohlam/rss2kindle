@@ -82,22 +82,28 @@ Traefik as a reverse proxy stands before all containers and intercepts and route
 * Web UI should be available by URL:
 
         https://web.localhost
+        or
+		https://ip_address/r2kweb		
         
 * Tomcat admin console for Web UI should be available by URL:
         
-       https://web.localhost/manager
+        https://web.localhost/manager
         
 * REST API should be available by URL:
        
-       https://api.localhost/rss2kindle/api/v1
+        https://api.localhost/rss2kindle/api/v1
+		or
+		https://ip_address/rss2kindle/api/v1
 
 * Tomcat admin console for REST API should be available by URL:
         
-       https://api.localhost/manager
+        https://api.localhost/manager
         
 * MailHog Web UI should be available by URL:
         
-       http://smtp.localhost
+        http://smtp.localhost
+		or
+		http://ip_address
 
 * MailHog SMTP port is 1025
  
