@@ -22,6 +22,8 @@
             <camel:redeliveryPolicy maximumRedeliveries="3" redeliveryDelay="5000" retryAttemptedLogLevel="ERROR"/>
         </camel:errorHandler>
 
+        <camel:errorHandler id="logErrorHandler" type="LoggingErrorHandler"/>
+
         <!-- rss to html transforming by xslt-->
         <camel:route id="rss2html">
             <!--<camel:from uri="direct:startTransformation?block=true&amp;timeout=50000"/>-->
@@ -142,10 +144,16 @@
             </camel:filter>
         </camel:route>
 
-        <camel:route id="startupQuartz">
+        <camel:route id="runRssPollingForAllUsersQuartz">
             <camel:from uri="quartz2:polling/runAll?cron={{cron.runAll}}"/>
             <camel:log message="Quartz job triggered runRssPollingForAllUsers" loggingLevel="INFO" logName="org.roag.camel.quartz"/>
             <camel:to uri="bean:rss2XmlHandler?method=runRssPollingForAllUsers"/>
         </camel:route>
+
+        <camel:route id="cleanupMobiStorage" errorHandlerRef="logErrorHandler">
+            <camel:from uri="file://{{storage.path.mobi}}?recursive=true&amp;delete=true&amp;scheduler=quartz2&amp;scheduler.cron=0+0+0+*+*+?&amp;filterFile=${file:modified} &lt; ${date:now-1h}"/>
+            <camel:log message="Removing file ${file:name} from {{storage.path.mobi}}" loggingLevel="INFO" logName="org.roag.camel.quartz"/>
+        </camel:route>
+
     </camel:camelContext>
 </beans>
